@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學：除以二位小數與商的秘密探究</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Zen Maru Gothic & Noto Sans TC for a warm anime aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: linear-gradient(175deg, #1A365D 0%, #2B6CB0 30%, #63B3ED 65%, #FEEBC8 92%, #FBD38D 100%);
+      min-height: 100vh;
+      color: #2D3748;
+    }
+
+    .shinkai-title {
+      font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 3px 6px rgba(15, 23, 42, 0.4);
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 12px 30px -4px rgba(31, 38, 135, 0.15), 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-card-cloud {
+      background: rgba(240, 249, 255, 0.85);
+      border: 1px solid rgba(186, 230, 253, 0.8);
+    }
+
+    /* Standard Vertical Fraction Format: vertical-align center with text */
+    .inline-fraction {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 0.25rem;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-weight: 700;
+    }
+    .inline-fraction .integer-part {
+      font-size: 1.15em;
+      margin-right: 0.25rem;
+    }
+    .inline-fraction .frac-body {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      line-height: 1.1;
+      font-size: 0.9em;
+    }
+    .inline-fraction .numerator {
+      border-bottom: 2px solid currentColor;
+      padding: 0 3px 1px 3px;
+      width: 100%;
+    }
+    .inline-fraction .denominator {
+      padding: 1px 3px 0 3px;
+      width: 100%;
+    }
+
+    /* Division Vertical Form (直式除法) Layout */
+    .math-bracket {
+      border-top: 3px solid #1E293B;
+      border-left: 3px solid #1E293B;
+      border-top-left-radius: 12px;
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      height: 8px;
+      background: #CBD5E1;
+      border-radius: 4px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #3B82F6;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+      border: 3px solid #FFFFFF;
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #2563EB;
+    }
+
+    /* Floating cloud elements */
+    .cloud-badge {
+      animation: floatSlow 6s ease-in-out infinite;
+    }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 flex flex-col items-center">
+
+  <header class="w-full max-w-5xl mb-6 text-center text-white relative">
+    <div class="inline-block py-1 px-4 mb-2 bg-white/20 backdrop-blur-md rounded-full text-xs md:text-sm font-semibold tracking-wider text-sky-100 shadow-sm border border-white/30">
+      <i class="fa-solid fa-cloud-sun mr-2 text-amber-200"></i>國小六上數學 3-2 互動學習網頁
+    </div>
+    <h1 class="text-2xl md:text-4xl font-extrabold tracking-wide shinkai-title drop-shadow">
+      除以二位小數與商的規律探究
+    </h1>
+    <p class="mt-2 text-sky-100 text-sm md:text-base opacity-95 max-w-2xl mx-auto">
+      以「0.01」為起點發現小數除法的奧祕，觀察小數點向右跳躍與商的大小變化！
+    </p>
+
+    <!-- Navigation Tabs -->
+    <div class="flex justify-center mt-6 gap-2 md:gap-4 flex-wrap">
+      <button onclick="switchTab('tab1')" id="tabBtn1" class="px-5 py-2.5 rounded-2xl font-bold transition-all shadow-md flex items-center gap-2 bg-white text-blue-800 scale-105 border-2 border-sky-300">
+        <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i>
+        <span>1. 小數點跳跳樂・直式探究</span>
+      </button>
+      <button onclick="switchTab('tabRemainder')" id="tabBtnRemainder" class="px-5 py-2.5 rounded-2xl font-bold transition-all shadow-md flex items-center gap-2 bg-sky-900/60 text-white hover:bg-sky-800/80 border border-white/30">
+        <i class="fa-solid fa-scissors text-amber-300"></i>
+        <span>2. 餘數在哪裡</span>
+      </button>
+      <button onclick="switchTab('tab2')" id="tabBtn2" class="px-5 py-2.5 rounded-2xl font-bold transition-all shadow-md flex items-center gap-2 bg-sky-900/60 text-white hover:bg-sky-800/80 border border-white/30">
+        <i class="fa-solid fa-ribbon text-pink-300"></i>
+        <span>3. 彩帶剪剪看・商的大秘密</span>
+      </button>
+      <button onclick="switchTab('tab3')" id="tabBtn3" class="px-5 py-2.5 rounded-2xl font-bold transition-all shadow-md flex items-center gap-2 bg-sky-900/60 text-white hover:bg-sky-800/80 border border-white/30">
+        <i class="fa-solid fa-medal text-amber-300"></i>
+        <span>4. 隨堂測驗</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-5xl">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: 小數點跳跳樂・直式探究 -->
+    <!-- ========================================== -->
+    <section id="tab1" class="space-y-6">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-100 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
+              <i class="fa-solid fa-calculator"></i>
+            </span>
+            <div>
+              <h2 class="text-xl md:text-2xl font-bold text-slate-800">以「0.01」為單位的小數除法</h2>
+              <p class="text-sm text-slate-500">觀察被除數與除數同時向右移動兩位小數點（同乘 100）的等價變化</p>
+            </div>
+          </div>
+
+          <!-- 課本經典題型快速切換 -->
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setPresetProblem(1.75, 0.25)" class="px-3 py-1.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-blue-800 text-xs font-bold transition">
+              課本例1：1.75 ÷ 0.25
+            </button>
+            <button onclick="setPresetProblem(4.5, 1.25)" class="px-3 py-1.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-blue-800 text-xs font-bold transition">
+              課本例2：4.5 ÷ 1.25
+            </button>
+            <button onclick="setPresetProblem(4, 0.16)" class="px-3 py-1.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-blue-800 text-xs font-bold transition">
+              課本例3：4 ÷ 0.16
+            </button>
+          </div>
+        </div>
+
+        <!-- 數值輸入與小數點移動控制器 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div class="lg:col-span-7 glass-card-cloud rounded-2xl p-5 flex flex-col justify-between">
+            <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 my-2">
+              <div class="text-center">
+                <label class="block text-xs font-bold text-slate-500 mb-1">被除數</label>
+                <input type="number" id="inputDividend" value="1.75" step="0.01" min="0.01" oninput="applyShift(isShifted)" class="w-28 md:w-32 text-center text-xl md:text-2xl font-black text-blue-900 bg-white border-2 border-sky-300 rounded-xl py-2 focus:outline-none focus:border-blue-500">
+              </div>
+              <span class="text-2xl font-black text-slate-400 mt-5">÷</span>
+              <div class="text-center">
+                <label class="block text-xs font-bold text-slate-500 mb-1">除數</label>
+                <input type="number" id="inputDivisor" value="0.25" step="0.01" min="0.01" oninput="applyShift(isShifted)" class="w-28 md:w-32 text-center text-xl md:text-2xl font-black text-pink-700 bg-white border-2 border-pink-300 rounded-xl py-2 focus:outline-none focus:border-pink-500">
+              </div>
+            </div>
+
+            <!-- 0.01 單位換算說明卡 -->
+            <div class="mt-4 bg-white/90 rounded-xl p-3.5 border border-sky-200 text-center">
+              <p class="text-xs md:text-sm font-bold text-slate-700">
+                換算成「0.01」為單位：
+                <span id="unitDividend" class="text-blue-700 font-black">175</span> 個 0.01 ÷ 
+                <span id="unitDivisor" class="text-pink-600 font-black">25</span> 個 0.01
+              </p>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 glass-card-cloud rounded-2xl p-5 flex flex-col justify-center items-center text-center">
+            <p class="text-xs font-bold text-slate-500 mb-3">點擊下方按鈕觀察小數點跳躍</p>
+            <div class="flex gap-2 w-full">
+              <button onclick="applyShift(false)" id="btnOriginalState" class="flex-1 py-3 px-3 rounded-xl font-bold text-xs md:text-sm bg-blue-600 text-white shadow transition">
+                原小數狀態
+              </button>
+              <button onclick="applyShift(true)" id="btnShiftedState" class="flex-1 py-3 px-3 rounded-xl font-bold text-xs md:text-sm bg-white text-slate-700 border border-slate-300 hover:bg-sky-50 transition">
+                小數點右移兩位 (×100)
+              </button>
+            </div>
+            <div id="shiftVisualBanner" class="mt-4 w-full py-2.5 px-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs md:text-sm">
+              目前狀態：原始小數列式
+            </div>
+          </div>
+        </div>
+
+        <!-- 標準直式運算觀察台（四步驟四等分欄位） -->
+        <div class="bg-white rounded-3xl p-5 md:p-6 border border-sky-200 shadow-inner">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <h3 class="text-base md:text-lg font-extrabold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-blue-600"></i>
+              <span>標準直式運算觀察台（四步驟拆解）</span>
+            </h3>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="setDivisionStep(1)" id="stepBtn1" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition">第一步</button>
+              <button onclick="setDivisionStep(2)" id="stepBtn2" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-sky-100 transition">第二步</button>
+              <button onclick="setDivisionStep(3)" id="stepBtn3" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-sky-100 transition">第三步</button>
+              <button onclick="setDivisionStep(4)" id="stepBtn4" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-sky-100 transition">第四步</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 步驟一 -->
+            <div id="stepCard1" class="rounded-2xl border-2 border-sky-400 bg-sky-50/40 p-4 flex flex-col justify-between min-h-[210px] transition-all">
+              <div class="text-center">
+                <span class="inline-block px-2.5 py-0.5 rounded-md bg-sky-100 text-sky-800 text-xs font-black">步驟一</span>
+                <p class="text-xs font-bold text-slate-600 mt-1">原小數直式列式</p>
+              </div>
+              <div id="stepContent1" class="mt-1 mb-auto flex justify-center font-mono text-lg font-bold text-slate-800"></div>
+              <p class="text-center text-xs font-bold text-slate-500">只列式不計算</p>
+            </div>
+
+            <!-- 步驟二 -->
+            <div id="stepCard2" class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 flex flex-col justify-between min-h-[210px] opacity-30 transition-all">
+              <div class="text-center">
+                <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-black">步驟二</span>
+                <p class="text-xs font-bold text-slate-600 mt-1">小數點向右移兩位</p>
+              </div>
+              <div id="stepContent2" class="mt-1 mb-auto flex justify-center font-mono text-lg font-bold text-slate-800"></div>
+              <p class="text-center text-xs font-bold text-slate-500">舊小數點淡化灰顯</p>
+            </div>
+
+            <!-- 步驟三 -->
+            <div id="stepCard3" class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 flex flex-col justify-between min-h-[210px] opacity-30 transition-all">
+              <div class="text-center">
+                <span class="inline-block px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-xs font-black">步驟三</span>
+                <p class="text-xs font-bold text-slate-600 mt-1">化為整數除法</p>
+              </div>
+              <div id="stepContent3" class="mt-1 mb-auto flex justify-center font-mono text-lg font-bold text-slate-800"></div>
+              <p id="labelStep3Desc" class="text-center text-xs font-bold text-slate-500">等價轉換 175 ÷ 25</p>
+            </div>
+
+            <!-- 步驟四 -->
+            <div id="stepCard4" class="rounded-2xl border border-slate-200 bg-slate-50/50 p-4 flex flex-col justify-between min-h-[210px] opacity-30 transition-all">
+              <div class="text-center">
+                <span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-xs font-black">步驟四</span>
+                <p class="text-xs font-bold text-slate-600 mt-1">直式計算求商</p>
+              </div>
+              <div id="stepContent4" class="mt-1 mb-auto flex justify-center font-mono text-lg font-bold text-slate-800"></div>
+              <p id="labelStep4Desc" class="text-center text-xs font-bold text-emerald-700">整除，商為 7</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB REMAINDER: 餘數在哪裡 -->
+    <!-- ========================================== -->
+    <section id="tabRemainder" class="space-y-6 hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <span class="inline-block px-3 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold mb-1">課本第 43 頁・思考帽</span>
+            <h2 class="text-xl md:text-3xl font-black text-slate-800">一條繩子長 1 公尺，每 0.16 公尺剪成一段，剩下幾公尺？</h2>
+          </div>
+        </div>
+
+        <!-- 繩子分段視覺圖 -->
+        <div class="bg-white rounded-2xl p-5 border border-sky-200 shadow-sm mb-6">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2 font-bold text-slate-700 text-sm md:text-base">
+              <i class="fa-solid fa-ruler-horizontal text-blue-600"></i>
+              <span id="remRopeHeader">全長 1.00 公尺（＝ 100 個 0.01 公尺）</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-bold">
+              <span class="flex items-center gap-1.5 text-slate-600">
+                <span class="w-3.5 h-3.5 rounded bg-sky-500 inline-block"></span>
+                <span id="remLegendCut">每段 0.16m（16個0.01）</span>
+              </span>
+              <span class="flex items-center gap-1.5 text-slate-600">
+                <span class="w-3.5 h-3.5 rounded bg-rose-500 inline-block"></span>
+                <span>剩下未剪的部分</span>
+              </span>
+            </div>
+          </div>
+
+          <div id="remVisualBar" class="w-full h-12 rounded-xl border-2 border-sky-300 bg-slate-100 overflow-hidden flex p-0.5 gap-0.5"></div>
+          <div id="remTickMarks" class="flex justify-between text-xs font-mono font-bold text-slate-500 mt-2"></div>
+        </div>
+
+        <!-- 兩種思維法卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="p-5 rounded-2xl bg-indigo-50/90 border border-indigo-200">
+            <h3 class="font-extrabold text-indigo-900 text-base mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-cube text-indigo-600"></i>
+              <span>思維法一：換成 0.01 單位想</span>
+            </h3>
+            <ul class="space-y-1.5 text-xs md:text-sm text-slate-700 font-medium list-disc list-inside">
+              <li>1 公尺 ＝ <span class="font-bold text-indigo-700">100 個 0.01</span></li>
+              <li>0.16 公尺 ＝ <span class="font-bold text-indigo-700">16 個 0.01</span></li>
+              <li>100 ÷ 16 ＝ 6 ... 剩下 <span class="font-black text-rose-600">4</span></li>
+              <li>這裡的「4」代表的是「4 個 0.01 公尺」＝ <span class="px-1.5 py-0.5 rounded bg-amber-200 font-black text-slate-900">0.04 公尺</span>，不是 4 公尺！</li>
+            </ul>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-rose-50/90 border border-rose-200">
+            <h3 class="font-extrabold text-rose-900 text-base mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-ruler-vertical text-rose-600"></i>
+              <span>思維法二：直式除法餘數小數點對齊</span>
+            </h3>
+            <ul class="space-y-1.5 text-xs md:text-sm text-slate-700 font-medium list-disc list-inside">
+              <li>在直式中，為了計算方便把小數點向右移了兩位。</li>
+              <li><span class="font-bold text-slate-900">關鍵鐵律：商到個位停止後，餘數的小數點必須對齊「原被除數」的小數點位置！</span></li>
+              <li>原本 1.00 的小數點垂直落下，得到餘數為 <span class="font-black text-rose-600">0.04</span>。</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 動手試試看滑桿 -->
+        <div class="p-5 rounded-2xl bg-sky-100/80 border border-sky-300">
+          <h3 class="font-extrabold text-slate-800 text-base mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-blue-600"></i>
+            <span>動手試試看：改變繩子長度與剪裁長度</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+            <div>
+              <div class="flex justify-between text-xs md:text-sm font-bold mb-1.5">
+                <span class="text-slate-700">繩子總長：<span id="remTotalLabel" class="text-blue-700 font-black">1.00</span> 公尺</span>
+              </div>
+              <input type="range" id="remTotalSlider" min="0.5" max="2.0" step="0.05" value="1.00" oninput="updateRemainderExperiment()" class="w-full">
+            </div>
+            <div>
+              <div class="flex justify-between text-xs md:text-sm font-bold mb-1.5">
+                <span class="text-slate-700">每段長度：<span id="remCutLabel" class="text-blue-700 font-black">0.16</span> 公尺</span>
+              </div>
+              <input type="range" id="remCutSlider" min="0.10" max="0.50" step="0.02" value="0.16" oninput="updateRemainderExperiment()" class="w-full">
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 border border-sky-200 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p class="text-base md:text-lg font-extrabold text-slate-800">
+              可剪成 <span id="remQuotientOut" class="text-2xl text-blue-600 font-black mx-1">6</span> 段，還剩下 <span id="remLeftOut" class="text-2xl text-rose-600 font-black mx-1">0.04</span> 公尺
+            </p>
+            <p id="remVerifyOut" class="text-xs font-mono font-bold text-slate-500">
+              驗算：0.16 × 6 + 0.04 = 1.00
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: 彩帶剪剪看・商的大秘密 -->
+    <!-- ========================================== -->
+    <section id="tab2" class="space-y-6 hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-sky-100 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-pink-500 text-white flex items-center justify-center text-lg shadow-sm">
+              <i class="fa-solid fa-scissors"></i>
+            </span>
+            <div>
+              <h2 class="text-xl md:text-2xl font-bold text-slate-800">彩帶剪剪看・除數與商的關係</h2>
+              <p class="text-sm text-slate-500">一樣長的 3 公尺彩帶，每段剪得越短，剪出來的段數會越多還是越少？</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button onclick="setRibbonCharacter(0.5)" class="px-3 py-1.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-900 text-xs font-bold transition">皮皮 (0.5m)</button>
+            <button onclick="setRibbonCharacter(1.0)" class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-bold transition">丹丹 (1m)</button>
+            <button onclick="setRibbonCharacter(1.5)" class="px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 text-xs font-bold transition">多多 (1.5m)</button>
+          </div>
+        </div>
+
+        <!-- 互動滑桿控制 -->
+        <div class="glass-card-cloud rounded-2xl p-5 mb-6">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+            <span class="text-sm font-bold text-slate-700">調整每段剪裁長度（除數）：<span id="cutLengthDisplay" class="text-xl font-black text-blue-700">0.5</span> 公尺</span>
+            <span class="text-sm font-bold text-slate-700">算式：<span id="ribbonFormulaDisplay" class="font-mono font-black text-pink-600">3 ÷ 0.5 = 6 段</span></span>
+          </div>
+          <input type="range" id="cutLengthSlider" min="0.2" max="2.0" step="0.1" value="0.5" oninput="updateRibbonExperiment(this.value)" class="w-full">
+          <div class="flex justify-between text-xs text-slate-500 font-bold mt-1">
+            <span>0.2m (剪很短)</span>
+            <span class="text-emerald-700">1.0m (基準長度)</span>
+            <span>2.0m (剪很長)</span>
+          </div>
+        </div>
+
+        <!-- 彩帶分段圖像直觀圖 -->
+        <div class="bg-white rounded-2xl p-5 border border-sky-200 shadow-sm mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-extrabold text-slate-800 text-sm md:text-base flex items-center gap-2">
+              <i class="fa-solid fa-tape text-pink-500"></i>
+              <span>彩帶分段圖像直觀圖（總長 3m）</span>
+            </span>
+            <span id="ribbonRoleBadge" class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold">當前角色：皮皮</span>
+          </div>
+          <div id="ribbonSegmentsContainer" class="w-full h-14 rounded-2xl border-2 border-sky-400 p-1 flex gap-1 bg-sky-50/40 overflow-hidden"></div>
+          <div class="flex justify-between text-xs font-bold text-slate-500 mt-2">
+            <span>0 m</span>
+            <span>1 m</span>
+            <span>2 m</span>
+            <span>3 m (全部用完)</span>
+          </div>
+        </div>
+
+        <!-- 皮皮、丹丹和多多比較示意圖 -->
+        <div class="mb-6">
+          <h3 class="text-base font-extrabold text-slate-800 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-users text-blue-600"></i>
+            <span>皮皮、丹丹和多多比較示意圖：</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 皮皮 -->
+            <div class="rounded-2xl p-4 bg-sky-50/90 border border-sky-200 shadow-sm">
+              <div class="flex justify-between items-center mb-1.5">
+                <span class="font-black text-sky-950 text-base">皮皮 (每段 0.5m)</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-sky-600 text-white text-xs font-bold">除數 ＜ 1</span>
+              </div>
+              <p class="text-xs font-bold text-slate-700 mb-2.5">算式：3 ÷ 0.5 ＝ <span class="text-sky-700 font-black text-sm">6</span> 段</p>
+              <div class="h-6 rounded-lg overflow-hidden flex gap-0.5 mb-1.5">
+                <div class="flex-1 bg-sky-400"></div><div class="flex-1 bg-sky-500"></div>
+                <div class="flex-1 bg-sky-400"></div><div class="flex-1 bg-sky-500"></div>
+                <div class="flex-1 bg-sky-400"></div><div class="flex-1 bg-sky-500"></div>
+              </div>
+              <p class="text-center text-xs text-slate-500 font-medium pb-2.5 border-b border-sky-200">剪成超多段（共 6 段）</p>
+              <p class="text-center text-xs font-black text-sky-800 pt-2">商 (6) ＞ 被除數 (3)</p>
+            </div>
+
+            <!-- 丹丹 -->
+            <div class="rounded-2xl p-4 bg-emerald-50/90 border border-emerald-200 shadow-sm">
+              <div class="flex justify-between items-center mb-1.5">
+                <span class="font-black text-emerald-950 text-base">丹丹 (每段 1m)</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-xs font-bold">除數 ＝ 1</span>
+              </div>
+              <p class="text-xs font-bold text-slate-700 mb-2.5">算式：3 ÷ 1 ＝ <span class="text-emerald-700 font-black text-sm">3</span> 段</p>
+              <div class="h-6 rounded-lg overflow-hidden flex gap-0.5 mb-1.5">
+                <div class="flex-1 bg-emerald-400"></div><div class="flex-1 bg-emerald-500"></div><div class="flex-1 bg-emerald-400"></div>
+              </div>
+              <p class="text-center text-xs text-slate-500 font-medium pb-2.5 border-b border-emerald-200">剪成一般段數（共 3 段）</p>
+              <p class="text-center text-xs font-black text-emerald-800 pt-2">商 (3) ＝ 被除數 (3)</p>
+            </div>
+
+            <!-- 多多 -->
+            <div class="rounded-2xl p-4 bg-purple-50/90 border border-purple-200 shadow-sm">
+              <div class="flex justify-between items-center mb-1.5">
+                <span class="font-black text-purple-950 text-base">多多 (每段 1.5m)</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-purple-600 text-white text-xs font-bold">除數 ＞ 1</span>
+              </div>
+              <p class="text-xs font-bold text-slate-700 mb-2.5">算式：3 ÷ 1.5 ＝ <span class="text-purple-700 font-black text-sm">2</span> 段</p>
+              <div class="h-6 rounded-lg overflow-hidden flex gap-0.5 mb-1.5">
+                <div class="flex-1 bg-purple-400"></div><div class="flex-1 bg-purple-500"></div>
+              </div>
+              <p class="text-center text-xs text-slate-500 font-medium pb-2.5 border-b border-purple-200">段數變少（共 2 段）</p>
+              <p class="text-center text-xs font-black text-purple-800 pt-2">商 (2) ＜ 被除數 (3)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 歸納統整表格 -->
+        <div class="overflow-x-auto rounded-2xl border border-sky-200 shadow-sm mb-6 bg-white">
+          <table class="w-full text-center border-collapse text-xs md:text-sm">
+            <thead>
+              <tr class="bg-sky-600 text-white font-bold">
+                <th class="py-3 px-3">除數與 1 的關係</th>
+                <th class="py-3 px-3">算式範例</th>
+                <th class="py-3 px-3">商 (計算結果)</th>
+                <th class="py-3 px-3">商 與 被除數 比較</th>
+                <th class="py-3 px-3">日常生活直觀理解</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-bold">
+              <tr id="summaryRowLess" class="bg-rose-50/80 transition">
+                <td class="py-3 px-3 text-rose-600 font-black">除數 ＜ 1</td>
+                <td class="py-3 px-3 font-mono text-slate-700">3 ÷ 0.5 ＝ 6</td>
+                <td class="py-3 px-3 text-blue-600">6</td>
+                <td class="py-3 px-3 text-rose-600 font-black">商 ＞ 被除數</td>
+                <td class="py-3 px-3 text-slate-600">每一段比1公尺短，越分越多段！</td>
+              </tr>
+              <tr id="summaryRowEqual" class="transition">
+                <td class="py-3 px-3 text-amber-600 font-black">除數 ＝ 1</td>
+                <td class="py-3 px-3 font-mono text-slate-700">3 ÷ 1 ＝ 3</td>
+                <td class="py-3 px-3 text-blue-600">3</td>
+                <td class="py-3 px-3 text-amber-600 font-black">商 ＝ 被除數</td>
+                <td class="py-3 px-3 text-slate-600">每段1公尺，剛好剪出原長度的段數。</td>
+              </tr>
+              <tr id="summaryRowGreater" class="transition">
+                <td class="py-3 px-3 text-indigo-600 font-black">除數 ＞ 1</td>
+                <td class="py-3 px-3 font-mono text-slate-700">3 ÷ 1.5 ＝ 2</td>
+                <td class="py-3 px-3 text-blue-600">2</td>
+                <td class="py-3 px-3 text-indigo-600 font-black">商 ＜ 被除數</td>
+                <td class="py-3 px-3 text-slate-600">每一段比1公尺長，能剪出的段數變少了。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 動態自由實驗台：大小天平 -->
+        <div class="bg-white rounded-3xl p-5 md:p-6 border border-sky-200 shadow-sm">
+          <h3 class="text-base md:text-lg font-extrabold text-slate-800 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-indigo-600"></i>
+            <span>動態自由實驗台：改變除數，觀察「商」與「被除數」的大小天平！</span>
+          </h3>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-slate-700 text-sm">固定被除數：<span class="text-indigo-600 font-black text-base">4.5</span></span>
+                <span class="text-xs font-bold text-slate-400">課本練習題型</span>
+              </div>
+              <div class="p-3 rounded-xl bg-indigo-50/70 text-xs font-bold text-slate-600">
+                我們固定總量為 4.5，只變更每次分裝的大小。
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="font-bold text-slate-700 text-sm">除數：<span id="scaleDivisorDisplay" class="text-pink-600 font-black text-lg">0.8</span></span>
+                  <span id="scaleDivisorTag" class="px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-800 text-xs font-black">除數 ＜ 1</span>
+                </div>
+                <input type="range" id="scaleDivisorSlider" min="0.2" max="3.0" step="0.1" value="0.8" oninput="updateBalanceScale(this.value)" class="w-full">
+                <div class="flex justify-between text-xs text-slate-400 font-bold mt-1">
+                  <span>0.2 (遠小於1)</span>
+                  <span class="text-emerald-600">1.0 (基準點)</span>
+                  <span>3.0 (遠大於1)</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-2 pt-1">
+                <button onclick="setScalePreset(0.5)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-sky-100 text-slate-700 text-xs font-bold transition">設為 0.5 (&lt;1)</button>
+                <button onclick="setScalePreset(1.0)" class="px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold transition">設為 1.0 (=1)</button>
+                <button onclick="setScalePreset(2.5)" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-sky-100 text-slate-700 text-xs font-bold transition">設為 2.5 (&gt;1)</button>
+              </div>
+            </div>
+
+            <!-- 天平視覺區 -->
+            <div class="bg-slate-50/80 rounded-2xl p-5 border border-slate-200 text-center">
+              <p class="text-xs font-bold text-slate-500 mb-2">天平傾斜方向 (商 VS 被除數)</p>
+              <svg viewBox="0 0 260 120" class="w-full max-w-[260px] mx-auto h-28">
+                <!-- 底座與支柱 -->
+                <rect x="95" y="102" width="70" height="8" rx="4" fill="#334155"/>
+                <polygon points="130,28 123,102 137,102" fill="#475569"/>
+                <!-- 橫梁與秤盤群組 -->
+                <g id="scaleBeamGroup" style="transform-origin: 130px 30px; transition: transform 0.35s ease;">
+                  <line x1="45" y1="30" x2="215" y2="30" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>
+                  <!-- 左盤（商） -->
+                  <line x1="55" y1="30" x2="40" y2="65" stroke="#94A3B8" stroke-width="1.5"/>
+                  <line x1="55" y1="30" x2="70" y2="65" stroke="#94A3B8" stroke-width="1.5"/>
+                  <path d="M32,65 Q55,80 78,65 Z" fill="#3B82F6"/>
+                  <!-- 右盤（被除數） -->
+                  <line x1="205" y1="30" x2="190" y2="65" stroke="#94A3B8" stroke-width="1.5"/>
+                  <line x1="205" y1="30" x2="220" y2="65" stroke="#94A3B8" stroke-width="1.5"/>
+                  <path d="M182,65 Q205,80 228,65 Z" fill="#6366F1"/>
+                </g>
+                <circle cx="130" cy="30" r="5" fill="#F59E0B"/>
+              </svg>
+
+              <div class="flex items-center justify-around mt-1">
+                <div>
+                  <p class="text-xs font-bold text-blue-600">商 (Quotient)</p>
+                  <p id="scaleQuotientVal" class="text-xl font-black text-blue-700">5.63</p>
+                </div>
+                <div id="scaleCompareSign" class="w-10 h-10 rounded-xl bg-sky-100 text-blue-700 font-black text-xl flex items-center justify-center border border-sky-200">
+                  ＞
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-indigo-600">被除數 (Dividend)</p>
+                  <p class="text-xl font-black text-indigo-700">4.50</p>
+                </div>
+              </div>
+
+              <div id="scaleConclusionText" class="mt-3 py-2 px-3 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700">
+                因為除數 0.8 ＜ 1，所以 <span class="text-blue-600 font-black">商 (5.63)</span> ＞ <span class="text-indigo-600 font-black">被除數 (4.5)</span>！
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: 隨堂測驗 (滿分 100 分) -->
+    <!-- ========================================== -->
+    <section id="tab3" class="space-y-6 hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <!-- 評量頂部狀態列 -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 mb-6 border-sky-100 gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-sm">
+              <i class="fa-solid fa-star"></i>
+            </span>
+            <div>
+              <h2 class="text-xl md:text-2xl font-bold text-slate-800">隨堂測驗</h2>
+              <p class="text-sm text-slate-500">考考你！完成作答後請點擊下方「提交答案」查看成績（滿分 100 分，每題 20 分）</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <div id="quizScoreBadge" class="px-4 py-1.5 rounded-2xl bg-amber-100 text-amber-900 border border-amber-300 font-black text-sm md:text-base shadow-sm">
+              得分：0 / 100
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 題題目卡片 -->
+        <div class="space-y-5">
+          <!-- 題目 1 -->
+          <div class="p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm">
+            <div class="flex items-start gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-black text-xs shrink-0">第 1 題</span>
+              <p class="text-sm md:text-base font-bold text-slate-800">
+                計算「1.75 ÷ 0.25」時，若被除數與除數都換成以 0.01 為單位，算式可以等價看成下列哪一個整數除法？
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onclick="selectOption(1, 0)" class="quiz-btn-1 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(A) 17.5 ÷ 2.5</span>
+              </button>
+              <button onclick="selectOption(1, 1)" class="quiz-btn-1 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(B) 175 ÷ 25</span>
+              </button>
+              <button onclick="selectOption(1, 2)" class="quiz-btn-1 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(C) 175 ÷ 2.5</span>
+              </button>
+              <button onclick="selectOption(1, 3)" class="quiz-btn-1 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(D) 1750 ÷ 250</span>
+              </button>
+            </div>
+            <div id="feedback1" class="hidden mt-3 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+
+          <!-- 題目 2 -->
+          <div class="p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm">
+            <div class="flex items-start gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-black text-xs shrink-0">第 2 題</span>
+              <p class="text-sm md:text-base font-bold text-slate-800">
+                布丁鮮奶問題中，算式是「4 ÷ 0.16」。直式計算時將除數 0.16 的小數點向右移兩位變成 16，被除數 4 的小數點也向右移兩位後，應該補零變成多少？
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onclick="selectOption(2, 0)" class="quiz-btn-2 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(A) 40</span>
+              </button>
+              <button onclick="selectOption(2, 1)" class="quiz-btn-2 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(B) 400</span>
+              </button>
+              <button onclick="selectOption(2, 2)" class="quiz-btn-2 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(C) 4</span>
+              </button>
+              <button onclick="selectOption(2, 3)" class="quiz-btn-2 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(D) 0.04</span>
+              </button>
+            </div>
+            <div id="feedback2" class="hidden mt-3 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+
+          <!-- 題目 3 -->
+          <div class="p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm">
+            <div class="flex items-start gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-black text-xs shrink-0">第 3 題</span>
+              <p class="text-sm md:text-base font-bold text-slate-800">
+                不經過繁複計算，請觀察除數與 1 的關係，判斷「4.5 ÷ 0.8」算出來的商，和被除數 4.5 比較大小結果為何？
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onclick="selectOption(3, 0)" class="quiz-btn-3 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(A) 商 ＞ 4.5 (商大於被除數)</span>
+              </button>
+              <button onclick="selectOption(3, 1)" class="quiz-btn-3 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(B) 商 ＝ 4.5 (商等於被除數)</span>
+              </button>
+              <button onclick="selectOption(3, 2)" class="quiz-btn-3 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(C) 商 ＜ 4.5 (商小於被除數)</span>
+              </button>
+              <button onclick="selectOption(3, 3)" class="quiz-btn-3 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(D) 條件不足無法判斷</span>
+              </button>
+            </div>
+            <div id="feedback3" class="hidden mt-3 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+
+          <!-- 題目 4 -->
+          <div class="p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm">
+            <div class="flex items-start gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-black text-xs shrink-0">第 4 題</span>
+              <p class="text-sm md:text-base font-bold text-slate-800 inline-flex flex-wrap items-center">
+                <span>一條長 1 公尺的繩子，每 0.16 公尺剪成一段，剪了 6 段後剩下 4 個 0.01 公尺（也就是</span>
+                <span class="inline-fraction"><span class="frac-body"><span class="numerator">4</span><span class="denominator">100</span></span></span>
+                <span>公尺），寫成小數是剩下幾公尺？</span>
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onclick="selectOption(4, 0)" class="quiz-btn-4 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(A) 0.4 公尺</span>
+              </button>
+              <button onclick="selectOption(4, 1)" class="quiz-btn-4 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(B) 0.04 公尺</span>
+              </button>
+              <button onclick="selectOption(4, 2)" class="quiz-btn-4 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(C) 4 公尺</span>
+              </button>
+              <button onclick="selectOption(4, 3)" class="quiz-btn-4 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(D) 0.004 公尺</span>
+              </button>
+            </div>
+            <div id="feedback4" class="hidden mt-3 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+
+          <!-- 題目 5 -->
+          <div class="p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm">
+            <div class="flex items-start gap-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-black text-xs shrink-0">第 5 題</span>
+              <p class="text-sm md:text-base font-bold text-slate-800">
+                關於小數除法中「商和被除數的大小關係」，下列哪一個敘述完全正確？
+              </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button onclick="selectOption(5, 0)" class="quiz-btn-5 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(A) 除法一定越除越小，商永遠小於被除數</span>
+              </button>
+              <button onclick="selectOption(5, 1)" class="quiz-btn-5 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(B) 當除數 ＜ 1 時，商 ＞ 被除數</span>
+              </button>
+              <button onclick="selectOption(5, 2)" class="quiz-btn-5 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(C) 當除數 ＞ 1 時，商 ＞ 被除數</span>
+              </button>
+              <button onclick="selectOption(5, 3)" class="quiz-btn-5 w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between">
+                <span>(D) 當除數 ＝ 1 時，商 ＞ 被除數</span>
+              </button>
+            </div>
+            <div id="feedback5" class="hidden mt-3 p-3 rounded-xl text-xs font-bold"></div>
+          </div>
+        </div>
+
+        <!-- 測驗下方操作按鈕列（並排置中、等寬大小相同） -->
+        <div class="mt-8 pt-6 border-t border-sky-100 flex justify-center items-center gap-4">
+          <button onclick="submitQuiz()" id="btnSubmitQuiz" class="w-40 py-3 px-6 rounded-2xl font-bold text-base bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>提交答案</span>
+          </button>
+          <button onclick="resetQuiz()" id="btnResetQuiz" class="w-40 py-3 px-6 rounded-2xl font-bold text-base bg-slate-200 hover:bg-slate-300 text-slate-800 shadow-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>重新測驗</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="mt-6 mb-4 text-center"></footer>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      const tabConfig = [
+        { id: 'tab1', btnId: 'tabBtn1' },
+        { id: 'tabRemainder', btnId: 'tabBtnRemainder' },
+        { id: 'tab2', btnId: 'tabBtn2' },
+        { id: 'tab3', btnId: 'tabBtn3' }
+      ];
+
+      tabConfig.forEach(tab => {
+        const tabEl = document.getElementById(tab.id);
+        const btnEl = document.getElementById(tab.btnId);
+        if (!tabEl || !btnEl) return;
+
+        if (tab.id === tabId) {
+          tabEl.classList.remove('hidden');
+          btnEl.className = "px-5 py-2.5 rounded-2xl font-bold transition-all shadow-md flex items-center gap-2 bg-white text-blue-800 scale-105 border-2 border-sky-300";
+        } else {
+          tabEl.classList.add('hidden');
+          btnEl.className = "px-5 py-2.5 rounded-2xl font-bold transition-all shadow-md flex items-center gap-2 bg-sky-900/60 text-white hover:bg-sky-800/80 border border-white/30";
+        }
+      });
+
+      if (tabId === 'tabRemainder') {
+        updateRemainderExperiment();
+      } else if (tabId === 'tab2') {
+        updateRibbonExperiment(document.getElementById('cutLengthSlider').value);
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // TAB 1 LOGIC: 小數點跳跳樂・四步驟直式探究
+    // ---------------------------------------------------------------------
+    let isShifted = false;
+    let currentDivisionStep = 1;
+
+    function setPresetProblem(dividend, divisor) {
+      document.getElementById('inputDividend').value = dividend;
+      document.getElementById('inputDivisor').value = divisor;
+      applyShift(isShifted);
+    }
+
+    function applyShift(shifted) {
+      isShifted = shifted;
+      const btnOrig = document.getElementById('btnOriginalState');
+      const btnShift = document.getElementById('btnShiftedState');
+      const banner = document.getElementById('shiftVisualBanner');
+
+      if (shifted) {
+        btnShift.className = "flex-1 py-3 px-3 rounded-xl font-bold text-xs md:text-sm bg-blue-600 text-white shadow transition";
+        btnOrig.className = "flex-1 py-3 px-3 rounded-xl font-bold text-xs md:text-sm bg-white text-slate-700 border border-slate-300 hover:bg-sky-50 transition";
+        banner.textContent = "目前狀態：被除數與除數小數點同時向右移兩位（同乘 100）";
+        banner.className = "mt-4 w-full py-2.5 px-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold text-xs md:text-sm";
+        setDivisionStep(4);
+      } else {
+        btnOrig.className = "flex-1 py-3 px-3 rounded-xl font-bold text-xs md:text-sm bg-blue-600 text-white shadow transition";
+        btnShift.className = "flex-1 py-3 px-3 rounded-xl font-bold text-xs md:text-sm bg-white text-slate-700 border border-slate-300 hover:bg-sky-50 transition";
+        banner.textContent = "目前狀態：原始小數列式";
+        banner.className = "mt-4 w-full py-2.5 px-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-bold text-xs md:text-sm";
+      }
+
+      renderDivisionSteps();
+    }
+
+    function setDivisionStep(step) {
+      currentDivisionStep = step;
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`stepBtn${i}`);
+        const card = document.getElementById(`stepCard${i}`);
+        if (i === step) {
+          btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-sm transition";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-sky-100 transition";
+        }
+
+        if (i <= step) {
+          card.classList.remove('opacity-30', 'border-slate-200', 'bg-slate-50/50');
+          card.classList.add('border-2', 'border-sky-400', 'bg-sky-50/40');
+        } else {
+          card.classList.add('opacity-30', 'border-slate-200', 'bg-slate-50/50');
+          card.classList.remove('border-2', 'border-sky-400', 'bg-sky-50/40');
+        }
+      }
+    }
+
+    function formatShiftedMarkup(num) {
+      const fixedStr = num.toFixed(2);
+      const parts = fixedStr.split('.');
+      const intPart = parts[0];
+      const decPart = parts[1];
+      if (intPart === '0') {
+        return `<span class="text-slate-300">0.</span><span>${decPart}</span><span class="text-rose-500">.</span>`;
+      }
+      return `<span>${intPart}</span><span class="text-slate-300">.</span><span>${decPart}</span><span class="text-rose-500">.</span>`;
+    }
+
+    function formatDigitRow(numStr, maxDigits, colorClass = '') {
+      const padded = numStr.padStart(maxDigits, ' ');
+      return padded.split('').map(ch =>
+        `<span class="inline-block w-5 text-center ${colorClass}">${ch === ' ' ? '&nbsp;' : ch}</span>`
+      ).join('');
+    }
+
+    function renderDivisionSteps() {
+      const rawDividend = parseFloat(document.getElementById('inputDividend').value);
+      const rawDivisor = parseFloat(document.getElementById('inputDivisor').value);
+      const dividend = isNaN(rawDividend) || rawDividend <= 0 ? 1.75 : rawDividend;
+      const divisor = isNaN(rawDivisor) || rawDivisor <= 0 ? 0.25 : rawDivisor;
+
+      const divInt = Math.round(dividend * 100);
+      const dvrInt = Math.round(divisor * 100);
+
+      document.getElementById('unitDividend').textContent = divInt;
+      document.getElementById('unitDivisor').textContent = dvrInt;
+
+      // 步驟一：原小數直式列式
+      document.getElementById('stepContent1').innerHTML = `
+        <div class="inline-flex flex-col items-end">
+          <div class="h-6"></div>
+          <div class="flex items-center">
+            <span class="pr-1.5 text-slate-800">${divisor}</span>
+            <span class="text-xl font-normal text-slate-800 mr-0.5">)</span>
+            <span class="border-t-2 border-slate-800 px-1.5 pt-0.5 text-slate-800">${dividend}</span>
+          </div>
+        </div>
+      `;
+
+      // 步驟二：小數點向右移兩位（舊小數點灰色，新小數點紅色）
+      document.getElementById('stepContent2').innerHTML = `
+        <div class="inline-flex flex-col items-end">
+          <div class="h-6"></div>
+          <div class="flex items-center">
+            <span class="pr-1.5">${formatShiftedMarkup(divisor)}</span>
+            <span class="text-xl font-normal text-slate-800 mr-0.5">)</span>
+            <span class="border-t-2 border-slate-800 px-1.5 pt-0.5">${formatShiftedMarkup(dividend)}</span>
+          </div>
+        </div>
+      `;
+
+      // 步驟三：化為整數除法
+      document.getElementById('stepContent3').innerHTML = `
+        <div class="inline-flex flex-col items-end">
+          <div class="h-6"></div>
+          <div class="flex items-center">
+            <span class="pr-1.5 text-indigo-700">${dvrInt}</span>
+            <span class="text-xl font-normal text-slate-800 mr-0.5">)</span>
+            <span class="border-t-2 border-slate-800 px-1.5 pt-0.5 text-slate-900">${divInt}</span>
+          </div>
+        </div>
+      `;
+      document.getElementById('labelStep3Desc').textContent = `等價轉換 ${divInt} ÷ ${dvrInt}`;
+
+      // 步驟四：商算到整數，位值與被除數精準對齊
+      const quotientInt = Math.floor(divInt / dvrInt);
+      const productInt = quotientInt * dvrInt;
+      const remainderInt = divInt - productInt;
+
+      const divStr = String(divInt);
+      const qStr = String(quotientInt);
+      const prodStr = String(productInt);
+      const remStr = String(remainderInt);
+      const maxDigits = Math.max(divStr.length, qStr.length, prodStr.length, remStr.length);
+
+      document.getElementById('stepContent4').innerHTML = `
+        <div class="inline-flex flex-col items-end">
+          <div class="h-6 flex items-center pr-1.5">
+            ${formatDigitRow(qStr, maxDigits, 'text-rose-600')}
+          </div>
+          <div class="flex items-center">
+            <span class="pr-1.5 text-indigo-700">${dvrInt}</span>
+            <span class="text-xl font-normal text-slate-800 mr-0.5">)</span>
+            <div class="border-t-2 border-slate-800 px-1.5 pt-0.5 flex">
+              ${formatDigitRow(divStr, maxDigits, 'text-slate-900')}
+            </div>
+          </div>
+          <div class="border-b-2 border-slate-800 px-1.5 pb-0.5 flex">
+            ${formatDigitRow(prodStr, maxDigits, 'text-slate-600')}
+          </div>
+          <div class="px-1.5 pt-0.5 flex">
+            ${formatDigitRow(remStr, maxDigits, remainderInt === 0 ? 'text-emerald-600' : 'text-amber-600')}
+          </div>
+        </div>
+      `;
+
+      const step4Desc = document.getElementById('labelStep4Desc');
+      if (remainderInt === 0) {
+        step4Desc.textContent = `整除，商為 ${quotientInt}`;
+        step4Desc.className = "text-center text-xs font-bold text-emerald-700";
+      } else {
+        step4Desc.textContent = `商為 ${quotientInt}，餘 ${remainderInt}`;
+        step4Desc.className = "text-center text-xs font-bold text-amber-700";
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // TAB REMAINDER LOGIC: 餘數在哪裡
+    // ---------------------------------------------------------------------
+    function updateRemainderExperiment() {
+      const totalEl = document.getElementById('remTotalSlider');
+      const cutEl = document.getElementById('remCutSlider');
+      if (!totalEl || !cutEl) return;
+
+      const total = parseFloat(totalEl.value);
+      const cut = parseFloat(cutEl.value);
+
+      const totalUnits = Math.round(total * 100);
+      const cutUnits = Math.round(cut * 100);
+      const count = Math.floor(totalUnits / cutUnits);
+      const remUnits = totalUnits - count * cutUnits;
+      const remVal = (remUnits / 100).toFixed(2);
+
+      document.getElementById('remTotalLabel').textContent = total.toFixed(2);
+      document.getElementById('remCutLabel').textContent = cut.toFixed(2);
+      document.getElementById('remRopeHeader').textContent = `全長 ${total.toFixed(2)} 公尺（＝ ${totalUnits} 個 0.01 公尺）`;
+      document.getElementById('remLegendCut').textContent = `每段 ${cut.toFixed(2)}m（${cutUnits}個0.01）`;
+
+      document.getElementById('remQuotientOut').textContent = count;
+      document.getElementById('remLeftOut').textContent = remVal;
+      document.getElementById('remVerifyOut').textContent = `驗算：${cut.toFixed(2)} × ${count} + ${remVal} = ${total.toFixed(2)}`;
+
+      const bar = document.getElementById('remVisualBar');
+      const ticks = document.getElementById('remTickMarks');
+      bar.innerHTML = '';
+      ticks.innerHTML = '<span>0m</span>';
+
+      const segPercent = (cutUnits / totalUnits) * 100;
+      for (let i = 1; i <= count; i++) {
+        const seg = document.createElement('div');
+        seg.style.width = `${segPercent}%`;
+        seg.className = "h-full bg-sky-500 text-white font-bold text-xs flex items-center justify-center rounded-lg shrink-0";
+        seg.textContent = `第${i}段`;
+        bar.appendChild(seg);
+      }
+
+      if (remUnits > 0) {
+        const remPercent = (remUnits / totalUnits) * 100;
+        const remSeg = document.createElement('div');
+        remSeg.style.width = `${remPercent}%`;
+        remSeg.className = "h-full bg-rose-400 text-white font-bold text-xs flex items-center justify-center rounded-lg flex-1";
+        remSeg.textContent = "餘";
+        bar.appendChild(remSeg);
+      }
+
+      const endTick = document.createElement('span');
+      endTick.className = "text-rose-600";
+      endTick.textContent = `${total.toFixed(2)}m (剩 ${remVal}m)`;
+      ticks.appendChild(endTick);
+    }
+
+    // ---------------------------------------------------------------------
+    // TAB 2 LOGIC: 彩帶剪剪看・商的大秘密
+    // ---------------------------------------------------------------------
+    function setRibbonCharacter(val) {
+      document.getElementById('cutLengthSlider').value = val;
+      updateRibbonExperiment(val);
+    }
+
+    function updateRibbonExperiment(val) {
+      const cutLen = parseFloat(val);
+      const totalLen = 3.0;
+      const segments = +(totalLen / cutLen).toFixed(2);
+
+      document.getElementById('cutLengthDisplay').textContent = cutLen.toFixed(1);
+      document.getElementById('ribbonFormulaDisplay').textContent = `3 ÷ ${cutLen} = ${segments} 段`;
+
+      const badge = document.getElementById('ribbonRoleBadge');
+      if (Math.abs(cutLen - 0.5) < 0.01) {
+        badge.textContent = "當前角色：皮皮 (0.5m)";
+      } else if (Math.abs(cutLen - 1.0) < 0.01) {
+        badge.textContent = "當前角色：丹丹 (1.0m)";
+      } else if (Math.abs(cutLen - 1.5) < 0.01) {
+        badge.textContent = "當前角色：多多 (1.5m)";
+      } else {
+        badge.textContent = `自訂實驗 (${cutLen.toFixed(1)}m)`;
+      }
+
+      const container = document.getElementById('ribbonSegmentsContainer');
+      container.innerHTML = '';
+      const colors = ['bg-pink-400', 'bg-sky-400', 'bg-amber-400', 'bg-teal-400', 'bg-indigo-400', 'bg-emerald-400'];
+      const fullCount = Math.floor(segments);
+      const remRatio = segments - fullCount;
+
+      for (let i = 0; i < fullCount; i++) {
+        const div = document.createElement('div');
+        div.style.width = `${(cutLen / totalLen) * 100}%`;
+        div.className = `h-full ${colors[i % colors.length]} text-white font-black text-xs md:text-sm rounded-xl flex items-center justify-center shrink-0 shadow-sm`;
+        div.textContent = `第${i + 1}段`;
+        container.appendChild(div);
+      }
+
+      if (remRatio > 0.02) {
+        const div = document.createElement('div');
+        div.className = "h-full bg-slate-300 text-slate-700 font-bold text-xs rounded-xl flex items-center justify-center flex-1";
+        div.textContent = `不足1段`;
+        container.appendChild(div);
+      }
+
+      // 高亮對應規律表格列
+      document.getElementById('summaryRowLess').classList.remove('bg-rose-50/80');
+      document.getElementById('summaryRowEqual').classList.remove('bg-amber-50/80');
+      document.getElementById('summaryRowGreater').classList.remove('bg-indigo-50/80');
+
+      if (cutLen < 1) {
+        document.getElementById('summaryRowLess').classList.add('bg-rose-50/80');
+      } else if (Math.abs(cutLen - 1) < 0.01) {
+        document.getElementById('summaryRowEqual').classList.add('bg-amber-50/80');
+      } else {
+        document.getElementById('summaryRowGreater').classList.add('bg-indigo-50/80');
+      }
+    }
+
+    function setScalePreset(val) {
+      document.getElementById('scaleDivisorSlider').value = val;
+      updateBalanceScale(val);
+    }
+
+    function updateBalanceScale(val) {
+      const divisor = parseFloat(val);
+      const dividend = 4.5;
+      const quotient = +(dividend / divisor).toFixed(2);
+
+      document.getElementById('scaleDivisorDisplay').textContent = divisor.toFixed(1);
+      document.getElementById('scaleQuotientVal').textContent = quotient.toFixed(2);
+
+      const tag = document.getElementById('scaleDivisorTag');
+      const sign = document.getElementById('scaleCompareSign');
+      const conclusion = document.getElementById('scaleConclusionText');
+      const beam = document.getElementById('scaleBeamGroup');
+
+      if (divisor < 1) {
+        tag.textContent = "除數 ＜ 1";
+        tag.className = "px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-800 text-xs font-black";
+        sign.textContent = "＞";
+        beam.style.transform = "rotate(-10deg)";
+        conclusion.innerHTML = `因為除數 ${divisor.toFixed(1)} ＜ 1，所以 <span class="text-blue-600 font-black">商 (${quotient.toFixed(2)})</span> ＞ <span class="text-indigo-600 font-black">被除數 (4.5)</span>！`;
+      } else if (Math.abs(divisor - 1) < 0.01) {
+        tag.textContent = "除數 ＝ 1";
+        tag.className = "px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-black";
+        sign.textContent = "＝";
+        beam.style.transform = "rotate(0deg)";
+        conclusion.innerHTML = `因為除數 ${divisor.toFixed(1)} ＝ 1，所以 <span class="text-blue-600 font-black">商 (${quotient.toFixed(2)})</span> ＝ <span class="text-indigo-600 font-black">被除數 (4.5)</span>！`;
+      } else {
+        tag.textContent = "除數 ＞ 1";
+        tag.className = "px-2.5 py-0.5 rounded-lg bg-indigo-100 text-indigo-800 text-xs font-black";
+        sign.textContent = "＜";
+        beam.style.transform = "rotate(10deg)";
+        conclusion.innerHTML = `因為除數 ${divisor.toFixed(1)} ＞ 1，所以 <span class="text-blue-600 font-black">商 (${quotient.toFixed(2)})</span> ＜ <span class="text-indigo-600 font-black">被除數 (4.5)</span>！`;
+      }
+    }
+
+    // ---------------------------------------------------------------------
+    // TAB 3 LOGIC: 隨堂測驗 (滿分 100 分，先選答後統一提交批改)
+    // ---------------------------------------------------------------------
+    let quizSubmitted = false;
+    const userSelections = { 1: null, 2: null, 3: null, 4: null, 5: null };
+    const correctAnswers = { 1: 1, 2: 1, 3: 0, 4: 1, 5: 1 };
+
+    const feedbackExplanations = {
+      1: {
+        correct: "答對了！1.75 是 175 個 0.01，0.25 是 25 個 0.01，兩者都以 0.01 為單位就是 175 ÷ 25！",
+        wrong: "這題答錯了。兩數小數點同時向右移動兩位（乘以 100），1.75 變成 175，0.25 變成 25，所以正解為 (B) 175 ÷ 25。"
+      },
+      2: {
+        correct: "太棒了！被除數 4 是整數，小數點向右移兩位相當於 4 × 100 ＝ 400，要在後面補兩個 0！",
+        wrong: "這題答錯了。被除數 4 的小數點原本在個位後面 (4.)，向右跳兩位要補兩個 0 變成 400，所以正解為 (B) 400。"
+      },
+      3: {
+        correct: "完全正確！除數 0.8 ＜ 1，所以除出來的商一定會比被除數 4.5 大！",
+        wrong: "這題答錯了。當除數小於 1（如 0.8）時，分出來的份數會比原來的數多，也就是商 ＞ 被除數，所以正解為 (A)。"
+      },
+      4: {
+        correct: "答得好！4 個 0.01 就是 4/100，化成小數就是 0.04 公尺！",
+        wrong: "這題答錯了。4 個 0.01 公尺是二位小數，寫成小數是 0.04 公尺，所以正解為 (B)。"
+      },
+      5: {
+        correct: "觀念非常清晰！在小數除法中，當除數小於 1 時，商會大於被除數！",
+        wrong: "這題答錯了。除法不一定越除越小！當除數小於 1 時，商反而會大於被除數，所以正解為 (B)。"
+      }
+    };
+
+    function selectOption(qNum, optIdx) {
+      if (quizSubmitted) return; // 提交後鎖定選項
+      userSelections[qNum] = optIdx;
+
+      const buttons = document.querySelectorAll(`.quiz-btn-${qNum}`);
+      buttons.forEach((btn, idx) => {
+        if (idx === optIdx) {
+          btn.classList.add('bg-sky-100', 'border-blue-500', 'text-blue-900', 'ring-2', 'ring-blue-300');
+          btn.classList.remove('border-slate-200', 'text-slate-700');
+        } else {
+          btn.classList.remove('bg-sky-100', 'border-blue-500', 'text-blue-900', 'ring-2', 'ring-blue-300');
+          btn.classList.add('border-slate-200', 'text-slate-700');
+        }
+      });
+    }
+
+    function submitQuiz() {
+      if (quizSubmitted) return;
+      quizSubmitted = true;
+
+      let totalScore = 0;
+
+      for (let qNum = 1; qNum <= 5; qNum++) {
+        const selectedIdx = userSelections[qNum];
+        const correctIdx = correctAnswers[qNum];
+        const feedbackEl = document.getElementById(`feedback${qNum}`);
+        const buttons = document.querySelectorAll(`.quiz-btn-${qNum}`);
+
+        buttons.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.remove('ring-2', 'ring-blue-300', 'bg-sky-100');
+        });
+
+        feedbackEl.classList.remove('hidden');
+
+        // 情況 1：未作答（空白） -> 僅顯示黃色系「未作答。」，不顯示其他說明也不顯示正確答案
+        if (selectedIdx === null) {
+          feedbackEl.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300";
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1"></i> 未作答。`;
+          continue;
+        }
+
+        // 情況 2：答對
+        if (selectedIdx === correctIdx) {
+          totalScore += 20;
+          buttons[selectedIdx].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+          buttons[selectedIdx].innerHTML += ' <i class="fa-solid fa-circle-check text-emerald-600 ml-2"></i>';
+
+          feedbackEl.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200";
+          feedbackEl.innerHTML = `<i class="fa-solid fa-star text-amber-500 mr-1"></i> ${feedbackExplanations[qNum].correct}`;
+        } 
+        // 情況 3：答錯
+        else {
+          buttons[selectedIdx].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900', 'font-bold');
+          buttons[selectedIdx].innerHTML += ' <i class="fa-solid fa-circle-xmark text-rose-600 ml-2"></i>';
+
+          feedbackEl.className = "mt-3 p-3 rounded-xl text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200";
+          feedbackEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1"></i> ${feedbackExplanations[qNum].wrong}`;
+        }
+      }
+
+      document.getElementById('quizScoreBadge').textContent = `得分：${totalScore} / 100`;
+      const btnSubmit = document.getElementById('btnSubmitQuiz');
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    function resetQuiz() {
+      quizSubmitted = false;
+      document.getElementById('quizScoreBadge').textContent = `得分：0 / 100`;
+
+      const btnSubmit = document.getElementById('btnSubmitQuiz');
+      btnSubmit.disabled = false;
+      btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      for (let i = 1; i <= 5; i++) {
+        userSelections[i] = null;
+        const feedbackEl = document.getElementById(`feedback${i}`);
+        feedbackEl.classList.add('hidden');
+        feedbackEl.innerHTML = '';
+
+        const buttons = document.querySelectorAll(`.quiz-btn-${i}`);
+        buttons.forEach(btn => {
+          btn.disabled = false;
+          btn.className = `quiz-btn-${i} w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-sky-50/50 text-xs md:text-sm font-semibold text-slate-700 transition flex items-center justify-between`;
+          const icon = btn.querySelector('i');
+          if (icon) icon.remove();
+        });
+      }
+    }
+
+    // 頁面初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      applyShift(false);
+      setDivisionStep(1);
+      updateRemainderExperiment();
+      updateRibbonExperiment(0.5);
+      updateBalanceScale(0.8);
+    });
+  </script>
+</body>
+</html>

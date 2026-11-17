@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2-3 異分母分數的除法 - 探究光廊</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sky-top: #1e3a8a;
+      --sky-mid: #38bdf8;
+      --sky-sunset: #f472b6;
+      --sky-warm: #fef08a;
+      --glass-bg: rgba(255, 255, 255, 0.82);
+      --glass-border: rgba(255, 255, 255, 0.65);
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+      --text-main: #1e293b;
+      --text-muted: #475569;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #ec4899;
+      --accent-gold: #f59e0b;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(165deg, #0f172a 0%, #1e3a8a 30%, #38bdf8 65%, #f472b6 90%, #fed7aa 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 雲朵與光芒裝飾 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -20%;
+      left: 10%;
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(40px);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* 頁首美學標題 */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      color: white;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 4px 14px;
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      backdrop-filter: blur(6px);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      text-shadow: 0 3px 14px rgba(15, 23, 42, 0.45);
+    }
+
+    header p {
+      font-size: 1rem;
+      opacity: 0.92;
+      font-weight: 400;
+    }
+
+    /* 導覽分頁按鈕 */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      border-color: white;
+      text-shadow: none;
+    }
+
+    /* 主卡片主體 */
+    .main-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      box-shadow: var(--glass-shadow);
+      padding: 30px;
+      margin-bottom: 24px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* 標準直式分數 CSS (國小課本標準樣式，分子上、分母下、橫線、文字垂直居中) */
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.95em;
+      line-height: 1.1;
+      font-weight: 700;
+      color: inherit;
+    }
+
+    .frac .num {
+      border-bottom: 1.8px solid currentColor;
+      padding-bottom: 2px;
+      min-width: 14px;
+    }
+
+    .frac .den {
+      padding-top: 2px;
+      min-width: 14px;
+    }
+
+    .mixed-frac {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      gap: 3px;
+      font-weight: 700;
+    }
+
+    .mixed-frac .whole {
+      font-size: 1.15em;
+      padding-right: 1px;
+    }
+
+    .math-term {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-size: 1.15rem;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(2, 132, 199, 0.18);
+      margin: 2px 2px;
+    }
+
+    .op {
+      font-weight: 800;
+      padding: 0 4px;
+      color: #0369a1;
+      font-size: 1.25rem;
+    }
+
+    /* 區塊小卡片 */
+    .sub-section {
+      background: rgba(255, 255, 255, 0.65);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .sub-title {
+      font-size: 1.2rem;
+      color: #0369a1;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sub-title::before {
+      content: "";
+      width: 6px;
+      height: 20px;
+      background: linear-gradient(to bottom, #38bdf8, #ec4899);
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* 說明對話泡泡 (皮皮與美美思維提示) */
+    .chat-bubble {
+      background: linear-gradient(135deg, #e0f2fe, #fdf2f8);
+      border-left: 5px solid #0284c7;
+      border-radius: 12px;
+      padding: 12px 18px;
+      margin: 14px 0;
+      font-size: 0.98rem;
+      line-height: 1.7;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .chat-avatar {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    /* 互動控制項樣式 */
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+
+    .control-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .control-item label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      border: 2px solid white;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
+    }
+
+    .btn-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(2, 132, 199, 0.4);
+    }
+
+    .btn-action.secondary {
+      background: linear-gradient(135deg, #f43f5e, #ec4899);
+    }
+
+    /* 圖像可視化區域 */
+    .visual-board {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    /* 量筒與條狀視覺模型 */
+    .cylinder-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 15px 0;
+      min-height: 220px;
+      flex-wrap: wrap;
+    }
+
+    .cylinder-box {
+      text-align: center;
+      width: 140px;
+    }
+
+    .cylinder {
+      width: 90px;
+      height: 180px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 3px solid #64748b;
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      margin: 0 auto 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 -4px 10px rgba(0,0,0,0.05);
+    }
+
+    .cylinder-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(2, 132, 199, 0.85), rgba(56, 189, 248, 0.65));
+      transition: height 0.5s ease-out;
+    }
+
+    .cylinder-subgrids {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column-reverse;
+      pointer-events: none;
+    }
+
+    .grid-line {
+      border-top: 1px dashed rgba(71, 85, 105, 0.4);
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      font-size: 0.65rem;
+      color: #64748b;
+      padding-left: 2px;
+    }
+
+    /* 杯子分裝動畫區 */
+    .cups-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .cup-item {
+      width: 75px;
+      height: 95px;
+      border: 2px solid #0284c7;
+      border-radius: 0 0 12px 12px;
+      background: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .cup-water {
+      width: 100%;
+      background: linear-gradient(to top, #38bdf8, #7dd3fc);
+      transition: height 0.5s;
+    }
+
+    .cup-label {
+      position: absolute;
+      top: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #0369a1;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    /* 算式推導動畫卡片 */
+    .step-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      border-left: 5px solid #38bdf8;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .step-card.active-step {
+      border-left-color: #ec4899;
+      background: #fdf4ff;
+      transform: scale(1.01);
+    }
+
+    .step-title {
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-step {
+      background: #0284c7;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    /* 測驗區塊樣式 */
+    .quiz-question {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .quiz-q-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 600px) {
+      .quiz-options {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .quiz-opt-btn {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .quiz-opt-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .quiz-opt-btn.selected {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+      font-weight: 700;
+      box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+    }
+
+    .quiz-opt-btn.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+      font-weight: 700;
+    }
+
+    .quiz-opt-btn.wrong {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+      font-weight: 700;
+    }
+
+    .quiz-feedback {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-top: 10px;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .quiz-feedback.success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .quiz-feedback.danger {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .quiz-feedback.warning {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      color: #a16207;
+      font-weight: 700;
+    }
+
+    .quiz-score-banner {
+      display: none;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      padding: 18px 24px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.28);
+      animation: fadeIn 0.35s ease;
+    }
+
+    .quiz-score-banner.show {
+      display: block;
+    }
+
+    .quiz-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 28px;
+      padding-top: 12px;
+    }
+
+    .quiz-action-btn {
+      width: 180px;
+      height: 50px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit-quiz {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+
+    .btn-submit-quiz:hover {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      transform: translateY(-2px);
+    }
+
+    .btn-reset-quiz {
+      background: linear-gradient(135deg, #64748b, #475569);
+      color: white;
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
+
+    .btn-reset-quiz:hover {
+      background: linear-gradient(135deg, #475569, #334155);
+      transform: translateY(-2px);
+    }
+
+    /* 緞帶迷思圖解專區 */
+    .ribbon-bar {
+      height: 38px;
+      background: #e2e8f0;
+      border-radius: 8px;
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      margin: 15px 0 10px;
+      border: 2px solid #64748b;
+    }
+
+    .ribbon-part {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-right: 2px dashed rgba(255,255,255,0.7);
+      transition: width 0.3s;
+    }
+
+    .ribbon-flower {
+      background: linear-gradient(135deg, #ec4899, #f43f5e);
+    }
+
+    .ribbon-remain {
+      background: repeating-linear-gradient(
+        45deg,
+        #f59e0b,
+        #f59e0b 10px,
+        #d97706 10px,
+        #d97706 20px
+      );
+    }
+
+    /* 圖 1 與 圖 3/4 新增專用樣式 */
+    .fig1-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .fig1-card {
+      background: white;
+      border-radius: 16px;
+      padding: 22px 18px;
+      border: 1.5px solid #e0f2fe;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 200px;
+    }
+
+    .fig1-card.accent-gold {
+      background: #fffdf5;
+      border-color: #fef08a;
+    }
+
+    .fig1-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #0369a1;
+      margin-bottom: 14px;
+    }
+
+    .fig1-header.gold {
+      color: #b45309;
+    }
+
+    .fig1-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e0f2fe;
+      color: #0284c7;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .fig1-badge.gold {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .fig1-formula-box {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 14px 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 68px;
+    }
+
+    .fig1-footer-desc {
+      font-size: 0.85rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    /* 翻轉卡片互動區 */
+    .interactive-flip-panel {
+      background: white;
+      border-radius: 18px;
+      padding: 28px 20px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .flip-wrapper {
+      perspective: 1000px;
+      display: inline-block;
+      vertical-align: middle;
+      cursor: pointer;
+      margin: 0 8px;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 120px;
+      height: 70px;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flip-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front, .flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+
+    .flip-front {
+      background: linear-gradient(135deg, #ffedd5, #fed7aa);
+      border: 2px solid #fb923c;
+      color: #c2410c;
+    }
+
+    .flip-back {
+      background: linear-gradient(135deg, #ffedd5, #fed7aa);
+      border: 2px solid #f97316;
+      color: #ea580c;
+      transform: rotateY(180deg);
+    }
+
+    /* 單元 3 思考帽與緞帶樣式 */
+    .thought-cap-card {
+      background: #fffdf5;
+      border: 1.5px solid #fde68a;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08);
+      margin-top: 18px;
+    }
+
+    .segmented-ribbon {
+      display: flex;
+      height: 44px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .seg-part {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-right: 1.5px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .seg-blue {
+      background: #0284c7;
+      width: 22.222%;
+    }
+
+    .seg-red {
+      background: #f43f5e;
+      width: 11.112%;
+      border-right: none;
+    }
+
+    .btn-toggle-analysis {
+      width: 100%;
+      background: #f59e0b;
+      color: white;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-toggle-analysis:hover {
+      background: #d97706;
+      transform: translateY(-1px);
+    }
+
+    .analysis-answer-box {
+      display: none;
+      margin-top: 16px;
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 14px;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .analysis-answer-box.show {
+      display: block;
+    }
+
+    /* 頁尾 */
+    footer {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.85rem;
+      margin-top: 30px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge-tag">國小六上數學 2-3 互動學習網頁</div>
+      <h1>異分母分數的除法 ‧ 探究光廊</h1>
+      <p>透過共測單位、圖像分裝與動態推導，親手解開分數除法的奧秘！</p>
+    </header>
+
+    <!-- 導覽分頁按鈕 -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab(0)">
+        <span>🥤</span> 通分與共測單位
+      </button>
+      <button class="tab-btn" onclick="switchTab(1)">
+        <span>✨</span> 顛倒相乘大解密
+      </button>
+      <button class="tab-btn" onclick="switchTab(2)">
+        <span>🎀</span> 帶分數與思考帽挑戰
+      </button>
+      <button class="tab-btn" onclick="switchTab(3)">
+        <span>🎯</span> 隨堂測驗
+      </button>
+    </nav>
+
+    <!-- 主內容區 -->
+    <main class="main-card">
+
+      <!-- ==================== TAB 1: 通分與共測單位 ==================== -->
+      <section class="tab-panel active" id="tab-0">
+        <div class="sub-section">
+          <div class="sub-title">情境布題：果汁分裝大冒險</div>
+          <p style="font-size: 1.05rem; line-height: 1.8;">
+            大雄有 <span class="frac"><span class="num">1</span><span class="den">2</span></span> 公升的果汁，每 
+            <span class="frac"><span class="num">1</span><span class="den">3</span></span> 公升裝成 1 杯。全部裝完，共可以裝成幾杯？
+          </p>
+
+          <div class="chat-bubble">
+            <div class="chat-avatar">💡</div>
+            <div>
+              <strong>皮皮的困惑：</strong>「<span class="frac"><span class="num">1</span><span class="den">2</span></span> 和 
+              <span class="frac"><span class="num">1</span><span class="den">3</span></span> 的分母不一樣，就像不同的刻度，沒辦法直接數。該怎麼辦呢？」<br>
+              <strong>教學小叮嚀：</strong>只要找出兩者的<strong>「共測單位（相同的單位刻度）」</strong>，把分數通分成相同分母，問題就變成簡單的整數除法囉！
+            </div>
+          </div>
+        </div>
+
+        <!-- 互動控制面板 -->
+        <div class="control-group">
+          <div class="control-item">
+            <label>果汁總量：</label>
+            <select id="juice-total" onchange="updateJuiceVisual()" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 1rem;">
+              <option value="1/2" selected>1/2 公升</option>
+              <option value="3/4">3/4 公升</option>
+              <option value="2/3">2/3 公升</option>
+              <option value="5/6">5/6 公升</option>
+            </select>
+          </div>
+          <div class="control-item">
+            <label>每杯容量：</label>
+            <select id="cup-size" onchange="updateJuiceVisual()" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 1rem;">
+              <option value="1/3" selected>1/3 公升</option>
+              <option value="1/4">1/4 公升</option>
+              <option value="1/6">1/6 公升</option>
+              <option value="2/5">2/5 公升</option>
+            </select>
+          </div>
+          <button class="btn-action" onclick="toggleCommonScale()">切換：顯示共測單位細分</button>
+        </div>
+
+        <!-- 視覺模擬量筒與分裝杯 -->
+        <div class="visual-board">
+          <div style="font-weight: 700; margin-bottom: 8px; color: #0369a1;">📊 即時動態容量圖解：</div>
+          <div class="cylinder-container">
+            <!-- 原果汁量筒 -->
+            <div class="cylinder-box">
+              <div class="cylinder">
+                <div class="cylinder-fill" id="juice-fluid" style="height: 50%;"></div>
+                <div class="cylinder-subgrids" id="subgrids-1"></div>
+              </div>
+              <div style="font-size: 0.9rem; font-weight: 700;">
+                果汁總量 <br>
+                <span id="label-juice-frac" class="frac"><span class="num">1</span><span class="den">2</span></span> 公升
+              </div>
+            </div>
+
+            <!-- 每杯量筒 -->
+            <div class="cylinder-box">
+              <div class="cylinder">
+                <div class="cylinder-fill" id="cup-fluid" style="height: 33.33%; background: linear-gradient(to top, #ec4899, #f472b6);"></div>
+                <div class="cylinder-subgrids" id="subgrids-2"></div>
+              </div>
+              <div style="font-size: 0.9rem; font-weight: 700;">
+                每杯容量 <br>
+                <span id="label-cup-frac" class="frac"><span class="num">1</span><span class="den">3</span></span> 公升
+              </div>
+            </div>
+
+            <!-- 說明與算式對應 -->
+            <div style="flex: 1; min-width: 250px; background: white; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+              <h4 style="color: #0284c7; margin-bottom: 8px;">🔍 共測單位轉換思考：</h4>
+              <p id="common-desc" style="line-height: 1.8; font-size: 0.96rem;">
+                通分成同分母 <strong>6</strong>：<br>
+                • 果汁有 <span class="frac"><span class="num">1</span><span class="den">2</span></span> ＝ <span class="frac"><span class="num">3</span><span class="den">6</span></span> 公升（也就是 <strong>3 個 <span class="frac"><span class="num">1</span><span class="den">6</span></span></strong>）<br>
+                • 每杯要 <span class="frac"><span class="num">1</span><span class="den">3</span></span> ＝ <span class="frac"><span class="num">2</span><span class="den">6</span></span> 公升（也就是 <strong>2 個 <span class="frac"><span class="num">1</span><span class="den">6</span></span></strong>）
+              </p>
+              <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #eee;">
+                <strong>同構整數除法算式：</strong><br>
+                <div id="juice-math-result" style="margin-top: 6px;">
+                  <span class="math-term">
+                    <span class="frac"><span class="num">1</span><span class="den">2</span></span>
+                    <span class="op">&divide;</span>
+                    <span class="frac"><span class="num">1</span><span class="den">3</span></span>
+                    <span class="op">＝</span>
+                    <span class="frac"><span class="num">3</span><span class="den">6</span></span>
+                    <span class="op">&divide;</span>
+                    <span class="frac"><span class="num">2</span><span class="den">6</span></span>
+                    <span class="op">＝</span>
+                    <span>3 &divide; 2</span>
+                    <span class="op">＝</span>
+                    <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">1</span><span class="den">2</span></span></span>
+                    <span>（杯）</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 分裝後的杯子視覺展示 -->
+          <div style="margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 16px;">
+            <div style="font-weight: 700; margin-bottom: 8px; color: #334155;">✨ 實際裝滿情況：</div>
+            <div class="cups-area" id="cups-display">
+              <!-- 動態生成杯子 -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 2: 顛倒相乘大解密 (圖 1 規格) ==================== -->
+      <section class="tab-panel" id="tab-1">
+        <!-- 上方三大核心步驟卡片 -->
+        <div class="fig1-grid">
+          <!-- 卡片 1 -->
+          <div class="fig1-card">
+            <div>
+              <div class="fig1-header">
+                <span class="fig1-badge">1</span>
+                <span>先通分找同分母 (20)</span>
+              </div>
+              <div class="fig1-formula-box">
+                <span class="frac"><span class="num">3</span><span class="den">4</span></span>
+                <span class="op">&divide;</span>
+                <span class="frac"><span class="num">2</span><span class="den">5</span></span>
+                <span class="op">＝</span>
+                <span class="frac" style="color: #0284c7;"><span class="num">3 &times; 5</span><span class="den">4 &times; 5</span></span>
+                <span class="op">&divide;</span>
+                <span class="frac" style="color: #ea580c;"><span class="num">2 &times; 4</span><span class="den">5 &times; 4</span></span>
+              </div>
+            </div>
+            <div class="fig1-footer-desc">
+              分母都變成 20，每份大小一致。
+            </div>
+          </div>
+
+          <!-- 卡片 2 -->
+          <div class="fig1-card">
+            <div>
+              <div class="fig1-header">
+                <span class="fig1-badge">2</span>
+                <span>整數分子直接相除</span>
+              </div>
+              <div class="fig1-formula-box" style="flex-direction: column; gap: 8px;">
+                <div>
+                  <span class="op">＝</span>
+                  <span style="font-weight: 700; color: #334155;">(3 &times; 5) &divide; (2 &times; 4)</span>
+                </div>
+                <div>
+                  <span class="op">＝</span>
+                  <span class="frac" style="color: #4f46e5; font-size: 1.1em;"><span class="num">3 &times; 5</span><span class="den">2 &times; 4</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="fig1-footer-desc">
+              同分母時，份數相除就是答案。
+            </div>
+          </div>
+
+          <!-- 卡片 3 -->
+          <div class="fig1-card accent-gold">
+            <div>
+              <div class="fig1-header gold">
+                <span class="fig1-badge gold">3</span>
+                <span>乘法交換律大變身</span>
+              </div>
+              <div class="fig1-formula-box" style="background: #fff;">
+                <span class="frac" style="font-size: 1.1em;"><span class="num">3 &times; 5</span><span class="den">4 &times; 2</span></span>
+                <span class="op">＝</span>
+                <span class="frac" style="color: #0284c7; font-size: 1.1em;"><span class="num">3</span><span class="den">4</span></span>
+                <span class="op">&times;</span>
+                <span class="frac" style="color: #e11d48; font-size: 1.1em;"><span class="num">5</span><span class="den">2</span></span>
+              </div>
+            </div>
+            <div class="fig1-footer-desc">
+              分母的「2 &times; 4」換成「4 &times; 2」，除數分子分母就倒過來了！
+            </div>
+          </div>
+        </div>
+
+        <!-- 下方旋轉翻轉互動體驗卡 -->
+        <div class="interactive-flip-panel">
+          <div style="font-weight: 700; font-size: 1.12rem; color: #1e293b; margin-bottom: 22px;">
+            👆 動手點擊卡片，親身體驗「除號變乘號、除數顛倒」：
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px;">
+            <!-- 被除數 3/4 -->
+            <span class="frac" style="color: #0284c7; font-size: 1.6rem;">
+              <span class="num">3</span><span class="den">4</span>
+            </span>
+
+            <!-- 旋轉翻面卡片 -->
+            <div class="flip-wrapper" onclick="toggleFlipBlock(this)">
+              <div class="flip-inner" id="flip-inner-box">
+                <!-- 正面：除號與 2/5 -->
+                <div class="flip-front">
+                  <span>&divide;</span>
+                  <span class="frac" style="margin-left: 6px;"><span class="num">2</span><span class="den">5</span></span>
+                </div>
+                <!-- 反面：乘號與 5/2 -->
+                <div class="flip-back">
+                  <span>&times;</span>
+                  <span class="frac" style="margin-left: 6px;"><span class="num">5</span><span class="den">2</span></span>
+                </div>
+              </div>
+            </div>
+
+            <span class="op" style="font-size: 1.8rem; color: #0f766e;">＝</span>
+
+            <span class="frac" style="color: #0f766e; font-size: 1.6rem;">
+              <span class="num">15</span><span class="den">8</span>
+            </span>
+
+            <span class="op" style="font-size: 1.8rem; color: #0f766e;">＝</span>
+
+            <span class="mixed-frac" style="color: #0f766e; font-size: 1.6rem;">
+              <span class="whole">1</span><span class="frac"><span class="num">7</span><span class="den">8</span></span>
+            </span>
+
+            <span style="font-size: 1.05rem; color: #64748b; font-weight: 700; margin-left: 4px;">（包）</span>
+          </div>
+
+          <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 18px;">
+            （點擊上方黃藍色方塊即可旋轉翻面）
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: 帶分數與思考帽挑戰 (圖 3 & 4 規格) ==================== -->
+      <section class="tab-panel" id="tab-2">
+        <div style="margin-bottom: 14px;">
+          <span style="background: #fce7f3; color: #be185d; padding: 4px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700;">
+            課本第 32 頁延伸與思考
+          </span>
+          <h2 style="font-size: 1.45rem; font-weight: 800; color: #1e293b; margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+            <span>🥣</span> 帶分數除法與「思考帽」單位陷阱探究
+          </h2>
+        </div>
+
+        <!-- 例題：草莓果醬分裝 -->
+        <div style="background: white; border-radius: 16px; padding: 20px; border: 1px solid #f1f5f9; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.05rem; color: #334155; margin-bottom: 8px;">
+            <span style="background: #f472b6; color: white; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;">例</span>
+            <span>草莓果醬分裝（帶分數先換成假分數）：</span>
+          </div>
+
+          <p style="font-size: 1.02rem; line-height: 1.8; color: #475569; margin-bottom: 14px;">
+            <span class="mixed-frac" style="color: #b91c1c;"><span class="whole">2</span><span class="frac"><span class="num">5</span><span class="den">8</span></span></span> 公升的草莓果醬，每 
+            <span class="frac" style="color: #b45309;"><span class="num">3</span><span class="den">10</span></span> 公升裝成 1 罐，全部裝完可以裝成幾罐？
+          </p>
+
+          <div style="background: #fafaf9; border-radius: 12px; padding: 16px; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; border: 1px solid #e7e5e4;">
+            <span class="mixed-frac" style="font-size: 1.3rem; font-weight: 800;">
+              <span class="whole">2</span><span class="frac"><span class="num">5</span><span class="den">8</span></span>
+            </span>
+            <span class="op">&divide;</span>
+            <span class="frac" style="font-size: 1.3rem; font-weight: 800;">
+              <span class="num">3</span><span class="den">10</span>
+            </span>
+            <span class="op">＝</span>
+            <span class="frac" style="color: #be123c; font-size: 1.3rem; font-weight: 800;">
+              <span class="num">21</span><span class="den">8</span>
+            </span>
+            <span class="op">&times;</span>
+            <span class="frac" style="color: #c2410c; font-size: 1.3rem; font-weight: 800;">
+              <span class="num">10</span><span class="den">3</span>
+            </span>
+            <span class="op">＝</span>
+            <span class="frac" style="color: #047857; font-size: 1.3rem; font-weight: 800;">
+              <span class="num">35</span><span class="den">4</span>
+            </span>
+            <span class="op">＝</span>
+            <span class="mixed-frac" style="color: #047857; font-size: 1.3rem; font-weight: 800;">
+              <span class="whole">8</span><span class="frac"><span class="num">3</span><span class="den">4</span></span>
+            </span>
+            <span style="font-size: 0.95rem; color: #78716c; font-weight: 600;">（罐）</span>
+          </div>
+        </div>
+
+        <!-- 思考帽：丹丹的緞帶問題 -->
+        <div class="thought-cap-card">
+          <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;">
+            <div style="background: #f59e0b; color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);">
+              🎓
+            </div>
+            <div>
+              <div style="font-weight: 800; font-size: 1.25rem; color: #92400e;">
+                課堂最核心【思考帽】：丹丹的緞帶問題
+              </div>
+              <div style="font-size: 0.88rem; color: #b45309; margin-top: 2px;">
+                單位陷阱大解密：到底剩下的是「幾朵」還是「幾公尺」？
+              </div>
+            </div>
+          </div>
+
+          <!-- 題目卡片 -->
+          <div style="background: white; border-radius: 12px; padding: 18px; border: 1.5px solid #fef08a; line-height: 1.9; font-size: 1.02rem;">
+            <div>
+              <strong>題目：</strong>「緞帶長 <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">1</span><span class="den">2</span></span></span> 公尺，每 
+              <span class="frac"><span class="num">1</span><span class="den">3</span></span> 公尺做 1 朵花。最多可做成幾朵？剩下幾公尺？」
+            </div>
+            <div style="margin-top: 6px;">
+              丹丹計算：<span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">1</span><span class="den">2</span></span></span> 
+              <span class="op">&divide;</span> <span class="frac"><span class="num">1</span><span class="den">3</span></span> 
+              <span class="op">＝</span> <span class="mixed-frac"><span class="whole">4</span><span class="frac"><span class="num">1</span><span class="den">2</span></span></span>。請問丹丹該回答剩下 
+              <span class="frac" style="font-weight: 700;"><span class="num">1</span><span class="den">2</span></span> 公尺，還是 
+              <span class="frac" style="font-weight: 700; color: #e11d48;"><span class="num">1</span><span class="den">6</span></span> 公尺？
+            </div>
+          </div>
+
+          <!-- 緞帶分割條圖模型 -->
+          <div style="margin-top: 18px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #475569; font-weight: 700; padding: 0 2px;">
+              <span>0 公尺</span>
+              <span>0.5 公尺</span>
+              <span>1.0 公尺</span>
+              <span>1.5 公尺 (全長 1又1/2 公尺)</span>
+            </div>
+
+            <div class="segmented-ribbon">
+              <div class="seg-part seg-blue">第1朵</div>
+              <div class="seg-part seg-blue">第2朵</div>
+              <div class="seg-part seg-blue">第3朵</div>
+              <div class="seg-part seg-blue">第4朵</div>
+              <div class="seg-part seg-red">剩下?</div>
+            </div>
+          </div>
+
+          <!-- 查看/收合 解析按鈕 -->
+          <button class="btn-toggle-analysis" id="btn-cap-toggle" onclick="toggleCapAnalysis()">
+            <span id="cap-icon">🔍</span>
+            <span id="cap-btn-text">查看單位秘密解析</span>
+          </button>
+
+          <!-- 展開解析區域 (圖 4 樣式) -->
+          <div class="analysis-answer-box" id="cap-analysis-box">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05rem; color: #166534; margin-bottom: 10px;">
+              <span style="font-size: 1.2rem;">✔</span>
+              <span>觀念透析：</span>
+            </div>
+            <p style="line-height: 2; font-size: 1.02rem; color: #1e293b; margin-bottom: 10px;">
+              丹丹算出的 <span class="mixed-frac"><span class="whole">4</span><span class="frac"><span class="num">1</span><span class="den">2</span></span></span>，其單位是<strong>「朵」</strong>！代表可以做完整的 <strong>4 朵花</strong>，剩下 <span class="frac"><span class="num">1</span><span class="den">2</span></span> <strong>朵花</strong>。
+            </p>
+            <p style="line-height: 2; font-size: 1.02rem; color: #1e293b; margin-bottom: 12px;">
+              因為做 1 朵花需要 <span class="frac"><span class="num">1</span><span class="den">3</span></span> 公尺，所以「半朵花」的實際公尺數是：
+              <span class="frac"><span class="num">1</span><span class="den">3</span></span> <span class="op">&times;</span> <span class="frac"><span class="num">1</span><span class="den">2</span></span> <span class="op">＝</span> <span class="frac" style="color: #e11d48; font-size: 1.15em;"><span class="num">1</span><span class="den">6</span></span> <strong>公尺</strong>！
+            </p>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #1e293b; padding-top: 8px; border-top: 1px dashed #86efac;">
+              👉 結論：最多可做成 4 朵，剩下 <span class="frac" style="color: #e11d48; font-size: 1.15em;"><span class="num">1</span><span class="den">6</span></span> 公尺。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 4: 隨堂測驗 ==================== -->
+      <section class="tab-panel" id="tab-3">
+        <div class="sub-section">
+          <div class="sub-title">隨堂測驗</div>
+          <p style="font-size: 1rem; color: #475569;">
+            共 5 題，每題 20 分，滿分 100 分。請點選各題答案後，按下底部的「提交答案」按鈕進行批改！
+          </p>
+        </div>
+
+        <!-- 測驗總分橫幅 -->
+        <div class="quiz-score-banner" id="quiz-score-banner"></div>
+
+        <div id="quiz-container">
+          <!-- 第 1 題 -->
+          <div class="quiz-question" id="q1">
+            <div class="quiz-q-title">
+              <span>第 1 題</span>
+              <span>計算 <span class="frac"><span class="num">1</span><span class="den">2</span></span> &divide; <span class="frac"><span class="num">1</span><span class="den">4</span></span> 時，若使用「通分法」換成相同單位，可以看成是幾個 
+              <span class="frac"><span class="num">1</span><span class="den">4</span></span> 除以 1 個 <span class="frac"><span class="num">1</span><span class="den">4</span></span>？</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" onclick="selectOption(1, 0)">A. 1 個</button>
+              <button class="quiz-opt-btn" onclick="selectOption(1, 1)">B. 2 個</button>
+              <button class="quiz-opt-btn" onclick="selectOption(1, 2)">C. 4 個</button>
+              <button class="quiz-opt-btn" onclick="selectOption(1, 3)">D. 8 個</button>
+            </div>
+            <div class="quiz-feedback" id="fb-1"></div>
+          </div>
+
+          <!-- 第 2 題 -->
+          <div class="quiz-question" id="q2">
+            <div class="quiz-q-title">
+              <span>第 2 題</span>
+              <span>關於「顛倒相乘」的規則，下列哪一個算式的改寫是「完全正確」的？</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" onclick="selectOption(2, 0)">
+                A. <span class="frac"><span class="num">3</span><span class="den">4</span></span> &divide; <span class="frac"><span class="num">2</span><span class="den">5</span></span> ＝ <span class="frac"><span class="num">4</span><span class="den">3</span></span> &times; <span class="frac"><span class="num">2</span><span class="den">5</span></span>
+              </button>
+              <button class="quiz-opt-btn" onclick="selectOption(2, 1)">
+                B. <span class="frac"><span class="num">3</span><span class="den">4</span></span> &divide; <span class="frac"><span class="num">2</span><span class="den">5</span></span> ＝ <span class="frac"><span class="num">3</span><span class="den">4</span></span> &times; <span class="frac"><span class="num">5</span><span class="den">2</span></span>
+              </button>
+              <button class="quiz-opt-btn" onclick="selectOption(2, 2)">
+                C. <span class="frac"><span class="num">3</span><span class="den">4</span></span> &divide; <span class="frac"><span class="num">2</span><span class="den">5</span></span> ＝ <span class="frac"><span class="num">4</span><span class="den">3</span></span> &times; <span class="frac"><span class="num">5</span><span class="den">2</span></span>
+              </button>
+              <button class="quiz-opt-btn" onclick="selectOption(2, 3)">
+                D. <span class="frac"><span class="num">3</span><span class="den">4</span></span> &divide; <span class="frac"><span class="num">2</span><span class="den">5</span></span> ＝ <span class="frac"><span class="num">3</span><span class="den">5</span></span> &times; <span class="frac"><span class="num">4</span><span class="den">2</span></span>
+              </button>
+            </div>
+            <div class="quiz-feedback" id="fb-2"></div>
+          </div>
+
+          <!-- 第 3 題 -->
+          <div class="quiz-question" id="q3">
+            <div class="quiz-q-title">
+              <span>第 3 題</span>
+              <span>計算帶分數除法 <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">3</span><span class="den">5</span></span></span> &divide; <span class="frac"><span class="num">4</span><span class="den">5</span></span> 的結果是多少？</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" onclick="selectOption(3, 0)">A. 1</button>
+              <button class="quiz-opt-btn" onclick="selectOption(3, 1)">B. 2</button>
+              <button class="quiz-opt-btn" onclick="selectOption(3, 2)">C. <span class="frac"><span class="num">32</span><span class="den">25</span></span></button>
+              <button class="quiz-opt-btn" onclick="selectOption(3, 3)">D. <span class="mixed-frac"><span class="whole">2</span><span class="frac"><span class="num">1</span><span class="den">4</span></span></span></button>
+            </div>
+            <div class="quiz-feedback" id="fb-3"></div>
+          </div>
+
+          <!-- 第 4 題 -->
+          <div class="quiz-question" id="q4">
+            <div class="quiz-q-title">
+              <span>第 4 題</span>
+              <span>有 6 公斤的麵粉，每 <span class="frac"><span class="num">3</span><span class="den">4</span></span> 公斤裝成一包，全部裝完共可裝成幾包？</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" onclick="selectOption(4, 0)">A. 4 包</button>
+              <button class="quiz-opt-btn" onclick="selectOption(4, 1)">B. 6 包</button>
+              <button class="quiz-opt-btn" onclick="selectOption(4, 2)">C. 8 包</button>
+              <button class="quiz-opt-btn" onclick="selectOption(4, 3)">D. 9 包</button>
+            </div>
+            <div class="quiz-feedback" id="fb-4"></div>
+          </div>
+
+          <!-- 第 5 題 -->
+          <div class="quiz-question" id="q5">
+            <div class="quiz-q-title">
+              <span>第 5 題 (思考帽高層次題)</span>
+              <span>水管長 <span class="mixed-frac"><span class="whole">3</span><span class="frac"><span class="num">1</span><span class="den">2</span></span></span> 公尺，每 
+              <span class="frac"><span class="num">2</span><span class="den">3</span></span> 公尺截成一段，算式算得 <span class="mixed-frac"><span class="whole">5</span><span class="frac"><span class="num">1</span><span class="den">4</span></span></span>。請問下列何者敘述「完全正確」？</span>
+            </div>
+            <div class="quiz-options">
+              <button class="quiz-opt-btn" onclick="selectOption(5, 0)">
+                A. 可截成 5 段，剩下 <span class="frac"><span class="num">1</span><span class="den">4</span></span> 公尺
+              </button>
+              <button class="quiz-opt-btn" onclick="selectOption(5, 1)">
+                B. 可截成 5 段，剩下 <span class="frac"><span class="num">1</span><span class="den">6</span></span> 公尺
+              </button>
+              <button class="quiz-opt-btn" onclick="selectOption(5, 2)">
+                C. 可截成 5 段，剩下 <span class="frac"><span class="num">2</span><span class="den">3</span></span> 公尺
+              </button>
+              <button class="quiz-opt-btn" onclick="selectOption(5, 3)">
+                D. 可截成 5 段，剛好截完沒有剩下
+              </button>
+            </div>
+            <div class="quiz-feedback" id="fb-5"></div>
+          </div>
+        </div>
+
+        <!-- 提交答案 與 重新測驗 按鈕 -->
+        <div class="quiz-actions">
+          <button class="quiz-action-btn btn-submit-quiz" onclick="submitQuiz()">
+            <span>📝</span> 提交答案
+          </button>
+          <button class="quiz-action-btn btn-reset-quiz" onclick="resetQuiz()">
+            <span>🔄</span> 重新測驗
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    // 標籤頁切換
+    function switchTab(index) {
+      const tabs = document.querySelectorAll('.tab-panel');
+      const btns = document.querySelectorAll('.tab-btn');
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+      });
+      btns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+    }
+
+    // 分數輔助函數
+    function gcd(a, b) {
+      return b === 0 ? a : gcd(b, a % b);
+    }
+    function lcm(a, b) {
+      return (a * b) / gcd(a, b);
+    }
+
+    // 格式化生成標準直式分數 HTML
+    function formatFracHTML(n, d) {
+      if (d === 1) return `<span>${n}</span>`;
+      if (n >= d && d > 1) {
+        const whole = Math.floor(n / d);
+        const rem = n % d;
+        if (rem === 0) return `<span>${whole}</span>`;
+        return `<span class="mixed-frac"><span class="whole">${whole}</span><span class="frac"><span class="num">${rem}</span><span class="den">${d}</span></span></span>`;
+      }
+      return `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`;
+    }
+
+    // ==================== 單元 1：動態視覺更新 ====================
+    let showCommonScale = false;
+
+    function toggleCommonScale() {
+      showCommonScale = !showCommonScale;
+      updateJuiceVisual();
+    }
+
+    function updateJuiceVisual() {
+      const [jN, jD] = document.getElementById('juice-total').value.split('/').map(Number);
+      const [cN, cD] = document.getElementById('cup-size').value.split('/').map(Number);
+
+      // 計算公分母
+      const comDen = lcm(jD, cD);
+      const jComN = jN * (comDen / jD);
+      const cComN = cN * (comDen / cD);
+
+      // 更新量筒水高度
+      document.getElementById('juice-fluid').style.height = `${(jN / jD) * 100}%`;
+      document.getElementById('cup-fluid').style.height = `${(cN / cD) * 100}%`;
+
+      // 標籤更新
+      document.getElementById('label-juice-frac').innerHTML = `<span class="num">${jN}</span><span class="den">${jD}</span>`;
+      document.getElementById('label-cup-frac').innerHTML = `<span class="num">${cN}</span><span class="den">${cD}</span>`;
+
+      // 刻度格線繪製
+      const grid1 = document.getElementById('subgrids-1');
+      const grid2 = document.getElementById('subgrids-2');
+      grid1.innerHTML = '';
+      grid2.innerHTML = '';
+
+      const scaleCount = showCommonScale ? comDen : jD;
+      for (let i = 1; i <= scaleCount; i++) {
+        const div = document.createElement('div');
+        div.className = 'grid-line';
+        if (showCommonScale) {
+          div.innerHTML = `<span style="transform: scale(0.85);">${i}/${comDen}</span>`;
+        }
+        grid1.appendChild(div);
+      }
+
+      const scaleCount2 = showCommonScale ? comDen : cD;
+      for (let i = 1; i <= scaleCount2; i++) {
+        const div = document.createElement('div');
+        div.className = 'grid-line';
+        if (showCommonScale) {
+          div.innerHTML = `<span style="transform: scale(0.85);">${i}/${comDen}</span>`;
+        }
+        grid2.appendChild(div);
+      }
+
+      // 說明文字更新
+      const desc = document.getElementById('common-desc');
+      if (showCommonScale) {
+        desc.innerHTML = `
+          已細分為共同單位刻度 <strong>${comDen}</strong> 分之一：<br>
+          • 果汁總量有 <span class="frac"><span class="num">${jN}</span><span class="den">${jD}</span></span> ＝ <span class="frac"><span class="num">${jComN}</span><span class="den">${comDen}</span></span> 公升（共有 <strong>${jComN}</strong> 格 <span class="frac"><span class="num">1</span><span class="den">${comDen}</span></span>）<br>
+          • 每裝 1 杯需要 <span class="frac"><span class="num">${cN}</span><span class="den">${cD}</span></span> ＝ <span class="frac"><span class="num">${cComN}</span><span class="den">${comDen}</span></span> 公升（需要 <strong>${cComN}</strong> 格 <span class="frac"><span class="num">1</span><span class="den">${comDen}</span></span>）
+        `;
+      } else {
+        desc.innerHTML = `
+          目前為原始刻度。點擊上方「<strong>切換：顯示共測單位細分</strong>」按鈕，<br>
+          觀察量筒如何切出相同大小的格子（公分母 ${comDen}）！
+        `;
+      }
+
+      // 算式展示
+      const mathBox = document.getElementById('juice-math-result');
+      const finalN = jN * cD;
+      const finalD = jD * cN;
+      const ansHTML = formatFracHTML(finalN, finalD);
+
+      mathBox.innerHTML = `
+        <span class="math-term">
+          <span class="frac"><span class="num">${jN}</span><span class="den">${jD}</span></span>
+          <span class="op">&divide;</span>
+          <span class="frac"><span class="num">${cN}</span><span class="den">${cD}</span></span>
+          <span class="op">＝</span>
+          <span class="frac"><span class="num">${jComN}</span><span class="den">${comDen}</span></span>
+          <span class="op">&divide;</span>
+          <span class="frac"><span class="num">${cComN}</span><span class="den">${comDen}</span></span>
+          <span class="op">＝</span>
+          <span>${jComN} &divide; ${cComN}</span>
+          <span class="op">＝</span>
+          ${ansHTML}
+          <span>（杯）</span>
+        </span>
+      `;
+
+      // 渲染杯子
+      renderCups(finalN / finalD);
+    }
+
+    function renderCups(totalCups) {
+      const container = document.getElementById('cups-display');
+      container.innerHTML = '';
+      const fullCount = Math.floor(totalCups);
+      const remainRatio = totalCups - fullCount;
+
+      for (let i = 1; i <= fullCount; i++) {
+        const cup = document.createElement('div');
+        cup.className = 'cup-item';
+        cup.innerHTML = `
+          <div class="cup-label">第 ${i} 杯</div>
+          <div class="cup-water" style="height: 100%;"></div>
+        `;
+        container.appendChild(cup);
+      }
+
+      if (remainRatio > 0.001) {
+        const cup = document.createElement('div');
+        cup.className = 'cup-item';
+        const pct = Math.round(remainRatio * 100);
+        cup.innerHTML = `
+          <div class="cup-label">剩 ${pct}% 杯</div>
+          <div class="cup-water" style="height: ${pct}%;"></div>
+        `;
+        container.appendChild(cup);
+      }
+    }
+
+    // 圖 1 旋轉翻面切換
+    function toggleFlipBlock(element) {
+      const inner = document.getElementById('flip-inner-box');
+      inner.classList.toggle('is-flipped');
+    }
+
+    // 圖 3 & 圖 4 思考帽解析展開/收合切換
+    function toggleCapAnalysis() {
+      const box = document.getElementById('cap-analysis-box');
+      const btnText = document.getElementById('cap-btn-text');
+      const icon = document.getElementById('cap-icon');
+      const isShowing = box.classList.contains('show');
+
+      if (isShowing) {
+        box.classList.remove('show');
+        btnText.innerText = '查看單位秘密解析';
+        icon.innerText = '🔍';
+      } else {
+        box.classList.add('show');
+        btnText.innerText = '收合思考解析';
+        icon.innerText = '🔄';
+      }
+    }
+
+    // ==================== 單元 4：隨堂測驗與回饋 ====================
+    let userSelections = { 1: null, 2: null, 3: null, 4: null, 5: null };
+    let quizSubmitted = false;
+
+    const quizConfig = {
+      1: {
+        correctIndex: 1,
+        correctMsg: '將 <span class="frac"><span class="num">1</span><span class="den">2</span></span> 通分成分母是 4 的分數即為 <span class="frac"><span class="num">2</span><span class="den">4</span></span>，相當於 2 個 <span class="frac"><span class="num">1</span><span class="den">4</span></span> 除以 1 個 <span class="frac"><span class="num">1</span><span class="den">4</span></span>，正確答案為 B（2 個）。',
+        wrongMsg: '請先將 <span class="frac"><span class="num">1</span><span class="den">2</span></span> 通分成以 4 為分母的分數：<span class="frac"><span class="num">1</span><span class="den">2</span></span> ＝ <span class="frac"><span class="num">2</span><span class="den">4</span></span>，代表裡面有 2 個 <span class="frac"><span class="num">1</span><span class="den">4</span></span>，因此正確答案應為 B（2 個）。'
+      },
+      2: {
+        correctIndex: 1,
+        correctMsg: '除以一個分數時，被除數 <span class="frac"><span class="num">3</span><span class="den">4</span></span> 保持不變，除號變乘號，除數 <span class="frac"><span class="num">2</span><span class="den">5</span></span> 的分子與分母顛倒為 <span class="frac"><span class="num">5</span><span class="den">2</span></span>，正確答案為 B。',
+        wrongMsg: '進行分數除法時，前面的被除數（<span class="frac"><span class="num">3</span><span class="den">4</span></span>）不能顛倒，只有除號後面的除數（<span class="frac"><span class="num">2</span><span class="den">5</span></span>）需要顛倒成 <span class="frac"><span class="num">5</span><span class="den">2</span></span>，因此正確答案應為 B。'
+      },
+      3: {
+        correctIndex: 1,
+        correctMsg: '先將帶分數 <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">3</span><span class="den">5</span></span></span> 化為假分數 <span class="frac"><span class="num">8</span><span class="den">5</span></span>，再顛倒相乘：<span class="frac"><span class="num">8</span><span class="den">5</span></span> &times; <span class="frac"><span class="num">5</span><span class="den">4</span></span> ＝ 2，正確答案為 B。',
+        wrongMsg: '計算帶分數除法時，需先將 <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">3</span><span class="den">5</span></span></span> 化成假分數 <span class="frac"><span class="num">8</span><span class="den">5</span></span>，算式改寫為 <span class="frac"><span class="num">8</span><span class="den">5</span></span> &times; <span class="frac"><span class="num">5</span><span class="den">4</span></span>，約分後可得結果為 2（選項 B）。'
+      },
+      4: {
+        correctIndex: 2,
+        correctMsg: '整數除以分數：6 &divide; <span class="frac"><span class="num">3</span><span class="den">4</span></span> ＝ 6 &times; <span class="frac"><span class="num">4</span><span class="den">3</span></span> ＝ <span class="frac"><span class="num">24</span><span class="den">3</span></span> ＝ 8（包），正確答案為 C。',
+        wrongMsg: '整數除以分數時，可將 6 &divide; <span class="frac"><span class="num">3</span><span class="den">4</span></span> 改寫為 <span class="frac"><span class="num">6</span><span class="den">1</span></span> &times; <span class="frac"><span class="num">4</span><span class="den">3</span></span>，約分後計算 2 &times; 4 ＝ 8（包），因此正確答案應為 C。'
+      },
+      5: {
+        correctIndex: 1,
+        correctMsg: '商 <span class="mixed-frac"><span class="whole">5</span><span class="frac"><span class="num">1</span><span class="den">4</span></span></span> 的單位是「段」，代表可截成 5 段並剩下 <span class="frac"><span class="num">1</span><span class="den">4</span></span>「段」；將 <span class="frac"><span class="num">1</span><span class="den">4</span></span> 段乘以每段長度 <span class="frac"><span class="num">2</span><span class="den">3</span></span> 公尺，可得實際剩下 <span class="frac"><span class="num">1</span><span class="den">6</span></span> 公尺，正確答案為 B。',
+        wrongMsg: '請留意商的單位！算出的 <span class="mixed-frac"><span class="whole">5</span><span class="frac"><span class="num">1</span><span class="den">4</span></span></span> 單位是「段」，代表剩下 <span class="frac"><span class="num">1</span><span class="den">4</span></span>「段」而非 <span class="frac"><span class="num">1</span><span class="den">4</span></span> 公尺。需計算 <span class="frac"><span class="num">2</span><span class="den">3</span></span> &times; <span class="frac"><span class="num">1</span><span class="den">4</span></span> ＝ <span class="frac"><span class="num">1</span><span class="den">6</span></span> 公尺，因此正確答案應為 B。'
+      }
+    };
+
+    function selectOption(qNum, optIdx) {
+      if (quizSubmitted) return;
+      userSelections[qNum] = optIdx;
+      const qDiv = document.getElementById(`q${qNum}`);
+      const btns = qDiv.querySelectorAll('.quiz-opt-btn');
+      btns.forEach((btn, idx) => {
+        btn.classList.toggle('selected', idx === optIdx);
+      });
+    }
+
+    function submitQuiz() {
+      quizSubmitted = true;
+      let totalScore = 0;
+
+      for (let qNum = 1; qNum <= 5; qNum++) {
+        const selectedIdx = userSelections[qNum];
+        const config = quizConfig[qNum];
+        const qDiv = document.getElementById(`q${qNum}`);
+        const btns = qDiv.querySelectorAll('.quiz-opt-btn');
+        const fb = document.getElementById(`fb-${qNum}`);
+
+        btns.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.remove('selected');
+        });
+
+        if (selectedIdx === null) {
+          // 未作答：僅顯示黃色系「未作答。」，不顯示其他說明且不標示正確答案
+          fb.className = 'quiz-feedback show warning';
+          fb.innerHTML = '未作答。';
+        } else if (selectedIdx === config.correctIndex) {
+          // 答對：加 20 分
+          totalScore += 20;
+          btns[selectedIdx].classList.add('correct');
+          fb.className = 'quiz-feedback show success';
+          fb.innerHTML = `<strong>✔ 答對了！</strong> ${config.correctMsg}`;
+        } else {
+          // 答錯：標示錯誤選項與正確選項，並顯示無矛盾之引導說明
+          btns[selectedIdx].classList.add('wrong');
+          btns[config.correctIndex].classList.add('correct');
+          fb.className = 'quiz-feedback show danger';
+          fb.innerHTML = `<strong>✘ 答錯了！</strong> ${config.wrongMsg}`;
+        }
+      }
+
+      const banner = document.getElementById('quiz-score-banner');
+      banner.classList.add('show');
+      banner.innerHTML = `🎯 測驗批改結果：您的得分為 <span style="font-size: 1.65rem; color: #fef08a; margin: 0 4px;">${totalScore}</span> / 100 分`;
+      banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function resetQuiz() {
+      quizSubmitted = false;
+      userSelections = { 1: null, 2: null, 3: null, 4: null, 5: null };
+
+      for (let qNum = 1; qNum <= 5; qNum++) {
+        const qDiv = document.getElementById(`q${qNum}`);
+        const btns = qDiv.querySelectorAll('.quiz-opt-btn');
+        const fb = document.getElementById(`fb-${qNum}`);
+
+        btns.forEach(btn => {
+          btn.disabled = false;
+          btn.classList.remove('selected', 'correct', 'wrong');
+        });
+
+        fb.className = 'quiz-feedback';
+        fb.innerHTML = '';
+      }
+
+      const banner = document.getElementById('quiz-score-banner');
+      banner.classList.remove('show');
+      banner.innerHTML = '';
+    }
+
+    // 初始化頁面
+    window.onload = function() {
+      updateJuiceVisual();
+    };
+  </script>
+</body>
+</html>

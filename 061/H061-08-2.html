@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小六年級 8-2 數形規則 互動探索學習教材</title>
+  <!-- 引入 Tailwind CSS 與 FontAwesome 圖標庫 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+    /* 全域強制使用思源黑體，但排除 FontAwesome 圖示避免破圖 */
+    *:not(.fa-solid):not(.fa-regular):not(.fa-brands):not(.fas):not(.far):not(.fab) {
+      font-family: 'Noto Sans TC', sans-serif !important;
+    }
+
+    /* 新海誠動漫美學背景色調：雲海、蔚藍與晨曦紫粉光影 */
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 45%, #fab1a0 85%, #ffeaa7 100%);
+      background-attachment: fixed;
+      color: #2d3436;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 仿磨砂玻璃質感卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 12px 36px rgba(31, 38, 135, 0.15);
+      border-radius: 1.25rem;
+    }
+
+    /* 國小數學課本標準直式分數規範 (分子在上、分母在下、整數在左、水平橫線、垂直置中) */
+    .frac-container {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 3px;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .frac-whole {
+      margin-right: 3px;
+      font-size: 1.15em;
+    }
+    .frac-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1;
+      padding: 0 2px;
+    }
+    .frac-num {
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 2px;
+      font-size: 0.95em;
+    }
+    .frac-den {
+      padding-top: 2px;
+      font-size: 0.95em;
+    }
+
+    /* 火車車廂座位樣式 */
+    .seat-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+      cursor: pointer;
+    }
+    .seat-regular {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      color: #475569;
+    }
+    .seat-active {
+      background: linear-gradient(135deg, #ff7675, #d63031);
+      border: 2px solid #ff7675;
+      color: #ffffff;
+      transform: scale(1.15);
+      box-shadow: 0 6px 14px rgba(214, 48, 49, 0.4);
+    }
+    .seat-highlight-family {
+      background: #e0f2fe;
+      border: 2px solid #38bdf8;
+      color: #0369a1;
+    }
+
+    /* 頁籤按鈕切換特效 */
+    .tab-active {
+      background: linear-gradient(135deg, #0984e3, #6c5ce7) !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 16px rgba(9, 132, 227, 0.35) !important;
+    }
+
+    /* 測驗選項美化 */
+    .quiz-opt {
+      transition: all 0.2s ease;
+    }
+    .quiz-opt:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      border-color: #6366f1;
+    }
+    .quiz-opt-selected {
+      background-color: #e0e7ff !important;
+      border-color: #4f46e5 !important;
+      color: #312e81 !important;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 pb-16">
+
+  <!-- 頂部頁首與情境引導 -->
+  <header class="w-full max-w-5xl text-center mb-6">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md text-blue-900 text-sm font-semibold mb-3 shadow-sm border border-white/60">
+      <i class="fa-solid fa-sparkles text-amber-500"></i> 國小六上數學 8-2 互動學習網頁
+    </div>
+    <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-wide drop-shadow-sm">
+      探索數字與圖形的排列密碼
+    </h1>
+    <p class="text-slate-700 font-medium text-sm md:text-base mt-2 max-w-2xl mx-auto">
+      乘著新海誠風的青空列車，透過動態滑桿即時操作，發現生活情境中的除法餘數規律、連續幾何線段與中空花片排列！
+    </p>
+  </header>
+
+  <!-- 導航分頁籤 (超過兩主題以標籤頁切換) -->
+  <nav class="w-full max-w-5xl mb-6 flex flex-wrap gap-2 md:gap-3 justify-center">
+    <button onclick="switchTab(0)" id="tab-btn-0" class="tab-active px-5 py-3 rounded-2xl font-bold text-sm md:text-base transition-all flex items-center gap-2 bg-white/80 text-slate-700 shadow-sm border border-white">
+      <i class="fa-solid fa-train-subway"></i> 1. 週期與火車座位
+    </button>
+    <button onclick="switchTab(1)" id="tab-btn-1" class="px-5 py-3 rounded-2xl font-bold text-sm md:text-base transition-all flex items-center gap-2 bg-white/80 text-slate-700 shadow-sm border border-white">
+      <i class="fa-solid fa-shapes"></i> 2. 相連圖形線段數
+    </button>
+    <button onclick="switchTab(2)" id="tab-btn-2" class="px-5 py-3 rounded-2xl font-bold text-sm md:text-base transition-all flex items-center gap-2 bg-white/80 text-slate-700 shadow-sm border border-white">
+      <i class="fa-solid fa-vector-square"></i> 3. 花片空心正方形
+    </button>
+    <button onclick="switchTab(3)" id="tab-btn-3" class="px-5 py-3 rounded-2xl font-bold text-sm md:text-base transition-all flex items-center gap-2 bg-white/80 text-slate-700 shadow-sm border border-white">
+      <i class="fa-solid fa-clipboard-check"></i> 4. 隨堂測驗
+    </button>
+  </nav>
+
+  <!-- 內容主要區塊 -->
+  <main class="w-full max-w-5xl">
+
+    <!-- ==================== TAB 0: 週期循環與火車座位規律 ==================== -->
+    <section id="tab-section-0" class="space-y-6">
+      
+      <!-- 探究 1-A: 窗邊吊飾週期 -->
+      <div class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">1-1</span>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">車廂掛飾的循環規律</h2>
+        </div>
+        <p class="text-slate-600 text-sm md:text-base mb-4">
+          車廂窗邊依序懸掛裝飾品，拖動滑桿推算第幾個圖案是什麼？體會「<strong>週期是幾個一組</strong>」與「<strong>除法餘數</strong>」的關聯。
+        </p>
+
+        <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-100 mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <label class="font-bold text-slate-700 text-sm md:text-base whitespace-nowrap">推算第幾個圖案：</label>
+            <input type="range" id="cycle-range" min="1" max="36" value="25" class="w-44 md:w-64 accent-blue-600 cursor-pointer" oninput="updateCycleSimulation()">
+            <span id="cycle-num-badge" class="px-3 py-1 bg-blue-600 text-white rounded-lg font-bold text-base shadow-sm">25</span>
+          </div>
+          <div class="text-xs md:text-sm text-slate-600 font-medium">
+            規律週期：每 <strong class="text-blue-700 text-base">3 個</strong> 一組（<i class="fa-solid fa-sun text-amber-500"></i> &rarr; <i class="fa-solid fa-tree text-emerald-600"></i> &rarr; <i class="fa-solid fa-water text-cyan-600"></i>）
+          </div>
+        </div>
+
+        <!-- 圖樣動態展示鏈 -->
+        <div class="w-full overflow-x-auto pb-3 mb-4">
+          <div id="cycle-ribbon" class="flex items-center gap-2 min-w-max p-2"></div>
+        </div>
+
+        <!-- 算式與結論卡 -->
+        <div id="cycle-calc-box" class="p-4 rounded-xl bg-gradient-to-r from-sky-50 to-indigo-50 border-l-4 border-blue-600 text-slate-800 text-sm md:text-base"></div>
+      </div>
+
+      <!-- 探究 1-B: 火車座位排數與走道/窗邊規律 -->
+      <div class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-bold text-sm shadow">1-2</span>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">台鐵火車座位排列規律</h2>
+        </div>
+        <p class="text-slate-600 text-sm md:text-base mb-4">
+          一橫排有 <strong>4 個座位</strong>，將 4 個座位看成一組。單號靠左、雙號靠右。媽媽買到了 <strong>27 號</strong>，會在哪一排、靠窗還是靠走道？
+        </p>
+
+        <div class="bg-indigo-50/60 p-4 rounded-xl border border-indigo-100 mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <label class="font-bold text-slate-700 text-sm md:text-base">查詢車票號碼：</label>
+            <input type="range" id="seat-range" min="1" max="32" value="27" class="w-44 md:w-64 accent-indigo-600 cursor-pointer" oninput="updateSeatSimulation()">
+            <span id="seat-num-badge" class="px-3 py-1 bg-indigo-600 text-white rounded-lg font-bold text-base shadow-sm">27</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="setSeatNumber(27)" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow transition">媽媽票 (27號)</button>
+            <button onclick="setSeatNumber(14)" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-slate-700 hover:bg-slate-800 text-white shadow transition">14號</button>
+            <button onclick="setSeatNumber(16)" class="px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-slate-700 hover:bg-slate-800 text-white shadow transition">16號</button>
+          </div>
+        </div>
+
+        <!-- 火車座位俯視結構圖 (8排示意) -->
+        <div class="p-4 bg-slate-100/90 rounded-2xl border border-slate-200 overflow-x-auto">
+          <div class="min-w-[500px] flex flex-col gap-2">
+            <!-- 走道與窗戶標籤列 -->
+            <div class="grid grid-cols-5 text-center font-bold text-xs md:text-sm text-slate-600 pb-1 border-b border-slate-300">
+              <div class="text-blue-600"><i class="fa-solid fa-window-maximize"></i> 靠窗 (單號)</div>
+              <div>靠走道 (單號)</div>
+              <div class="text-slate-400 font-normal">── 走道 ──</div>
+              <div>靠走道 (雙號)</div>
+              <div class="text-emerald-600"><i class="fa-solid fa-window-maximize"></i> 靠窗 (雙號)</div>
+            </div>
+
+            <!-- 車廂 8 排動態生成容器 -->
+            <div id="train-seats-grid" class="flex flex-col gap-2"></div>
+          </div>
+        </div>
+
+        <!-- 算式解析與餘數密碼 -->
+        <div id="seat-calc-box" class="mt-5 p-4 rounded-xl bg-white border border-slate-200 text-slate-800 text-sm md:text-base shadow-sm"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> 餘數規律密碼本 (除以4)</h4>
+            <ul class="text-xs md:text-sm text-amber-950 space-y-1">
+              <li>• <strong>餘 1</strong>：單號靠窗（1, 5, 9, 13, 17, 21, 25, 29...）</li>
+              <li>• <strong>餘 3</strong>：單號靠走道（3, 7, 11, 15, 19, 23, 27, 31...）</li>
+              <li>• <strong>餘 2</strong>：雙號靠走道（2, 6, 10, 14, 18, 22, 26, 30...）</li>
+              <li>• <strong>整除 (餘0)</strong>：雙號靠窗（4, 8, 12, 16, 20, 24, 28, 32...）</li>
+            </ul>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <h4 class="font-bold text-emerald-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-circle-question"></i> 為什麼算排數要「+1」？</h4>
+            <p class="text-xs md:text-sm text-emerald-950 leading-relaxed">
+              以 27 號為例：27 ÷ 4 = 6 ⋯ 3<br>
+              代表前面 6 排（共 24 個位置）已經全部坐滿，多出的 3 位乘客必須坐到<strong>下一排</strong>，所以坐在第 6 + 1 = 7 排！
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 1: 相連圖形數量規律 ==================== -->
+    <section id="tab-section-1" class="space-y-6 hidden">
+      <div class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 rounded-xl bg-purple-500 text-white flex items-center justify-center font-bold text-sm shadow">2-1</span>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">用棉花棒連續拼正方形</h2>
+        </div>
+        <p class="text-slate-600 text-sm md:text-base mb-4">
+          排 1 個正方形要 4 根棉花棒，排 2 個要 7 根，排 3 個要 10 根... 拖動滑桿觀察圖形是如何生長的？多多與皮皮分別是怎麼思考的？
+        </p>
+
+        <div class="bg-purple-50/70 p-4 rounded-xl border border-purple-100 mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <label class="font-bold text-slate-700 text-sm md:text-base">相連正方形數量：</label>
+            <input type="range" id="sq-range" min="1" max="12" value="4" class="w-44 md:w-64 accent-purple-600 cursor-pointer" oninput="renderConnectedSquares()">
+            <span id="sq-num-badge" class="px-3 py-1 bg-purple-600 text-white rounded-lg font-bold text-base shadow-sm">4</span>
+          </div>
+          <div class="text-xs md:text-sm text-purple-900 font-bold">
+            <i class="fa-solid fa-plus-circle text-purple-600"></i> 每增加 1 個正方形，就多 3 根棉花棒！
+          </div>
+        </div>
+
+        <!-- SVG 幾何繪圖區塊 -->
+        <div class="w-full bg-slate-900/95 rounded-2xl p-4 flex items-center justify-center overflow-x-auto shadow-inner min-h-[140px]">
+          <svg id="sq-svg" class="min-w-max h-28"></svg>
+        </div>
+
+        <!-- 兩種思考模型對比卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <div class="p-5 rounded-2xl bg-sky-50/80 border-2 border-sky-300">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-sky-900 flex items-center gap-2"><i class="fa-solid fa-child text-sky-600"></i> 多多的思維方式</h3>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-200 text-sky-800">基準量 + 遞增</span>
+            </div>
+            <p class="text-xs md:text-sm text-slate-600 mb-3">
+              第 1 個正方形需要完整的 <strong>4 根</strong>。後面每增加 1 個正方形，都只要再接上 <strong>3 根</strong>：
+            </p>
+            <div id="duo-calc" class="text-base font-bold text-sky-800 bg-white p-3 rounded-xl border border-sky-200 mb-2"></div>
+            <div class="text-xs text-sky-700 font-medium">一般化公式：4 + 3 × (正方形個數 - 1)</div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-rose-50/80 border-2 border-rose-300">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-rose-900 flex items-center gap-2"><i class="fa-solid fa-child-reaching text-rose-600"></i> 皮皮的思維方式</h3>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded bg-rose-200 text-rose-800">起始邊 + 匚字形</span>
+            </div>
+            <p class="text-xs md:text-sm text-slate-600 mb-3">
+              先把最左邊的 <strong>1 根</strong>固定當底。之後每 1 個正方形，都接上一個「匚」字型的 <strong>3 根</strong>：
+            </p>
+            <div id="pi-calc" class="text-base font-bold text-rose-800 bg-white p-3 rounded-xl border border-rose-200 mb-2"></div>
+            <div class="text-xs text-rose-700 font-medium">一般化公式：1 + 3 × 正方形個數</div>
+          </div>
+        </div>
+
+        <!-- 挑戰延伸 -->
+        <div class="mt-5 p-4 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-sm text-indigo-900 font-medium">
+            <i class="fa-solid fa-rocket text-indigo-600"></i> 課本挑戰：若排 <strong>20 個連續正方形</strong>，共需幾根棉花棒？
+          </div>
+          <div class="font-bold text-indigo-800 bg-white px-3 py-1.5 rounded-lg border border-indigo-200 text-sm md:text-base">
+            1 + 3 × 20 = 61 (根)
+          </div>
+        </div>
+
+        <!-- 正方形個數與棉花棒數量 對照統計表 (已縮小欄位並於6與20間加入動態格) -->
+        <div class="mt-4 overflow-x-auto rounded-xl border border-emerald-300 shadow-sm bg-white">
+          <table class="w-full text-center border-collapse text-xs md:text-sm">
+            <thead>
+              <tr class="bg-emerald-100/70 text-emerald-950 font-bold border-b border-emerald-300">
+                <th class="p-2 text-left pl-3 font-bold border-r border-emerald-300 whitespace-nowrap">正方形個數 (個)</th>
+                <th id="th-sq-1" class="p-2 border-r border-emerald-300 w-10">1</th>
+                <th id="th-sq-2" class="p-2 border-r border-emerald-300 w-10">2</th>
+                <th id="th-sq-3" class="p-2 border-r border-emerald-300 w-10">3</th>
+                <th id="th-sq-4" class="p-2 border-r border-emerald-300 w-10">4</th>
+                <th id="th-sq-5" class="p-2 border-r border-emerald-300 w-10">5</th>
+                <th id="th-sq-6" class="p-2 border-r border-emerald-300 w-10">6</th>
+                <th id="th-sq-dynamic" class="p-2 border-r border-emerald-300 w-12 font-bold text-slate-500">⋯</th>
+                <th class="p-2 bg-emerald-100/90 text-emerald-900 font-bold min-w-[70px]">20 (進階)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-slate-700 font-semibold">
+                <td class="p-2 text-left pl-3 font-bold text-slate-800 border-r border-emerald-200 whitespace-nowrap bg-emerald-50/30">棉花棒數量 (根)</td>
+                <td id="td-sq-1" class="p-2 border-r border-emerald-200">4</td>
+                <td id="td-sq-2" class="p-2 border-r border-emerald-200">7</td>
+                <td id="td-sq-3" class="p-2 border-r border-emerald-200">10</td>
+                <td id="td-sq-4" class="p-2 border-r border-emerald-200">13</td>
+                <td id="td-sq-5" class="p-2 border-r border-emerald-200">16</td>
+                <td id="td-sq-6" class="p-2 border-r border-emerald-200">19</td>
+                <td id="td-sq-dynamic" class="p-2 border-r border-emerald-200 text-slate-400">⋯</td>
+                <td class="p-2 font-bold text-emerald-700 bg-emerald-50/50">61</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 類題: 吸管排連續三角形 -->
+      <div class="glass-card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-3">
+          <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">2-2</span>
+          <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">類題實作：用吸管連續拼三角形</h2>
+        </div>
+        <p class="text-slate-600 text-sm md:text-base mb-4">
+          排 1 個三角形用 3 根，排 2 個用 5 根，排 3 個用 7 根... 拖動觀察每次增加幾根？
+        </p>
+
+        <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-100 mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <label class="font-bold text-slate-700 text-sm md:text-base">相連三角形數量：</label>
+            <input type="range" id="tri-range" min="1" max="14" value="5" class="w-44 md:w-64 accent-amber-600 cursor-pointer" oninput="renderConnectedTriangles()">
+            <span id="tri-num-badge" class="px-3 py-1 bg-amber-600 text-white rounded-lg font-bold text-base shadow-sm">5</span>
+          </div>
+          <div class="text-xs md:text-sm text-amber-950 font-bold">
+            <i class="fa-solid fa-plus-circle text-amber-600"></i> 每增加 1 個三角形，就多 2 根吸管！
+          </div>
+        </div>
+
+        <!-- SVG 幾何繪圖區塊 (正三角形、首個紅邊、後續綠邊、頂點黃圓) -->
+        <div class="w-full bg-slate-900/95 rounded-2xl p-4 flex items-center justify-center overflow-x-auto shadow-inner min-h-[140px]">
+          <svg id="tri-svg" class="min-w-max h-28"></svg>
+        </div>
+
+        <!-- 算式解析卡 -->
+        <div id="tri-calc-box" class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-slate-800 text-sm md:text-base shadow-sm"></div>
+
+        <!-- 三角形個數與吸管數量 對照統計表 (含 1~6、動態格、進階14與23) -->
+        <div class="mt-4 overflow-x-auto rounded-xl border border-amber-300 shadow-sm bg-white">
+          <table class="w-full text-center border-collapse text-xs md:text-sm">
+            <thead>
+              <tr class="bg-amber-100/70 text-amber-950 font-bold border-b border-amber-300">
+                <th class="p-2 text-left pl-3 font-bold border-r border-amber-300 whitespace-nowrap">三角形個數 (個)</th>
+                <th id="th-tri-1" class="p-2 border-r border-amber-300 w-10">1</th>
+                <th id="th-tri-2" class="p-2 border-r border-amber-300 w-10">2</th>
+                <th id="th-tri-3" class="p-2 border-r border-amber-300 w-10">3</th>
+                <th id="th-tri-4" class="p-2 border-r border-amber-300 w-10">4</th>
+                <th id="th-tri-5" class="p-2 border-r border-amber-300 w-10">5</th>
+                <th id="th-tri-6" class="p-2 border-r border-amber-300 w-10">6</th>
+                <th id="th-tri-dynamic" class="p-2 border-r border-amber-300 w-12 font-bold text-slate-500">⋯</th>
+                <th class="p-2 bg-amber-100/90 text-amber-900 font-bold min-w-[70px]">14 (進階)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-slate-700 font-semibold">
+                <td class="p-2 text-left pl-3 font-bold text-slate-800 border-r border-amber-200 whitespace-nowrap bg-amber-50/30">吸管數量 (根)</td>
+                <td id="td-tri-1" class="p-2 border-r border-amber-200">3</td>
+                <td id="td-tri-2" class="p-2 border-r border-amber-200">5</td>
+                <td id="td-tri-3" class="p-2 border-r border-amber-200">7</td>
+                <td id="td-tri-4" class="p-2 border-r border-amber-200">9</td>
+                <td id="td-tri-5" class="p-2 border-r border-amber-200">11</td>
+                <td id="td-tri-6" class="p-2 border-r border-amber-200">13</td>
+                <td id="td-tri-dynamic" class="p-2 border-r border-amber-200 text-slate-400">⋯</td>
+                <td class="p-2 font-bold text-amber-700 bg-amber-50/50">29</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 花片空心正方形 ==================== -->
+    <section id="tab-section-2" class="space-y-6 hidden">
+      <div class="glass-card p-6 md:p-8">
+        <!-- 標題與引導說明 -->
+        <div class="mb-5">
+          <div class="flex items-center gap-3 text-rose-900 font-black text-xl md:text-2xl">
+            <span class="w-8 h-8 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold text-sm shadow">3</span>
+            <span>花片排成「空心正方形」的邊框計數</span>
+          </div>
+          <p class="text-slate-600 text-sm md:text-base mt-1">
+            觀察 4 個頂點花片被重複計算的問題，探究不同的思考視角！
+          </p>
+        </div>
+
+        <!-- 左右兩欄格局 (圖1與圖2版型) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- 左側欄：控制項 + 花片網格圖形 (佔 5 格) -->
+          <div class="lg:col-span-5 space-y-4">
+            
+            <!-- 每邊花片數量控制卡片 -->
+            <div class="bg-rose-50/60 p-5 rounded-2xl border border-rose-100 shadow-sm">
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-extrabold text-slate-800 text-sm md:text-base">每邊花片數量 (邊長 n)：</span>
+                <span id="hollow-badge-text" class="text-2xl md:text-3xl font-black text-rose-600">4 個</span>
+              </div>
+              <input type="range" id="hollow-range" min="3" max="8" value="4" class="w-full accent-rose-500 cursor-pointer" oninput="renderHollowSquare()">
+              <div class="flex justify-between text-[11px] md:text-xs font-semibold text-slate-400 mt-1 px-1">
+                <span>每邊 3</span>
+                <span>每邊 4</span>
+                <span>每邊 5</span>
+                <span>每邊 6</span>
+                <span>每邊 8</span>
+              </div>
+            </div>
+
+            <!-- 花片排列動態畫布卡片 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center min-h-[300px]">
+              <div id="hollow-grid" class="grid gap-2 sm:gap-2.5 p-2 transition-all"></div>
+              
+              <!-- 圖例說明 -->
+              <div class="mt-6 flex items-center justify-center gap-5 text-xs font-bold text-slate-600">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full bg-rose-500 inline-block"></span>
+                  <span>實心花片</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border-2 border-dashed border-slate-300 bg-slate-50/50 inline-block"></span>
+                  <span>中空部分</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 右側欄：視角切換與算式解析 (佔 7 格) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="text-xs md:text-sm font-bold text-slate-600">
+              選擇觀察視角（點擊切換顏色分解）：
+            </div>
+
+            <!-- 視角一：美美做法卡片 (圖1) -->
+            <div id="card-meimei" onclick="setHollowPerspective('meimei')" class="p-5 rounded-2xl border-2 transition-all cursor-pointer border-rose-400 bg-rose-50/70 shadow-sm">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2 font-black text-rose-900 text-sm md:text-base">
+                  <i class="fa-solid fa-scissors text-rose-500"></i>
+                  美美的做法：扣除 4 個角重複算的花片
+                </div>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-200 text-rose-800">每邊 × 4 - 4</span>
+              </div>
+              <p class="text-xs md:text-sm text-slate-600 mb-2">
+                把四個邊都當成完整邊長相乘，但 4 個角各被算了 2 次，所以必須減去 4。
+              </p>
+              <div id="meimei-formula" class="font-extrabold text-rose-600 text-lg md:text-xl">
+                4 × 4 - 4 = 12 (個)
+              </div>
+            </div>
+
+            <!-- 視角二：丹丹做法卡片 (圖2) -->
+            <div id="card-dandan" onclick="setHollowPerspective('dandan')" class="p-5 rounded-2xl border-2 transition-all cursor-pointer border-slate-200 bg-white hover:border-blue-300">
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="flex items-center gap-2 font-black text-slate-800 text-sm md:text-base">
+                  <i class="fa-solid fa-puzzle-piece text-blue-500"></i>
+                  丹丹的做法：每邊先少算 1 個角
+                </div>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">(每邊 - 1) × 4</span>
+              </div>
+              <p class="text-xs md:text-sm text-slate-600 mb-2">
+                每條邊只取頭不取尾（或順時鐘旋轉分配），正好形成 4 組長度相等的區段！
+              </p>
+              <div id="dandan-formula" class="font-extrabold text-blue-600 text-lg md:text-xl">
+                (4 - 1) × 4 = 12 (個)
+              </div>
+            </div>
+
+            <!-- 課堂思考帽延伸卡片 -->
+            <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 text-slate-800 shadow-sm">
+              <div class="flex items-center gap-2 text-amber-900 font-extrabold text-sm md:text-base mb-1.5">
+                <i class="fa-solid fa-graduation-cap text-amber-600 text-base"></i>
+                課堂思考帽延伸：
+              </div>
+              <p class="text-xs md:text-sm text-slate-700 mb-2">
+                若多多用 <strong>72 個花片</strong> 圍成一個<strong>空心正三角形</strong>，這個正三角形每邊有幾個花片？
+              </p>
+              <div class="p-3 rounded-xl bg-amber-100/70 border border-amber-200/80 text-xs md:text-sm font-bold text-amber-950">
+                <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 逆向思考：(72 &divide; 3) + 1 = <span class="text-rose-600 text-base font-black">25</span> 個花片！
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 隨堂測驗 (5題，滿分100) ==================== -->
+    <section id="tab-section-3" class="space-y-6 hidden">
+      <div class="glass-card p-6 md:p-8">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">4</span>
+            <h2 class="text-xl md:text-2xl font-extrabold text-slate-800">隨堂測驗</h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="quiz-score-badge" class="hidden px-4 py-1.5 rounded-full bg-indigo-600 text-white font-black text-sm md:text-base shadow">
+              得分：0 / 100 分
+            </span>
+            <div class="text-xs md:text-sm font-bold text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-200">
+              共 5 題・滿分 100 分
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+
+          <!-- 題 1 -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm" id="quiz-block-1">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mt-0.5">1</span>
+              <div class="flex-1">
+                <p class="font-bold text-slate-800 text-sm md:text-base mb-3">
+                  運動會走廊懸掛彩色旗幟，依「紅旗、黃旗、藍旗、綠旗」4 種顏色依序規律循環。請問第 35 面旗幟是什麼顏色？
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                  <button onclick="selectQuizOption(1, 0)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">A. 紅旗</button>
+                  <button onclick="selectQuizOption(1, 1)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">B. 黃旗</button>
+                  <button onclick="selectQuizOption(1, 2)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">C. 藍旗</button>
+                  <button onclick="selectQuizOption(1, 3)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">D. 綠旗</button>
+                </div>
+                <div id="quiz-feedback-1" class="hidden p-3 rounded-xl text-xs md:text-sm font-medium"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題 2 -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm" id="quiz-block-2">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mt-0.5">2</span>
+              <div class="flex-1">
+                <p class="font-bold text-slate-800 text-sm md:text-base mb-3">
+                  火車座位一排有 4 個位置（單號靠窗餘1、單號靠走道餘3、雙號靠走道餘2、雙號靠窗整除）。小翰買到的車票是 <strong>19 號</strong>，他會坐在哪裡？
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                  <button onclick="selectQuizOption(2, 0)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">A. 第 4 排，靠走道</button>
+                  <button onclick="selectQuizOption(2, 1)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">B. 第 5 排，靠窗</button>
+                  <button onclick="selectQuizOption(2, 2)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">C. 第 5 排，靠走道</button>
+                  <button onclick="selectQuizOption(2, 3)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">D. 第 6 排，靠走道</button>
+                </div>
+                <div id="quiz-feedback-2" class="hidden p-3 rounded-xl text-xs md:text-sm font-medium"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題 3 -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm" id="quiz-block-3">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mt-0.5">3</span>
+              <div class="flex-1">
+                <p class="font-bold text-slate-800 text-sm md:text-base mb-3">
+                  用棉花棒連續相連拼出正方形，排 1 個用 4 根、排 2 個用 7 根。若要連續排 <strong>30 個</strong> 正方形，共需要幾根棉花棒？
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                  <button onclick="selectQuizOption(3, 0)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">A. 120 根</button>
+                  <button onclick="selectQuizOption(3, 1)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">B. 90 根</button>
+                  <button onclick="selectQuizOption(3, 2)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">C. 91 根</button>
+                  <button onclick="selectQuizOption(3, 3)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">D. 94 根</button>
+                </div>
+                <div id="quiz-feedback-3" class="hidden p-3 rounded-xl text-xs md:text-sm font-medium"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題 4 -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm" id="quiz-block-4">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mt-0.5">4</span>
+              <div class="flex-1">
+                <p class="font-bold text-slate-800 text-sm md:text-base mb-3">
+                  翰翰用吸管連續相連拼出三角形，每多排 1 個增加 2 根。若翰翰手中共有 <strong>47 根</strong> 吸管且全數用完，他排出了幾個連續三角形？
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                  <button onclick="selectQuizOption(4, 0)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">A. 22 個</button>
+                  <button onclick="selectQuizOption(4, 1)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">B. 23 個</button>
+                  <button onclick="selectQuizOption(4, 2)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">C. 24 個</button>
+                  <button onclick="selectQuizOption(4, 3)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">D. 25 個</button>
+                </div>
+                <div id="quiz-feedback-4" class="hidden p-3 rounded-xl text-xs md:text-sm font-medium"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題 5 -->
+          <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm" id="quiz-block-5">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center mt-0.5">5</span>
+              <div class="flex-1">
+                <p class="font-bold text-slate-800 text-sm md:text-base mb-3">
+                  健康操隊形排成一個每邊有 <strong>20 人</strong> 的中空正方形。請問圍成這個中空隊形總共需要多少位同學？
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                  <button onclick="selectQuizOption(5, 0)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">A. 80 人</button>
+                  <button onclick="selectQuizOption(5, 1)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">B. 76 人</button>
+                  <button onclick="selectQuizOption(5, 2)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">C. 72 人</button>
+                  <button onclick="selectQuizOption(5, 3)" class="quiz-opt p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-700 bg-slate-50">D. 84 人</button>
+                </div>
+                <div id="quiz-feedback-5" class="hidden p-3 rounded-xl text-xs md:text-sm font-medium"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 測驗操作按鈕列：提交答案(左) 與 重新測驗(右)，大小相同並排置中 -->
+        <div class="mt-8 flex items-center justify-center gap-4">
+          <button id="btn-submit-quiz" onclick="submitQuiz()" class="w-36 sm:w-44 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm md:text-base shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button id="btn-reset-quiz" onclick="resetQuiz()" class="w-36 sm:w-44 py-3 rounded-2xl bg-slate-600 hover:bg-slate-700 text-white font-bold text-sm md:text-base shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-rotate-right"></i> 重新測驗
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== JavaScript 動態互動核心 ==================== -->
+  <script>
+    // 1. 頁籤切換
+    function switchTab(index) {
+      for (let i = 0; i < 4; i++) {
+        const sec = document.getElementById(`tab-section-${i}`);
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (i === index) {
+          sec.classList.remove('hidden');
+          btn.classList.add('tab-active');
+        } else {
+          sec.classList.add('hidden');
+          btn.classList.remove('tab-active');
+        }
+      }
+    }
+
+    // 2. 主題一：掛飾週期計算與繪製
+    const cycleItems = [
+      { name: '太陽', icon: 'fa-sun', color: 'text-amber-500', bg: 'bg-amber-100', rem: 1 },
+      { name: '松樹', icon: 'fa-tree', color: 'text-emerald-600', bg: 'bg-emerald-100', rem: 2 },
+      { name: '海浪', icon: 'fa-water', color: 'text-cyan-600', bg: 'bg-cyan-100', rem: 0 }
+    ];
+
+    function updateCycleSimulation() {
+      const n = parseInt(document.getElementById('cycle-range').value);
+      document.getElementById('cycle-num-badge').innerText = n;
+      const ribbon = document.getElementById('cycle-ribbon');
+      ribbon.innerHTML = '';
+
+      // 產生前 n 個掛飾視覺
+      for (let i = 1; i <= n; i++) {
+        const itemIdx = (i - 1) % 3;
+        const item = cycleItems[itemIdx];
+        const isTarget = (i === n);
+
+        const el = document.createElement('div');
+        el.className = `flex flex-col items-center justify-center p-2 rounded-xl transition-all ${item.bg} ${
+          isTarget ? 'ring-4 ring-blue-500 scale-110 shadow-lg' : 'opacity-85'
+        }`;
+        el.style.minWidth = '46px';
+        el.innerHTML = `
+          <i class="fa-solid ${item.icon} ${item.color} text-lg"></i>
+          <span class="text-[10px] font-bold text-slate-700 mt-1">${i}</span>
+        `;
+        ribbon.appendChild(el);
+      }
+
+      // 滾動到最新位置
+      ribbon.parentElement.scrollLeft = ribbon.parentElement.scrollWidth;
+
+      // 計算算式
+      const quotient = Math.floor(n / 3);
+      const remainder = n % 3;
+      const targetItem = cycleItems[(n - 1) % 3];
+
+      let remainderDesc = '';
+      if (remainder === 1) remainderDesc = '餘數是 1，代表完整循環後的<strong>第 1 個圖案（太陽）</strong>。';
+      else if (remainder === 2) remainderDesc = '餘數是 2，代表完整循環後的<strong>第 2 個圖案（松樹）</strong>。';
+      else remainderDesc = '剛好整除（餘數是 0），代表剛好是每組的<strong>最後一個圖案（海浪）</strong>。';
+
+      document.getElementById('cycle-calc-box').innerHTML = `
+        <div class="font-bold text-blue-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-calculator"></i> 週期計算算式：
+        </div>
+        <div class="text-base font-bold text-slate-800">
+          ${n} &divide; 3 = <span class="text-blue-600">${quotient}</span> &hellip; <span class="text-rose-600">${remainder}</span>
+        </div>
+        <p class="mt-1 text-slate-700">
+          ${remainderDesc} 所以第 ${n} 個圖案是：<strong class="text-indigo-800 font-extrabold text-lg">${targetItem.name}</strong>！
+        </p>
+      `;
+    }
+
+    // 3. 主題一：火車座位計算與渲染
+    function setSeatNumber(val) {
+      document.getElementById('seat-range').value = val;
+      updateSeatSimulation();
+    }
+
+    function updateSeatSimulation() {
+      const seat = parseInt(document.getElementById('seat-range').value);
+      document.getElementById('seat-num-badge').innerText = seat;
+
+      // 計算排數與位置
+      const quotient = Math.floor(seat / 4);
+      const remainder = seat % 4;
+      const row = (remainder === 0) ? quotient : (quotient + 1);
+
+      let positionText = '';
+      let typeClass = '';
+      if (remainder === 1) { positionText = '單號靠窗'; typeClass = 'text-blue-600'; }
+      else if (remainder === 3) { positionText = '單號靠走道'; typeClass = 'text-indigo-600'; }
+      else if (remainder === 2) { positionText = '雙號靠走道'; typeClass = 'text-amber-600'; }
+      else { positionText = '雙號靠窗'; typeClass = 'text-emerald-600'; }
+
+      // 渲染 8 排座位表格
+      const container = document.getElementById('train-seats-grid');
+      container.innerHTML = '';
+
+      for (let r = 1; r <= 8; r++) {
+        // 單號靠窗、單號靠走道、雙號靠走道、雙號靠窗
+        const wOdd = (r - 1) * 4 + 1;
+        const aOdd = (r - 1) * 4 + 3;
+        const aEven = (r - 1) * 4 + 2;
+        const wEven = (r - 1) * 4 + 4;
+
+        const rowEl = document.createElement('div');
+        rowEl.className = 'grid grid-cols-5 gap-2 items-center text-center';
+
+        // 生成按鈕函式
+        const makeBtn = (num) => {
+          const isActive = (num === seat);
+          return `
+            <div onclick="setSeatNumber(${num})" class="seat-box mx-auto ${isActive ? 'seat-active' : 'seat-regular'}">
+              <span>${num}</span>
+              <span class="text-[9px] font-normal opacity-70">第${r}排</span>
+            </div>
+          `;
+        };
+
+        rowEl.innerHTML = `
+          ${makeBtn(wOdd)}
+          ${makeBtn(aOdd)}
+          <div class="text-xs text-slate-400 font-bold">第${r}排</div>
+          ${makeBtn(aEven)}
+          ${makeBtn(wEven)}
+        `;
+        container.appendChild(rowEl);
+      }
+
+      // 算式結論卡更新
+      document.getElementById('seat-calc-box').innerHTML = `
+        <div class="font-bold text-indigo-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-calculator"></i> 座位推算算式：
+        </div>
+        <div class="text-base font-bold text-slate-800">
+          ${seat} &divide; 4 = <span class="text-indigo-600">${quotient}</span> &hellip; <span class="text-rose-600">${remainder}</span>
+          ${remainder === 0 ? '' : ` &rarr; 第 ${quotient} + 1 = <span class="text-indigo-700">${row}</span> 排`}
+        </div>
+        <p class="mt-1 text-slate-700">
+          查詢號碼 <strong>${seat} 號</strong>：會坐在 <strong class="text-indigo-800 font-bold">第 ${row} 排</strong>，位置是 <strong class="${typeClass} font-bold">${positionText}</strong>。
+        </p>
+      `;
+    }
+
+    // 4. 主題二：棉花棒連續拼正方形 SVG (圖3配色：藍色首框、橙色延續線、黃色頂點圓點)
+    function renderConnectedSquares() {
+      const n = parseInt(document.getElementById('sq-range').value);
+      document.getElementById('sq-num-badge').innerText = n;
+
+      const svg = document.getElementById('sq-svg');
+      svg.innerHTML = '';
+
+      const sqSize = 56;
+      const startX = 24;
+      const startY = 24;
+      const strokeW = 5;
+
+      svg.setAttribute('width', Math.max(680, startX + n * sqSize + 50));
+
+      // 繪製正方形線條 (第1個藍色，後續每接1個為橙黃色)
+      for (let i = 0; i < n; i++) {
+        const x = startX + i * sqSize;
+        const y = startY;
+
+        if (i === 0) {
+          // 第 1 個正方形：完整四邊（藍色）
+          const color1 = '#2563eb';
+          svg.innerHTML += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y + sqSize}" stroke="${color1}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${x}" y1="${y}" x2="${x + sqSize}" y2="${y}" stroke="${color1}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${x}" y1="${y + sqSize}" x2="${x + sqSize}" y2="${y + sqSize}" stroke="${color1}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${x + sqSize}" y1="${y}" x2="${x + sqSize}" y2="${y + sqSize}" stroke="${color1}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+        } else {
+          // 後續正方形：接上匚字形3邊（橙色）
+          const colorN = '#f59e0b';
+          svg.innerHTML += `<line x1="${x}" y1="${y}" x2="${x + sqSize}" y2="${y}" stroke="${colorN}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${x}" y1="${y + sqSize}" x2="${x + sqSize}" y2="${y + sqSize}" stroke="${colorN}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${x + sqSize}" y1="${y}" x2="${x + sqSize}" y2="${y + sqSize}" stroke="${colorN}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+        }
+
+        // 正方形編號標籤
+        svg.innerHTML += `<text x="${x + sqSize / 2}" y="${y + sqSize / 2 + 5}" fill="#64748b" font-size="14" font-weight="bold" text-anchor="middle">${i + 1}</text>`;
+      }
+
+      // 繪製頂點圓點（黃色圓點，橙色外邊線）
+      for (let i = 0; i <= n; i++) {
+        const vx = startX + i * sqSize;
+        svg.innerHTML += `<circle cx="${vx}" cy="${startY}" r="5" fill="#fbc531" stroke="#f39c12" stroke-width="1.5" />`;
+        svg.innerHTML += `<circle cx="${vx}" cy="${startY + sqSize}" r="5" fill="#fbc531" stroke="#f39c12" stroke-width="1.5" />`;
+      }
+
+      // 算式更新
+      const duoCount = 4 + 3 * (n - 1);
+      const piCount = 1 + 3 * n;
+      document.getElementById('duo-calc').innerText = `4 + 3 × (${n} - 1) = ${duoCount} (根)`;
+      document.getElementById('pi-calc').innerText = `1 + 3 × ${n} = ${piCount} (根)`;
+
+      // 表格 1~6 欄位高亮判定
+      for (let k = 1; k <= 6; k++) {
+        const th = document.getElementById(`th-sq-${k}`);
+        const td = document.getElementById(`td-sq-${k}`);
+        if (th && td) {
+          if (k === n) {
+            th.classList.add('bg-amber-100', 'text-amber-900');
+            td.classList.add('bg-amber-100', 'text-amber-800', 'font-extrabold');
+          } else {
+            th.classList.remove('bg-amber-100', 'text-amber-900');
+            td.classList.remove('bg-amber-100', 'text-amber-800', 'font-extrabold');
+          }
+        }
+      }
+
+      // 動態欄位（大於6小於20時在6與20之間顯示個數與對應棉花棒數）
+      const dynTh = document.getElementById('th-sq-dynamic');
+      const dynTd = document.getElementById('td-sq-dynamic');
+      if (dynTh && dynTd) {
+        if (n > 6 && n < 20) {
+          dynTh.innerText = n;
+          dynTh.className = 'p-2 border-r border-emerald-300 w-12 font-bold bg-amber-100 text-amber-900';
+          dynTd.innerText = piCount;
+          dynTd.className = 'p-2 border-r border-emerald-200 font-extrabold bg-amber-100 text-amber-800';
+        } else {
+          dynTh.innerText = '⋯';
+          dynTh.className = 'p-2 border-r border-emerald-300 w-12 font-bold text-slate-500';
+          dynTd.innerText = '⋯';
+          dynTd.className = 'p-2 border-r border-emerald-200 text-slate-400';
+        }
+      }
+    }
+
+    // 5. 主題二：吸管連續拼正三角形 SVG (標準正三角形等邊：高 = 邊長 × √3 / 2，第1個全紅，後續綠色，頂點黃色圓點)
+    function renderConnectedTriangles() {
+      const n = parseInt(document.getElementById('tri-range').value);
+      document.getElementById('tri-num-badge').innerText = n;
+
+      const svg = document.getElementById('tri-svg');
+      svg.innerHTML = '';
+      
+      const side = 60;                          // 正三角形邊長 L = 60
+      const half = side / 2;                    // 半寬 30
+      const triHeight = side * (Math.sqrt(3) / 2); // 標準正三角形高度約 51.96
+      const startX = 35;
+      const topY = 22;                          // 頂部 Y 座標
+      const botY = topY + triHeight;            // 底部 Y 座標 (約 73.96)
+      const firstColor = '#ef4444';             // 第 1 個三角形邊長全為紅色
+      const addColor = '#22c55e';               // 後續增加的邊長為綠色
+      const strokeW = 4.5;
+
+      svg.setAttribute('width', Math.max(700, startX + n * half + 60));
+
+      // 1. 繪製吸管線段
+      for (let i = 0; i < n; i++) {
+        const leftX = startX + i * half;
+        const rightX = leftX + side;
+        const midX = leftX + half;
+        const isUp = (i % 2 === 0); // 奇數個正立、偶數個倒立
+
+        if (i === 0) {
+          // 第 1 個正三角形：底邊、左斜邊、右斜邊均為紅色
+          svg.innerHTML += `<line x1="${leftX}" y1="${botY}" x2="${rightX}" y2="${botY}" stroke="${firstColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${leftX}" y1="${botY}" x2="${midX}" y2="${topY}" stroke="${firstColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${midX}" y1="${topY}" x2="${rightX}" y2="${botY}" stroke="${firstColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<text x="${midX}" y="${botY - 14}" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">${i + 1}</text>`;
+        } else if (isUp) {
+          // 後續的正立三角形：新增底邊與右斜邊（綠色，左斜邊已由前一個倒立三角形畫過）
+          svg.innerHTML += `<line x1="${leftX}" y1="${botY}" x2="${rightX}" y2="${botY}" stroke="${addColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${midX}" y1="${topY}" x2="${rightX}" y2="${botY}" stroke="${addColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<text x="${midX}" y="${botY - 14}" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">${i + 1}</text>`;
+        } else {
+          // 倒立三角形：新增頂邊與右斜邊（綠色，左斜邊已由前一個正立三角形畫過）
+          svg.innerHTML += `<line x1="${leftX}" y1="${topY}" x2="${rightX}" y2="${topY}" stroke="${addColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<line x1="${rightX}" y1="${topY}" x2="${midX}" y2="${botY}" stroke="${addColor}" stroke-width="${strokeW}" stroke-linecap="round" />`;
+          svg.innerHTML += `<text x="${midX}" y="${topY + 28}" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle">${i + 1}</text>`;
+        }
+      }
+
+      // 2. 繪製所有交會頂點處的黃色小圓點
+      const vertexSet = new Set();
+      const addVertex = (x, y) => {
+        const key = `${Math.round(x)},${Math.round(y)}`;
+        if (!vertexSet.has(key)) {
+          vertexSet.add(key);
+          svg.innerHTML += `<circle cx="${x}" cy="${y}" r="5.5" fill="#fbc531" stroke="#f39c12" stroke-width="1.5" />`;
+        }
+      };
+
+      for (let i = 0; i < n; i++) {
+        const leftX = startX + i * half;
+        const rightX = leftX + side;
+        const midX = leftX + half;
+        const isUp = (i % 2 === 0);
+
+        if (isUp) {
+          addVertex(leftX, botY);
+          addVertex(midX, topY);
+          addVertex(rightX, botY);
+        } else {
+          addVertex(leftX, topY);
+          addVertex(rightX, topY);
+          addVertex(midX, botY);
+        }
+      }
+
+      // 總根數計算
+      const total = 1 + 2 * n;
+      document.getElementById('tri-calc-box').innerHTML = `
+        <div class="font-bold text-amber-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-calculator"></i> 連續正三角形吸管總數計算：
+        </div>
+        <div class="text-base font-bold text-slate-800">
+          <span class="text-rose-600">3 (首個正三角形)</span> + 2 × (${n} - 1) = <strong class="text-amber-700">${total}</strong> 根 （或 1 + 2 × ${n} = <strong class="text-amber-700">${total}</strong> 根）
+        </div>
+      `;
+
+      // 表格 1~6 欄位高亮判定
+      for (let k = 1; k <= 6; k++) {
+        const th = document.getElementById(`th-tri-${k}`);
+        const td = document.getElementById(`td-tri-${k}`);
+        if (th && td) {
+          if (k === n) {
+            th.classList.add('bg-amber-100', 'text-amber-900');
+            td.classList.add('bg-amber-100', 'text-amber-800', 'font-extrabold');
+          } else {
+            th.classList.remove('bg-amber-100', 'text-amber-900');
+            td.classList.remove('bg-amber-100', 'text-amber-800', 'font-extrabold');
+          }
+        }
+      }
+
+      // 三角形動態欄位（大於6且小於14時顯示）
+      const dynTh = document.getElementById('th-tri-dynamic');
+      const dynTd = document.getElementById('td-tri-dynamic');
+      if (dynTh && dynTd) {
+        if (n > 6 && n < 14) {
+          dynTh.innerText = n;
+          dynTh.className = 'p-2 border-r border-amber-300 w-12 font-bold bg-amber-100 text-amber-900';
+          dynTd.innerText = total;
+          dynTd.className = 'p-2 border-r border-amber-200 font-extrabold bg-amber-100 text-amber-800';
+        } else {
+          dynTh.innerText = '⋯';
+          dynTh.className = 'p-2 border-r border-amber-300 w-12 font-bold text-slate-500';
+          dynTd.innerText = '⋯';
+          dynTd.className = 'p-2 border-r border-amber-200 text-slate-400';
+        }
+      }
+    }
+
+    // 6. 主題三：花片排成「空心正方形」互動渲染 (支援美美法與丹丹法兩種顏色視角切換)
+    let currentHollowPerspective = 'meimei'; // 'meimei' or 'dandan'
+
+    function setHollowPerspective(mode) {
+      currentHollowPerspective = mode;
+      const cardMeimei = document.getElementById('card-meimei');
+      const cardDandan = document.getElementById('card-dandan');
+
+      if (mode === 'meimei') {
+        cardMeimei.className = 'p-5 rounded-2xl border-2 transition-all cursor-pointer border-rose-400 bg-rose-50/70 shadow-sm';
+        cardDandan.className = 'p-5 rounded-2xl border-2 transition-all cursor-pointer border-slate-200 bg-white hover:border-blue-300';
+      } else {
+        cardMeimei.className = 'p-5 rounded-2xl border-2 transition-all cursor-pointer border-slate-200 bg-white hover:border-rose-300';
+        cardDandan.className = 'p-5 rounded-2xl border-2 transition-all cursor-pointer border-blue-400 bg-blue-50/70 shadow-sm';
+      }
+      renderHollowSquare();
+    }
+
+    function renderHollowSquare() {
+      const n = parseInt(document.getElementById('hollow-range').value);
+      document.getElementById('hollow-badge-text').innerText = `${n} 個`;
+
+      const total = n * 4 - 4;
+      document.getElementById('meimei-formula').innerText = `${n} × 4 - 4 = ${total} (個)`;
+      document.getElementById('dandan-formula').innerText = `(${n} - 1) × 4 = ${total} (個)`;
+
+      const grid = document.getElementById('hollow-grid');
+      grid.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+      grid.innerHTML = '';
+
+      const dotSize = n <= 5 ? 'w-9 h-9 sm:w-10 sm:h-10' : (n <= 6 ? 'w-8 h-8' : 'w-6 h-6 sm:w-7 sm:h-7');
+
+      for (let r = 0; r < n; r++) {
+        for (let c = 0; c < n; c++) {
+          const isTop = (r === 0);
+          const isBottom = (r === n - 1);
+          const isLeft = (c === 0);
+          const isRight = (c === n - 1);
+          const isBorder = isTop || isBottom || isLeft || isRight;
+
+          const dot = document.createElement('div');
+          if (!isBorder) {
+            // 中空部分：淡灰色虛線空心圓
+            dot.className = `${dotSize} rounded-full border-2 border-dashed border-slate-300 bg-slate-50/40`;
+          } else if (currentHollowPerspective === 'meimei') {
+            // 美美視角：四個頂點為黃底金星，其餘邊框為桃紅色圓片
+            const isCorner = (isTop || isBottom) && (isLeft || isRight);
+            if (isCorner) {
+              dot.className = `${dotSize} rounded-full bg-amber-300 border-2 border-rose-400 flex items-center justify-center text-amber-800 text-xs shadow-sm`;
+              dot.innerHTML = '<i class="fa-solid fa-star"></i>';
+            } else {
+              dot.className = `${dotSize} rounded-full bg-rose-500 shadow-sm`;
+            }
+          } else {
+            // 丹丹視角：四組不重疊「取頭不取尾」順時鐘分色
+            let groupColor = '';
+            if (isTop && !isRight) groupColor = 'bg-indigo-500';
+            else if (isRight && !isBottom) groupColor = 'bg-emerald-500';
+            else if (isBottom && !isLeft) groupColor = 'bg-amber-500';
+            else groupColor = 'bg-rose-500';
+
+            dot.className = `${dotSize} rounded-full ${groupColor} shadow-sm transition-colors`;
+          }
+          grid.appendChild(dot);
+        }
+      }
+    }
+
+    // 7. 隨堂測驗答案選擇、批量送出與重設邏輯 (滿分 100 分，每題 20 分)
+    const userAnswers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+    const correctAnswers = { 1: 2, 2: 2, 3: 2, 4: 1, 5: 1 };
+    let isQuizSubmitted = false;
+
+    const quizFeedback = {
+      1: {
+        correct: '答對了！🎉 35 ÷ 4 = 8 ⋯ 3。每 4 個一循環，餘數 3 代表該組的第 3 個顏色，也就是「藍旗」。',
+        wrong: '答錯囉！💡 提示：4 種顏色一組循環，35 ÷ 4 = 8 ⋯ 3，餘數 3 代表該組的第 3 個顏色（藍旗）。'
+      },
+      2: {
+        correct: '太棒了！🎉 19 ÷ 4 = 4 ⋯ 3。坐滿 4 排後多出 3 個座位，所以坐在第 4 + 1 = 5 排；除以 4 餘 3 是單號靠走道！',
+        wrong: '答錯囉！💡 提示：一排有 4 個位置，19 ÷ 4 = 4 ⋯ 3。有餘數代表要往下一排坐（4 + 1 = 5 排），餘 3 則是靠走道的單號位置。'
+      },
+      3: {
+        correct: '完全正確！🎉 使用皮皮公式：1 + 3 × 30 = 91 根（或多多公式：4 + 3 × 29 = 91 根）。',
+        wrong: '答錯囉！💡 提示：第 1 個需要 4 根，之後每多 1 個只要加 3 根。所以排 30 個只需要加 29 次：4 + 3 × 29 = 91 根。'
+      },
+      4: {
+        correct: '恭喜答對！🎉 三角形吸管數為 1 + 2 × n = 47。逆向回推：(47 - 1) ÷ 2 = 46 ÷ 2 = 23 個。',
+        wrong: '答錯囉！💡 提示：先扣掉開頭固定基準的 1 根吸管：47 - 1 = 46，接著每組增加 2 根：46 ÷ 2 = 23 個。'
+      },
+      5: {
+        correct: '優秀！答對了！🎉 每邊 20 人，四個角都有人重複計算：20 × 4 - 4 = 76 人（或 (20 - 1) × 4 = 76 人）。',
+        wrong: '答錯囉！💡 提示：如果直接 20 × 4 = 80，四個角落的同學就被重複計算了兩次！記得扣掉重複的 4 個角：80 - 4 = 76 人。'
+      }
+    };
+
+    function selectQuizOption(qNum, optIdx) {
+      if (isQuizSubmitted) return; // 已送出後鎖定作答
+      userAnswers[qNum] = optIdx;
+
+      const block = document.getElementById(`quiz-block-${qNum}`);
+      const buttons = block.querySelectorAll('.quiz-opt');
+      buttons.forEach((btn, idx) => {
+        if (idx === optIdx) {
+          btn.classList.add('quiz-opt-selected');
+        } else {
+          btn.classList.remove('quiz-opt-selected');
+        }
+      });
+    }
+
+    function submitQuiz() {
+      isQuizSubmitted = true;
+      let score = 0;
+
+      for (let qNum = 1; qNum <= 5; qNum++) {
+        const block = document.getElementById(`quiz-block-${qNum}`);
+        const buttons = block.querySelectorAll('.quiz-opt');
+        const fb = document.getElementById(`quiz-feedback-${qNum}`);
+        const chosen = userAnswers[qNum];
+        const correctIdx = correctAnswers[qNum];
+
+        buttons.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.remove('quiz-opt-selected');
+        });
+
+        if (chosen === null) {
+          // 空白未作答：僅顯示黃色系 "未作答。"，不顯示其他說明與正解
+          fb.className = 'mt-3 p-3 rounded-xl text-xs md:text-sm font-bold bg-amber-50 text-amber-800 border border-amber-300';
+          fb.innerText = '未作答。';
+        } else if (chosen === correctIdx) {
+          score += 20;
+          buttons[chosen].classList.remove('bg-slate-50', 'text-slate-700');
+          buttons[chosen].classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+          fb.className = 'mt-3 p-3 rounded-xl text-xs md:text-sm font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200';
+          fb.innerHTML = quizFeedback[qNum].correct;
+        } else {
+          buttons[chosen].classList.remove('bg-slate-50', 'text-slate-700');
+          buttons[chosen].classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+          fb.className = 'mt-3 p-3 rounded-xl text-xs md:text-sm font-semibold bg-rose-50 text-rose-800 border border-rose-200';
+          fb.innerHTML = quizFeedback[qNum].wrong;
+        }
+        fb.classList.remove('hidden');
+      }
+
+      const scoreBadge = document.getElementById('quiz-score-badge');
+      scoreBadge.innerText = `得分：${score} / 100 分`;
+      scoreBadge.classList.remove('hidden');
+    }
+
+    function resetQuiz() {
+      isQuizSubmitted = false;
+      for (let qNum = 1; qNum <= 5; qNum++) {
+        userAnswers[qNum] = null;
+        const block = document.getElementById(`quiz-block-${qNum}`);
+        const buttons = block.querySelectorAll('.quiz-opt');
+        const fb = document.getElementById(`quiz-feedback-${qNum}`);
+
+        buttons.forEach(btn => {
+          btn.disabled = false;
+          btn.classList.remove(
+            'quiz-opt-selected',
+            'bg-emerald-500', 'text-white', 'border-emerald-600',
+            'bg-rose-500', 'border-rose-600'
+          );
+          btn.classList.add('bg-slate-50', 'text-slate-700');
+        });
+
+        fb.classList.add('hidden');
+        fb.innerHTML = '';
+      }
+
+      const scoreBadge = document.getElementById('quiz-score-badge');
+      scoreBadge.classList.add('hidden');
+      scoreBadge.innerText = '得分：0 / 100 分';
+    }
+
+    // 頁面初始化
+    window.onload = function() {
+      updateCycleSimulation();
+      updateSeatSimulation();
+      renderConnectedSquares();
+      renderConnectedTriangles();
+      renderHollowSquare();
+    };
+  </script>
+</body>
+</html>

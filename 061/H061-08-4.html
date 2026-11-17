@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學 8-4 和差問題互動探究館</title>
+  <!-- Google Fonts: 思源黑體 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 圖標庫 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* 新海誠風格色彩：清透晴空藍、晨曦金橙與夕照微光 */
+    body {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 35%, #60a5fa 65%, #fb923c 90%, #f97316 100%);
+      min-height: 100vh;
+      font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      color: #1f2937;
+    }
+
+    /* 確保非圖示元素皆套用思源黑體，同時保留 FontAwesome 圖示字體正常顯示 */
+    body *:not(.fa):not(.fas):not(.far):not(.fal):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands) {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    /* 玻璃擬態光透質感卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22);
+    }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    /* 國小數學課本標準直式分數格式（分子在上、分母在下，垂直置中） */
+    .math-fraction {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 4px;
+      font-family: inherit;
+      line-height: 1;
+    }
+    .math-fraction .integer-part {
+      font-size: 1.1em;
+      margin-right: 3px;
+      font-weight: bold;
+    }
+    .math-fraction .fraction-body {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .math-fraction .numerator {
+      font-size: 0.88em;
+      padding: 0 3px 1px 3px;
+      line-height: 1.1;
+      font-weight: bold;
+    }
+    .math-fraction .fraction-line {
+      width: 100%;
+      height: 1.8px;
+      background-color: currentColor;
+      margin: 1px 0;
+    }
+    .math-fraction .denominator {
+      font-size: 0.88em;
+      padding: 1px 3px 0 3px;
+      line-height: 1.1;
+      font-weight: bold;
+    }
+
+    /* 客製化滑桿 */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      background: #cbd5e1;
+      height: 7px;
+      border-radius: 9999px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #2563eb;
+      cursor: pointer;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #1d4ed8;
+    }
+
+    /* 平滑寬度過渡效果 */
+    .bar-transition {
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 flex flex-col items-center">
+
+  <!-- 頂部頁頭區 -->
+  <header class="w-full max-w-5xl mb-6 text-center text-white drop-shadow-md">
+    <div class="inline-flex items-center gap-2 bg-blue-900/40 px-4 py-1.5 rounded-full text-blue-100 text-sm mb-2 backdrop-blur-sm border border-white/20">
+      <i class="fa-solid fa-graduation-cap"></i> 國小六上數學 8-4 互動學習網頁
+    </div>
+    <h1 class="text-3xl md:text-4xl font-black tracking-wide text-white drop-shadow-lg">
+      和差問題．數量關係動態探究館
+    </h1>
+    <p class="text-blue-100 mt-2 text-sm md:text-base font-light">
+      透過互動滑桿、幾何動態與線段移補，親手探索「和不變」、「差不變」與「以多補少」！
+    </p>
+  </header>
+
+  <!-- 導航標籤列 (Tabs) -->
+  <nav class="w-full max-w-5xl glass-nav rounded-2xl p-2 mb-6 shadow-lg flex flex-wrap gap-2 justify-center">
+    <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition duration-200 flex items-center gap-2 bg-blue-600 text-white shadow-md">
+      <i class="fa-solid fa-scale-balanced"></i> 1. 和不變與差不變
+    </button>
+    <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition duration-200 flex items-center gap-2 bg-white text-gray-700 hover:bg-blue-50">
+      <i class="fa-solid fa-chart-simple"></i> 2. 和差線段圖互動解題器
+    </button>
+    <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition duration-200 flex items-center gap-2 bg-white text-gray-700 hover:bg-blue-50">
+      <i class="fa-solid fa-arrows-split-up-and-left"></i> 3. 以多補少與平均移補
+    </button>
+    <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition duration-200 flex items-center gap-2 bg-white text-gray-700 hover:bg-blue-50">
+      <i class="fa-solid fa-circle-question"></i> 4. 隨堂測驗
+    </button>
+  </nav>
+
+  <!-- 主內容容器 -->
+  <main class="w-full max-w-5xl">
+
+    <!-- ==================== 分頁 1：和不變與差不變 ==================== -->
+    <section id="tab-content-1" class="tab-pane space-y-6">
+      <!-- 探究一：直角三角形雙銳角和不變 -->
+      <div class="glass-card rounded-2xl p-6">
+        <div class="border-b border-gray-200 pb-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-xl font-bold text-blue-900 flex items-center gap-2">
+            <i class="fa-solid fa-draw-polygon text-blue-600"></i> 【探究一】直角三角形兩個銳角（和不變）
+          </h2>
+          <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-bold">兩銳角總和固定為 90°</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-4">
+          滑動滑桿改變 <strong class="text-blue-600">∠A</strong> 的度數，觀察三角形形狀變化及 <strong class="text-rose-600">∠C</strong> 如何即時動態互補。
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <!-- 幾何三角形畫布 (精準三角函數計算，靠左佈局) -->
+          <div class="bg-sky-50/80 rounded-2xl p-4 flex flex-col items-center justify-center border border-sky-100">
+            <svg id="triangle-svg" viewBox="0 0 330 220" class="w-full max-w-sm h-52">
+              <!-- 直角符號 -->
+              <path id="right-angle-marker" d="M 35 175 L 45 175 L 45 185 L 35 185 Z" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+              <!-- 直角三角形 -->
+              <polygon id="triangle-poly" points="35,40 35,185 240,185" fill="rgba(59, 130, 246, 0.25)" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+              <!-- 頂點標籤 -->
+              <text id="label-A" x="30" y="30" font-weight="bold" fill="#1d4ed8" font-size="16">A</text>
+              <text x="15" y="204" font-weight="bold" fill="#475569" font-size="14">B (90°)</text>
+              <text id="label-C" x="245" y="190" font-weight="bold" fill="#dc2626" font-size="16">C</text>
+              <!-- 角度文字標籤 -->
+              <text id="text-angle-A" x="48" y="55" fill="#1d4ed8" font-weight="bold" font-size="14">∠A = 30°</text>
+              <text id="text-angle-C" x="165" y="177" fill="#dc2626" font-weight="bold" font-size="14">∠C = 60°</text>
+            </svg>
+          </div>
+
+          <!-- 控制與計算面板 -->
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label for="slider-angle-A" class="font-bold text-gray-700">調整 ∠A 角度：</label>
+                <span id="val-angle-A" class="text-xl font-black text-blue-600">30°</span>
+              </div>
+              <input type="range" id="slider-angle-A" min="10" max="80" value="30" oninput="updateAngleSum(this.value)">
+              <div class="flex justify-between text-xs text-gray-400 mt-1">
+                <span>10°</span>
+                <span>45°</span>
+                <span>80°</span>
+              </div>
+            </div>
+
+            <!-- 計算狀態卡 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-2">
+              <div class="text-sm font-semibold text-gray-700 flex items-center justify-between">
+                <span>∠C 的度數：</span>
+                <span id="val-angle-C" class="text-xl font-black text-rose-600">60°</span>
+              </div>
+              <div class="p-2.5 bg-blue-50 rounded-lg text-sm text-blue-900 font-mono">
+                和不變式：<span class="text-blue-600 font-bold">∠A</span> + <span class="text-rose-600 font-bold">∠C</span> = 90°
+              </div>
+              <div class="p-2.5 bg-amber-50 rounded-lg text-sm text-amber-900 font-mono">
+                動態求值：90° - <span class="text-blue-600 font-bold" id="formula-A">30°</span> = <span class="text-rose-600 font-bold" id="formula-C">60°</span>
+              </div>
+            </div>
+
+            <div class="text-xs bg-amber-50 p-3 rounded-lg text-amber-900 border border-amber-200">
+              <i class="fa-solid fa-lightbulb text-amber-600 mr-1"></i> <strong>教學觀察：</strong> ∠A 愈大，∠C 就愈小；因為兩個角的「和」始終固定為 90 度！
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 探究二：年齡差不變 (完整符合圖 1 樣式) -->
+      <div class="glass-card rounded-2xl p-6">
+        <div class="border-b border-gray-200 pb-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-xl font-bold text-blue-900 flex items-center gap-2">
+            <i class="fa-solid fa-users text-blue-600"></i> 【探究二】年齡差的奧祕（差不變）
+          </h2>
+          <span class="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full font-bold">兩量之差永遠固定</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-4">
+          爸爸 29 歲時，小翰 1 歲。每過一年，兩人都會增加 1 歲，觀察年齡差距的規律：
+        </p>
+
+        <!-- 滑桿控制列 -->
+        <div class="bg-sky-50/60 p-4 rounded-2xl border border-sky-100 mb-6 flex flex-col sm:flex-row items-center gap-4">
+          <div class="flex items-center gap-2 font-bold text-gray-700 whitespace-nowrap text-sm md:text-base">
+            <i class="fa-solid fa-users text-blue-900"></i> 調整經過年數：
+          </div>
+          <div class="flex-1 w-full">
+            <input type="range" id="slider-years" min="0" max="40" value="0" step="1" oninput="updateYearsPassed(this.value)">
+          </div>
+          <div class="bg-blue-100 text-blue-800 font-bold px-4 py-1.5 rounded-full text-sm border border-blue-200 shadow-sm min-w-[70px] text-center" id="display-passed-years">
+            +0 年
+          </div>
+        </div>
+
+        <!-- 關係對照表格 -->
+        <div class="overflow-hidden rounded-xl border border-blue-200 bg-white shadow-sm mb-6">
+          <table class="w-full text-center border-collapse">
+            <thead>
+              <tr class="bg-blue-50/80 text-blue-900 text-xs md:text-sm border-b border-blue-200">
+                <th class="py-3 px-4 font-bold w-1/5 border-r border-blue-100">人物</th>
+                <th class="py-3 px-4 font-bold w-1/5 border-r border-blue-100">目前年齡</th>
+                <th class="py-3 px-4 font-bold w-2/5 border-r border-blue-100">年齡差 (爸爸 - 小翰)</th>
+                <th class="py-3 px-4 font-bold w-1/5">關係式</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm md:text-base divide-y divide-blue-50">
+              <!-- 爸爸 -->
+              <tr>
+                <td class="py-4 px-3 font-semibold text-gray-700 border-r border-blue-100 flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-user text-blue-700"></i> 爸爸
+                </td>
+                <td class="py-4 px-3 font-black text-blue-700 text-lg border-r border-blue-100" id="table-dad-age">
+                  29 歲
+                </td>
+                <td rowspan="2" class="py-4 px-4 font-black text-rose-500 text-lg md:text-xl border-r border-blue-100 bg-white/40">
+                  <span id="table-calc-dad">29</span> - <span id="table-calc-kid">1</span> = 28 歲 (固定)
+                </td>
+                <td rowspan="2" class="py-4 px-4 font-medium text-gray-700 text-xs md:text-sm bg-white/40">
+                  爸爸年齡 - 小翰年齡 = 28
+                </td>
+              </tr>
+              <!-- 小翰 -->
+              <tr>
+                <td class="py-4 px-3 font-semibold text-gray-700 border-r border-blue-100 flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-child text-amber-500"></i> 小翰
+                </td>
+                <td class="py-4 px-3 font-black text-amber-500 text-lg border-r border-blue-100" id="table-kid-age">
+                  1 歲
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 思考推論說明卡 -->
+        <div class="border-l-4 border-blue-600 bg-sky-50/70 p-4 rounded-r-xl text-gray-700 text-xs md:text-sm leading-relaxed flex items-start gap-2.5">
+          <i class="fa-solid fa-circle-info text-sky-500 text-base mt-0.5"></i>
+          <div>
+            <strong>思考推論：</strong> 當小翰 20 歲時，爸爸幾歲？利用「差不變」規律：20 + 28 = 48 歲！無論經過多少年，相差的 28 歲永遠固定不變。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 分頁 2：和差線段圖互動解題器 (完全比照圖 2~7) ==================== -->
+    <section id="tab-content-2" class="tab-pane hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6 shadow-xl border border-white/60">
+        <!-- 頂部標題與題型切換 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-gray-200">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-teal-500 flex items-center justify-center text-white shadow-sm font-bold text-lg">
+              <i class="fa-solid fa-shapes"></i>
+            </div>
+            <h2 class="text-xl md:text-2xl font-black text-gray-800 tracking-wide">
+              和差線段圖互動解題器
+            </h2>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs md:text-sm">
+            <span class="text-gray-500 font-medium">切換題型：</span>
+            <button onclick="setScenarioPreset('cake')" id="preset-btn-cake" class="px-3 py-1.5 rounded-lg bg-teal-100 text-teal-800 font-bold transition shadow-sm">
+              蛋糕與果汁
+            </button>
+            <button onclick="setScenarioPreset('hotpot')" id="preset-btn-hotpot" class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition">
+              火鍋套餐升級
+            </button>
+            <button onclick="setScenarioPreset('rect')" id="preset-btn-rect" class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition">
+              繩子圍長方形
+            </button>
+          </div>
+        </div>
+
+        <!-- 雙輸入卡片 (藍/粉) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <!-- 兩量之和 (藍色卡片) -->
+          <div class="bg-blue-50/60 border border-blue-200 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-bold text-gray-700">兩量之和 (大數 + 小數)：</span>
+              <input type="number" id="num-sum" value="240" min="20" max="1000" step="2" oninput="onSumChange(this.value)" class="w-20 text-center font-bold text-blue-600 bg-white border border-blue-300 rounded-lg py-1 px-2 text-base focus:ring-2 focus:ring-blue-400 outline-none">
+            </div>
+            <input type="range" id="range-sum" min="20" max="1000" step="2" value="240" oninput="onSumChange(this.value)">
+          </div>
+
+          <!-- 兩量之差 (粉色卡片) -->
+          <div class="bg-rose-50/60 border border-rose-200 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-bold text-gray-700">兩量之差 (大數 - 小數)：</span>
+              <input type="number" id="num-diff" value="100" min="0" max="500" step="2" oninput="onDiffChange(this.value)" class="w-20 text-center font-bold text-rose-500 bg-white border border-rose-300 rounded-lg py-1 px-2 text-base focus:ring-2 focus:ring-rose-400 outline-none">
+            </div>
+            <input type="range" id="range-diff" min="0" max="500" step="2" value="100" oninput="onDiffChange(this.value)">
+          </div>
+        </div>
+
+        <!-- 策略切換按鈕區 (中置膠囊按鈕) -->
+        <div class="flex justify-center mt-6">
+          <div class="bg-gray-100/90 p-1.5 rounded-2xl inline-flex gap-2 border border-gray-200">
+            <button onclick="switchStrategy(1)" id="btn-strat-1" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-rose-600 shadow-sm border border-gray-200">
+              <i class="fa-solid fa-scissors text-rose-500"></i> 策略一：扣除多的差額（先求小數）
+            </button>
+            <button onclick="switchStrategy(2)" id="btn-strat-2" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 text-gray-600 hover:text-emerald-700">
+              <i class="fa-solid fa-puzzle-piece text-emerald-500"></i> 策略二：補齊少的差額（先求大數）
+            </button>
+          </div>
+        </div>
+
+        <!-- 動態幾何線段圖畫布 -->
+        <div class="mt-6 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm relative overflow-hidden">
+          <div class="flex justify-between items-center text-xs text-gray-500 mb-6">
+            <span class="flex items-center gap-1 font-semibold text-blue-700">
+              <i class="fa-solid fa-chart-line"></i> 動態幾何線段圖（長度按數值等比例縮放）：
+            </span>
+            <span>總和標註於右側</span>
+          </div>
+
+          <div class="max-w-2xl mx-auto flex items-center">
+            <!-- 線段展示主體 -->
+            <div class="flex-1 space-y-6 pr-4">
+              <!-- 大數線段 -->
+              <div class="flex items-center">
+                <span class="w-24 text-xs sm:text-sm font-bold text-gray-700 flex-shrink-0 text-right pr-3">
+                  較大量 (大數)
+                </span>
+                <div class="flex-1 flex items-center">
+                  <!-- 藍色基準量 (小數) -->
+                  <div id="vis-large-base" class="bg-blue-500 text-white font-bold text-xs sm:text-sm h-8 rounded-l-lg flex items-center justify-center bar-transition shadow-sm">
+                    70
+                  </div>
+                  <!-- 紅色虛線分隔線 (僅策略一) -->
+                  <div id="vis-cut-line" class="h-10 border-r-2 border-dashed border-rose-500 -my-1 z-10"></div>
+                  <!-- 差額區塊 (策略一為粉紅，策略二為綠色) -->
+                  <div id="vis-large-diff" class="bg-rose-500 text-white font-bold text-xs sm:text-sm h-8 rounded-r-lg flex items-center justify-center bar-transition shadow-sm">
+                    多 100
+                  </div>
+                </div>
+              </div>
+
+              <!-- 小數線段 -->
+              <div class="flex items-center">
+                <span class="w-24 text-xs sm:text-sm font-bold text-gray-700 flex-shrink-0 text-right pr-3">
+                  較小量 (小數)
+                </span>
+                <div class="flex-1 flex items-center">
+                  <!-- 小數基準條 -->
+                  <div id="vis-small-base" class="bg-blue-500 text-white font-bold text-xs sm:text-sm h-8 rounded-lg flex items-center justify-center bar-transition shadow-sm">
+                    70
+                  </div>
+                  <!-- 策略二之補齊虛線框 -->
+                  <div id="vis-small-ghost" class="hidden border-2 border-dashed border-emerald-500 text-emerald-600 font-bold text-xs sm:text-sm h-8 rounded-r-lg items-center justify-center bar-transition bg-emerald-50/40 ml-0.5">
+                    +補 100
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右側花括號與總和 -->
+            <div class="w-28 flex-shrink-0 flex items-center gap-1.5">
+              <!-- SVG 圓弧大括號 } -->
+              <svg viewBox="0 0 24 80" class="w-6 h-20 text-sky-600 stroke-current fill-none stroke-[2] stroke-linecap-round stroke-linejoin-round">
+                <path d="M 4,4 Q 14,4 14,24 Q 14,40 22,40 Q 14,40 14,56 Q 14,76 4,76" />
+              </svg>
+              <span class="font-black text-sky-600 text-base sm:text-lg whitespace-nowrap">
+                共 <span id="label-bracket-sum">240</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 下方解題步驟面板 (隨策略切換樣式) -->
+        <div id="strategy-panel" class="mt-6 rounded-2xl p-5 border shadow-sm transition-colors duration-300 bg-rose-50/40 border-rose-200">
+          <!-- 策略標題 -->
+          <div class="flex items-center gap-2 mb-4">
+            <span id="badge-strat-name" class="bg-rose-500 text-white text-xs font-black px-2.5 py-1 rounded-md">
+              策略一
+            </span>
+            <span id="title-strat-desc" class="text-sm font-bold text-gray-800">
+              扣除差額法：先把「多出來的差」剪掉，化為 2 份一樣長的小數
+            </span>
+          </div>
+
+          <!-- 3步驟白色資訊卡 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <!-- 步驟 1 -->
+            <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+              <div id="step1-title" class="text-xs font-bold text-rose-500 mb-1.5">
+                步驟 1：扣掉多出的差
+              </div>
+              <div id="step1-formula" class="text-sm font-black text-gray-800 mb-1">
+                240 - 100 = <span class="text-rose-500">140</span>
+              </div>
+              <div id="step1-note" class="text-xs text-gray-400">
+                此時剩下 2 個完整的小數長度
+              </div>
+            </div>
+
+            <!-- 步驟 2 -->
+            <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+              <div id="step2-title" class="text-xs font-bold text-blue-600 mb-1.5">
+                步驟 2：除以 2 求出小數
+              </div>
+              <div id="step2-formula" class="text-sm font-black text-gray-800 mb-1">
+                140 ÷ 2 = <span class="text-blue-600">70</span>
+              </div>
+              <div id="step2-note" class="text-xs text-gray-400">
+                獲得較小量 (小數) = 70
+              </div>
+            </div>
+
+            <!-- 步驟 3 -->
+            <div class="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+              <div id="step3-title" class="text-xs font-bold text-emerald-600 mb-1.5">
+                步驟 3：加回差求出大數
+              </div>
+              <div id="step3-formula" class="text-sm font-black text-gray-800 mb-1">
+                70 + 100 = <span class="text-emerald-600">170</span>
+              </div>
+              <div id="step3-note" class="text-xs text-gray-400">
+                獲得較大量 (大數) = 170
+              </div>
+            </div>
+          </div>
+
+          <!-- 驗算檢查欄 -->
+          <div class="flex items-center gap-2 text-xs text-gray-700 font-medium">
+            <i class="fa-solid fa-check text-emerald-500"></i>
+            <span>驗算檢查：兩量相加 <span id="check-sum">170 + 70 = 240</span>；兩量相減 <span id="check-diff">170 - 70 = 100</span>，完全符合題意！</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 分頁 3：以多補少與平均移補 ==================== -->
+    <section id="tab-content-3" class="tab-pane hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="border-b border-gray-200 pb-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-xl font-bold text-indigo-900 flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white flex items-center justify-center text-base shadow-sm">
+              <i class="fa-solid fa-candy-cane"></i>
+            </span>
+            探索一：糖果平分實驗（移動差的
+            <span class="math-fraction text-base text-indigo-700">
+              <span class="fraction-body">
+                <span class="numerator">1</span>
+                <span class="fraction-line"></span>
+                <span class="denominator">2</span>
+              </span>
+            </span>
+            達平分）
+          </h2>
+          <span class="bg-indigo-100 text-indigo-800 text-xs px-3 py-1 rounded-full font-bold">移動差量的一半即相等</span>
+        </div>
+
+        <p class="text-gray-600 text-sm mb-4">
+          哥哥有 12 顆糖果、弟弟有 8 顆糖果。哥哥要給弟弟幾顆，兩人的糖果才會一樣多？
+        </p>
+
+        <!-- 糖果視覺動態展示 -->
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-orange-200">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- 哥哥糖果 -->
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-gray-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-user text-blue-600"></i> 哥哥的糖果
+                </span>
+                <span id="display-bro-candies" class="font-black text-blue-600 text-lg">12 顆</span>
+              </div>
+              <div id="bro-candies-container" class="flex flex-wrap gap-2 p-3 bg-white rounded-xl min-h-[64px] border border-blue-200 shadow-inner">
+              </div>
+            </div>
+
+            <!-- 弟弟糖果 -->
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-gray-700 flex items-center gap-1.5">
+                  <i class="fa-solid fa-user text-emerald-600"></i> 弟弟的糖果
+                </span>
+                <span id="display-sis-candies" class="font-black text-emerald-600 text-lg">8 顆</span>
+              </div>
+              <div id="sis-candies-container" class="flex flex-wrap gap-2 p-3 bg-white rounded-xl min-h-[64px] border border-emerald-200 shadow-inner">
+              </div>
+            </div>
+          </div>
+
+          <!-- 移補滑桿控制 -->
+          <div class="mt-6 pt-4 border-t border-orange-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <span class="text-sm font-bold text-gray-700">動態移動糖果（哥哥給弟弟）：</span>
+              <span id="move-count-text" class="text-sm font-bold text-indigo-700">已給出 0 顆</span>
+            </div>
+            <input type="range" id="slider-candy-transfer" min="0" max="4" value="0" step="1" oninput="onCandyTransfer(this.value)">
+            <div class="flex justify-between text-xs text-gray-400 mt-1">
+              <span>0 顆 (未移動)</span>
+              <span class="text-indigo-600 font-bold">2 顆 (平分最佳點)</span>
+              <span>4 顆 (全給差量)</span>
+            </div>
+          </div>
+
+          <!-- 狀態回饋 -->
+          <div id="candy-status-box" class="mt-4 p-4 rounded-xl bg-white border border-gray-200 text-sm flex items-center justify-between">
+            <div>
+              <span class="text-gray-500">當前狀態：</span>
+              <span id="candy-status-desc" class="font-bold text-gray-800">哥哥比弟弟多 4 顆</span>
+            </div>
+            <div id="candy-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+              尚未平分
+            </div>
+          </div>
+        </div>
+
+        <!-- 歸納重點 -->
+        <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-200 text-sm space-y-2">
+          <h3 class="font-bold text-indigo-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-lightbulb text-indigo-600"></i> 教學核心歸納：
+          </h3>
+          <p class="text-indigo-950 leading-relaxed">
+            1. 兩人原本相差：12 - 8 = 4（顆）。<br>
+            2. 若把相差的 4 顆全給弟弟，弟弟會變成 12 顆，哥哥剩 8 顆，位置反而對調了！<br>
+            3. 因此只需移動相差量的
+            <span class="math-fraction">
+              <span class="fraction-body">
+                <span class="numerator">1</span>
+                <span class="fraction-line"></span>
+                <span class="denominator">2</span>
+              </span>
+            </span>
+            ：<span class="font-mono font-bold text-indigo-700">(12 - 8) ÷ 2 = 2</span> 顆，兩人就都剛好是 10 顆。
+          </p>
+        </div>
+      </div>
+
+      <!-- ==================== 圖 1：天平平衡實驗 (習作綠豆移補問題) ==================== -->
+      <div class="glass-card rounded-2xl p-6">
+        <div class="border-b border-gray-200 pb-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-xl font-bold text-amber-900 flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-base shadow-sm">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </span>
+            探索二：天平平衡實驗（習作綠豆移補問題）
+          </h2>
+          <span class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold border border-amber-200">差的一半</span>
+        </div>
+
+        <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+          情境：天平左托盤有 <strong class="text-blue-600">480 公克</strong> 的綠豆，右邊放了較少的綠豆。只要將左盤的綠豆拿出 <strong class="text-rose-600">50 公克</strong> 放到右盤，天平就達到平衡！試問右盤原來有幾公克？
+        </p>
+
+        <!-- 天平互動畫布 -->
+        <div class="bg-sky-50/50 rounded-2xl p-6 border border-sky-100 flex flex-col items-center">
+          <svg id="balance-svg" viewBox="0 0 500 240" class="w-full max-w-lg h-56">
+            <!-- 底座與立柱 -->
+            <path d="M 225 210 L 275 210 L 260 120 L 240 120 Z" fill="#334155" />
+            <rect x="200" y="210" width="100" height="12" rx="6" fill="#1e293b" />
+            <circle cx="250" cy="115" r="9" fill="#f59e0b" stroke="#ffffff" stroke-width="2.5" />
+
+            <!-- 天平橫樑群組 (隨傾角動態旋轉) -->
+            <g id="scale-beam" transform="rotate(-9, 250, 115)" class="transition-transform duration-200 ease-out">
+              <!-- 橫樑主體 -->
+              <rect x="70" y="111" width="360" height="8" rx="4" fill="#0284c7" />
+              <circle cx="250" cy="115" r="4" fill="#ffffff" />
+              <circle cx="90" cy="115" r="4" fill="#0369a1" />
+              <circle cx="410" cy="115" r="4" fill="#0369a1" />
+
+              <!-- 左吊盤 (維持鉛直) -->
+              <g id="scale-left-pan" transform="translate(90, 115)">
+                <g id="scale-left-counter" transform="rotate(9)">
+                  <line x1="0" y1="0" x2="-25" y2="45" stroke="#94a3b8" stroke-width="2" />
+                  <line x1="0" y1="0" x2="25" y2="45" stroke="#94a3b8" stroke-width="2" />
+                  <ellipse cx="0" cy="46" rx="36" ry="8" fill="#cbd5e1" stroke="#64748b" stroke-width="2" />
+                  <!-- 左重量包 -->
+                  <path d="M -18 43 Q 0 20 18 43 Z" fill="#3b82f6" />
+                  <rect x="-24" y="38" width="48" height="16" rx="8" fill="#2563eb" />
+                  <text id="scale-left-text" x="0" y="50" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">480g</text>
+                </g>
+              </g>
+
+              <!-- 右吊盤 (維持鉛直) -->
+              <g id="scale-right-pan" transform="translate(410, 115)">
+                <g id="scale-right-counter" transform="rotate(9)">
+                  <line x1="0" y1="0" x2="-25" y2="45" stroke="#94a3b8" stroke-width="2" />
+                  <line x1="0" y1="0" x2="25" y2="45" stroke="#94a3b8" stroke-width="2" />
+                  <ellipse cx="0" cy="46" rx="36" ry="8" fill="#cbd5e1" stroke="#64748b" stroke-width="2" />
+                  <!-- 右重量包 -->
+                  <path d="M -16 43 Q 0 25 16 43 Z" fill="#10b981" />
+                  <rect x="-22" y="38" width="44" height="16" rx="8" fill="#059669" />
+                  <text id="scale-right-text" x="0" y="50" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">380g</text>
+                </g>
+              </g>
+            </g>
+          </svg>
+
+          <!-- 滑桿控制框 -->
+          <div class="w-full max-w-md bg-white rounded-2xl p-4 shadow-sm border border-gray-200 mt-2">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-bold text-gray-700">從左盤移到右盤的克數：</span>
+              <span id="scale-trans-badge" class="bg-rose-50 border border-rose-200 text-rose-600 font-bold px-3 py-1 rounded-xl text-sm">
+                0 公克
+              </span>
+            </div>
+            <input type="range" id="slider-scale-transfer" min="0" max="50" value="0" step="1" oninput="updateBalanceScale(this.value)">
+            <div class="flex justify-between text-xs mt-1">
+              <span class="text-gray-400">0g (未移動，左重右輕)</span>
+              <span id="scale-status-tip" class="text-emerald-600 font-bold">50g (正好平衡！)</span>
+            </div>
+          </div>
+
+          <!-- 說明卡 -->
+          <div class="w-full max-w-xl bg-amber-50/80 border border-amber-200 rounded-2xl p-4 mt-6 text-xs sm:text-sm text-amber-950 space-y-3">
+            <div class="font-bold flex items-center gap-1.5 text-amber-900">
+              <i class="fa-solid fa-lightbulb text-amber-500 text-base"></i> 為什麼「移動 50 公克」，兩邊原本相差的不是 50 公克？
+            </div>
+            <p class="leading-relaxed">
+              左邊少 50g、同時右邊多 50g，兩邊的差距一下子縮小了：<span class="font-bold text-rose-600 font-mono">50 × 2 = 100</span> 公克！
+            </p>
+            <div class="bg-white/80 p-3 rounded-xl border border-amber-200 font-mono text-gray-800 space-y-1">
+              <div>平衡時兩邊都是：480 - 50 = 430 公克</div>
+              <div>右盤原來有：430 - 50 = <span class="font-bold text-blue-700">380 公克</span></div>
+              <div class="text-gray-500 text-xs">（或者直接算：480 - (50 × 2) = <span class="font-bold text-blue-700">380 公克</span>）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== 圖 3 標題 + 圖 2 內容：倒水平分瓶子容量 ==================== -->
+      <div class="glass-card rounded-2xl p-6">
+        <!-- 圖 3 標題列 -->
+        <div class="border-b border-gray-200 pb-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="text-xl font-bold text-cyan-900 flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-cyan-500 text-white flex items-center justify-center text-base shadow-sm">
+              <i class="fa-solid fa-bottle-water"></i>
+            </span>
+            探索三：倒水平分瓶子容量（差的一半移補）
+          </h2>
+          <span class="bg-cyan-100 text-cyan-800 text-xs px-3 py-1 rounded-full font-bold border border-cyan-200">課本第 132 頁</span>
+        </div>
+
+        <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+          紅瓶水 800 毫升、綠瓶水 600 毫升，到底要倒多少水才能一樣多？為什麼「不是倒兩者相差的全部，而是相差的一半」？
+        </p>
+
+        <!-- 圖 2 上半部：雙滑桿輸入 + 核心思考原理 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <!-- 左側：容量滑桿控制 -->
+          <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 space-y-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-gray-700">紅瓶裝水量：</span>
+                <span id="disp-water-red" class="font-black text-amber-600 text-base">800 mL</span>
+              </div>
+              <input type="range" id="slider-water-red" min="400" max="1000" step="20" value="800" oninput="onWaterInputChange()">
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-gray-700">綠瓶裝水量：</span>
+                <span id="disp-water-green" class="font-black text-amber-600 text-base">600 mL</span>
+              </div>
+              <input type="range" id="slider-water-green" min="200" max="800" step="20" value="600" oninput="onWaterInputChange()">
+            </div>
+
+            <button onclick="toggleWaterSimulation()" id="btn-water-sim" class="w-full py-2.5 px-4 bg-white hover:bg-sky-50 text-blue-700 border-2 border-blue-400 font-bold rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-arrows-rotate"></i> 執行「移多補少」模擬平分
+            </button>
+          </div>
+
+          <!-- 右側：核心思考原理說明卡 -->
+          <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm text-xs sm:text-sm text-gray-700 space-y-3">
+            <div class="font-bold text-gray-900 flex items-center gap-1.5">
+              <i class="fa-solid fa-pen-ruler text-amber-500"></i> 核心思考原理：
+            </div>
+
+            <div>
+              <div class="font-bold text-gray-800 mb-1">方法一：先求出相差多少，再將差量平分 (推薦)</div>
+              <div class="pl-2 space-y-0.5 font-mono text-xs text-gray-600">
+                <div>1. 紅瓶比綠瓶多：<span id="text-calc-diff">800 - 600 = 200</span> mL (兩瓶相差)</div>
+                <div>2. 只要將多的部分平分一半給綠瓶：<span id="text-calc-half">200 ÷ 2 = 100</span> mL</div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100">
+              <div class="font-bold text-gray-800 mb-1">方法二：求出總和平均值，再看紅瓶要減少多少</div>
+              <div class="pl-2 space-y-0.5 font-mono text-xs text-gray-600">
+                <div>1. 平分後的理想水容量：<span id="text-calc-avg">(800 + 600) ÷ 2 = 700</span> mL</div>
+                <div>2. 紅瓶要倒出：<span id="text-calc-out">800 - 700 = 100</span> mL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 圖 2 中間：雙瓶動態水位展示與需倒出相差的 1/2 標註 -->
+        <div class="mt-6 bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+          <div class="flex flex-col md:flex-row items-center justify-around gap-6">
+            <!-- 紅瓶子 -->
+            <div class="flex flex-col items-center">
+              <div class="text-sm font-bold text-rose-600 flex items-center gap-1 mb-2">
+                <i class="fa-solid fa-wine-bottle"></i> 紅瓶子
+              </div>
+              <div class="w-28 h-48 border-2 border-gray-300 border-t-0 rounded-b-2xl bg-gray-50/50 relative flex items-end overflow-hidden p-1">
+                <div id="bottle-red-liquid" class="w-full bg-gradient-to-t from-rose-500 to-rose-400 rounded-b-xl flex items-center justify-center text-white font-bold text-xs bar-transition" style="height: 80%;">
+                  <span id="bottle-red-inner">800 mL</span>
+                </div>
+              </div>
+              <span id="bottle-red-label" class="mt-2 text-xs sm:text-sm font-bold text-gray-700">紅瓶：800 mL</span>
+            </div>
+
+            <!-- 中間箭頭與需倒出差的 1/2 虛線框 -->
+            <div class="flex flex-col items-center gap-3">
+              <div class="border-2 border-dashed border-amber-500 bg-amber-50/60 text-amber-800 font-bold px-4 py-2.5 rounded-2xl text-xs sm:text-sm flex items-center gap-1 shadow-sm">
+                <span>需倒出相差的</span>
+                <span class="math-fraction text-base">
+                  <span class="fraction-body">
+                    <span class="numerator">1</span>
+                    <span class="fraction-line"></span>
+                    <span class="denominator">2</span>
+                  </span>
+                </span>
+                <span>：</span>
+                <span id="water-transfer-needed" class="text-rose-600 font-black">100 mL</span>
+              </div>
+              <i class="fa-solid fa-arrow-right text-blue-500 text-2xl hidden md:block"></i>
+              <i class="fa-solid fa-arrow-down text-blue-500 text-2xl md:hidden"></i>
+            </div>
+
+            <!-- 綠瓶子 -->
+            <div class="flex flex-col items-center">
+              <div class="text-sm font-bold text-emerald-600 flex items-center gap-1 mb-2">
+                <i class="fa-solid fa-wine-bottle"></i> 綠瓶子
+              </div>
+              <div class="w-28 h-48 border-2 border-gray-300 border-t-0 rounded-b-2xl bg-gray-50/50 relative flex items-end overflow-hidden p-1">
+                <div id="bottle-green-liquid" class="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-b-xl flex items-center justify-center text-white font-bold text-xs bar-transition" style="height: 60%;">
+                  <span id="bottle-green-inner">600 mL</span>
+                </div>
+              </div>
+              <span id="bottle-green-label" class="mt-2 text-xs sm:text-sm font-bold text-gray-700">綠瓶：600 mL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 圖 2 底部：易錯提醒條 -->
+        <div class="mt-6 border-l-4 border-teal-500 bg-teal-50/60 p-4 rounded-r-xl text-teal-950 text-xs sm:text-sm leading-relaxed flex items-start gap-2.5">
+          <i class="fa-solid fa-circle-exclamation text-amber-600 text-base mt-0.5"></i>
+          <div>
+            <strong>易錯提醒：</strong> 如果把相差的量全部倒過去，原本多的就會反而變成少的！因此必須把相差的量「平分成 2 份」，將其中的
+            <span class="math-fraction text-base">
+              <span class="fraction-body">
+                <span class="numerator">1</span>
+                <span class="fraction-line"></span>
+                <span class="denominator">2</span>
+              </span>
+            </span>
+            移過去，兩邊才能真正達到均等！
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== 分頁 4：實戰評量挑戰 (5題) ==================== -->
+    <section id="tab-content-4" class="tab-pane hidden space-y-6">
+      <div class="glass-card rounded-2xl p-6">
+        <div class="border-b border-gray-200 pb-3 mb-6 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-blue-900 flex items-center gap-2">
+            <i class="fa-solid fa-spell-check text-blue-600"></i> 【實戰自我檢測】和差問題實力檢測 (共 5 題)
+          </h2>
+          <span id="quiz-score-badge" class="bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold">
+            得分：0 / 100
+          </span>
+        </div>
+
+        <!-- 題目動態容器 -->
+        <div id="quiz-container" class="space-y-6"></div>
+
+        <!-- 送出按鈕 -->
+        <div class="mt-8 text-center">
+          <button onclick="checkQuizAnswers()" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 transform hover:-translate-y-0.5 transition duration-150">
+            <i class="fa-solid fa-check-double mr-1.5"></i> 送出並看詳細解題步驟
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ==================== 標籤切換 ==================== */
+    function switchTab(tabIndex) {
+      document.querySelectorAll('.tab-pane').forEach((pane, idx) => {
+        if (idx + 1 === tabIndex) {
+          pane.classList.remove('hidden');
+        } else {
+          pane.classList.add('hidden');
+        }
+      });
+
+      document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        if (idx + 1 === tabIndex) {
+          btn.className = "tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition duration-200 flex items-center gap-2 bg-blue-600 text-white shadow-md";
+        } else {
+          btn.className = "tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition duration-200 flex items-center gap-2 bg-white text-gray-700 hover:bg-blue-50";
+        }
+      });
+
+      if (tabIndex === 2) {
+        updateSolverView();
+      }
+    }
+
+    /* ==================== 探究一：直角三角形和不變 ==================== */
+    function updateAngleSum(degA) {
+      const angleA = parseInt(degA);
+      const angleC = 90 - angleA;
+
+      document.getElementById('val-angle-A').textContent = angleA + '°';
+      document.getElementById('val-angle-C').textContent = angleC + '°';
+      document.getElementById('formula-A').textContent = angleA + '°';
+      document.getElementById('formula-C').textContent = angleC + '°';
+
+      const bX = 35;
+      const bY = 185;
+
+      const radA = (angleA * Math.PI) / 180;
+      const L = 175;
+      const hAB = L * Math.cos(radA);
+      const wBC = L * Math.sin(radA);
+
+      const aX = bX;
+      const aY = bY - hAB;
+      const cX = bX + wBC;
+      const cY = bY;
+
+      const poly = document.getElementById('triangle-poly');
+      poly.setAttribute('points', `${aX},${aY} ${bX},${bY} ${cX},${cY}`);
+
+      const sq = 10;
+      const rightAnglePath = document.getElementById('right-angle-marker');
+      if (rightAnglePath) {
+        rightAnglePath.setAttribute('d', `M ${bX} ${bY - sq} L ${bX + sq} ${bY - sq} L ${bX + sq} ${bY} L ${bX} ${bY} Z`);
+      }
+
+      const labelA = document.getElementById('label-A');
+      labelA.setAttribute('x', aX - 8);
+      labelA.setAttribute('y', Math.max(16, aY - 6));
+
+      const labelC = document.getElementById('label-C');
+      labelC.setAttribute('x', cX + 8);
+      labelC.setAttribute('y', cY + 5);
+
+      const textA = document.getElementById('text-angle-A');
+      textA.textContent = `∠A = ${angleA}°`;
+      textA.setAttribute('x', aX + 12);
+      textA.setAttribute('y', Math.max(35, aY + 18));
+
+      const textC = document.getElementById('text-angle-C');
+      textC.textContent = `∠C = ${angleC}°`;
+      textC.setAttribute('x', Math.max(bX + 55, cX - 68));
+      textC.setAttribute('y', cY - 8);
+    }
+
+    /* ==================== 探究二：年齡差不變 ==================== */
+    function updateYearsPassed(years) {
+      const y = parseInt(years);
+      const dad = 29 + y;
+      const kid = 1 + y;
+
+      document.getElementById('display-passed-years').textContent = `+${y} 年`;
+      document.getElementById('table-dad-age').textContent = `${dad} 歲`;
+      document.getElementById('table-kid-age').textContent = `${kid} 歲`;
+      document.getElementById('table-calc-dad').textContent = dad;
+      document.getElementById('table-calc-kid').textContent = kid;
+    }
+
+    /* ==================== 分頁 2：和差線段圖互動解題器 (圖 2~7 完整邏輯) ==================== */
+    let curSum = 240;
+    let curDiff = 100;
+    let curStrategy = 1; // 1: 扣除差額法 (先求小數), 2: 補齊差額法 (先求大數)
+
+    function setScenarioPreset(type) {
+      const btnCake = document.getElementById('preset-btn-cake');
+      const btnHotpot = document.getElementById('preset-btn-hotpot');
+      const btnRect = document.getElementById('preset-btn-rect');
+
+      [btnCake, btnHotpot, btnRect].forEach(b => {
+        b.className = "px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold transition";
+      });
+
+      if (type === 'cake') {
+        curSum = 240;
+        curDiff = 100;
+        btnCake.className = "px-3 py-1.5 rounded-lg bg-teal-100 text-teal-800 font-bold transition shadow-sm";
+      } else if (type === 'hotpot') {
+        curSum = 500;
+        curDiff = 80;
+        btnHotpot.className = "px-3 py-1.5 rounded-lg bg-teal-100 text-teal-800 font-bold transition shadow-sm";
+      } else if (type === 'rect') {
+        curSum = 100;
+        curDiff = 10;
+        btnRect.className = "px-3 py-1.5 rounded-lg bg-teal-100 text-teal-800 font-bold transition shadow-sm";
+      }
+
+      document.getElementById('num-sum').value = curSum;
+      document.getElementById('range-sum').value = curSum;
+      document.getElementById('num-diff').value = curDiff;
+      document.getElementById('range-diff').value = curDiff;
+
+      updateSolverView();
+    }
+
+    function onSumChange(val) {
+      curSum = parseInt(val) || 0;
+      if (curDiff > curSum) curDiff = curSum;
+      document.getElementById('num-sum').value = curSum;
+      document.getElementById('range-sum').value = curSum;
+      document.getElementById('num-diff').value = curDiff;
+      document.getElementById('range-diff').value = curDiff;
+      updateSolverView();
+    }
+
+    function onDiffChange(val) {
+      curDiff = parseInt(val) || 0;
+      if (curDiff > curSum) curDiff = curSum;
+      document.getElementById('num-diff').value = curDiff;
+      document.getElementById('range-diff').value = curDiff;
+      updateSolverView();
+    }
+
+    function switchStrategy(stratNum) {
+      curStrategy = stratNum;
+      const btn1 = document.getElementById('btn-strat-1');
+      const btn2 = document.getElementById('btn-strat-2');
+
+      if (stratNum === 1) {
+        btn1.className = "px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-rose-600 shadow-sm border border-gray-200";
+        btn2.className = "px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 text-gray-600 hover:text-emerald-700";
+      } else {
+        btn2.className = "px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-emerald-700 shadow-sm border border-gray-200";
+        btn1.className = "px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2 text-gray-600 hover:text-rose-600";
+      }
+
+      updateSolverView();
+    }
+
+    function updateSolverView() {
+      const smallVal = (curSum - curDiff) / 2;
+      const largeVal = smallVal + curDiff;
+
+      document.getElementById('label-bracket-sum').textContent = curSum;
+
+      const fullRef = largeVal;
+      let basePct = fullRef > 0 ? (smallVal / fullRef) * 100 : 50;
+      let diffPct = fullRef > 0 ? (curDiff / fullRef) * 100 : 50;
+
+      basePct = Math.max(18, Math.min(82, basePct));
+      diffPct = 100 - basePct;
+
+      const largeBase = document.getElementById('vis-large-base');
+      const cutLine = document.getElementById('vis-cut-line');
+      const largeDiff = document.getElementById('vis-large-diff');
+      const smallBase = document.getElementById('vis-small-base');
+      const smallGhost = document.getElementById('vis-small-ghost');
+
+      largeBase.style.width = basePct + '%';
+      largeBase.textContent = smallVal;
+
+      smallBase.style.width = basePct + '%';
+      smallBase.textContent = smallVal;
+
+      largeDiff.style.width = diffPct + '%';
+
+      if (curStrategy === 1) {
+        // 策略一：扣除差額法
+        cutLine.classList.remove('hidden');
+        largeDiff.className = "bg-rose-500 text-white font-bold text-xs sm:text-sm h-8 rounded-r-lg flex items-center justify-center bar-transition shadow-sm";
+        largeDiff.textContent = `多 ${curDiff}`;
+        smallGhost.classList.add('hidden');
+        smallGhost.classList.remove('flex');
+        smallBase.className = "bg-blue-500 text-white font-bold text-xs sm:text-sm h-8 rounded-lg flex items-center justify-center bar-transition shadow-sm";
+
+        const panel = document.getElementById('strategy-panel');
+        panel.className = "mt-6 rounded-2xl p-5 border shadow-sm transition-colors duration-300 bg-rose-50/40 border-rose-200";
+        document.getElementById('badge-strat-name').className = "bg-rose-500 text-white text-xs font-black px-2.5 py-1 rounded-md";
+        document.getElementById('badge-strat-name').textContent = "策略一";
+        document.getElementById('title-strat-desc').textContent = "扣除差額法：先把「多出來的差」剪掉，化為 2 份一樣長的小數";
+
+        document.getElementById('step1-title').className = "text-xs font-bold text-rose-500 mb-1.5";
+        document.getElementById('step1-title').textContent = "步驟 1：扣掉多出的差";
+        document.getElementById('step1-formula').innerHTML = `${curSum} - ${curDiff} = <span class="text-rose-500">${curSum - curDiff}</span>`;
+        document.getElementById('step1-note').textContent = "此時剩下 2 個完整的小數長度";
+
+        document.getElementById('step2-title').className = "text-xs font-bold text-blue-600 mb-1.5";
+        document.getElementById('step2-title').textContent = "步驟 2：除以 2 求出小數";
+        document.getElementById('step2-formula').innerHTML = `${curSum - curDiff} ÷ 2 = <span class="text-blue-600">${smallVal}</span>`;
+        document.getElementById('step2-note').textContent = `獲得較小量 (小數) = ${smallVal}`;
+
+        document.getElementById('step3-title').className = "text-xs font-bold text-emerald-600 mb-1.5";
+        document.getElementById('step3-title').textContent = "步驟 3：加回差求出大數";
+        document.getElementById('step3-formula').innerHTML = `${smallVal} + ${curDiff} = <span class="text-emerald-600">${largeVal}</span>`;
+        document.getElementById('step3-note').textContent = `獲得較大量 (大數) = ${largeVal}`;
+
+      } else {
+        // 策略二：補齊差額法
+        cutLine.classList.add('hidden');
+        largeDiff.className = "bg-emerald-500 text-white font-bold text-xs sm:text-sm h-8 rounded-r-lg flex items-center justify-center bar-transition shadow-sm";
+        largeDiff.textContent = curDiff;
+
+        smallGhost.classList.remove('hidden');
+        smallGhost.classList.add('flex');
+        smallGhost.style.width = diffPct + '%';
+        smallGhost.textContent = `+補 ${curDiff}`;
+
+        const panel = document.getElementById('strategy-panel');
+        panel.className = "mt-6 rounded-2xl p-5 border shadow-sm transition-colors duration-300 bg-emerald-50/40 border-emerald-200";
+        document.getElementById('badge-strat-name').className = "bg-emerald-600 text-white text-xs font-black px-2.5 py-1 rounded-md";
+        document.getElementById('badge-strat-name').textContent = "策略二";
+        document.getElementById('title-strat-desc').textContent = "補齊差額法：把「不足的差」補上去，化為 2 份一樣長的大數";
+
+        document.getElementById('step1-title').className = "text-xs font-bold text-emerald-600 mb-1.5";
+        document.getElementById('step1-title').textContent = "步驟 1：總和加上差額";
+        document.getElementById('step1-formula').innerHTML = `${curSum} + ${curDiff} = <span class="text-emerald-600">${curSum + curDiff}</span>`;
+        document.getElementById('step1-note').textContent = "此時相當於 2 個完整的大數長度";
+
+        document.getElementById('step2-title').className = "text-xs font-bold text-emerald-600 mb-1.5";
+        document.getElementById('step2-title').textContent = "步驟 2：除以 2 求出大數";
+        document.getElementById('step2-formula').innerHTML = `${curSum + curDiff} ÷ 2 = <span class="text-emerald-600">${largeVal}</span>`;
+        document.getElementById('step2-note').textContent = `獲得較大量 (大數) = ${largeVal}`;
+
+        document.getElementById('step3-title').className = "text-xs font-bold text-blue-600 mb-1.5";
+        document.getElementById('step3-title').textContent = "步驟 3：減去差求出小數";
+        document.getElementById('step3-formula').innerHTML = `${largeVal} - ${curDiff} = <span class="text-blue-600">${smallVal}</span>`;
+        document.getElementById('step3-note').textContent = `獲得較小量 (小數) = ${smallVal}`;
+      }
+
+      document.getElementById('check-sum').textContent = `${largeVal} + ${smallVal} = ${curSum}`;
+      document.getElementById('check-diff').textContent = `${largeVal} - ${smallVal} = ${curDiff}`;
+    }
+
+    /* ==================== 主題三：糖果以多補少 ==================== */
+    const originalBro = 12;
+    const originalSis = 8;
+
+    function renderCandyIcons() {
+      const broContainer = document.getElementById('bro-candies-container');
+      const sisContainer = document.getElementById('sis-candies-container');
+      const transfer = parseInt(document.getElementById('slider-candy-transfer').value);
+
+      const curBro = originalBro - transfer;
+      const curSis = originalSis + transfer;
+
+      document.getElementById('display-bro-candies').textContent = curBro + ' 顆';
+      document.getElementById('display-sis-candies').textContent = curSis + ' 顆';
+      document.getElementById('move-count-text').textContent = `已給出 ${transfer} 顆`;
+
+      broContainer.innerHTML = '';
+      for (let i = 0; i < curBro; i++) {
+        const icon = document.createElement('i');
+        icon.className = "fa-solid fa-candy-cane text-blue-500 text-lg transition-transform hover:scale-125";
+        broContainer.appendChild(icon);
+      }
+
+      sisContainer.innerHTML = '';
+      for (let i = 0; i < curSis; i++) {
+        const icon = document.createElement('i');
+        if (i >= originalSis) {
+          icon.className = "fa-solid fa-candy-cane text-amber-500 text-lg animate-bounce";
+          icon.title = "哥哥給的糖果";
+        } else {
+          icon.className = "fa-solid fa-candy-cane text-emerald-500 text-lg transition-transform hover:scale-125";
+        }
+        sisContainer.appendChild(icon);
+      }
+
+      const statusDesc = document.getElementById('candy-status-desc');
+      const badge = document.getElementById('candy-badge');
+
+      if (curBro === curSis) {
+        statusDesc.textContent = `兩人都是 ${curBro} 顆，完美達成一樣多！`;
+        statusDesc.className = "font-bold text-emerald-600";
+        badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800";
+        badge.textContent = "剛好一樣多";
+      } else if (curBro > curSis) {
+        statusDesc.textContent = `哥哥還有 ${curBro} 顆，比弟弟多 ${curBro - curSis} 顆`;
+        statusDesc.className = "font-bold text-gray-800";
+        badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800";
+        badge.textContent = "尚未平衡";
+      } else {
+        statusDesc.textContent = `弟弟變成 ${curSis} 顆，反而比哥哥多 ${curSis - curBro} 顆囉！`;
+        statusDesc.className = "font-bold text-rose-600";
+        badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800";
+        badge.textContent = "給太多了";
+      }
+    }
+
+    function onCandyTransfer() {
+      renderCandyIcons();
+    }
+
+    /* ==================== 圖 1：天平平衡實驗邏輯 ==================== */
+    function updateBalanceScale(transfer) {
+      const trans = parseInt(transfer);
+      const leftWeight = 480 - trans;
+      const rightWeight = 380 + trans;
+
+      // 角度計算：0g 時為 -9 度，50g 平衡時為 0 度
+      const angle = -9 * (1 - trans / 50);
+
+      document.getElementById('scale-trans-badge').textContent = `${trans} 公克`;
+      document.getElementById('scale-left-text').textContent = `${leftWeight}g`;
+      document.getElementById('scale-right-text').textContent = `${rightWeight}g`;
+
+      // 旋轉橫樑群組
+      const beam = document.getElementById('scale-beam');
+      beam.setAttribute('transform', `rotate(${angle}, 250, 115)`);
+
+      // 吊盤反向旋轉以維持鉛直下垂
+      document.getElementById('scale-left-counter').setAttribute('transform', `rotate(${-angle})`);
+      document.getElementById('scale-right-counter').setAttribute('transform', `rotate(${-angle})`);
+
+      const tip = document.getElementById('scale-status-tip');
+      if (trans === 50) {
+        tip.className = "text-emerald-600 font-black animate-pulse";
+        tip.textContent = "50g (正好平衡！)";
+      } else {
+        tip.className = "text-gray-400 font-normal";
+        tip.textContent = "50g (正好平衡！)";
+      }
+    }
+
+    /* ==================== 圖 2 & 圖 3：倒水容量邏輯 ==================== */
+    let waterRed = 800;
+    let waterGreen = 600;
+    let isWaterSimulated = false;
+
+    function onWaterInputChange() {
+      isWaterSimulated = false;
+      waterRed = parseInt(document.getElementById('slider-water-red').value) || 0;
+      waterGreen = parseInt(document.getElementById('slider-water-green').value) || 0;
+
+      // 確保紅瓶 >= 綠瓶，若不合理則自動調諧
+      if (waterRed < waterGreen) {
+        waterGreen = waterRed;
+        document.getElementById('slider-water-green').value = waterGreen;
+      }
+
+      updateWaterView(waterRed, waterGreen);
+    }
+
+    function updateWaterView(redVal, greenVal) {
+      document.getElementById('disp-water-red').textContent = `${redVal} mL`;
+      document.getElementById('disp-water-green').textContent = `${greenVal} mL`;
+
+      document.getElementById('bottle-red-inner').textContent = `${redVal} mL`;
+      document.getElementById('bottle-red-label').textContent = `紅瓶：${redVal} mL`;
+      document.getElementById('bottle-green-inner').textContent = `${greenVal} mL`;
+      document.getElementById('bottle-green-label').textContent = `綠瓶：${greenVal} mL`;
+
+      // 水位百分比換算 (容器最大量設為 1000 mL)
+      const pctRed = Math.min(95, Math.max(15, (redVal / 1000) * 100));
+      const pctGreen = Math.min(95, Math.max(15, (greenVal / 1000) * 100));
+      document.getElementById('bottle-red-liquid').style.height = `${pctRed}%`;
+      document.getElementById('bottle-green-liquid').style.height = `${pctGreen}%`;
+
+      const diff = redVal - greenVal;
+      const halfDiff = Math.round(diff / 2);
+      const avg = Math.round((redVal + greenVal) / 2);
+
+      document.getElementById('water-transfer-needed').textContent = `${halfDiff} mL`;
+
+      document.getElementById('text-calc-diff').textContent = `${redVal} - ${greenVal} = ${diff}`;
+      document.getElementById('text-calc-half').textContent = `${diff} ÷ 2 = ${halfDiff}`;
+      document.getElementById('text-calc-avg').textContent = `(${redVal} + ${greenVal}) ÷ 2 = ${avg}`;
+      document.getElementById('text-calc-out').textContent = `${redVal} - ${avg} = ${halfDiff}`;
+
+      const btn = document.getElementById('btn-water-sim');
+      if (isWaterSimulated) {
+        btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> 重設為原水量';
+        btn.className = "w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2";
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> 執行「移多補少」模擬平分';
+        btn.className = "w-full py-2.5 px-4 bg-white hover:bg-sky-50 text-blue-700 border-2 border-blue-400 font-bold rounded-xl shadow-sm transition flex items-center justify-center gap-2";
+      }
+    }
+
+    function toggleWaterSimulation() {
+      if (!isWaterSimulated) {
+        const avg = Math.round((waterRed + waterGreen) / 2);
+        isWaterSimulated = true;
+        updateWaterView(avg, avg);
+      } else {
+        isWaterSimulated = false;
+        updateWaterView(waterRed, waterGreen);
+      }
+    }
+
+    /* ==================== 主題四：五題評量題目 ==================== */
+    const quizData = [
+      {
+        id: 1,
+        question: "直角三角形中，一個銳角是 45°，另一個銳角是多少度？",
+        options: ["35°", "45°", "55°", "90°"],
+        answer: 1,
+        explain: "直角三角形兩銳角和不變：90° - 45° = 45°。"
+      },
+      {
+        id: 2,
+        question: "爸爸和小翰的年齡相差 28 歲。當小翰 20 歲時，爸爸是幾歲？",
+        options: ["40 歲", "46 歲", "48 歲", "50 歲"],
+        answer: 2,
+        explain: "兩人的年齡差永遠固定為 28 歲，因此爸爸是 20 + 28 = 48 歲。"
+      },
+      {
+        id: 3,
+        question: "媽媽買了一件襯衫和一條裙子共花了 1200 元，裙子比襯衫貴 400 元，請問襯衫是多少元？",
+        options: ["400 元", "500 元", "800 元", "300 元"],
+        answer: 0,
+        explain: "襯衫是小數。小數 = (和 - 差) ÷ 2 = (1200 - 400) ÷ 2 = 800 ÷ 2 = 400 元。"
+      },
+      {
+        id: 4,
+        question: "紅瓶子裝水 800 毫升，綠瓶子裝水 600 毫升，紅瓶子要倒多少毫升的水給綠瓶子，兩瓶水才會一樣多？",
+        options: ["200 毫升", "100 毫升", "150 毫升", "50 毫升"],
+        answer: 1,
+        explain: "兩瓶水相差 800 - 600 = 200 毫升，只需倒出相差量的一半：200 ÷ 2 = 100 毫升，兩瓶就都是 700 毫升。"
+      },
+      {
+        id: 5,
+        question: "天平左盤放了 480 公克綠豆，把左盤的綠豆拿 50 公克放到右盤後，兩邊就會平衡。右盤原來放了多少公克？",
+        options: ["430 公克", "380 公克", "530 公克", "580 公克"],
+        answer: 1,
+        explain: "移動 50 公克就平衡，代表兩邊原本相差 50 × 2 = 100 公克。右盤較輕，所以原來有 480 - 100 = 380 公克。"
+      }
+    ];
+
+    function initQuiz() {
+      const container = document.getElementById('quiz-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-5 border border-gray-200 shadow-sm";
+
+        let optionsHtml = '';
+        q.options.forEach((opt, optIdx) => {
+          optionsHtml += `
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 hover:bg-blue-50/60 cursor-pointer transition">
+              <input type="radio" name="quiz-${idx}" value="${optIdx}" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm font-medium text-gray-700">${opt}</span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <h3 class="font-bold text-gray-800 text-sm sm:text-base leading-relaxed">
+              <span class="inline-block bg-blue-600 text-white text-xs font-black px-2 py-0.5 rounded-md mr-1.5">Q${q.id}</span>
+              ${q.question}
+            </h3>
+            <span id="badge-result-${idx}" class="hidden whitespace-nowrap"></span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${optionsHtml}
+          </div>
+          <div id="explain-${idx}" class="hidden"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function checkQuizAnswers() {
+      let score = 0;
+      quizData.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="quiz-${idx}"]:checked`);
+        const resultBadge = document.getElementById(`badge-result-${idx}`);
+        const explainBox = document.getElementById(`explain-${idx}`);
+
+        resultBadge.classList.remove('hidden');
+        explainBox.classList.remove('hidden');
+
+        if (!selected) {
+          // 未作答：僅顯示黃色系「未作答。」提示，不顯示其他說明與正確答案
+          resultBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800";
+          resultBadge.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-1"></i>未作答';
+          explainBox.className = "mt-3 p-3 rounded-xl text-xs leading-relaxed bg-amber-50 text-amber-900 border border-amber-200 font-bold";
+          explainBox.textContent = "未作答。";
+        } else if (parseInt(selected.value) === q.answer) {
+          score += 20;
+          resultBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800";
+          resultBadge.innerHTML = '<i class="fa-solid fa-check mr-1"></i>答對';
+          explainBox.className = "mt-3 p-3 rounded-xl text-xs leading-relaxed bg-emerald-50 text-emerald-900 border border-emerald-200";
+          explainBox.innerHTML = `<strong>【解題分析】：</strong> ${q.explain}`;
+        } else {
+          resultBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-800";
+          resultBadge.innerHTML = '<i class="fa-solid fa-xmark mr-1"></i>答錯';
+          explainBox.className = "mt-3 p-3 rounded-xl text-xs leading-relaxed bg-rose-50 text-rose-900 border border-rose-200";
+          explainBox.innerHTML = `<strong>【解題分析】：</strong> ${q.explain}`;
+        }
+      });
+
+      const scoreBadge = document.getElementById('quiz-score-badge');
+      scoreBadge.textContent = `得分：${score} / 100`;
+      if (score === 100) {
+        scoreBadge.className = "bg-emerald-500 text-white text-xs px-3 py-1.5 rounded-full font-bold animate-pulse";
+      } else {
+        scoreBadge.className = "bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-bold";
+      }
+    }
+
+    function resetQuiz() {
+      quizData.forEach((q, idx) => {
+        const radios = document.querySelectorAll(`input[name="quiz-${idx}"]`);
+        radios.forEach(r => r.checked = false);
+
+        const resultBadge = document.getElementById(`badge-result-${idx}`);
+        const explainBox = document.getElementById(`explain-${idx}`);
+        resultBadge.classList.add('hidden');
+        explainBox.classList.add('hidden');
+        explainBox.innerHTML = '';
+      });
+
+      const scoreBadge = document.getElementById('quiz-score-badge');
+      scoreBadge.textContent = '得分：0 / 100';
+      scoreBadge.className = 'bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full font-bold';
+    }
+
+    // 初始化載入
+    window.addEventListener('DOMContentLoaded', () => {
+      updateAngleSum(30);
+      updateYearsPassed(0);
+      setScenarioPreset('cake');
+      renderCandyIcons();
+      updateBalanceScale(0);
+      updateWaterView(800, 600);
+      initQuiz();
+    });
+  </script>
+</body>
+</html>

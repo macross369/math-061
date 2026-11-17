@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小六上數學 5-2 兩量和問題 互動探究教材</title>
+  <!-- 引入思源黑體 (Noto Sans TC) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sky-blue: #38bdf8;
+      --sky-deep: #0284c7;
+      --sunset-peach: #fb923c;
+      --sunset-rose: #f43f5e;
+      --cloud-white: rgba(255, 255, 255, 0.92);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(255, 255, 255, 0.65);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --color-base: #f59e0b;
+      --color-comp: #10b981;
+      --color-sum: #e11d48;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #7dd3fc 0%, #bae6fd 25%, #fed7aa 65%, #fbcfe8 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      padding: 20px 14px 40px;
+    }
+
+    .container {
+      max-width: 1060px;
+      margin: 0 auto;
+    }
+
+    /* 頂部標題列 (新海誠氛圍) */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 24px 20px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 30px rgba(14, 165, 233, 0.15);
+    }
+
+    .header-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      color: white;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-size: 1.85rem;
+      color: #0369a1;
+      margin-bottom: 6px;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* 導覽分頁標籤 */
+    .tabs-nav {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 170px;
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.95);
+      color: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35);
+    }
+
+    /* 主內容面板 */
+    .tab-content {
+      display: none;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+      padding: 26px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+      animation: fadeIn 0.3s ease-in-out forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 網格佈局 */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 820px) {
+      .layout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 控制面板與卡片 */
+    .panel-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .panel-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 情境切換膠囊按鈕 */
+    .pill-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+    }
+
+    .pill-btn {
+      flex: 1;
+      padding: 8px 10px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #64748b;
+      transition: all 0.2s;
+    }
+
+    .pill-btn.active {
+      background: white;
+      color: #0284c7;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* 滑桿與數值呈現 */
+    .ctrl-group {
+      margin-bottom: 16px;
+    }
+
+    .ctrl-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: #334155;
+    }
+
+    .ctrl-val {
+      color: #0284c7;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 7px;
+      border-radius: 5px;
+      background: #cbd5e1;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #0284c7;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    /* SVG 繪圖畫布 */
+    .svg-container {
+      width: 100%;
+      background: #fafafa;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+    }
+
+    /* 課本標準直式分數排版 */
+    .fraction-box {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 4px;
+      font-weight: 700;
+    }
+
+    .fraction-int {
+      font-size: 1.15rem;
+      margin-right: 3px;
+    }
+
+    .fraction-frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      font-size: 0.88rem;
+      line-height: 1;
+    }
+
+    .fraction-num {
+      padding: 0 3px 2px 3px;
+      border-bottom: 1.8px solid currentColor;
+      text-align: center;
+      display: block;
+    }
+
+    .fraction-den {
+      padding: 2px 3px 0 3px;
+      text-align: center;
+      display: block;
+    }
+
+    /* 數學解析算式區塊 */
+    .math-card {
+      background: linear-gradient(135deg, #f8fafc, #eff6ff);
+      border-radius: 14px;
+      padding: 18px 22px;
+      border-left: 5px solid #0284c7;
+      margin-top: 14px;
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    .math-step {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .highlight-pill {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .note-box {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      color: #92400e;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    /* 測驗樣式 */
+    .quiz-card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .quiz-q {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .quiz-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quiz-opt-btn {
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.94rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-opt-btn:hover {
+      background: #f0f9ff;
+      border-color: #38bdf8;
+    }
+
+    .quiz-opt-btn.selected {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      font-weight: 700;
+    }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.93rem;
+      display: none;
+    }
+
+    .quiz-feedback.correct {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .quiz-feedback.wrong {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .quiz-feedback.unanswered {
+      display: block;
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde047;
+      font-weight: 700;
+    }
+
+    .quiz-btn-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .action-btn {
+      flex: 1;
+      max-width: 240px;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    .reset-btn {
+      background: linear-gradient(135deg, #64748b, #475569);
+      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
+    }
+
+    .reset-btn:hover {
+      box-shadow: 0 6px 16px rgba(71, 85, 105, 0.4);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <span class="header-badge">國小六上數學 5-2 互動學習網頁</span>
+    <h1>5-2 兩量和問題 互動探究學習網</h1>
+    <p>結合動態幾何線段、基準量概念與生活加成題型，透視「1 + 幾倍」的核心思維！</p>
+  </header>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('tab1')">
+      <span>1️⃣ 基礎篇：倍數與合成</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab2')">
+      <span>2️⃣ 生活篇：加成與漲價</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab3')">
+      <span>3️⃣ 逆向篇：已知和求基準量</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab4')">
+      <span>4️⃣ 隨堂測驗</span>
+    </button>
+  </nav>
+
+  <!-- ==================== TAB 1: 基礎篇 ==================== -->
+  <section id="tab1" class="tab-content active">
+    <div class="pill-group">
+      <button class="pill-btn active" onclick="setTab1Preset('pipi')">課本例 1：皮皮與妮妮 (整數 3 倍)</button>
+      <button class="pill-btn" onclick="setTab1Preset('weight')">課本例 2：美美與多多 (小數 0.7 倍)</button>
+      <button class="pill-btn" onclick="setTab1Preset('beads')">課本例 3：丹丹串珠 (分數 11/8 倍)</button>
+    </div>
+
+    <div class="layout-grid">
+      <div class="panel-card">
+        <h3 class="panel-title">🎛️ 參數操作面板</h3>
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span id="t1-lbl-base">基準量名稱與數值</span>
+            <span id="t1-val-base" class="ctrl-val">100 元</span>
+          </div>
+          <input type="range" id="t1-slider-base" min="20" max="200" step="10" value="100" oninput="updateTab1()">
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span id="t1-lbl-rate">比較量倍數 (相對於基準量)</span>
+            <span id="t1-val-rate" class="ctrl-val">3 倍</span>
+          </div>
+          <input type="range" id="t1-slider-rate" min="0.2" max="5.0" step="0.1" value="3.0" oninput="updateTab1()">
+        </div>
+
+        <div class="note-box">
+          <span>💡</span>
+          <div>
+            <strong>思維指引：</strong>
+            基準量本身永遠代表「<strong>1 倍</strong>」。因此兩人合起來的總量，就是基準量的 <strong>(1 + 比較量倍數)</strong> 倍！
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="panel-title">📊 動態線段圖解析</h3>
+        <div class="svg-container">
+          <svg id="t1-svg" viewBox="0 0 520 230" width="100%" height="230">
+            <!-- 基準量 -->
+            <text x="15" y="48" font-size="14" font-weight="700" fill="#334155" id="t1-svg-name-base">基準量 (皮皮)</text>
+            <rect id="t1-bar-base" x="125" y="30" width="100" height="26" rx="6" fill="#f59e0b" />
+            <text id="t1-txt-base-val" x="135" y="48" font-size="13" font-weight="700" fill="#fff">100元</text>
+            <text id="t1-txt-base-mult" x="235" y="48" font-size="13" font-weight="700" fill="#d97706">【基準量 1 倍】</text>
+
+            <!-- 比較量 -->
+            <text x="15" y="98" font-size="14" font-weight="700" fill="#334155" id="t1-svg-name-comp">比較量 (妮妮)</text>
+            <rect id="t1-bar-comp" x="125" y="80" width="180" height="26" rx="6" fill="#10b981" />
+            <text id="t1-txt-comp-val" x="135" y="98" font-size="13" font-weight="700" fill="#fff">300元</text>
+            <text id="t1-txt-comp-mult" x="315" y="98" font-size="13" font-weight="700" fill="#059669">3.0 倍</text>
+
+            <!-- 虛擬分隔線 -->
+            <line x1="125" y1="122" x2="495" y2="122" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4" />
+
+            <!-- 合起來 (兩量和) -->
+            <text x="15" y="152" font-size="14" font-weight="700" fill="#334155">兩人合起來</text>
+            <rect id="t1-bar-sum-base" x="125" y="134" width="100" height="26" rx="6" fill="#f59e0b" />
+            <rect id="t1-bar-sum-comp" x="225" y="134" width="180" height="26" rx="6" fill="#10b981" />
+
+            <!-- 紅色花括弧曲線與置中標籤 -->
+            <path id="t1-svg-bracket" d="M 125 174 C 125 184, 265 184, 265 194 C 265 184, 405 184, 405 174" fill="none" stroke="#e11d48" stroke-width="2.2" />
+            <text id="t1-svg-bracket-text" x="265" y="215" font-size="14" font-weight="700" fill="#e11d48" text-anchor="middle">
+              共 400 元 = (1 + 3.0) 倍
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 算式展示區 -->
+    <div class="math-card" id="t1-math-display">
+      <!-- 動態載入運算步驟 -->
+    </div>
+  </section>
+
+  <!-- ==================== TAB 2: 生活加成與漲價 ==================== -->
+  <section id="tab2" class="tab-content">
+    <div class="pill-group">
+      <button class="pill-btn active" onclick="setTab2Preset('cake')">課本例 4：蛋糕成本加成 (加四成 / 40%)</button>
+      <button class="pill-btn" onclick="setTab2Preset('vege')">課本例 5：蔬菜颱風漲價 (漲幅 65%)</button>
+    </div>
+
+    <div class="layout-grid">
+      <div class="panel-card">
+        <h3 class="panel-title">🎛️ 加成與漲幅設定</h3>
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span id="t2-lbl-base">原價 / 成本 (基準量)</span>
+            <span id="t2-val-base-txt" class="ctrl-val">50 元</span>
+          </div>
+          <input type="range" id="t2-slider-base" min="10" max="200" step="5" value="50" oninput="updateTab2()">
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span id="t2-lbl-rate">加成或調漲幅度</span>
+            <span id="t2-val-rate-txt" class="ctrl-val">40% (四成)</span>
+          </div>
+          <input type="range" id="t2-slider-rate" min="5" max="100" step="5" value="40" oninput="updateTab2()">
+        </div>
+
+        <div class="note-box">
+          <span>🏷️</span>
+          <div>
+            <strong>名詞小字典：</strong>
+            一成代表 10% (0.1)，「<strong>加四成</strong>」代表增加成本的 40% (0.4 倍)。因此售價就是成本的 <strong>(1 + 40%) = 1.4 倍</strong>。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="panel-title">📈 原價與加成視覺化長條</h3>
+        <div class="svg-container">
+          <svg id="t2-svg" viewBox="0 0 520 230" width="100%" height="230">
+            <!-- 基準量成本 -->
+            <text x="15" y="48" font-size="14" font-weight="700" fill="#334155" id="t2-svg-lbl-base">成本 (基準量)</text>
+            <rect id="t2-bar-base" x="125" y="30" width="180" height="26" rx="6" fill="#f59e0b" />
+            <text id="t2-bar-base-val" x="135" y="48" font-size="13" font-weight="700" fill="#fff">50元 (1倍)</text>
+
+            <!-- 加成量 -->
+            <text x="15" y="98" font-size="14" font-weight="700" fill="#334155" id="t2-svg-lbl-comp">加成幅度</text>
+            <rect id="t2-bar-comp" x="125" y="80" width="72" height="26" rx="6" fill="#10b981" />
+            <text id="t2-bar-comp-val" x="135" y="98" font-size="13" font-weight="700" fill="#fff">+40%</text>
+
+            <!-- 分隔線 -->
+            <line x1="125" y1="122" x2="495" y2="122" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4" />
+
+            <!-- 最終售價 (加成後合成) -->
+            <text x="15" y="152" font-size="14" font-weight="700" fill="#334155" id="t2-svg-lbl-sum">最終售價</text>
+            <!-- 橘色成本底段 (1倍) -->
+            <rect id="t2-bar-sum1" x="125" y="134" width="180" height="26" rx="6" fill="#f59e0b" />
+            <!-- 綠色加成段 (比較量) -->
+            <rect id="t2-bar-sum2" x="305" y="134" width="72" height="26" rx="6" fill="#10b981" />
+
+            <!-- 圖1樣式：紅色下括弧曲線與標註文字 -->
+            <path id="t2-svg-bracket" d="M 125 174 C 125 184, 251 184, 251 194 C 251 184, 377 184, 377 174" fill="none" stroke="#e11d48" stroke-width="2.2" />
+            <text id="t2-svg-bracket-text" x="251" y="215" font-size="14" font-weight="700" fill="#e11d48" text-anchor="middle">
+              70 元 (原來的 1.4 倍)
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 算式解析 -->
+    <div class="math-card" id="t2-math-display">
+      <!-- 動態載入運算步驟 -->
+    </div>
+  </section>
+
+  <!-- ==================== TAB 3: 逆求基準量 ==================== -->
+  <section id="tab3" class="tab-content">
+    <div class="pill-group">
+      <button class="pill-btn active" onclick="setTab3Preset('garden')">課本例 6：花園面積合 (整數倍逆推)</button>
+      <button class="pill-btn" onclick="setTab3Preset('pepper')">課本例 7：胡椒粉增量 (百分率逆推)</button>
+    </div>
+
+    <div class="layout-grid">
+      <div class="panel-card">
+        <h3 class="panel-title">🔍 已知條件操作</h3>
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span id="t3-lbl-total">兩者總和 (兩量和)</span>
+            <span id="t3-val-total" class="ctrl-val">64 公畝</span>
+          </div>
+          <input type="range" id="t3-slider-total" min="20" max="200" step="4" value="64" oninput="updateTab3()">
+        </div>
+
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span id="t3-lbl-mult">比較量的倍數關係</span>
+            <span id="t3-val-mult" class="ctrl-val">3 倍</span>
+          </div>
+          <input type="range" id="t3-slider-mult" min="1" max="5" step="1" value="3" oninput="updateTab3()">
+        </div>
+
+        <div class="note-box">
+          <span>🧠</span>
+          <div>
+            <strong>逆向思維解密：</strong>
+            設基準量為 <code>( )</code>。<br>
+            <code>( ) × (1 + 比較倍數) = 總和</code><br>
+            所以：<code>基準量 = 總和 ÷ (1 + 比較倍數)</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h3 class="panel-title">🧩 「份數與比」視覺模型</h3>
+        <div class="svg-container">
+          <svg id="t3-svg" viewBox="0 0 520 230" width="100%" height="230">
+            <!-- 基準量(未知 1 份) -->
+            <text x="15" y="48" font-size="14" font-weight="700" fill="#334155" id="t3-svg-lbl-base">基準量 (？)</text>
+            <rect id="t3-box-base" x="125" y="30" width="70" height="26" rx="6" fill="#f59e0b" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3" />
+            <text id="t3-txt-base" x="160" y="48" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">? (1份)</text>
+
+            <!-- 比較量 -->
+            <text x="15" y="98" font-size="14" font-weight="700" fill="#334155" id="t3-svg-lbl-comp">比較量</text>
+            <g id="t3-group-comp-boxes">
+              <!-- 動態生成份數方塊 -->
+            </g>
+
+            <!-- 分隔線 -->
+            <line x1="125" y1="122" x2="495" y2="122" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="4" />
+
+            <!-- 合起來全部份數 -->
+            <text x="15" y="152" font-size="14" font-weight="700" fill="#334155">兩量和</text>
+            <g id="t3-group-total-boxes">
+              <!-- 動態生成合成方塊 -->
+            </g>
+
+            <!-- 紅色下括弧曲線與標註 -->
+            <path id="t3-svg-bracket" d="M 125 174 C 125 184, 265 184, 265 194 C 265 184, 405 174, 405 174" fill="none" stroke="#e11d48" stroke-width="2.2" />
+            <text id="t3-svg-bracket-text" x="265" y="215" font-size="14" font-weight="700" fill="#e11d48" text-anchor="middle">
+              合起來共 64 公畝 (相當於 4 份)
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 雙解法算式展示 -->
+    <div class="math-card" id="t3-math-display">
+      <!-- 動態載入運算步驟 -->
+    </div>
+  </section>
+
+  <!-- ==================== TAB 4: 隨堂測驗 ==================== -->
+  <section id="tab4" class="tab-content">
+    <div class="panel-card" style="margin-bottom: 20px;">
+      <h3 class="panel-title">📝 隨堂測驗</h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        請仔細閱讀題目，找出「基準量」是誰，並善用「基準量 × (1 + 幾倍)」或「兩量和 ÷ (1 + 幾倍)」進行解題！
+      </p>
+    </div>
+
+    <div id="quiz-container">
+      <!-- 測驗題 1 -->
+      <div class="quiz-card" data-qid="1">
+        <div class="quiz-q">
+          1. 爸爸採了 600 公克的草莓，姑姑採的草莓重量是爸爸的 4 倍，兩人共採了多少公克的草莓？
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" onclick="selectAnswer(1, 'A')">A. 600 × 4 = 2400 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(1, 'B')">B. 600 × (1 + 4) = 3000 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(1, 'C')">C. 600 ÷ (1 + 4) = 120 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(1, 'D')">D. 600 + 4 = 604 公克</button>
+        </div>
+        <div class="quiz-feedback" id="q-fb-1"></div>
+      </div>
+
+      <!-- 測驗題 2 -->
+      <div class="quiz-card" data-qid="2">
+        <div class="quiz-q">
+          2. 灰鸚鵡的體重是 500 公克，金剛鸚鵡的體重是灰鸚鵡的 2.6 倍，兩隻鸚鵡的體重「共」重幾公克？
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" onclick="selectAnswer(2, 'A')">A. 500 × 2.6 = 1300 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(2, 'B')">B. 500 × (2.6 - 1) = 800 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(2, 'C')">C. 500 × (1 + 2.6) = 1800 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(2, 'D')">D. 500 ÷ 2.6 ≈ 192 公克</button>
+        </div>
+        <div class="quiz-feedback" id="q-fb-2"></div>
+      </div>
+
+      <!-- 測驗題 3 (直式分數題目) -->
+      <div class="quiz-card" data-qid="3">
+        <div class="quiz-q">
+          3. 丹丹串珠長 80 公分，妮妮串的長度是丹丹的
+          <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span>
+          倍，兩人串的串珠共長多少公分？
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" onclick="selectAnswer(3, 'A')">
+            A. 80 × <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span> = 110 公分
+          </button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(3, 'B')">
+            B. 80 × (1 + <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span>) = 190 公分
+          </button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(3, 'C')">
+            C. 80 + <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span> = 81<span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">3</span><span class="fraction-den">8</span></span></span> 公分
+          </button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(3, 'D')">
+            D. 80 ÷ <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">19</span><span class="fraction-den">8</span></span></span> ≈ 33.7 公分
+          </button>
+        </div>
+        <div class="quiz-feedback" id="q-fb-3"></div>
+      </div>
+
+      <!-- 測驗題 4 -->
+      <div class="quiz-card" data-qid="4">
+        <div class="quiz-q">
+          4. 排骨便當原價每個 70 元，老闆調漲 10%，爸爸買了 5 個調漲後的排骨便當，一共要花多少元？
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" onclick="selectAnswer(4, 'A')">A. 70 × 1.1 × 5 = 385 元</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(4, 'B')">B. 70 × 0.1 × 5 = 35 元</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(4, 'C')">C. (70 + 10) × 5 = 400 元</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(4, 'D')">D. 70 × 5 = 350 元</button>
+        </div>
+        <div class="quiz-feedback" id="q-fb-4"></div>
+      </div>
+
+      <!-- 測驗題 5 -->
+      <div class="quiz-card" data-qid="5">
+        <div class="quiz-q">
+          5. 餅乾新包裝增量 12%，增量後重量變成 224 公克。請問餅乾「舊包裝」的重量是多少公克？
+        </div>
+        <div class="quiz-options">
+          <button class="quiz-opt-btn" onclick="selectAnswer(5, 'A')">A. 224 × (1 + 0.12) = 250.88 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(5, 'B')">B. 224 × 0.12 = 26.88 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(5, 'C')">C. 224 ÷ (1 + 0.12) = 200 公克</button>
+          <button class="quiz-opt-btn" onclick="selectAnswer(5, 'D')">D. 224 - 12 = 212 公克</button>
+        </div>
+        <div class="quiz-feedback" id="q-fb-5"></div>
+      </div>
+    </div>
+
+    <div class="quiz-btn-group">
+      <button class="action-btn" onclick="gradeAllQuiz()">提交答案</button>
+      <button class="action-btn reset-btn" onclick="resetQuiz()">重新測驗</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  // 標籤頁切換
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+
+    if (tabId === 'tab1') updateTab1();
+    if (tabId === 'tab2') updateTab2();
+    if (tabId === 'tab3') updateTab3();
+  }
+
+  /* ========================================================
+     TAB 1: 基礎倍數與兩量和
+     ======================================================== */
+  let t1CurrentPreset = 'pipi';
+
+  function setTab1Preset(type) {
+    t1CurrentPreset = type;
+    const btns = document.querySelectorAll('#tab1 .pill-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    const sBase = document.getElementById('t1-slider-base');
+    const sRate = document.getElementById('t1-slider-rate');
+
+    if (type === 'pipi') {
+      document.getElementById('t1-lbl-base').innerText = '皮皮的錢 (基準量)';
+      document.getElementById('t1-lbl-rate').innerText = '妮妮的倍數';
+      document.getElementById('t1-svg-name-base').textContent = '基準量 (皮皮)';
+      document.getElementById('t1-svg-name-comp').textContent = '比較量 (妮妮)';
+      sBase.min = 20; sBase.max = 300; sBase.step = 10; sBase.value = 100;
+      sRate.min = 1; sRate.max = 6; sRate.step = 0.5; sRate.value = 3;
+    } else if (type === 'weight') {
+      document.getElementById('t1-lbl-base').innerText = '美美的體重 (基準量)';
+      document.getElementById('t1-lbl-rate').innerText = '多多的倍數';
+      document.getElementById('t1-svg-name-base').textContent = '基準量 (美美)';
+      document.getElementById('t1-svg-name-comp').textContent = '比較量 (多多)';
+      sBase.min = 10; sBase.max = 60; sBase.step = 2; sBase.value = 20;
+      sRate.min = 0.1; sRate.max = 2.0; sRate.step = 0.1; sRate.value = 0.7;
+    } else if (type === 'beads') {
+      document.getElementById('t1-lbl-base').innerText = '丹丹串珠長度 (基準量)';
+      document.getElementById('t1-lbl-rate').innerText = '妮妮倍數 (11/8 = 1.375)';
+      document.getElementById('t1-svg-name-base').textContent = '基準量 (丹丹)';
+      document.getElementById('t1-svg-name-comp').textContent = '比較量 (妮妮)';
+      sBase.min = 16; sBase.max = 160; sBase.step = 8; sBase.value = 80;
+      sRate.min = 0.5; sRate.max = 3.0; sRate.step = 0.125; sRate.value = 1.375;
+    }
+    updateTab1();
+  }
+
+  function updateTab1() {
+    const baseVal = parseFloat(document.getElementById('t1-slider-base').value);
+    const rateVal = parseFloat(document.getElementById('t1-slider-rate').value);
+    const unit = t1CurrentPreset === 'pipi' ? '元' : (t1CurrentPreset === 'weight' ? '公斤' : '公分');
+    
+    // 更新數值文字
+    document.getElementById('t1-val-base').innerText = `${baseVal} ${unit}`;
+    if (t1CurrentPreset === 'beads' && Math.abs(rateVal - 1.375) < 0.01) {
+      document.getElementById('t1-val-rate').innerHTML = `<span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span> 倍 (${rateVal} 倍)`;
+    } else {
+      document.getElementById('t1-val-rate').innerText = `${rateVal} 倍`;
+    }
+
+    // 計算視覺長條寬度
+    const basePx = 100;
+    const compPx = Math.max(16, Math.min(270, basePx * rateVal));
+    const startX = 125;
+    const totalPx = basePx + compPx;
+    const endX = startX + totalPx;
+    const midX = startX + totalPx / 2;
+
+    const compVal = Math.round(baseVal * rateVal * 10) / 10;
+    const totalVal = Math.round(baseVal * (1 + rateVal) * 10) / 10;
+
+    // 更新 SVG 元素
+    document.getElementById('t1-bar-base').setAttribute('width', basePx);
+    document.getElementById('t1-txt-base-val').textContent = `${baseVal}${unit}`;
+    
+    document.getElementById('t1-bar-comp').setAttribute('width', compPx);
+    document.getElementById('t1-txt-comp-val').textContent = `${compVal}${unit}`;
+    document.getElementById('t1-txt-comp-mult').setAttribute('x', startX + compPx + 10);
+    document.getElementById('t1-txt-comp-mult').textContent = `${rateVal} 倍`;
+
+    document.getElementById('t1-bar-sum-base').setAttribute('width', basePx);
+    document.getElementById('t1-bar-sum-comp').setAttribute('x', startX + basePx);
+    document.getElementById('t1-bar-sum-comp').setAttribute('width', compPx);
+
+    // 紅色花括弧曲線 d 屬性
+    const bracket = document.getElementById('t1-svg-bracket');
+    bracket.setAttribute('d', `M ${startX} 174 C ${startX} 184, ${midX} 184, ${midX} 194 C ${midX} 184, ${endX} 184, ${endX} 174`);
+
+    const bracketTxt = document.getElementById('t1-svg-bracket-text');
+    bracketTxt.setAttribute('x', midX);
+    bracketTxt.textContent = `共 ${totalVal} ${unit} = (1 + ${rateVal}) 倍`;
+
+    // 渲染算式卡片
+    renderTab1Math(baseVal, rateVal, compVal, totalVal, unit);
+  }
+
+  function renderTab1Math(base, rate, comp, total, unit) {
+    const box = document.getElementById('t1-math-display');
+    if (t1CurrentPreset === 'beads' && Math.abs(rate - 1.375) < 0.01) {
+      box.innerHTML = `
+        <div class="math-step">
+          <strong>【列成一個算式】：</strong>
+          <span>${base} × ( 1 + </span>
+          <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span>
+          <span>)</span>
+        </div>
+        <div class="math-step">
+          <span>＝ ${base} × </span>
+          <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">19</span><span class="fraction-den">8</span></span></span>
+        </div>
+        <div class="math-step">
+          <span>＝ <span class="highlight-pill">${total} ${unit}</span></span>
+        </div>
+        <div style="font-size: 0.93rem; color: #64748b; margin-top: 6px;">
+          * 說明：丹丹自己是基準量「1 倍」即為 8/8 倍，妮妮是 11/8 倍，合起來是 8/8 + 11/8 = 19/8 倍。
+        </div>
+      `;
+    } else {
+      box.innerHTML = `
+        <div class="math-step">
+          <strong>【列成一個算式】：</strong>
+          <span>${base} × ( 1 + ${rate} )</span>
+        </div>
+        <div class="math-step">
+          <span>＝ ${base} × ${Math.round((1 + rate) * 100) / 100}</span>
+        </div>
+        <div class="math-step">
+          <span>＝ <span class="highlight-pill">${total} ${unit}</span></span>
+        </div>
+        <div style="font-size: 0.93rem; color: #64748b; margin-top: 6px;">
+          * 答：兩人共有 <strong>${total} ${unit}</strong>。
+        </div>
+      `;
+    }
+  }
+
+  /* ========================================================
+     TAB 2: 加成與漲價 (圖2修改核心)
+     ======================================================== */
+  let t2CurrentPreset = 'cake';
+
+  function setTab2Preset(type) {
+    t2CurrentPreset = type;
+    const btns = document.querySelectorAll('#tab2 .pill-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    const sBase = document.getElementById('t2-slider-base');
+    const sRate = document.getElementById('t2-slider-rate');
+
+    if (type === 'cake') {
+      document.getElementById('t2-lbl-base').innerText = '蛋糕成本 (基準量 1倍)';
+      document.getElementById('t2-lbl-rate').innerText = '成本加成幅度';
+      document.getElementById('t2-svg-lbl-base').textContent = '成本 (基準量)';
+      document.getElementById('t2-svg-lbl-comp').textContent = '加成幅度';
+      document.getElementById('t2-svg-lbl-sum').textContent = '最終售價';
+      sBase.min = 20; sBase.max = 150; sBase.step = 5; sBase.value = 50;
+      sRate.min = 10; sRate.max = 80; sRate.step = 10; sRate.value = 40;
+    } else {
+      document.getElementById('t2-lbl-base').innerText = '空心菜原價每公斤 (基準量)';
+      document.getElementById('t2-lbl-rate').innerText = '颱風漲價幅度';
+      document.getElementById('t2-svg-lbl-base').textContent = '原價 (每公斤)';
+      document.getElementById('t2-svg-lbl-comp').textContent = '漲價幅度';
+      document.getElementById('t2-svg-lbl-sum').textContent = '漲價後售價';
+      sBase.min = 20; sBase.max = 100; sBase.step = 4; sBase.value = 40;
+      sRate.min = 10; sRate.max = 90; sRate.step = 5; sRate.value = 65;
+    }
+    updateTab2();
+  }
+
+  function updateTab2() {
+    const baseVal = parseFloat(document.getElementById('t2-slider-base').value);
+    const ratePercent = parseFloat(document.getElementById('t2-slider-rate').value);
+    const rateDec = ratePercent / 100;
+    const totalMult = 1 + rateDec;
+    const finalPrice = Math.round(baseVal * totalMult * 10) / 10;
+
+    // 控制項數值標示
+    document.getElementById('t2-val-base-txt').innerText = `${baseVal} 元`;
+    const rateDisplay = (t2CurrentPreset === 'cake' && ratePercent % 10 === 0) 
+      ? `${ratePercent}% (或加 ${ratePercent / 10} 成)` 
+      : `${ratePercent}%`;
+    document.getElementById('t2-val-rate-txt').innerText = rateDisplay;
+
+    // 寬度計算 (以基準量 = 180px 為參考標準)
+    const basePx = 180;
+    const compPx = Math.max(18, basePx * rateDec);
+    const startX = 125;
+    const totalPx = basePx + compPx;
+    const endX = startX + totalPx;
+    const midX = startX + totalPx / 2;
+
+    // 成本條
+    const bBase = document.getElementById('t2-bar-base');
+    bBase.setAttribute('width', basePx);
+    document.getElementById('t2-bar-base-val').textContent = `${baseVal}元 (1倍)`;
+
+    // 加成條
+    const bComp = document.getElementById('t2-bar-comp');
+    bComp.setAttribute('width', compPx);
+    document.getElementById('t2-bar-comp-val').textContent = `+${ratePercent}%`;
+
+    // 最終售價段落 (橘 + 綠合成)
+    document.getElementById('t2-bar-sum1').setAttribute('width', basePx);
+    const bSum2 = document.getElementById('t2-bar-sum2');
+    bSum2.setAttribute('x', startX + basePx);
+    bSum2.setAttribute('width', compPx);
+
+    // 【修改處】：以圖 1 的紅線與文字呈現
+    const bracket = document.getElementById('t2-svg-bracket');
+    bracket.setAttribute('d', `M ${startX} 174 C ${startX} 184, ${midX} 184, ${midX} 194 C ${midX} 184, ${endX} 184, ${endX} 174`);
+
+    const bracketTxt = document.getElementById('t2-svg-bracket-text');
+    bracketTxt.setAttribute('x', midX);
+    const multStr = totalMult.toFixed(2).replace(/\.?0+$/, '');
+    bracketTxt.textContent = `${finalPrice} 元 (原來的 ${multStr} 倍)`;
+
+    // 渲染下方算式
+    renderTab2Math(baseVal, ratePercent, rateDec, totalMult, finalPrice);
+  }
+
+  function renderTab2Math(base, pct, dec, mult, finalPrice) {
+    const box = document.getElementById('t2-math-display');
+    const multFormatted = mult.toFixed(2).replace(/\.?0+$/, '');
+    if (t2CurrentPreset === 'cake') {
+      box.innerHTML = `
+        <div class="math-step">
+          <strong>【加成問題思維】：</strong>四成是成本的 ${pct}%，也就是 <strong>${dec} 倍</strong>。
+        </div>
+        <div class="math-step">
+          <strong>【列式計算】：</strong>
+          <span>${base} × ( 1 + ${pct}% )</span>
+          <span>＝ ${base} × ( 1 + ${dec} )</span>
+          <span>＝ ${base} × ${multFormatted}</span>
+          <span>＝ <span class="highlight-pill">${finalPrice} 元</span></span>
+        </div>
+        <div style="font-size: 0.93rem; color: #64748b; margin-top: 6px;">
+          * 答：蛋糕的售價為 <strong>${finalPrice} 元</strong>。
+        </div>
+      `;
+    } else {
+      const fiveKgPrice = Math.round(finalPrice * 5 * 10) / 10;
+      box.innerHTML = `
+        <div class="math-step">
+          <strong>【漲價幅度思維】：</strong>漲價 ${pct}% 表示把原價當基準量(1)，增加了 ${pct}%，也就是原來的 <strong>(1 + ${dec}) 倍</strong>。
+        </div>
+        <div class="math-step">
+          <strong>【每公斤售價】：</strong>
+          <span>${base} × ( 1 + ${pct}% ) ＝ ${base} × ${multFormatted} ＝ <span class="highlight-pill">${finalPrice} 元/公斤</span></span>
+        </div>
+        <div class="math-step">
+          <strong>【購買 5 公斤】：</strong>
+          <span>${finalPrice} × 5 ＝ <span class="highlight-pill">${fiveKgPrice} 元</span></span>
+        </div>
+      `;
+    }
+  }
+
+  /* ========================================================
+     TAB 3: 逆向求基準量
+     ======================================================== */
+  let t3CurrentPreset = 'garden';
+
+  function setTab3Preset(type) {
+    t3CurrentPreset = type;
+    const btns = document.querySelectorAll('#tab3 .pill-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    const sTot = document.getElementById('t3-slider-total');
+    const sMult = document.getElementById('t3-slider-mult');
+
+    if (type === 'garden') {
+      document.getElementById('t3-lbl-total').innerText = '兩個花園面積合起來 (公畝)';
+      document.getElementById('t3-lbl-mult').innerText = '玫瑰是百合的幾倍';
+      document.getElementById('t3-svg-lbl-base').textContent = '百合 (基準量)';
+      document.getElementById('t3-svg-lbl-comp').textContent = '玫瑰 (比較量)';
+      sTot.min = 20; sTot.max = 120; sTot.step = 4; sTot.value = 64;
+      sMult.min = 1; sMult.max = 5; sMult.step = 1; sMult.value = 3;
+    } else {
+      document.getElementById('t3-lbl-total').innerText = '新包裝增量後重量 (公克)';
+      document.getElementById('t3-lbl-mult').innerText = '增量百分率 (%)';
+      document.getElementById('t3-svg-lbl-base').textContent = '舊包裝 (基準量)';
+      document.getElementById('t3-svg-lbl-comp').textContent = '增量部分';
+      sTot.min = 270; sTot.max = 810; sTot.step = 27; sTot.value = 540;
+      sMult.min = 10; sMult.max = 50; sMult.step = 5; sMult.value = 35;
+    }
+    updateTab3();
+  }
+
+  function updateTab3() {
+    const totalVal = parseFloat(document.getElementById('t3-slider-total').value);
+    const multVal = parseFloat(document.getElementById('t3-slider-mult').value);
+    
+    let baseVal, partsCount, multDisplay;
+    const unit = t3CurrentPreset === 'garden' ? '公畝' : '公克';
+
+    if (t3CurrentPreset === 'garden') {
+      partsCount = 1 + multVal;
+      baseVal = Math.round((totalVal / partsCount) * 10) / 10;
+      multDisplay = `${multVal} 倍`;
+      document.getElementById('t3-val-total').innerText = `${totalVal} ${unit}`;
+      document.getElementById('t3-val-mult').innerText = multDisplay;
+    } else {
+      const dec = multVal / 100;
+      baseVal = Math.round((totalVal / (1 + dec)) * 10) / 10;
+      partsCount = 1 + dec;
+      multDisplay = `增量 ${multVal}% (${dec} 倍)`;
+      document.getElementById('t3-val-total').innerText = `${totalVal} ${unit}`;
+      document.getElementById('t3-val-mult').innerText = multDisplay;
+    }
+
+    // 繪製份數 SVG
+    const startX = 125;
+    const boxW = t3CurrentPreset === 'garden' ? 55 : 65;
+    
+    // 基準量
+    const baseBox = document.getElementById('t3-box-base');
+    baseBox.setAttribute('width', boxW);
+    document.getElementById('t3-txt-base').setAttribute('x', startX + boxW / 2);
+    document.getElementById('t3-txt-base').textContent = `( ) × 1`;
+
+    // 比較量多個方塊
+    const gComp = document.getElementById('t3-group-comp-boxes');
+    gComp.innerHTML = '';
+    const gTot = document.getElementById('t3-group-total-boxes');
+    gTot.innerHTML = '';
+
+    if (t3CurrentPreset === 'garden') {
+      for (let i = 0; i < multVal; i++) {
+        const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        r.setAttribute('x', startX + i * (boxW + 4));
+        r.setAttribute('y', 80);
+        r.setAttribute('width', boxW);
+        r.setAttribute('height', 26);
+        r.setAttribute('rx', 6);
+        r.setAttribute('fill', '#10b981');
+        gComp.appendChild(r);
+      }
+
+      // 總和方塊 (1 + multVal 份)
+      const totalWidth = partsCount * (boxW + 4) - 4;
+      for (let i = 0; i < partsCount; i++) {
+        const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        r.setAttribute('x', startX + i * (boxW + 4));
+        r.setAttribute('y', 134);
+        r.setAttribute('width', boxW);
+        r.setAttribute('height', 26);
+        r.setAttribute('rx', 6);
+        r.setAttribute('fill', i === 0 ? '#f59e0b' : '#10b981');
+        gTot.appendChild(r);
+      }
+
+      const endX = startX + totalWidth;
+      const midX = startX + totalWidth / 2;
+
+      const bracket = document.getElementById('t3-svg-bracket');
+      bracket.setAttribute('d', `M ${startX} 174 C ${startX} 184, ${midX} 184, ${midX} 194 C ${midX} 184, ${endX} 184, ${endX} 174`);
+      const bracketTxt = document.getElementById('t3-svg-bracket-text');
+      bracketTxt.setAttribute('x', midX);
+      bracketTxt.textContent = `合起來共 ${totalVal} ${unit} (相當於 1 + ${multVal} = ${partsCount} 份)`;
+    } else {
+      // 百分比增量
+      const compW = Math.max(20, boxW * (multVal / 100));
+      gComp.innerHTML = `
+        <rect x="${startX}" y="80" width="${compW}" height="26" rx="6" fill="#10b981" />
+        <text x="${startX + 8}" y="98" font-size="12" font-weight="700" fill="#fff">+${multVal}%</text>
+      `;
+      gTot.innerHTML = `
+        <rect x="${startX}" y="134" width="${boxW}" height="26" rx="6" fill="#f59e0b" />
+        <rect x="${startX + boxW}" y="134" width="${compW}" height="26" rx="6" fill="#10b981" />
+      `;
+      const endX = startX + boxW + compW;
+      const midX = startX + (boxW + compW) / 2;
+      const bracket = document.getElementById('t3-svg-bracket');
+      bracket.setAttribute('d', `M ${startX} 174 C ${startX} 184, ${midX} 184, ${midX} 194 C ${midX} 184, ${endX} 184, ${endX} 174`);
+      const bracketTxt = document.getElementById('t3-svg-bracket-text');
+      bracketTxt.setAttribute('x', midX);
+      bracketTxt.textContent = `新包裝共 ${totalVal} 公克 (是舊包裝的 ${(1 + multVal/100).toFixed(2)} 倍)`;
+    }
+
+    renderTab3Math(totalVal, multVal, baseVal, unit);
+  }
+
+  function renderTab3Math(total, mult, base, unit) {
+    const box = document.getElementById('t3-math-display');
+    if (t3CurrentPreset === 'garden') {
+      const parts = 1 + mult;
+      box.innerHTML = `
+        <div class="math-step">
+          <strong>【方法一：乘法算式記題】</strong>
+        </div>
+        <div class="math-step">
+          <span>( 基準量 ) × ( 1 + ${mult} ) ＝ ${total}</span>
+          <span>➜ ( 基準量 ) × ${parts} ＝ ${total}</span>
+          <span>➜ 基準量 ＝ ${total} ÷ ${parts} ＝ <span class="highlight-pill">${base} ${unit}</span></span>
+        </div>
+        <div class="math-step" style="margin-top: 8px;">
+          <strong>【方法二：比與份數思維】</strong>
+        </div>
+        <div class="math-step">
+          <span>玫瑰是 3 份，百合是 1 份，合起來是 4 份。</span>
+          <span>( 3 ＋ 1 ) : 1 ＝ ${total} : ( 基準量 )</span>
+          <span>➜ 4 份是 ${total}，1 份是 ${total} ÷ 4 ＝ <strong>${base} ${unit}</strong></span>
+        </div>
+      `;
+    } else {
+      const dec = mult / 100;
+      const multTotal = (1 + dec).toFixed(2);
+      box.innerHTML = `
+        <div class="math-step">
+          <strong>【方法一：小數乘法記題】</strong>
+        </div>
+        <div class="math-step">
+          <span>( 舊包裝 ) × ( 1 + ${mult}% ) ＝ ${total}</span>
+          <span>➜ ( 舊包裝 ) × ${multTotal} ＝ ${total}</span>
+          <span>➜ 舊包裝 ＝ ${total} ÷ ${multTotal} ＝ <span class="highlight-pill">${base} 公克</span></span>
+        </div>
+        <div class="math-step" style="margin-top: 8px;">
+          <strong>【方法二：化為最簡整數比求解】</strong>
+        </div>
+        <div class="math-step">
+          <span>新包裝比舊包裝 ＝ ( 1 + ${dec} ) : 1 ＝ 1.35 : 1 ＝ 27 : 20</span>
+          <span>想成新包裝是 27 份 (540公克)，舊包裝是 20 份：540 ÷ 27 × 20 ＝ <strong>${base} 公克</strong></span>
+        </div>
+      `;
+    }
+  }
+
+  /* ========================================================
+     TAB 4: 隨堂測驗邏輯
+     ======================================================== */
+  const userAnswers = {};
+  const correctAnswers = {
+    1: { ans: 'B', expl: '爸爸採的草莓是基準量 (1 倍)，姑姑是 4 倍，合起來是 (1 + 4) = 5 倍。算式：600 × (1 + 4) = 3000 公克。' },
+    2: { ans: 'C', expl: '灰鸚鵡是基準量 (1 倍)，金剛鸚鵡是 2.6 倍，合起來是 (1 + 2.6) = 3.6 倍。算式：500 × 3.6 = 1800 公克。' },
+    3: { ans: 'B', expl: '丹丹是基準量 (1 ＝ <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">8</span><span class="fraction-den">8</span></span></span> 倍)，妮妮是 <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span> 倍，合起來是 (1 ＋ <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">11</span><span class="fraction-den">8</span></span></span>) ＝ <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">19</span><span class="fraction-den">8</span></span></span> 倍。算式：80 × <span class="fraction-box"><span class="fraction-frac"><span class="fraction-num">19</span><span class="fraction-den">8</span></span></span> ＝ 190 公分。' },
+    4: { ans: 'A', expl: '調漲 10% 代表售價為原來的 (1 + 0.1) = 1.1 倍。每個便當 70 × 1.1 = 77 元，買 5 個為 77 × 5 = 385 元。' },
+    5: { ans: 'C', expl: '新包裝是舊包裝的 (1 + 12%) = 1.12 倍。已知合成後總重求基準量，需用除法：224 ÷ 1.12 = 200 公克。' }
+  };
+
+  function selectAnswer(qid, choice) {
+    userAnswers[qid] = choice;
+    const card = document.querySelector(`.quiz-card[data-qid="${qid}"]`);
+    card.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+  }
+
+  function gradeAllQuiz() {
+    let score = 0;
+    for (let qid = 1; qid <= 5; qid++) {
+      const fb = document.getElementById(`q-fb-${qid}`);
+      const userChoice = userAnswers[qid];
+      const correct = correctAnswers[qid];
+
+      if (!userChoice) {
+        fb.className = 'quiz-feedback unanswered';
+        fb.innerHTML = '未作答。';
+        continue;
+      }
+
+      if (userChoice === correct.ans) {
+        score += 20;
+        fb.className = 'quiz-feedback correct';
+        fb.innerHTML = `🎉 <strong>答對了！</strong> ${correct.expl}`;
+      } else {
+        fb.className = 'quiz-feedback wrong';
+        fb.innerHTML = `❌ <strong>答錯囉！</strong> 你的選擇是 (${userChoice})，正確答案為 <strong>(${correct.ans})</strong>。<br>👉 解析：${correct.expl}`;
+      }
+    }
+
+    const banner = document.createElement('div');
+    banner.className = 'math-card';
+    banner.style.borderLeftColor = score >= 80 ? '#10b981' : '#f59e0b';
+    banner.innerHTML = `
+      <h3 style="color: #0369a1; margin-bottom: 6px;">🎯 測驗總結得分：${score} / 100 分</h3>
+      <p style="color: #475569;">${score === 100 ? '太厲害了！你已經完全掌握「兩量和問題」的幾何與代數思維！' : '請參考各題下方的說明，複習基準量與倍數合成的觀念喔！'}</p>
+    `;
+    
+    const container = document.getElementById('quiz-container');
+    const oldBanner = document.getElementById('score-banner');
+    if (oldBanner) oldBanner.remove();
+    banner.id = 'score-banner';
+    container.insertBefore(banner, container.firstChild);
+    banner.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function resetQuiz() {
+    // 清除作答紀錄
+    for (let qid = 1; qid <= 5; qid++) {
+      delete userAnswers[qid];
+      const fb = document.getElementById(`q-fb-${qid}`);
+      fb.className = 'quiz-feedback';
+      fb.innerHTML = '';
+    }
+    // 取消選項選取狀態
+    document.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.remove('selected'));
+    // 移除成績總結橫幅
+    const oldBanner = document.getElementById('score-banner');
+    if (oldBanner) oldBanner.remove();
+    // 平滑捲動回測驗區頂部
+    document.getElementById('tab4').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // 網頁初始載入
+  window.addEventListener('DOMContentLoaded', () => {
+    updateTab1();
+    updateTab2();
+    updateTab3();
+  });
+</script>
+</body>
+</html>

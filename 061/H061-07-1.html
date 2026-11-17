@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小六上數學 7-1 互動學習網頁</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: 思源黑體 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6.5.1 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    /* 全站中文字體一律使用思源黑體，確保不覆蓋 Font Awesome 圖示字體 */
+    body, button, input, select, textarea, text {
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* 新海誠風格：澄澈天藍、雲朵白與黃昏晚霞珊瑚橘光影漸層 */
+    body {
+      background: linear-gradient(170deg, #0f294a 0%, #2563a6 28%, #7cc4fa 56%, #e0f2fe 74%, #fed7aa 90%, #fda4af 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+      padding-bottom: 60px;
+    }
+
+    /* 裝飾性光暈雲彩 */
+    .shinkai-glow {
+      position: fixed;
+      top: -120px;
+      right: -100px;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(254, 240, 138, 0.35) 0%, rgba(251, 146, 60, 0.12) 45%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 國小數學課本標準直式分數：分子在上、橫線分隔、分母在下，垂直置中 */
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 3px;
+      line-height: 1.08;
+      font-size: 0.92em;
+      font-weight: 700;
+    }
+    .fraction .numerator {
+      border-bottom: 1.8px solid currentColor;
+      padding: 0 2px 1px 2px;
+      display: block;
+    }
+    .fraction .denominator {
+      padding: 1px 2px 0 2px;
+      display: block;
+    }
+
+    /* 毛玻璃卡片 (Glassmorphism) */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 18px 40px rgba(15, 41, 74, 0.16);
+    }
+
+    /* SVG 頂點同心漣漪脈衝光環 */
+    .ripple-ring {
+      animation: ripplePulse 1.5s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes ripplePulse {
+      0% { r: 5; opacity: 1; stroke-width: 2.5; }
+      55% { opacity: 0.65; }
+      100% { r: 17; opacity: 0; stroke-width: 1; }
+    }
+
+    /* SVG 邊線流動高亮 */
+    .highlight-edge {
+      stroke: #e11d48 !important;
+      stroke-width: 4.5 !important;
+      stroke-dasharray: 7 4;
+      animation: edgeDashFlow 0.85s linear infinite;
+    }
+    @keyframes edgeDashFlow {
+      to { stroke-dashoffset: -22; }
+    }
+
+    /* SVG 文字白底描邊光暈，防止與網格或線條重疊不清 */
+    .svg-label {
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 3.8px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      font-weight: 700;
+      user-select: none;
+    }
+
+    /* 可點擊的 SVG 互動熱區 */
+    .svg-clickable {
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .svg-clickable:hover {
+      filter: brightness(1.15);
+    }
+
+    input[type=range] {
+      accent-color: #2563eb;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 relative">
+  <div class="shinkai-glow"></div>
+
+  <div class="max-w-6xl mx-auto relative z-10">
+    <!-- 頁首標題區塊 -->
+    <header class="text-center text-white mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs sm:text-sm font-bold tracking-wider mb-2.5 text-amber-100 border border-white/35 shadow-sm">
+        <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 7-1 互動學習網頁
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-md flex items-center justify-center gap-3">
+        <span>認識放大圖和縮小圖</span>
+      </h1>
+      <p class="text-xs sm:text-base text-sky-50 mt-2 max-w-2xl mx-auto drop-shadow font-medium">
+        透過方格幾何操作、對應點邊點擊探索與疊合比較，理解「對應邊成相同倍數」與「對應角完全相等」的核心概念！
+      </p>
+    </header>
+
+    <!-- 五大主題分頁導覽列 -->
+    <nav class="flex flex-wrap gap-2 p-1.5 bg-slate-900/30 backdrop-blur-xl rounded-2xl border border-white/40 shadow-lg mb-6">
+      <button onclick="switchTab('lab')" id="tabBtn-lab" class="tab-btn flex-1 min-w-[135px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 bg-white text-blue-900 shadow-md">
+        <i class="fa-solid fa-sliders"></i> 1. 放大縮小探究室
+      </button>
+      <button onclick="switchTab('quad')" id="tabBtn-quad" class="tab-btn flex-1 min-w-[135px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 text-white hover:bg-white/25">
+        <i class="fa-solid fa-draw-polygon"></i> 2. 四邊形放大對應
+      </button>
+      <button onclick="switchTab('tri3060')" id="tabBtn-tri3060" class="tab-btn flex-1 min-w-[135px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 text-white hover:bg-white/25">
+        <i class="fa-solid fa-shapes"></i> 3. 直角三角形對應
+      </button>
+      <button onclick="switchTab('shrink')" id="tabBtn-shrink" class="tab-btn flex-1 min-w-[135px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 text-white hover:bg-white/25">
+        <i class="fa-solid fa-compress"></i> 4. 三角形縮小探究
+      </button>
+      <button onclick="switchTab('quiz')" id="tabBtn-quiz" class="tab-btn flex-1 min-w-[135px] py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-200 text-white hover:bg-white/25">
+        <i class="fa-solid fa-clipboard-check"></i> 5. 隨堂測驗
+      </button>
+    </nav>
+
+    <!-- ============================================================
+         分頁 1：放大縮小探究室
+         ============================================================ -->
+    <section id="tab-lab" class="tab-content glass-card rounded-3xl p-4 sm:p-6 mb-6">
+      <!-- 控制面板 -->
+      <div class="bg-gradient-to-r from-sky-50 to-orange-50/60 border border-sky-200 rounded-2xl p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3 flex-1 min-w-[270px]">
+          <span class="font-bold text-blue-950 text-sm sm:text-base whitespace-nowrap flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass text-blue-600"></i> 調整倍數：
+          </span>
+          <input type="range" id="labSlider" min="0.5" max="2.0" step="0.5" value="1.0" class="w-full h-2.5 bg-blue-200 rounded-lg cursor-pointer" oninput="updateLabScale(parseFloat(this.value))">
+          <div id="labScaleBadge" class="bg-blue-600 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm min-w-[118px] text-center shadow-sm">
+            1.0 倍 (原圖大小)
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btnLabOverlay" onclick="toggleLabOverlay()" class="px-4 py-2 bg-white border border-blue-400 text-blue-700 hover:bg-blue-50 font-bold rounded-xl text-xs sm:text-sm shadow-sm transition flex items-center gap-2">
+            <i class="fa-solid fa-layer-group"></i> <span id="labOverlayLabel">疊合比較對應角</span>
+          </button>
+          <button onclick="setLabScale(1.0)" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5">
+            <i class="fa-solid fa-rotate-left"></i> 重設
+          </button>
+        </div>
+      </div>
+
+      <!-- 快捷倍數按鈕 -->
+      <div class="flex items-center gap-2 mb-5 text-xs font-bold text-slate-600 flex-wrap">
+        <span><i class="fa-solid fa-bolt text-amber-500 mr-1"></i>快捷切換：</span>
+        <button onclick="setLabScale(0.5)" class="px-3 py-1 bg-white hover:bg-violet-50 text-violet-800 border border-violet-200 rounded-lg shadow-xs transition">
+          <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖
+        </button>
+        <button onclick="setLabScale(1.0)" class="px-3 py-1 bg-white hover:bg-blue-50 text-blue-800 border border-blue-200 rounded-lg shadow-xs transition">
+          1.0 倍（與原圖全等）
+        </button>
+        <button onclick="setLabScale(1.5)" class="px-3 py-1 bg-white hover:bg-amber-50 text-amber-800 border border-amber-200 rounded-lg shadow-xs transition">
+          1.5 倍放大圖
+        </button>
+        <button onclick="setLabScale(2.0)" class="px-3 py-1 bg-white hover:bg-orange-50 text-orange-800 border border-orange-200 rounded-lg shadow-xs transition">
+          2.0 倍放大圖
+        </button>
+      </div>
+
+      <!-- 雙畫布 (1格 = 1cm = 20px, viewBox 0 0 400 340, 上方保留充足安全空間) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+        <!-- 甲圖（原圖基準） -->
+        <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-2.5 border-b border-slate-100 pb-2">
+            <span class="font-bold text-blue-950 text-sm sm:text-base flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> 甲圖（原圖基準）
+            </span>
+            <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-md font-bold">1 格 = 1 公分</span>
+          </div>
+
+          <div class="w-full rounded-xl border border-sky-100 bg-[#f8fbff] overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 400 340" class="w-full h-auto max-h-[340px]">
+              <defs>
+                <pattern id="gridLabA" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#dbeafe" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="400" height="340" fill="url(#gridLabA)" />
+
+              <!-- 甲圖直角三角形：B(40,300), C(200,300), A(200,180) 底8格(8cm), 高6格(6cm), 斜邊10cm -->
+              <polygon points="40,300 200,300 200,180" fill="rgba(37, 99, 235, 0.16)" stroke="#2563eb" stroke-width="2.5" />
+
+              <!-- 直角符號 -->
+              <path d="M 185,300 L 185,285 L 200,285" fill="none" stroke="#2563eb" stroke-width="2" />
+              <text x="172" y="280" class="svg-label" font-size="11" fill="#475569">90°</text>
+
+              <!-- 角度標註 -->
+              <path d="M 70,300 A 30 30 0 0 0 64,282" fill="none" stroke="#2563eb" stroke-width="1.5" />
+              <text x="74" y="292" class="svg-label" font-size="12" fill="#334155">37°</text>
+
+              <path d="M 200,205 A 25 25 0 0 1 185,200" fill="none" stroke="#2563eb" stroke-width="1.5" />
+              <text x="178" y="216" class="svg-label" font-size="12" fill="#334155">53°</text>
+
+              <!-- 邊長標註 -->
+              <text x="120" y="318" class="svg-label" font-size="12" fill="#1e3a8a" text-anchor="middle">BC = 8 cm</text>
+              <text x="210" y="244" class="svg-label" font-size="12" fill="#1e3a8a">AC = 6 cm</text>
+              <text x="102" y="230" class="svg-label" font-size="12" fill="#1e3a8a">AB = 10 cm</text>
+
+              <!-- 頂點交點圓點 -->
+              <circle cx="40" cy="300" r="4.5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+              <text x="24" y="304" class="svg-label" font-size="14" fill="#1e3a8a">B</text>
+
+              <circle cx="200" cy="300" r="4.5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+              <text x="207" y="306" class="svg-label" font-size="14" fill="#1e3a8a">C</text>
+
+              <circle cx="200" cy="180" r="4.5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+              <text x="207" y="176" class="svg-label" font-size="14" fill="#1e3a8a">A</text>
+            </svg>
+          </div>
+          <p class="text-xs text-slate-500 mt-2 font-medium">原圖甲：底 BC = 8 cm、高 AC = 6 cm、斜邊 AB = 10 cm，頂點精準對齊方格交點。</p>
+        </div>
+
+        <!-- 乙圖（變化目標） -->
+        <div class="bg-white rounded-2xl p-4 border border-amber-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-2.5 border-b border-slate-100 pb-2">
+            <span class="font-bold text-amber-900 text-sm sm:text-base flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-orange-600 inline-block"></span> 乙圖（變化目標）
+            </span>
+            <span id="labTargetBadge" class="text-xs bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md font-bold">1.0 倍 (原圖大小)</span>
+          </div>
+
+          <div class="w-full rounded-xl border border-amber-100 bg-[#fffdfa] overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 400 340" class="w-full h-auto max-h-[340px]">
+              <defs>
+                <pattern id="gridLabB" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#fed7aa" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="400" height="340" fill="url(#gridLabB)" />
+
+              <!-- 疊合比較時的甲圖半透明參考層（對齊左下角頂點 E(40,300)） -->
+              <g id="labGhostGroup" style="display: none;">
+                <polygon points="40,300 200,300 200,180" fill="rgba(37, 99, 235, 0.22)" stroke="#2563eb" stroke-width="2.2" stroke-dasharray="5 3" />
+                <text x="115" y="275" class="svg-label" font-size="11" fill="#1d4ed8">甲圖疊合位置 (∠B = 37° 完全重合)</text>
+              </g>
+
+              <!-- 乙圖動態多邊形：起點 E(40, 300) 精準咬合方格交點；2.0 倍時 F(360,300), D(360,60)，上方保留 60px (3格) 空間 -->
+              <polygon id="polyLabB" points="40,300 200,300 200,180" fill="rgba(234, 88, 12, 0.16)" stroke="#ea580c" stroke-width="2.5" />
+
+              <!-- 直角符號 -->
+              <path id="labRightAngleB" d="M 185,300 L 185,285 L 200,285" fill="none" stroke="#ea580c" stroke-width="2" />
+              <text id="lblLabAngF" x="172" y="280" class="svg-label" font-size="11" fill="#475569">90°</text>
+
+              <!-- 角度標籤 -->
+              <text id="lblLabAngE" x="74" y="292" class="svg-label" font-size="12" fill="#334155">37°</text>
+              <text id="lblLabAngD" x="178" y="216" class="svg-label" font-size="12" fill="#334155">53°</text>
+
+              <!-- 邊長標註 -->
+              <text id="txtLabEF" x="120" y="318" class="svg-label" font-size="12" fill="#c2410c" text-anchor="middle">EF = 8 cm</text>
+              <text id="txtLabDF" x="210" y="244" class="svg-label" font-size="12" fill="#c2410c">DF = 6 cm</text>
+              <text id="txtLabDE" x="102" y="230" class="svg-label" font-size="12" fill="#c2410c">DE = 10 cm</text>
+
+              <!-- 頂點圓點與標籤 -->
+              <circle id="ptLabE" cx="40" cy="300" r="4.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+              <text id="txtLabPtE" x="24" y="304" class="svg-label" font-size="14" fill="#c2410c">E</text>
+
+              <circle id="ptLabF" cx="200" cy="300" r="4.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+              <text id="txtLabPtF" x="207" y="306" class="svg-label" font-size="14" fill="#c2410c">F</text>
+
+              <circle id="ptLabD" cx="200" cy="180" r="4.5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+              <text id="txtLabPtD" x="207" y="176" class="svg-label" font-size="14" fill="#c2410c">D</text>
+            </svg>
+          </div>
+          <p id="labTargetNote" class="text-xs text-slate-500 mt-2 font-medium">目前為 1.0 倍，乙圖與甲圖大小完全相等（全等圖形）。</p>
+        </div>
+      </div>
+
+      <!-- 即時數值比較表 -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-center text-xs sm:text-sm bg-white">
+          <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+            <tr>
+              <th class="py-2.5 px-3">對應邊名稱</th>
+              <th class="py-2.5 px-3 text-blue-700">甲圖邊長</th>
+              <th class="py-2.5 px-3 text-orange-700">乙圖邊長</th>
+              <th class="py-2.5 px-3">倍數關係 (乙 ÷ 甲)</th>
+              <th class="py-2.5 px-3">對應角比較</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-medium">
+            <tr>
+              <td class="py-2 px-3 font-bold text-slate-800">底邊 (BC → EF)</td>
+              <td class="py-2 px-3 text-blue-700">8 cm</td>
+              <td id="tblLabEF" class="py-2 px-3 text-orange-700 font-bold">8 cm</td>
+              <td rowspan="3" id="tblLabRatio" class="py-2 px-3 font-black text-blue-700 bg-sky-50/70 text-base">1 倍</td>
+              <td class="py-2 px-3 text-emerald-700 font-bold"><i class="fa-solid fa-check mr-1"></i>∠B = ∠E = 37°</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-slate-800">高 (AC → DF)</td>
+              <td class="py-2 px-3 text-blue-700">6 cm</td>
+              <td id="tblLabDF" class="py-2 px-3 text-orange-700 font-bold">6 cm</td>
+              <td class="py-2 px-3 text-emerald-700 font-bold"><i class="fa-solid fa-check mr-1"></i>∠C = ∠F = 90°</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-bold text-slate-800">斜邊 (AB → DE)</td>
+              <td class="py-2 px-3 text-blue-700">10 cm</td>
+              <td id="tblLabDE" class="py-2 px-3 text-orange-700 font-bold">10 cm</td>
+              <td class="py-2 px-3 text-emerald-700 font-bold"><i class="fa-solid fa-check mr-1"></i>∠A = ∠D = 53°</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         分頁 2：四邊形放大對應 (課本 P.106 第 3 題)
+         ============================================================ -->
+    <section id="tab-quad" class="tab-content glass-card rounded-3xl p-4 sm:p-6 mb-6 hidden">
+      <div class="text-center max-w-2xl mx-auto mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-blue-950 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-draw-polygon text-blue-600"></i> 四邊形 3 倍放大圖對應探索（課本第 106 頁）
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1">點擊下方按鈕或直接點擊圖形上的頂點與邊線，觀察甲圖與 3 倍放大圖乙的對應關係！</p>
+      </div>
+
+      <!-- 對應點與對應邊按鈕群 -->
+      <div class="flex flex-wrap justify-center gap-2 mb-5">
+        <button onclick="selectQuadItem('ptA')" id="qBtn-ptA" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-blue-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 A ↔ 點 E (106°)
+        </button>
+        <button onclick="selectQuadItem('ptB')" id="qBtn-ptB" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-blue-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 B ↔ 點 F (90°)
+        </button>
+        <button onclick="selectQuadItem('ptC')" id="qBtn-ptC" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-blue-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 C ↔ 點 G (50°)
+        </button>
+        <button onclick="selectQuadItem('ptD')" id="qBtn-ptD" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-blue-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 D ↔ 點 H (114°)
+        </button>
+        <button onclick="selectQuadItem('edgeAB')" id="qBtn-edgeAB" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler-vertical text-amber-600"></i> 邊 AB ↔ 邊 EF (5 → 15 cm)
+        </button>
+        <button onclick="selectQuadItem('edgeBC')" id="qBtn-edgeBC" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler-horizontal text-amber-600"></i> 邊 BC ↔ 邊 FG (9 → 27 cm)
+        </button>
+        <button onclick="selectQuadItem('edgeCD')" id="qBtn-edgeCD" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler text-amber-600"></i> 邊 CD ↔ 邊 GH (8 → 24 cm)
+        </button>
+        <button onclick="selectQuadItem('edgeDA')" id="qBtn-edgeDA" class="q-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-amber-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler text-amber-600"></i> 邊 DA ↔ 邊 HE (4 → 12 cm)
+        </button>
+      </div>
+
+      <!-- 雙畫布 (上方留足 4 格高度空間，頂點 H(114°) 完整呈現不裁切) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
+        <!-- 甲圖（原圖） -->
+        <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="font-bold text-blue-950 text-sm">甲圖（原圖四邊形）</span>
+            <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded font-bold">1 格 = 1 公分</span>
+          </div>
+          <div class="w-full bg-[#f8fbff] rounded-xl border border-sky-100 overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 380 340" class="w-full h-auto max-h-[330px]">
+              <defs>
+                <pattern id="gridQuadA" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#dbeafe" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="380" height="340" fill="url(#gridQuadA)" />
+
+              <!-- 甲圖四邊形：B(60,280), C(240,280), D(140,160), A(60,180) -->
+              <polygon points="60,280 240,280 140,160 60,180" fill="rgba(37, 99, 235, 0.14)" />
+
+              <!-- 可點擊邊線 -->
+              <line id="qEdge-AB" onclick="selectQuadItem('edgeAB')" x1="60" y1="280" x2="60" y2="180" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+              <line id="qEdge-BC" onclick="selectQuadItem('edgeBC')" x1="60" y1="280" x2="240" y2="280" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+              <line id="qEdge-CD" onclick="selectQuadItem('edgeCD')" x1="240" y1="280" x2="140" y2="160" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+              <line id="qEdge-DA" onclick="selectQuadItem('edgeDA')" x1="140" y1="160" x2="60" y2="180" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+
+              <!-- 直角符號 -->
+              <path d="M 60,265 L 75,265 L 75,280" fill="none" stroke="#2563eb" stroke-width="1.8" />
+
+              <!-- 邊長標註 -->
+              <text onclick="selectQuadItem('edgeAB')" x="28" y="235" class="svg-label svg-clickable" font-size="12" fill="#1e3a8a">5 cm</text>
+              <text onclick="selectQuadItem('edgeBC')" x="150" y="298" class="svg-label svg-clickable" font-size="12" fill="#1e3a8a" text-anchor="middle">9 cm</text>
+              <text onclick="selectQuadItem('edgeCD')" x="200" y="215" class="svg-label svg-clickable" font-size="12" fill="#1e3a8a">8 cm</text>
+              <text onclick="selectQuadItem('edgeDA')" x="95" y="160" class="svg-label svg-clickable" font-size="12" fill="#1e3a8a">4 cm</text>
+
+              <!-- 動態漣漪光環 -->
+              <circle id="qRippleA" cx="-100" cy="-100" r="6" fill="none" stroke="#e11d48" stroke-width="2.5" class="ripple-ring" style="display:none;" />
+
+              <!-- 頂點與角度 -->
+              <g onclick="selectQuadItem('ptB')" class="svg-clickable">
+                <circle id="qDot-B" cx="60" cy="280" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="36" y="298" class="svg-label" font-size="13" fill="#1e3a8a">B (90°)</text>
+              </g>
+              <g onclick="selectQuadItem('ptC')" class="svg-clickable">
+                <circle id="qDot-C" cx="240" cy="280" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="246" y="296" class="svg-label" font-size="13" fill="#1e3a8a">C (50°)</text>
+              </g>
+              <g onclick="selectQuadItem('ptA')" class="svg-clickable">
+                <circle id="qDot-A" cx="60" cy="180" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="22" y="172" class="svg-label" font-size="13" fill="#1e3a8a">A (106°)</text>
+              </g>
+              <g onclick="selectQuadItem('ptD')" class="svg-clickable">
+                <circle id="qDot-D" cx="140" cy="160" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="140" y="146" class="svg-label" font-size="13" fill="#1e3a8a" text-anchor="middle">D (114°)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 乙圖（3 倍放大圖，上方保留 80px 安全高度，H (114°) 完整不截斷） -->
+        <div class="bg-white rounded-2xl p-4 border border-amber-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="font-bold text-amber-900 text-sm">乙圖（甲圖的 3 倍放大圖）</span>
+            <span class="text-xs bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded font-bold">對應邊 × 3，對應角相等</span>
+          </div>
+          <div class="w-full bg-[#fffdfa] rounded-xl border border-amber-100 overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 380 340" class="w-full h-auto max-h-[330px]">
+              <defs>
+                <pattern id="gridQuadB" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ffedd5" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="380" height="340" fill="url(#gridQuadB)" />
+
+              <!-- 乙圖四邊形：F(60,280), G(330,280), H(180,80), E(60,130) -->
+              <polygon points="60,280 330,280 180,80 60,130" fill="rgba(234, 88, 12, 0.15)" />
+
+              <!-- 可點擊邊線 -->
+              <line id="qEdge-EF" onclick="selectQuadItem('edgeAB')" x1="60" y1="280" x2="60" y2="130" stroke="#ea580c" stroke-width="3" class="svg-clickable" />
+              <line id="qEdge-FG" onclick="selectQuadItem('edgeBC')" x1="60" y1="280" x2="330" y2="280" stroke="#ea580c" stroke-width="3" class="svg-clickable" />
+              <line id="qEdge-GH" onclick="selectQuadItem('edgeCD')" x1="330" y1="280" x2="180" y2="80" stroke="#ea580c" stroke-width="3" class="svg-clickable" />
+              <line id="qEdge-HE" onclick="selectQuadItem('edgeDA')" x1="180" y1="80" x2="60" y2="130" stroke="#ea580c" stroke-width="3" class="svg-clickable" />
+
+              <!-- 直角符號 -->
+              <path d="M 60,265 L 75,265 L 75,280" fill="none" stroke="#ea580c" stroke-width="1.8" />
+
+              <!-- 邊長標註 -->
+              <text onclick="selectQuadItem('edgeAB')" x="14" y="210" class="svg-label svg-clickable" font-size="12" fill="#c2410c">15 cm</text>
+              <text onclick="selectQuadItem('edgeBC')" x="195" y="298" class="svg-label svg-clickable" font-size="12" fill="#c2410c" text-anchor="middle">27 cm (9×3)</text>
+              <text onclick="selectQuadItem('edgeCD')" x="265" y="175" class="svg-label svg-clickable" font-size="12" fill="#c2410c">24 cm (8×3)</text>
+              <text onclick="selectQuadItem('edgeDA')" x="108" y="96" class="svg-label svg-clickable" font-size="12" fill="#c2410c">12 cm</text>
+
+              <!-- 動態漣漪光環 -->
+              <circle id="qRippleB" cx="-100" cy="-100" r="6" fill="none" stroke="#e11d48" stroke-width="2.5" class="ripple-ring" style="display:none;" />
+
+              <!-- 頂點與角度 (H(180, 80) 距離頂邊 80px，上方留有 4 格完整空間) -->
+              <g onclick="selectQuadItem('ptB')" class="svg-clickable">
+                <circle id="qDot-F" cx="60" cy="280" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+                <text x="36" y="298" class="svg-label" font-size="13" fill="#c2410c">F (90°)</text>
+              </g>
+              <g onclick="selectQuadItem('ptC')" class="svg-clickable">
+                <circle id="qDot-G" cx="330" cy="280" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+                <text x="322" y="298" class="svg-label" font-size="13" fill="#c2410c">G (50°)</text>
+              </g>
+              <g onclick="selectQuadItem('ptA')" class="svg-clickable">
+                <circle id="qDot-E" cx="60" cy="130" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+                <text x="18" y="122" class="svg-label" font-size="13" fill="#c2410c">E (106°)</text>
+              </g>
+              <g onclick="selectQuadItem('ptD')" class="svg-clickable">
+                <circle id="qDot-H" cx="180" cy="80" r="5" fill="#ea580c" stroke="#ffffff" stroke-width="1.5" />
+                <text x="180" y="64" class="svg-label" font-size="13" fill="#c2410c" text-anchor="middle">H (114°)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 對應說明列 -->
+      <div class="p-4 rounded-2xl bg-blue-50/90 border border-blue-200 text-xs sm:text-sm text-slate-700 flex items-start gap-3">
+        <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5"></i>
+        <div id="quadInfoBox">請點擊上方按鈕或圖形頂點、邊線，查看對應關係說明！</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         分頁 3：直角三角形對應 (課本 P.106 第 4 題)
+         ============================================================ -->
+    <section id="tab-tri3060" class="tab-content glass-card rounded-3xl p-4 sm:p-6 mb-6 hidden">
+      <div class="text-center max-w-2xl mx-auto mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-blue-950 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-shapes text-emerald-600"></i> 直角三角形 2 倍放大對應（課本第 106 頁第 4 題）
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1">點擊對應點或對應邊按鈕（或直接點擊圖形），並可使用「平移疊合驗證」觀察 30° 與 60° 對應角完全重合！</p>
+      </div>
+
+      <!-- 對應控制按鈕群 -->
+      <div class="flex flex-wrap justify-center gap-2 mb-4">
+        <button onclick="selectTriItem('ptD')" id="tBtn-ptD" class="t-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-emerald-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 D ↔ 點 A (30°)
+        </button>
+        <button onclick="selectTriItem('ptE')" id="tBtn-ptE" class="t-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-emerald-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 E ↔ 點 B (60°)
+        </button>
+        <button onclick="selectTriItem('ptF')" id="tBtn-ptF" class="t-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-emerald-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-dot text-rose-500"></i> 點 F ↔ 點 C (90°)
+        </button>
+        <button onclick="selectTriItem('edgeDE')" id="tBtn-edgeDE" class="t-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-emerald-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler-vertical text-emerald-600"></i> 邊 DE ↔ 邊 AB (12 → 24 cm)
+        </button>
+        <button onclick="selectTriItem('edgeEF')" id="tBtn-edgeEF" class="t-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-emerald-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler-horizontal text-emerald-600"></i> 邊 EF ↔ 邊 BC (6 → 12 cm)
+        </button>
+        <button onclick="selectTriItem('edgeDF')" id="tBtn-edgeDF" class="t-btn px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-emerald-50 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler text-emerald-600"></i> 斜邊 DF ↔ 斜邊 AC (2 倍)
+        </button>
+        <button id="btnTriOverlay" onclick="toggleTriOverlay()" class="px-3.5 py-1.5 rounded-xl border border-blue-500 bg-blue-50 text-blue-800 hover:bg-blue-100 font-bold text-xs sm:text-sm transition flex items-center gap-1.5">
+          <i class="fa-solid fa-layer-group"></i> <span id="triOverlayLabel">平移疊合驗證</span>
+        </button>
+      </div>
+
+      <!-- 雙畫布 (1 格 = 1 cm = 20px, viewBox 0 0 360 340, 上方保留充足空間) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
+        <!-- 原圖甲 (DE = 12cm, EF = 6cm) -->
+        <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="font-bold text-blue-950 text-sm">甲圖（原圖三角形）</span>
+            <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded font-bold">1 格 = 1 公分</span>
+          </div>
+          <div class="w-full bg-[#f8fbff] rounded-xl border border-sky-100 overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 360 340" class="w-full h-auto max-h-[330px]">
+              <defs>
+                <pattern id="gridTriA" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#dbeafe" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="360" height="340" fill="url(#gridTriA)" />
+
+              <!-- 甲圖多邊形：E(100,300), F(160,300), D(100,180) -> 高 6 格(代表12cm比例), 底 3 格(代表6cm比例) -->
+              <polygon points="100,300 160,300 100,180" fill="rgba(37, 99, 235, 0.14)" />
+
+              <line id="tEdge-DE" onclick="selectTriItem('edgeDE')" x1="100" y1="300" x2="100" y2="180" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+              <line id="tEdge-EF" onclick="selectTriItem('edgeEF')" x1="100" y1="300" x2="160" y2="300" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+              <line id="tEdge-DF" onclick="selectTriItem('edgeDF')" x1="100" y1="180" x2="160" y2="300" stroke="#2563eb" stroke-width="3" class="svg-clickable" />
+
+              <!-- 直角符號 -->
+              <path d="M 145,300 L 145,285 L 160,285" fill="none" stroke="#2563eb" stroke-width="1.8" />
+
+              <!-- 邊長文字 -->
+              <text onclick="selectTriItem('edgeDE')" x="52" y="244" class="svg-label svg-clickable" font-size="12" fill="#1e3a8a">12 cm</text>
+              <text onclick="selectTriItem('edgeEF')" x="130" y="318" class="svg-label svg-clickable" font-size="12" fill="#1e3a8a" text-anchor="middle">6 cm</text>
+
+              <circle id="tRippleA" cx="-100" cy="-100" r="6" fill="none" stroke="#e11d48" stroke-width="2.5" class="ripple-ring" style="display:none;" />
+
+              <g onclick="selectTriItem('ptE')" class="svg-clickable">
+                <circle id="tDot-E" cx="100" cy="300" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="68" y="316" class="svg-label" font-size="13" fill="#1e3a8a">E (60°)</text>
+              </g>
+              <g onclick="selectTriItem('ptF')" class="svg-clickable">
+                <circle id="tDot-F" cx="160" cy="300" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="166" y="314" class="svg-label" font-size="13" fill="#1e3a8a">F (90°)</text>
+              </g>
+              <g onclick="selectTriItem('ptD')" class="svg-clickable">
+                <circle id="tDot-D" cx="100" cy="180" r="5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+                <text x="100" y="166" class="svg-label" font-size="13" fill="#1e3a8a" text-anchor="middle">D (30°)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 乙圖（2 倍放大圖，AB = 24cm, BC = 12cm，頂點 A 位於 y=60，上方留有 60px 空間） -->
+        <div class="bg-white rounded-2xl p-4 border border-emerald-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="font-bold text-emerald-950 text-sm">乙圖（甲圖的 2 倍放大圖）</span>
+            <span class="text-xs bg-emerald-100 text-emerald-900 px-2.5 py-0.5 rounded font-bold">對應邊 × 2，對應角相等</span>
+          </div>
+          <div class="w-full bg-[#f7fdfb] rounded-xl border border-emerald-100 overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 360 340" class="w-full h-auto max-h-[330px]">
+              <defs>
+                <pattern id="gridTriB" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#d1fae5" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="360" height="340" fill="url(#gridTriB)" />
+
+              <!-- 疊合驗證層（將甲圖疊合至左上頂點 A(90,60) 或左下頂點 B(90,300)） -->
+              <g id="triGhostGroup" style="display: none;">
+                <polygon points="90,300 150,300 90,180" fill="rgba(37, 99, 235, 0.22)" stroke="#2563eb" stroke-width="2" stroke-dasharray="5 3" />
+                <text x="156" y="245" class="svg-label" font-size="11" fill="#1d4ed8">← 甲圖疊合：∠E 與 ∠B (60°) 完全重合</text>
+              </g>
+
+              <!-- 乙圖多邊形：B(90,300), C(210,300), A(90,60) -->
+              <polygon points="90,300 210,300 90,60" fill="rgba(16, 185, 129, 0.15)" />
+
+              <line id="tEdge-AB" onclick="selectTriItem('edgeDE')" x1="90" y1="300" x2="90" y2="60" stroke="#059669" stroke-width="3" class="svg-clickable" />
+              <line id="tEdge-BC" onclick="selectTriItem('edgeEF')" x1="90" y1="300" x2="210" y2="300" stroke="#059669" stroke-width="3" class="svg-clickable" />
+              <line id="tEdge-AC" onclick="selectTriItem('edgeDF')" x1="90" y1="60" x2="210" y2="300" stroke="#059669" stroke-width="3" class="svg-clickable" />
+
+              <!-- 直角符號 -->
+              <path d="M 195,300 L 195,285 L 210,285" fill="none" stroke="#059669" stroke-width="1.8" />
+
+              <!-- 邊長文字 -->
+              <text onclick="selectTriItem('edgeDE')" x="18" y="185" class="svg-label svg-clickable" font-size="12" fill="#065f46">24 cm (12×2)</text>
+              <text onclick="selectTriItem('edgeEF')" x="150" y="318" class="svg-label svg-clickable" font-size="12" fill="#065f46" text-anchor="middle">12 cm (6×2)</text>
+
+              <circle id="tRippleB" cx="-100" cy="-100" r="6" fill="none" stroke="#e11d48" stroke-width="2.5" class="ripple-ring" style="display:none;" />
+
+              <g onclick="selectTriItem('ptE')" class="svg-clickable">
+                <circle id="tDot-B" cx="90" cy="300" r="5" fill="#059669" stroke="#ffffff" stroke-width="1.5" />
+                <text x="58" y="316" class="svg-label" font-size="13" fill="#065f46">B (60°)</text>
+              </g>
+              <g onclick="selectTriItem('ptF')" class="svg-clickable">
+                <circle id="tDot-C" cx="210" cy="300" r="5" fill="#059669" stroke="#ffffff" stroke-width="1.5" />
+                <text x="216" y="314" class="svg-label" font-size="13" fill="#065f46">C (90°)</text>
+              </g>
+              <g onclick="selectTriItem('ptD')" class="svg-clickable">
+                <circle id="tDot-A" cx="90" cy="60" r="5" fill="#059669" stroke="#ffffff" stroke-width="1.5" />
+                <text x="90" y="45" class="svg-label" font-size="13" fill="#065f46" text-anchor="middle">A (30°)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 對應說明列 -->
+      <div class="p-4 rounded-2xl bg-emerald-50/90 border border-emerald-200 text-xs sm:text-sm text-slate-700 flex items-start gap-3">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
+        <div id="triInfoBox">請點擊上方按鈕或圖形頂點、邊線，觀察 2 倍放大圖的對應關係！</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         分頁 4：三角形縮小探究 (課本 P.107 第 5 題)
+         ============================================================ -->
+    <section id="tab-shrink" class="tab-content glass-card rounded-3xl p-4 sm:p-6 mb-6 hidden">
+      <div class="text-center max-w-2xl mx-auto mb-4">
+        <h2 class="text-lg sm:text-xl font-bold text-blue-950 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-compress text-violet-600"></i> 三角形 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖探究（課本第 107 頁第 5 題）
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-1">
+          多多把甲圖影印縮小成乙圖，乙圖的各邊長都是甲圖對應邊長的 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍，且對應角保持相等！
+        </p>
+      </div>
+
+      <div class="flex justify-center mb-4">
+        <button id="btnShrinkOverlay" onclick="toggleShrinkOverlay()" class="px-4 py-2 rounded-xl border border-violet-400 bg-violet-50 text-violet-900 hover:bg-violet-100 font-bold text-xs sm:text-sm shadow-xs transition flex items-center gap-2">
+          <i class="fa-solid fa-layer-group"></i> <span id="shrinkOverlayLabel">疊合比較對應角 (∠B 與 ∠E)</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+        <!-- 甲圖（原圖：三邊 8, 6, 4 cm） -->
+        <div class="bg-white rounded-2xl p-4 border border-blue-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="font-bold text-blue-950 text-sm">甲圖（原圖）</span>
+            <span class="text-xs bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded font-bold">三邊長：8 cm、6 cm、4 cm</span>
+          </div>
+          <div class="w-full bg-[#f8fbff] rounded-xl border border-sky-100 overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 360 300" class="w-full h-auto max-h-[280px]">
+              <defs>
+                <pattern id="gridShrinkA" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#dbeafe" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="360" height="300" fill="url(#gridShrinkA)" />
+
+              <!-- 甲圖三角形：C(60,240), B(220,240), A(100,140) (1格 = 1cm) -->
+              <polygon points="60,240 220,240 100,140" fill="rgba(37, 99, 235, 0.16)" stroke="#2563eb" stroke-width="2.5" />
+
+              <text x="140" y="260" class="svg-label" font-size="13" fill="#1e3a8a" text-anchor="middle">BC = 8 cm</text>
+              <text x="175" y="185" class="svg-label" font-size="13" fill="#1e3a8a">AB = 6 cm</text>
+              <text x="42" y="185" class="svg-label" font-size="13" fill="#1e3a8a">AC = 4 cm</text>
+
+              <circle cx="60" cy="240" r="4.5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+              <text x="42" y="246" class="svg-label" font-size="14" fill="#1e3a8a">C</text>
+
+              <circle cx="220" cy="240" r="4.5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+              <text x="228" y="246" class="svg-label" font-size="14" fill="#1e3a8a">B</text>
+
+              <circle cx="100" cy="140" r="4.5" fill="#1d4ed8" stroke="#ffffff" stroke-width="1.5" />
+              <text x="100" y="126" class="svg-label" font-size="14" fill="#1e3a8a" text-anchor="middle">A</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 乙圖（1/2 倍縮小圖：三邊 4, 3, 2 cm） -->
+        <div class="bg-white rounded-2xl p-4 border border-violet-100 shadow-sm flex flex-col items-center">
+          <div class="w-full flex justify-between items-center mb-2">
+            <span class="font-bold text-violet-950 text-sm">乙圖（甲圖的縮小圖）</span>
+            <span class="text-xs bg-violet-100 text-violet-900 px-2.5 py-0.5 rounded font-bold">
+              <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖
+            </span>
+          </div>
+          <div class="w-full bg-[#fcfaff] rounded-xl border border-violet-100 overflow-hidden flex items-center justify-center">
+            <svg viewBox="0 0 360 300" class="w-full h-auto max-h-[280px]">
+              <defs>
+                <pattern id="gridShrinkB" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#ede9fe" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect width="360" height="300" fill="url(#gridShrinkB)" />
+
+              <!-- 疊合層：甲圖疊合於 F(100,240) -->
+              <g id="shrinkGhostGroup" style="display: none;">
+                <polygon points="100,240 260,240 140,140" fill="rgba(37, 99, 235, 0.16)" stroke="#2563eb" stroke-width="2" stroke-dasharray="5 3" />
+                <text x="180" y="132" class="svg-label" font-size="11" fill="#1d4ed8" text-anchor="middle">甲圖疊合：∠C 與 ∠F 完全重合</text>
+              </g>
+
+              <!-- 乙圖縮小三角形：F(100,240), E(180,240), D(120,190) (各邊為甲圖的一半) -->
+              <polygon points="100,240 180,240 120,190" fill="rgba(124, 58, 237, 0.22)" stroke="#7c3aed" stroke-width="2.5" />
+
+              <text x="140" y="260" class="svg-label" font-size="13" fill="#5b21b6" text-anchor="middle">EF = 4 cm</text>
+              <text x="162" y="210" class="svg-label" font-size="13" fill="#5b21b6">DE = 3 cm</text>
+              <text x="64" y="212" class="svg-label" font-size="13" fill="#5b21b6">DF = 2 cm</text>
+
+              <circle cx="100" cy="240" r="4.5" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5" />
+              <text x="84" y="246" class="svg-label" font-size="14" fill="#5b21b6">F</text>
+
+              <circle cx="180" cy="240" r="4.5" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5" />
+              <text x="188" y="246" class="svg-label" font-size="14" fill="#5b21b6">E</text>
+
+              <circle cx="120" cy="190" r="4.5" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5" />
+              <text x="120" y="176" class="svg-label" font-size="14" fill="#5b21b6" text-anchor="middle">D</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 算式解析卡 (標準直式分數) -->
+      <div class="p-4 rounded-2xl bg-violet-50/90 border border-violet-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <h3 class="font-bold text-violet-950 mb-2.5 flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-violet-600"></i> 對應邊倍數計算（乙圖邊長 ÷ 甲圖對應邊長）：
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <div class="bg-white p-3 rounded-xl border border-violet-100 text-center shadow-xs">
+            <div class="text-slate-500 font-bold mb-1">邊 DE ÷ 邊 AB</div>
+            <div class="text-violet-800 font-black text-base">
+              3 ÷ 6 = <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍
+            </div>
+          </div>
+          <div class="bg-white p-3 rounded-xl border border-violet-100 text-center shadow-xs">
+            <div class="text-slate-500 font-bold mb-1">邊 EF ÷ 邊 BC</div>
+            <div class="text-violet-800 font-black text-base">
+              4 ÷ 8 = <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍
+            </div>
+          </div>
+          <div class="bg-white p-3 rounded-xl border border-violet-100 text-center shadow-xs">
+            <div class="text-slate-500 font-bold mb-1">邊 DF ÷ 邊 AC</div>
+            <div class="text-violet-800 font-black text-base">
+              2 ÷ 4 = <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍
+            </div>
+          </div>
+        </div>
+        <p class="text-center font-bold text-violet-950">
+          結論：乙圖的各邊長都是甲圖對應邊長的 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍，且對應角相等，因此乙圖為甲圖的 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖。
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         分頁 5：隨堂測驗 (滿分 100 分，並排置中「提交答案」與「重新測驗」)
+         ============================================================ -->
+    <section id="tab-quiz" class="tab-content glass-card rounded-3xl p-4 sm:p-6 mb-6 hidden">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 mb-5">
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold text-blue-950 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-blue-600"></i> 隨堂測驗
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-0.5">共 5 題單選題，每題 20 分，滿分 100 分。作答完畢請點擊下方「提交答案」。</p>
+        </div>
+        <!-- 得分顯示區（提交後顯示） -->
+        <div id="quizScoreResult" class="hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black px-4 py-2 rounded-2xl text-sm sm:text-base shadow-md">
+          本次得分：<span id="quizScoreValue">0</span> / 100 分
+        </div>
+      </div>
+
+      <!-- 5 題測驗列表 -->
+      <div class="space-y-5">
+
+        <!-- 第 1 題 (附 SVG 圖形輔助) -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs" id="quizBox-1">
+          <div class="flex flex-col md:flex-row gap-4 items-start">
+            <div class="flex-1">
+              <p class="font-bold text-slate-800 text-sm sm:text-base mb-3 leading-relaxed">
+                <span class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-md mr-2">第 1 題 (20分)</span>
+                觀察右圖，乙圖是甲圖的 2 倍放大圖。若甲圖中的 ∠B = 35°，請問乙圖中對應角 ∠E 是多少度？
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm" id="opts-1">
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q1" value="0" class="w-4 h-4 accent-blue-600">
+                  <span>A. 70°（35° × 2）</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q1" value="1" class="w-4 h-4 accent-blue-600">
+                  <span>B. 35°（對應角大小不變）</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q1" value="2" class="w-4 h-4 accent-blue-600">
+                  <span>C. 17.5°（35° ÷ 2）</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q1" value="3" class="w-4 h-4 accent-blue-600">
+                  <span>D. 90°</span>
+                </label>
+              </div>
+            </div>
+            <!-- 題目 1 輔助示意圖 -->
+            <div class="w-full md:w-52 bg-sky-50/70 rounded-xl p-2 border border-sky-100 flex justify-center shrink-0">
+              <svg viewBox="0 0 210 110" class="w-48 h-auto">
+                <polygon points="15,90 65,90 65,55" fill="rgba(37,99,235,0.2)" stroke="#2563eb" stroke-width="2"/>
+                <text x="10" y="103" class="svg-label" font-size="10" fill="#1e3a8a">B(35°)</text>
+                <text x="42" y="72" class="svg-label" font-size="10" fill="#1e3a8a">甲</text>
+                <polygon points="95,90 195,90 195,20" fill="rgba(234,88,12,0.2)" stroke="#ea580c" stroke-width="2"/>
+                <text x="88" y="103" class="svg-label" font-size="10" fill="#c2410c">E(?°)</text>
+                <text x="155" y="65" class="svg-label" font-size="10" fill="#c2410c">乙(2倍)</text>
+              </svg>
+            </div>
+          </div>
+          <!-- 解析顯示區 -->
+          <div id="fb-1" class="hidden mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium"></div>
+        </div>
+
+        <!-- 第 2 題 (附 SVG 圖形輔助) -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs" id="quizBox-2">
+          <div class="flex flex-col md:flex-row gap-4 items-start">
+            <div class="flex-1">
+              <p class="font-bold text-slate-800 text-sm sm:text-base mb-3 leading-relaxed">
+                <span class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-md mr-2">第 2 題 (20分)</span>
+                原圖長方形的長為 12 公分、寬為 6 公分；縮小後的長方形長為 4 公分、寬為 2 公分。請問縮小圖是原圖的幾倍縮小圖？
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm" id="opts-2">
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q2" value="0" class="w-4 h-4 accent-blue-600">
+                  <span>A. 3 倍縮小圖</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q2" value="1" class="w-4 h-4 accent-blue-600">
+                  <span>B. <span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span> 倍縮小圖</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q2" value="2" class="w-4 h-4 accent-blue-600">
+                  <span>C. <span class="fraction"><span class="numerator">1</span><span class="denominator">4</span></span> 倍縮小圖</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q2" value="3" class="w-4 h-4 accent-blue-600">
+                  <span>D. <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖</span>
+                </label>
+              </div>
+            </div>
+            <!-- 題目 2 輔助示意圖 -->
+            <div class="w-full md:w-52 bg-violet-50/70 rounded-xl p-2 border border-violet-100 flex justify-center shrink-0">
+              <svg viewBox="0 0 210 110" class="w-48 h-auto">
+                <rect x="15" y="25" width="96" height="48" fill="rgba(37,99,235,0.18)" stroke="#2563eb" stroke-width="2"/>
+                <text x="63" y="88" class="svg-label" font-size="10" fill="#1e3a8a" text-anchor="middle">12 cm</text>
+                <text x="63" y="53" class="svg-label" font-size="10" fill="#1e3a8a" text-anchor="middle">原圖</text>
+                <rect x="140" y="45" width="32" height="16" fill="rgba(124,58,237,0.22)" stroke="#7c3aed" stroke-width="2"/>
+                <text x="156" y="76" class="svg-label" font-size="10" fill="#5b21b6" text-anchor="middle">4 cm</text>
+              </svg>
+            </div>
+          </div>
+          <div id="fb-2" class="hidden mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium"></div>
+        </div>
+
+        <!-- 第 3 題 -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs" id="quizBox-3">
+          <p class="font-bold text-slate-800 text-sm sm:text-base mb-3 leading-relaxed">
+            <span class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-md mr-2">第 3 題 (20分)</span>
+            丁圖是丙圖的 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖。若丙圖有一條邊長為 18 公分，請問丁圖中相對應的邊長是多少公分？
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm" id="opts-3">
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q3" value="0" class="w-4 h-4 accent-blue-600">
+              <span>A. 36 公分</span>
+            </label>
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q3" value="1" class="w-4 h-4 accent-blue-600">
+              <span>B. 16 公分</span>
+            </label>
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q3" value="2" class="w-4 h-4 accent-blue-600">
+              <span>C. 9 公分</span>
+            </label>
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q3" value="3" class="w-4 h-4 accent-blue-600">
+              <span>D. 6 公分</span>
+            </label>
+          </div>
+          <div id="fb-3" class="hidden mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium"></div>
+        </div>
+
+        <!-- 第 4 題 -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs" id="quizBox-4">
+          <p class="font-bold text-slate-800 text-sm sm:text-base mb-3 leading-relaxed">
+            <span class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-md mr-2">第 4 題 (20分)</span>
+            檢查兩個多邊形是否為「放大圖或縮小圖」關係時，必須同時符合哪兩個條件？
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm" id="opts-4">
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q4" value="0" class="w-4 h-4 accent-blue-600">
+              <span>A. 對應邊長有相同的倍數關係，且對應角相等</span>
+            </label>
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q4" value="1" class="w-4 h-4 accent-blue-600">
+              <span>B. 只要對應角相等，邊長可以隨意拉長</span>
+            </label>
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q4" value="2" class="w-4 h-4 accent-blue-600">
+              <span>C. 只要周長成倍數關係，角度大小不影響</span>
+            </label>
+            <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+              <input type="radio" name="q4" value="3" class="w-4 h-4 accent-blue-600">
+              <span>D. 兩圖的面積必須完全相同</span>
+            </label>
+          </div>
+          <div id="fb-4" class="hidden mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium"></div>
+        </div>
+
+        <!-- 第 5 題 (附 SVG 圖形輔助) -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-xs" id="quizBox-5">
+          <div class="flex flex-col md:flex-row gap-4 items-start">
+            <div class="flex-1">
+              <p class="font-bold text-slate-800 text-sm sm:text-base mb-3 leading-relaxed">
+                <span class="bg-blue-600 text-white text-xs px-2.5 py-0.5 rounded-md mr-2">第 5 題 (20分)</span>
+                如右圖，四邊形 EFGH 是四邊形 ABCD 的 3 倍放大圖。已知原圖邊 AD = 4 cm、邊 BC = 9 cm，請問放大圖的邊 EH 與邊 FG 分別是多少公分？
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm" id="opts-5">
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q5" value="0" class="w-4 h-4 accent-blue-600">
+                  <span>A. EH = 7 cm，FG = 12 cm</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q5" value="1" class="w-4 h-4 accent-blue-600">
+                  <span>B. EH = 12 cm，FG = 27 cm</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q5" value="2" class="w-4 h-4 accent-blue-600">
+                  <span>C. EH = 12 cm，FG = 18 cm</span>
+                </label>
+                <label class="quiz-opt flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 hover:bg-blue-50/70 cursor-pointer font-medium transition">
+                  <input type="radio" name="q5" value="3" class="w-4 h-4 accent-blue-600">
+                  <span>D. EH = 27 cm，FG = 12 cm</span>
+                </label>
+              </div>
+            </div>
+            <!-- 題目 5 輔助示意圖 -->
+            <div class="w-full md:w-52 bg-amber-50/70 rounded-xl p-2 border border-amber-100 flex justify-center shrink-0">
+              <svg viewBox="0 0 210 110" class="w-48 h-auto">
+                <polygon points="15,90 55,90 35,60 15,65" fill="rgba(37,99,235,0.2)" stroke="#2563eb" stroke-width="1.8"/>
+                <text x="12" y="57" class="svg-label" font-size="9" fill="#1e3a8a">AD=4</text>
+                <text x="35" y="102" class="svg-label" font-size="9" fill="#1e3a8a" text-anchor="middle">BC=9</text>
+                <polygon points="85,90 185,90 135,20 85,35" fill="rgba(234,88,12,0.2)" stroke="#ea580c" stroke-width="1.8"/>
+                <text x="95" y="22" class="svg-label" font-size="9" fill="#c2410c">EH=?</text>
+                <text x="135" y="102" class="svg-label" font-size="9" fill="#c2410c" text-anchor="middle">FG=?</text>
+              </svg>
+            </div>
+          </div>
+          <div id="fb-5" class="hidden mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium"></div>
+        </div>
+
+      </div>
+
+      <!-- 測驗下方並排置中、大小完全相同的兩個按鈕：左邊「提交答案」、右邊「重新測驗」 -->
+      <div class="mt-7 flex items-center justify-center gap-4">
+        <button onclick="submitQuiz()" class="w-36 sm:w-44 h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm sm:text-base shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-paper-plane"></i> 提交答案
+        </button>
+        <button onclick="resetQuiz()" class="w-36 sm:w-44 h-12 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 border-2 border-slate-300 font-bold text-sm sm:text-base shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-solid fa-rotate-right"></i> 重新測驗
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 核心互動 JavaScript -->
+  <script>
+    /* ============================================================
+       1. 分頁切換控制
+       ============================================================ */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-blue-900', 'shadow-md');
+        btn.classList.add('text-white');
+      });
+
+      const targetPane = document.getElementById('tab-' + tabId);
+      const targetBtn = document.getElementById('tabBtn-' + tabId);
+      if (targetPane) targetPane.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.add('bg-white', 'text-blue-900', 'shadow-md');
+        targetBtn.classList.remove('text-white');
+      }
+    }
+
+    /* ============================================================
+       2. 分頁 1：放大縮小探究室（1 格 = 1 cm = 20px）
+       ============================================================ */
+    let labOverlayOn = false;
+    const BASE_X = 40;
+    const BASE_Y = 300;
+    const ORIG_W = 8; // 8 cm
+    const ORIG_H = 6; // 6 cm
+    const CELL_PX = 20;
+
+    function setLabScale(val) {
+      document.getElementById('labSlider').value = val;
+      updateLabScale(val);
+    }
+
+    function updateLabScale(scale) {
+      const efCm = ORIG_W * scale;
+      const dfCm = ORIG_H * scale;
+      const deCm = Math.sqrt(efCm * efCm + dfCm * dfCm);
+
+      const ex = BASE_X;
+      const ey = BASE_Y;
+      const fx = ex + efCm * CELL_PX;
+      const fy = ey;
+      const dx = fx;
+      const dy = fy - dfCm * CELL_PX;
+
+      // 更新多邊形與頂點位置（嚴格對齊方格交點）
+      document.getElementById('polyLabB').setAttribute('points', `${ex},${ey} ${fx},${fy} ${dx},${dy}`);
+
+      document.getElementById('ptLabE').setAttribute('cx', ex);
+      document.getElementById('ptLabE').setAttribute('cy', ey);
+      document.getElementById('txtLabPtE').setAttribute('x', ex - 16);
+      document.getElementById('txtLabPtE').setAttribute('y', ey + 4);
+
+      document.getElementById('ptLabF').setAttribute('cx', fx);
+      document.getElementById('ptLabF').setAttribute('cy', fy);
+      document.getElementById('txtLabPtF').setAttribute('x', fx + 7);
+      document.getElementById('txtLabPtF').setAttribute('y', fy + 6);
+
+      document.getElementById('ptLabD').setAttribute('cx', dx);
+      document.getElementById('ptLabD').setAttribute('cy', dy);
+      document.getElementById('txtLabPtD').setAttribute('x', dx + 7);
+      document.getElementById('txtLabPtD').setAttribute('y', dy - 4);
+
+      // 直角符號與角度標籤
+      document.getElementById('labRightAngleB').setAttribute('d', `M ${fx - 15},${fy} L ${fx - 15},${fy - 15} L ${fx},${fy - 15}`);
+      document.getElementById('lblLabAngF').setAttribute('x', fx - 28);
+      document.getElementById('lblLabAngF').setAttribute('y', fy - 20);
+
+      document.getElementById('lblLabAngE').setAttribute('x', ex + 34);
+      document.getElementById('lblLabAngE').setAttribute('y', ey - 8);
+
+      document.getElementById('lblLabAngD').setAttribute('x', dx - 22);
+      document.getElementById('lblLabAngD').setAttribute('y', dy + 36);
+
+      // 邊長文字
+      document.getElementById('txtLabEF').setAttribute('x', (ex + fx) / 2);
+      document.getElementById('txtLabEF').setAttribute('y', fy + 18);
+      document.getElementById('txtLabEF').textContent = `EF = ${efCm} cm`;
+
+      document.getElementById('txtLabDF').setAttribute('x', fx + 8);
+      document.getElementById('txtLabDF').setAttribute('y', (fy + dy) / 2 + 4);
+      document.getElementById('txtLabDF').textContent = `DF = ${dfCm} cm`;
+
+      document.getElementById('txtLabDE').setAttribute('x', (ex + dx) / 2 - 28);
+      document.getElementById('txtLabDE').setAttribute('y', (ey + dy) / 2 - 6);
+      document.getElementById('txtLabDE').textContent = `DE = ${deCm} cm`;
+
+      // 更新徽章、表格與說明（直式分數排版）
+      const badge = document.getElementById('labScaleBadge');
+      const targetBadge = document.getElementById('labTargetBadge');
+      const tblRatio = document.getElementById('tblLabRatio');
+      const note = document.getElementById('labTargetNote');
+
+      if (scale === 1.0) {
+        badge.innerHTML = '1.0 倍 (原圖大小)';
+        targetBadge.className = 'text-xs bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md font-bold';
+        targetBadge.innerHTML = '1.0 倍 (原圖大小)';
+        tblRatio.innerHTML = '1 倍';
+        note.innerHTML = '目前為 1.0 倍，乙圖與甲圖大小完全相等（全等圖形）。';
+      } else if (scale < 1.0) {
+        badge.innerHTML = '<span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖';
+        targetBadge.className = 'text-xs bg-violet-100 text-violet-900 px-2.5 py-0.5 rounded-md font-bold';
+        targetBadge.innerHTML = '<span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖';
+        tblRatio.innerHTML = '<span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍';
+        note.innerHTML = '各邊長均縮小為原圖的 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍，但形狀不變，對應角完全相等。';
+      } else {
+        badge.innerHTML = `${scale.toFixed(1)} 倍放大圖`;
+        targetBadge.className = 'text-xs bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-md font-bold';
+        targetBadge.innerHTML = `${scale.toFixed(1)} 倍放大圖`;
+        tblRatio.innerHTML = `${scale.toFixed(1)} 倍`;
+        note.innerHTML = `各邊長均放大為原圖的 ${scale.toFixed(1)} 倍，頂點對齊方格交點且對應角完全相等。`;
+      }
+
+      document.getElementById('tblLabEF').textContent = `${efCm} cm`;
+      document.getElementById('tblLabDF').textContent = `${dfCm} cm`;
+      document.getElementById('tblLabDE').textContent = `${deCm} cm`;
+    }
+
+    function toggleLabOverlay() {
+      labOverlayOn = !labOverlayOn;
+      const ghost = document.getElementById('labGhostGroup');
+      const btn = document.getElementById('btnLabOverlay');
+      const lbl = document.getElementById('labOverlayLabel');
+
+      if (labOverlayOn) {
+        ghost.style.display = 'block';
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('bg-white', 'text-blue-700');
+        lbl.textContent = '關閉疊合比較';
+      } else {
+        ghost.style.display = 'none';
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-white', 'text-blue-700');
+        lbl.textContent = '疊合比較對應角';
+      }
+    }
+
+    /* ============================================================
+       3. 分頁 2：四邊形放大對應互動（清除舊狀態 + 同步脈衝光環）
+       ============================================================ */
+    const quadData = {
+      ptA: { a: [60, 180], b: [60, 130], desc: '<strong>點 A 對應 點 E：</strong>兩者皆為對應頂點，對應角 ∠A = ∠E = 106°，角度保持相等。' },
+      ptB: { a: [60, 280], b: [60, 280], desc: '<strong>點 B 對應 點 F：</strong>兩者皆為對應頂點，對應角 ∠B = ∠F = 90°（直角）。' },
+      ptC: { a: [240, 280], b: [330, 280], desc: '<strong>點 C 對應 點 G：</strong>兩者皆為對應頂點，對應角 ∠C = ∠G = 50°。' },
+      ptD: { a: [140, 160], b: [180, 80], desc: '<strong>點 D 對應 點 H：</strong>兩者皆為對應頂點，對應角 ∠D = ∠H = 114°。' },
+      edgeAB: { eA: 'qEdge-AB', eB: 'qEdge-EF', desc: '<strong>邊 AB 對應 邊 EF：</strong>原圖 AB = 5 cm，放大 3 倍後 EF = 5 × 3 = 15 cm。' },
+      edgeBC: { eA: 'qEdge-BC', eB: 'qEdge-FG', desc: '<strong>邊 BC 對應 邊 FG：</strong>原圖 BC = 9 cm，放大 3 倍後 FG = 9 × 3 = 27 cm。' },
+      edgeCD: { eA: 'qEdge-CD', eB: 'qEdge-GH', desc: '<strong>邊 CD 對應 邊 GH：</strong>原圖 CD = 8 cm，放大 3 倍後 GH = 8 × 3 = 24 cm。' },
+      edgeDA: { eA: 'qEdge-DA', eB: 'qEdge-HE', desc: '<strong>邊 DA 對應 邊 HE：</strong>原圖 DA = 4 cm，放大 3 倍後 HE = 4 × 3 = 12 cm。' }
+    };
+
+    function clearQuadState() {
+      document.querySelectorAll('.q-btn').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        b.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
+      });
+      document.getElementById('qRippleA').style.display = 'none';
+      document.getElementById('qRippleB').style.display = 'none';
+      ['qEdge-AB', 'qEdge-BC', 'qEdge-CD', 'qEdge-DA', 'qEdge-EF', 'qEdge-FG', 'qEdge-GH', 'qEdge-HE'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('highlight-edge');
+      });
+    }
+
+    function selectQuadItem(key) {
+      clearQuadState();
+      const btn = document.getElementById('qBtn-' + key);
+      if (btn) {
+        btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
+        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+      }
+      const item = quadData[key];
+      if (!item) return;
+
+      if (item.a && item.b) {
+        const rA = document.getElementById('qRippleA');
+        const rB = document.getElementById('qRippleB');
+        rA.setAttribute('cx', item.a[0]);
+        rA.setAttribute('cy', item.a[1]);
+        rA.style.display = 'block';
+
+        rB.setAttribute('cx', item.b[0]);
+        rB.setAttribute('cy', item.b[1]);
+        rB.style.display = 'block';
+      }
+      if (item.eA && item.eB) {
+        document.getElementById(item.eA).classList.add('highlight-edge');
+        document.getElementById(item.eB).classList.add('highlight-edge');
+      }
+      document.getElementById('quadInfoBox').innerHTML = item.desc;
+    }
+
+    /* ============================================================
+       4. 分頁 3：直角三角形 2 倍對應與疊合驗證
+       ============================================================ */
+    let triOverlayOn = false;
+    const triData = {
+      ptD: { a: [100, 180], b: [90, 60], desc: '<strong>點 D 對應 點 A：</strong>對應角 ∠D = ∠A = 30°，放大 2 倍後角度不變。' },
+      ptE: { a: [100, 300], b: [90, 300], desc: '<strong>點 E 對應 點 B：</strong>對應角 ∠E = ∠B = 60°，放大 2 倍後角度不變。' },
+      ptF: { a: [160, 300], b: [210, 300], desc: '<strong>點 F 對應 點 C：</strong>對應角 ∠F = ∠C = 90°（直角）。' },
+      edgeDE: { eA: 'tEdge-DE', eB: 'tEdge-AB', desc: '<strong>邊 DE 對應 邊 AB：</strong>原圖 DE = 12 cm，放大 2 倍後 AB = 12 × 2 = 24 cm。' },
+      edgeEF: { eA: 'tEdge-EF', eB: 'tEdge-BC', desc: '<strong>邊 EF 對應 邊 BC：</strong>原圖 EF = 6 cm，放大 2 倍後 BC = 6 × 2 = 12 cm。' },
+      edgeDF: { eA: 'tEdge-DF', eB: 'tEdge-AC', desc: '<strong>斜邊 DF 對應 斜邊 AC：</strong>AC 的長度是 DF 的 2 倍。' }
+    };
+
+    function clearTriState() {
+      document.querySelectorAll('.t-btn').forEach(b => {
+        b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-600');
+        b.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
+      });
+      document.getElementById('tRippleA').style.display = 'none';
+      document.getElementById('tRippleB').style.display = 'none';
+      ['tEdge-DE', 'tEdge-EF', 'tEdge-DF', 'tEdge-AB', 'tEdge-BC', 'tEdge-AC'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('highlight-edge');
+      });
+    }
+
+    function selectTriItem(key) {
+      clearTriState();
+      const btn = document.getElementById('tBtn-' + key);
+      if (btn) {
+        btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
+        btn.classList.add('bg-emerald-600', 'text-white', 'border-emerald-600');
+      }
+      const item = triData[key];
+      if (!item) return;
+
+      if (item.a && item.b) {
+        const rA = document.getElementById('tRippleA');
+        const rB = document.getElementById('tRippleB');
+        rA.setAttribute('cx', item.a[0]);
+        rA.setAttribute('cy', item.a[1]);
+        rA.style.display = 'block';
+
+        rB.setAttribute('cx', item.b[0]);
+        rB.setAttribute('cy', item.b[1]);
+        rB.style.display = 'block';
+      }
+      if (item.eA && item.eB) {
+        document.getElementById(item.eA).classList.add('highlight-edge');
+        document.getElementById(item.eB).classList.add('highlight-edge');
+      }
+      document.getElementById('triInfoBox').innerHTML = item.desc;
+    }
+
+    function toggleTriOverlay() {
+      triOverlayOn = !triOverlayOn;
+      const ghost = document.getElementById('triGhostGroup');
+      const btn = document.getElementById('btnTriOverlay');
+      const lbl = document.getElementById('triOverlayLabel');
+      if (triOverlayOn) {
+        ghost.style.display = 'block';
+        btn.classList.add('bg-blue-600', 'text-white');
+        btn.classList.remove('bg-blue-50', 'text-blue-800');
+        lbl.textContent = '關閉疊合驗證';
+      } else {
+        ghost.style.display = 'none';
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-blue-50', 'text-blue-800');
+        lbl.textContent = '平移疊合驗證';
+      }
+    }
+
+    /* ============================================================
+       5. 分頁 4：縮小圖疊合切換
+       ============================================================ */
+    let shrinkOverlayOn = false;
+    function toggleShrinkOverlay() {
+      shrinkOverlayOn = !shrinkOverlayOn;
+      const ghost = document.getElementById('shrinkGhostGroup');
+      const btn = document.getElementById('btnShrinkOverlay');
+      const lbl = document.getElementById('shrinkOverlayLabel');
+      if (shrinkOverlayOn) {
+        ghost.style.display = 'block';
+        btn.classList.add('bg-violet-600', 'text-white');
+        btn.classList.remove('bg-violet-50', 'text-violet-900');
+        lbl.textContent = '關閉疊合比較';
+      } else {
+        ghost.style.display = 'none';
+        btn.classList.remove('bg-violet-600', 'text-white');
+        btn.classList.add('bg-violet-50', 'text-violet-900');
+        lbl.textContent = '疊合比較對應角 (∠B 與 ∠E)';
+      }
+    }
+
+    /* ============================================================
+       6. 分頁 5：隨堂測驗評分與無矛盾解析邏輯（滿分 100 分）
+       - 未作答時：解析區僅顯示「未作答。」（黃色系），不顯示其他說明及正確答案
+       - 作答解析本身不含「完全正確」、「答對了」、「太棒了」等矛盾詞彙
+       ============================================================ */
+    const quizKey = {
+      1: {
+        ans: '1',
+        explanation: '放大圖與原圖的形狀相同，對應角的大小保持相等，不會隨邊長放大而改變，因此 ∠E = ∠B = 35°。'
+      },
+      2: {
+        ans: '1',
+        explanation: '縮小倍數是以「縮小後的邊長 ÷ 原圖對應邊長」計算：4 ÷ 12 = <span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span>（或 2 ÷ 6 = <span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span>），故為 <span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span> 倍縮小圖。'
+      },
+      3: {
+        ans: '2',
+        explanation: '丁圖為丙圖的 <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍縮小圖，對應邊長為 18 × <span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> = 9 公分。'
+      },
+      4: {
+        ans: '0',
+        explanation: '判斷放大圖或縮小圖必須同時檢驗兩個條件：各組對應邊有相同的倍數關係，且各組對應角相等。'
+      },
+      5: {
+        ans: '1',
+        explanation: '乙圖為甲圖的 3 倍放大圖，各對應邊長均為原圖的 3 倍：EH = 4 × 3 = 12 cm，FG = 9 × 3 = 27 cm。'
+      }
+    };
+
+    function submitQuiz() {
+      let totalScore = 0;
+
+      for (let q = 1; q <= 5; q++) {
+        const selected = document.querySelector(`input[name="q${q}"]:checked`);
+        const fbEl = document.getElementById(`fb-${q}`);
+        const options = document.querySelectorAll(`#opts-${q} .quiz-opt`);
+
+        // 重置選項背景框線
+        options.forEach(opt => {
+          opt.classList.remove('bg-emerald-50', 'border-emerald-500', 'bg-rose-50', 'border-rose-400', 'bg-amber-50', 'border-amber-400');
+        });
+
+        if (!selected) {
+          // 規則 3：空白未作答時，僅顯示「未作答。」（黃色系），不顯示其他說明且不顯示正確答案
+          fbEl.className = 'mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-50 border border-amber-400 text-amber-800 flex items-center gap-2';
+          fbEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i> <span>未作答。</span>';
+          fbEl.classList.remove('hidden');
+        } else {
+          const userVal = selected.value;
+          const isCorrect = (userVal === quizKey[q].ans);
+          const parentLabel = selected.closest('.quiz-opt');
+
+          if (isCorrect) {
+            totalScore += 20;
+            parentLabel.classList.add('bg-emerald-50', 'border-emerald-500');
+            fbEl.className = 'mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-emerald-50 border border-emerald-400 text-emerald-900 flex items-start gap-2';
+            fbEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i> <div><strong>答對了！</strong>${quizKey[q].explanation}</div>`;
+          } else {
+            parentLabel.classList.add('bg-rose-50', 'border-rose-400');
+            fbEl.className = 'mt-3 p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-rose-50 border border-rose-400 text-rose-900 flex items-start gap-2';
+            fbEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mt-0.5"></i> <div><strong>答錯了，再想一想：</strong>${quizKey[q].explanation}</div>`;
+          }
+          fbEl.classList.remove('hidden');
+        }
+      }
+
+      // 顯示總分（滿分 100 分）
+      document.getElementById('quizScoreValue').textContent = totalScore;
+      document.getElementById('quizScoreResult').classList.remove('hidden');
+    }
+
+    function resetQuiz() {
+      for (let q = 1; q <= 5; q++) {
+        const radios = document.querySelectorAll(`input[name="q${q}"]`);
+        radios.forEach(r => r.checked = false);
+
+        const options = document.querySelectorAll(`#opts-${q} .quiz-opt`);
+        options.forEach(opt => {
+          opt.classList.remove('bg-emerald-50', 'border-emerald-500', 'bg-rose-50', 'border-rose-400', 'bg-amber-50', 'border-amber-400');
+        });
+
+        const fbEl = document.getElementById(`fb-${q}`);
+        fbEl.classList.add('hidden');
+        fbEl.innerHTML = '';
+      }
+      document.getElementById('quizScoreResult').classList.add('hidden');
+      document.getElementById('quizScoreValue').textContent = '0';
+    }
+
+    // 初始化預設畫面
+    window.addEventListener('DOMContentLoaded', () => {
+      updateLabScale(1.0);
+      selectQuadItem('ptA');
+      selectTriItem('ptD');
+    });
+  </script>
+</body>
+</html>

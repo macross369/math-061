@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學 4-1 比和相等的比 - 互動探索教室</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC & Fredoka -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shinkai: {
+              sky: '#38bdf8',
+              twilight: '#6366f1',
+              sunset: '#f43f5e',
+              amber: '#fbbf24',
+              cloud: '#f0f9ff',
+              deep: '#1e1b4b'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+            math: ['"Fredoka"', '"Noto Sans TC"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 新海誠動漫天空光影背景與動畫 */
+    body {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 45%, #ec4899 80%, #fbbf24 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    /* 雲朵飄動裝飾層 */
+    .shinkai-clouds {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.25) 0%, transparent 40%),
+                  radial-gradient(circle at 80% 40%, rgba(255,247,237,0.2) 0%, transparent 50%),
+                  radial-gradient(circle at 50% 80%, rgba(254,243,199,0.15) 0%, transparent 60%);
+      z-index: 0;
+    }
+
+    /* 霧面毛玻璃卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px -5px rgba(30, 27, 75, 0.15), 0 4px 6px -2px rgba(30, 27, 75, 0.05);
+    }
+
+    .glass-tab {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+    }
+
+    .glass-tab.active {
+      background: rgba(255, 255, 255, 0.95);
+      color: #4f46e5;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* 國小標準直式分數排版：垂直置中、分母在下、分子在上、帶分數整數在左 */
+    .math-fraction {
+      display: inline-flex;
+      vertical-align: middle;
+      align-items: center;
+      line-height: 1;
+      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+      margin: 0 3px;
+    }
+    .math-fraction .integer-part {
+      font-size: 1.15em;
+      margin-right: 2px;
+      font-weight: 600;
+    }
+    .math-fraction .frac-stack {
+      display: inline-flex;
+      flex-direction: column;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 0.92em;
+    }
+    .math-fraction .numerator {
+      border-bottom: 1.5px solid currentColor;
+      padding: 0 3px 1px 3px;
+      display: block;
+    }
+    .math-fraction .denominator {
+      padding: 1px 3px 0 3px;
+      display: block;
+    }
+
+    /* 檸檬紅茶杯中動態液體 */
+    .liquid-wave {
+      transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease;
+    }
+
+    /* 數值高亮光芒 */
+    .glow-num {
+      text-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased relative pb-16">
+  <div class="shinkai-clouds"></div>
+
+  <header class="relative z-10 px-4 pt-6 pb-4 max-w-6xl mx-auto">
+    <div class="glass-card rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-t-2 border-white">
+      <div class="flex items-center gap-3.5 text-center md:text-left">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-pink-400 flex items-center justify-center text-white shadow-lg text-2xl">
+          <i class="fa-solid fa-scale-balanced"></i>
+        </div>
+        <div>
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 mb-1 tracking-wide">
+            國小六上數學 4-1 互動學習網頁
+          </span>
+          <h1 class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">
+            4-1 比和相等的比
+          </h1>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-2 text-xs md:text-sm text-slate-600 bg-sky-50/80 px-3.5 py-2 rounded-xl border border-sky-100">
+        <i class="fa-solid fa-cloud-sun text-amber-500 text-base"></i>
+        <span>探究式動態視覺 ‧ 觀察量與量的對應</span>
+      </div>
+    </div>
+
+    <!-- 標籤導覽列 (四個核心主題標籤頁) -->
+    <nav class="flex flex-wrap gap-2 mt-4 justify-center" id="tabNav">
+      <button onclick="switchTab('tab1')" id="btn-tab1" class="glass-tab active px-4 py-2.5 rounded-xl text-sm md:text-base font-semibold flex items-center gap-2 text-slate-700">
+        <i class="fa-solid fa-gift text-pink-500"></i> 1. 認識比與集點記法
+      </button>
+      <button onclick="switchTab('tab2')" id="btn-tab2" class="glass-tab px-4 py-2.5 rounded-xl text-sm md:text-base font-semibold flex items-center gap-2 text-slate-700">
+        <i class="fa-solid fa-mug-hot text-amber-500"></i> 2. 檸檬紅茶實驗室 (相等的比)
+      </button>
+      <button onclick="switchTab('tab3')" id="btn-tab3" class="glass-tab px-4 py-2.5 rounded-xl text-sm md:text-base font-semibold flex items-center gap-2 text-slate-700">
+        <i class="fa-solid fa-calculator text-indigo-500"></i> 3. 比例式與未知數推導
+      </button>
+      <button onclick="switchTab('tab4')" id="btn-tab4" class="glass-tab px-4 py-2.5 rounded-xl text-sm md:text-base font-semibold flex items-center gap-2 text-slate-700">
+        <i class="fa-solid fa-star-half-stroke text-amber-500"></i> 4. 隨堂測驗
+      </button>
+    </nav>
+  </header>
+
+  <main class="relative z-10 max-w-6xl mx-auto px-4 mt-2">
+    
+    <!-- ==================== TAB 1: 認識比 ==================== -->
+    <section id="tab1" class="tab-content block">
+      <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6">
+        <!-- 觀念引導區 (支援動態同步更換情境內容) -->
+        <div class="border-b border-indigo-100 pb-5">
+          <div class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 text-xs px-3 py-1 rounded-md font-bold mb-2" id="tab1Badge">
+            <i class="fa-solid fa-lightbulb"></i> 課本情境 1-2：交換情境認識比
+          </div>
+          <h2 class="text-xl md:text-2xl font-bold text-slate-800" id="tab1Title">
+            集點獎勵制度：兩量的對應關係
+          </h2>
+          <p class="text-slate-600 mt-1 text-sm md:text-base leading-relaxed" id="tab1Desc">
+            六年甲班的獎勵制度規定：<span class="font-bold text-indigo-600">每集滿 10 點可以換 3 隻玩偶</span>。
+            兩數量的對應關係可以用比記成「<span class="font-bold text-pink-600 font-math text-lg">10 : 3</span>」，讀作「<span class="font-bold">10 比 3</span>」。
+          </p>
+        </div>
+
+        <!-- 互動控制：點數滑桿與動態實體展示 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-6 bg-gradient-to-br from-indigo-50/80 to-sky-50/80 p-5 rounded-xl border border-indigo-100/80 space-y-5">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-700 text-sm md:text-base" id="tab1SliderLabel">
+                <i class="fa-solid fa-sliders text-indigo-500 mr-1.5"></i> 調整皮皮收集的點數：
+              </span>
+              <span class="bg-indigo-600 text-white font-math font-bold px-3 py-1 rounded-lg text-lg shadow-sm" id="pointValueDisplay">
+                30 點
+              </span>
+            </div>
+
+            <input type="range" id="pointSlider" min="10" max="80" step="10" value="30" 
+              class="w-full h-2.5 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 focus:outline-none"
+              oninput="updateRatioTab1(this.value)">
+
+            <div class="flex justify-between text-xs text-slate-600 px-1 font-math" id="tab1SliderTicks">
+              <span>10點(換3隻)</span>
+              <span>20點(換6隻)</span>
+              <span>30點(換9隻)</span>
+              <span>50點(換15隻)</span>
+              <span>80點(換24隻)</span>
+            </div>
+
+            <!-- 比的專屬結構解剖框 -->
+            <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm space-y-3">
+              <div class="text-xs font-bold text-slate-600 uppercase tracking-wider text-center">
+                比的記法解剖結構
+              </div>
+              <div class="flex items-center justify-center gap-3 md:gap-6 py-2">
+                <!-- 前項 -->
+                <div class="text-center">
+                  <div class="text-xs text-indigo-600 font-semibold mb-1" id="tab1AntLabel">前項 (點數)</div>
+                  <div id="tab1AntDisplay" class="w-16 h-14 md:w-20 md:h-16 rounded-xl bg-indigo-100 border-2 border-indigo-500 flex items-center justify-center text-xl md:text-2xl font-black text-indigo-700 font-math">
+                    30
+                  </div>
+                </div>
+
+                <!-- 比號 -->
+                <div class="flex flex-col items-center">
+                  <span class="text-xs text-slate-600 mb-1">比號</span>
+                  <span class="text-3xl md:text-4xl font-black text-slate-500 font-math">:</span>
+                </div>
+
+                <!-- 後項 -->
+                <div class="text-center">
+                  <div class="text-xs text-pink-600 font-semibold mb-1" id="tab1ConsLabel">後項 (玩偶數)</div>
+                  <div id="tab1ConsDisplay" class="w-16 h-14 md:w-20 md:h-16 rounded-xl bg-pink-100 border-2 border-pink-500 flex items-center justify-center text-xl md:text-2xl font-black text-pink-700 font-math">
+                    9
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-center text-xs md:text-sm text-slate-600 bg-indigo-50/60 py-2 rounded-lg" id="tab1ReadText">
+                記作「<b class="text-indigo-700 font-math">30 : 9</b>」，讀作「<b class="text-slate-800">30 比 9</b>」。前項是 <b>30</b>，後項是 <b>9</b>。
+              </div>
+            </div>
+          </div>
+
+          <!-- 右側動態圖像視覺化 -->
+          <div class="lg:col-span-6 bg-white/90 p-5 rounded-xl border border-slate-200/80 shadow-inner flex flex-col justify-between min-h-[300px]">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
+                <span class="text-sm font-bold text-slate-700">
+                  <i class="fa-solid fa-shapes text-pink-500 mr-1.5"></i> 實體對應視覺圖
+                </span>
+                <span class="text-xs text-indigo-600 font-semibold" id="tab1PackMultiplier">相當於 3 組基礎交換</span>
+              </div>
+
+              <!-- 點數卡清單 -->
+              <div class="space-y-1">
+                <span class="text-xs font-semibold text-slate-600" id="tab1PointCardHeader">點數卡（每張10點）：</span>
+                <div id="tab1PointsVisual" class="flex flex-wrap gap-1.5 min-h-[40px] items-center">
+                  <!-- 動態注入點數卡圖標 -->
+                </div>
+              </div>
+
+              <!-- 獎品清單 -->
+              <div class="space-y-1 mt-3">
+                <span class="text-xs font-semibold text-slate-600" id="tab1PrizeHeader">可兌換的玩偶（每10點得3隻）：</span>
+                <div id="tab1DollsVisual" class="flex flex-wrap gap-1.5 min-h-[60px] items-center">
+                  <!-- 動態注入獎品圖標 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 情境結論提示 -->
+            <div class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs md:text-sm text-amber-900 flex items-start gap-2">
+              <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+              <div>
+                <b>教師提醒：</b>比是用來表達兩個數量之間的「對應關係」。記錄比時可以不寫單位；在「前項 : 後項」的情境中，位置不可任意對調喔！
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 類題生活情境切換按鈕區 (圖2) -->
+        <div class="pt-2">
+          <div class="text-sm font-bold text-slate-700 mb-2">
+            <i class="fa-solid fa-arrows-spin text-indigo-500 mr-1"></i> 切換其他課本生活情境：
+          </div>
+          <div class="flex flex-wrap gap-2.5" id="scenarioButtons">
+            <button onclick="setTab1Scenario('doll', 30)" id="btnScen-doll" class="px-3.5 py-1.5 rounded-lg text-xs md:text-sm bg-indigo-600 text-white font-semibold shadow-sm transition">
+              例題①：點數與玩偶 (10點換3隻)
+            </button>
+            <button onclick="setTab1Scenario('notebook', 50)" id="btnScen-notebook" class="px-3.5 py-1.5 rounded-lg text-xs md:text-sm bg-pink-100 text-pink-700 font-semibold hover:bg-pink-200 transition">
+              例題③：多多集滿50點換4本筆記本 (50 : 4)
+            </button>
+            <button onclick="setTab1Scenario('juice', 90)" id="btnScen-juice" class="px-3.5 py-1.5 rounded-lg text-xs md:text-sm bg-amber-100 text-amber-800 font-semibold hover:bg-amber-200 transition">
+              超市活動：婷婷集滿90點換12罐果汁 (90 : 12)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 相等的比 (檸檬紅茶實驗室) ==================== -->
+    <section id="tab2" class="tab-content hidden">
+      <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6">
+        <!-- 標題與情境說明 -->
+        <div class="border-b border-indigo-100 pb-5">
+          <div class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 text-xs px-3 py-1 rounded-md font-bold mb-2">
+            <i class="fa-solid fa-lemon"></i> 課本情境 1-1 & 1-3：酸度情境與相等的比
+          </div>
+          <h2 class="text-xl md:text-2xl font-bold text-slate-800">
+            飲料店「招牌檸檬紅茶」調配實驗室
+          </h2>
+          <p class="text-slate-600 mt-1 text-sm md:text-base leading-relaxed">
+            飲料店招牌檸檬紅茶的黃金配方為：<span class="font-bold text-amber-600">2 匙檸檬汁</span> 和 <span class="font-bold text-red-600">5 杯紅茶</span>，比記作「<span class="font-math font-bold text-indigo-600">2 : 5</span>」。
+            只要調配的比例與 2 : 5 相同，就能調出<b>一模一樣的黃金風味</b>！
+          </p>
+        </div>
+
+        <!-- 實驗操作台：左邊滑桿調配，中間杯子視覺，右邊比的判定 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+          
+          <!-- 控制面板 -->
+          <div class="md:col-span-4 bg-sky-50/70 p-5 rounded-xl border border-sky-100 space-y-5 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="font-bold text-slate-700 text-sm flex items-center justify-between">
+                <span>調配原料控制</span>
+                <span class="text-xs text-sky-600 font-normal">動手調整看看</span>
+              </div>
+
+              <!-- 檸檬汁滑桿 -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                  <span class="text-amber-700"><i class="fa-solid fa-spoon text-amber-500 mr-1"></i> 檸檬汁 (匙)：</span>
+                  <span id="lemonVal" class="font-math font-bold text-amber-700 text-base">2</span>
+                </div>
+                <input type="range" id="lemonSlider" min="1" max="15" step="1" value="2"
+                  class="w-full h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                  oninput="updateLemonTeaLab()">
+                <div class="flex justify-between text-[11px] text-slate-600 px-0.5 mt-0.5 font-math">
+                  <span>1匙</span><span>6匙</span><span>10匙</span><span>15匙</span>
+                </div>
+              </div>
+
+              <!-- 紅茶滑桿 -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                  <span class="text-red-700"><i class="fa-solid fa-mug-saucer text-red-500 mr-1"></i> 紅茶 (杯)：</span>
+                  <span id="teaVal" class="font-math font-bold text-red-700 text-base">5</span>
+                </div>
+                <input type="range" id="teaSlider" min="1" max="35" step="1" value="5"
+                  class="w-full h-2 bg-red-200 rounded-lg appearance-none cursor-pointer accent-red-500"
+                  oninput="updateLemonTeaLab()">
+                <div class="flex justify-between text-[11px] text-slate-600 px-0.5 mt-0.5 font-math">
+                  <span>1杯</span><span>15杯</span><span>25杯</span><span>35杯</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 課本情境快捷測試鈕 -->
+            <div class="border-t border-sky-200/80 pt-3 space-y-2">
+              <span class="text-xs font-bold text-slate-600 block">課本案例快速載入：</span>
+              <div class="grid grid-cols-2 gap-1.5 text-xs font-semibold">
+                <button onclick="setLemonTeaPreset(2, 5)" class="p-1.5 bg-white rounded border border-amber-200 hover:bg-amber-50 text-slate-700 text-left">
+                  🌟 招牌配方 (2:5)
+                </button>
+                <button onclick="setLemonTeaPreset(6, 15)" class="p-1.5 bg-white rounded border border-indigo-200 hover:bg-indigo-50 text-slate-700 text-left">
+                  ✅ 擴分3次 (6:15)
+                </button>
+                <button onclick="setLemonTeaPreset(12, 30)" class="p-1.5 bg-white rounded border border-indigo-200 hover:bg-indigo-50 text-slate-700 text-left">
+                  ✅ 擴分6次 (12:30)
+                </button>
+                <button onclick="setLemonTeaPreset(10, 15)" class="p-1.5 bg-white rounded border border-rose-200 hover:bg-rose-50 text-rose-700 text-left">
+                  ❌ 丹丹調的 (10:15)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 中間：大茶杯動態外觀與風味指示 -->
+          <div class="md:col-span-4 bg-white/90 p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center justify-between text-center">
+            <span class="text-xs font-bold text-slate-500 tracking-wider">即時混合杯外觀</span>
+
+            <div class="relative w-36 h-52 bg-slate-100/80 border-4 border-slate-300 rounded-b-3xl rounded-t-lg overflow-hidden my-2 flex flex-col justify-end shadow-inner">
+              <!-- 杯子刻度 -->
+              <div class="absolute inset-y-0 right-1 flex flex-col justify-between py-3 text-[10px] text-slate-400 font-math pointer-events-none select-none">
+                <span>-MAX</span>
+                <span>-30</span>
+                <span>-20</span>
+                <span>-10</span>
+                <span>-0</span>
+              </div>
+
+              <!-- 液體顏色與高度 -->
+              <div id="cupLiquid" class="liquid-wave w-full flex items-center justify-center text-white font-math font-bold text-xs" style="height: 45%; background-color: #d97706;">
+                <span id="liquidLabel" class="drop-shadow">2 : 5</span>
+              </div>
+            </div>
+
+            <!-- 風味徽章標籤 -->
+            <div id="flavorBadge" class="w-full py-2 px-3 rounded-xl bg-emerald-100 text-emerald-800 text-xs md:text-sm font-bold flex items-center justify-center gap-1.5 border border-emerald-200">
+              <i class="fa-solid fa-circle-check text-emerald-600"></i>
+              <span>黃金比例！口味與招牌完全一樣！</span>
+            </div>
+          </div>
+
+          <!-- 右側：比的數學運算與倍數關係分析 -->
+          <div class="md:col-span-4 bg-gradient-to-br from-indigo-50/60 to-purple-50/60 p-5 rounded-xl border border-indigo-100 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold text-indigo-700 block mb-2 uppercase">
+                <i class="fa-solid fa-arrow-down-up-across-line mr-1"></i> 相等的比檢驗核心
+              </span>
+
+              <div class="bg-white p-3.5 rounded-xl border border-indigo-100 shadow-sm space-y-2 text-xs md:text-sm">
+                <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+                  <span class="text-slate-500">招牌基準比：</span>
+                  <span class="font-math font-bold text-slate-700">2 : 5</span>
+                </div>
+                <div class="flex items-center justify-between pb-1 border-b border-slate-100">
+                  <span class="text-slate-500">當前調配比：</span>
+                  <span class="font-math font-bold text-indigo-600" id="currentRatioFormula">2 : 5</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-500">檸檬汁倍率：</span>
+                  <span class="font-math font-bold" id="lemonMultiplierText">× 1 倍</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-500">紅茶倍率：</span>
+                  <span class="font-math font-bold" id="teaMultiplierText">× 1 倍</span>
+                </div>
+              </div>
+
+              <!-- 動態解析結論 -->
+              <div id="mathExplanation" class="mt-3 p-3 rounded-lg text-xs leading-relaxed bg-indigo-100/60 text-indigo-950 font-medium">
+                前項與後項同時乘以 1，比值不變。<br>
+                因此 <span class="font-math font-bold">2 : 5 = 2 : 5</span> 是<b>相等的比</b>！
+              </div>
+            </div>
+
+            <!-- 重要數學結論筆記 -->
+            <div class="bg-amber-100/70 p-3 rounded-lg border border-amber-200/80 text-[12px] text-amber-950 mt-3">
+              <span class="font-bold"><i class="fa-solid fa-bookmark text-amber-600 mr-1"></i>重要定理：</span>
+              比的前項、後項同時<b>乘以</b>或<b>除以</b>同一個不為 0 的數，所得的比都是相等的比！
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 四項比例式與分數乘除 ==================== -->
+    <section id="tab3" class="tab-content hidden">
+      <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6">
+        <!-- 標題區 -->
+        <div class="border-b border-indigo-100 pb-5">
+          <div class="inline-flex items-center gap-2 bg-purple-50 text-purple-700 text-xs px-3 py-1 rounded-md font-bold mb-2">
+            <i class="fa-solid fa-equals"></i> 課本情境 1-4：四項比例式求部分量或總量
+          </div>
+          <h2 class="text-xl md:text-2xl font-bold text-slate-800">
+            四項比例式探索器（支援整數、小數與直式分數）
+          </h2>
+          <p class="text-slate-600 mt-1 text-sm md:text-base leading-relaxed">
+            當兩個比相等時，可以記作四項比例式「<span class="font-math font-bold text-indigo-600">a : b = c : d</span>」。
+            透過前項與後項同乘或同除以同一個數的關係，我們就能求出未知的數量！
+          </p>
+        </div>
+
+        <!-- 比例式互動演算台 -->
+        <div class="bg-white/80 p-5 md:p-6 rounded-2xl border border-indigo-100 shadow-sm space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <span class="font-bold text-slate-700 text-sm md:text-base">
+              <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 mr-1.5"></i> 選擇課本經典範例進行互動拆解：
+            </span>
+            <div class="flex flex-wrap gap-2 text-xs md:text-sm font-semibold">
+              <button onclick="loadProportionExample('pen')" id="btnProp-pen" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-sm">
+                原子筆例題 (紅筆:藍筆)
+              </button>
+              <button onclick="loadProportionExample('camp')" id="btnProp-camp" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">
+                夏令營例題 (男女比)
+              </button>
+              <button onclick="loadProportionExample('oil')" id="btnProp-oil" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">
+                葵花油例題 (直式分數倍率)
+              </button>
+              <button onclick="loadProportionExample('decimal')" id="btnProp-decimal" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200">
+                小數倍率例題 (7:9=7.7:d)
+              </button>
+            </div>
+          </div>
+
+          <!-- 視覺化比例式展示板 -->
+          <div class="bg-gradient-to-r from-sky-50 via-indigo-50 to-pink-50 p-6 rounded-2xl border border-indigo-100 flex flex-col items-center">
+            <div class="text-xs md:text-sm text-slate-500 font-semibold mb-4" id="proportionTitle">
+              情境：一袋原子筆有 2 枝紅筆、3 枝藍筆。丹丹買了幾袋，其中有 12 枝紅筆，藍筆有幾枝？
+            </div>
+
+            <!-- a : b = c : d 四項格子 -->
+            <div class="flex flex-wrap items-center justify-center gap-2 md:gap-4 my-2">
+              <!-- a (前項1) -->
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-indigo-600 font-bold mb-1" id="label-termA">紅筆</span>
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white border-2 border-indigo-400 rounded-xl flex items-center justify-center text-xl md:text-2xl font-black font-math text-indigo-700 shadow-sm" id="termA">
+                  2
+                </div>
+              </div>
+
+              <!-- 冒號 -->
+              <div class="text-3xl font-black text-slate-400 font-math pt-5">:</div>
+
+              <!-- b (後項1) -->
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-indigo-600 font-bold mb-1" id="label-termB">藍筆</span>
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white border-2 border-indigo-400 rounded-xl flex items-center justify-center text-xl md:text-2xl font-black font-math text-indigo-700 shadow-sm" id="termB">
+                  3
+                </div>
+              </div>
+
+              <!-- 等號 -->
+              <div class="text-3xl font-black text-slate-500 font-math pt-5 mx-1 md:mx-2">=</div>
+
+              <!-- c (前項2) -->
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-pink-600 font-bold mb-1" id="label-termC">紅筆</span>
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-white border-2 border-pink-400 rounded-xl flex items-center justify-center text-xl md:text-2xl font-black font-math text-pink-700 shadow-sm" id="termC">
+                  12
+                </div>
+              </div>
+
+              <!-- 冒號 -->
+              <div class="text-3xl font-black text-slate-400 font-math pt-5">:</div>
+
+              <!-- d (後項2 - 未知數或已求得) -->
+              <div class="flex flex-col items-center">
+                <span class="text-xs text-pink-600 font-bold mb-1" id="label-termD">藍筆 (未知)</span>
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-amber-50 border-2 border-amber-400 rounded-xl flex items-center justify-center text-xl md:text-2xl font-black font-math text-amber-700 shadow-sm relative" id="termD">
+                  <span id="termDVal">18</span>
+                  <span id="termDUnknown" class="hidden text-amber-600 font-bold">( ? )</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 連動箭頭說明 (同乘以或除以的關係標示) -->
+            <div class="w-full max-w-lg mt-4 bg-white/90 p-4 rounded-xl border border-indigo-100 shadow-sm space-y-2 text-xs md:text-sm">
+              <div class="flex items-center justify-between text-indigo-900 font-medium">
+                <span><i class="fa-solid fa-arrow-right text-indigo-500 mr-1"></i> 前項變化：</span>
+                <span id="stepAntecedent" class="font-bold flex items-center">2 × 6 = 12</span>
+              </div>
+              <div class="flex items-center justify-between text-pink-900 font-medium border-t border-slate-100 pt-2">
+                <span><i class="fa-solid fa-arrow-right text-pink-500 mr-1"></i> 後項對應同乘：</span>
+                <span id="stepConsequent" class="font-bold flex items-center">3 × 6 = 18</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-700 border-t border-slate-100 pt-2 font-semibold" id="stepResult">
+                <span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> 答：藍筆共有 18 枝</span>
+                <span class="text-xs text-slate-500 font-normal">相等的比成立！</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 直式分數乘除解題專區 (依要求：嚴格標準直式分數展示，垂直置中) -->
+          <div class="bg-gradient-to-r from-amber-50/70 to-orange-50/70 p-5 rounded-xl border border-amber-200/70">
+            <div class="font-bold text-amber-900 text-sm md:text-base flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-graduation-cap text-amber-600"></i>
+              國小數學課本標準：直式分數倍率算法解析
+            </div>
+            <p class="text-xs md:text-sm text-slate-700 mb-3">
+              當後項或前項不是整數倍時，可利用乘除互逆，將倍數以<b>直式分數</b>表示：
+            </p>
+
+            <div class="bg-white p-4 rounded-xl border border-amber-200 flex flex-wrap items-center justify-around gap-4 text-slate-800 text-sm md:text-base" id="standardFractionDisplay">
+              <!-- 動態生成直式分數運算算式 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: 隨堂測驗 ==================== -->
+    <section id="tab4" class="tab-content hidden">
+      <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6">
+        <!-- 標題區 (已移除原本右側的計分小卡圖示內容) -->
+        <div class="border-b border-indigo-100 pb-5">
+          <div class="inline-flex items-center gap-2 bg-pink-50 text-pink-700 text-xs px-3 py-1 rounded-md font-bold mb-2">
+            <i class="fa-solid fa-clipboard-check"></i> 概念歷程檢核
+          </div>
+          <h2 class="text-xl md:text-2xl font-bold text-slate-800">
+            隨堂測驗
+          </h2>
+          <p class="text-slate-600 mt-1 text-xs md:text-sm">
+            共 5 題，每題 20 分，滿分 100 分。請完成作答後點選下方「提交答案」按鈕檢視得分與解析。
+          </p>
+        </div>
+
+        <!-- 5 題測驗卡片容器 -->
+        <div class="space-y-6" id="quizContainer">
+          <!-- 題目由 JS 動態完整載入 -->
+        </div>
+
+        <!-- 測驗得分橫幅 (提交後顯示，滿分 100 分) -->
+        <div id="quizScoreBanner" class="hidden p-5 rounded-2xl border-2 text-center transition-all"></div>
+
+        <!-- 下方並排置中按鈕：提交答案 (左) & 重新測驗 (右) (大小相同並排置中) -->
+        <div class="pt-4 flex items-center justify-center gap-4">
+          <button onclick="submitQuiz()" class="w-40 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm md:text-base shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-40 py-3 rounded-xl bg-white hover:bg-slate-100 text-indigo-600 border-2 border-indigo-200 font-bold text-sm md:text-base shadow-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ==========================================
+    // 1. 標籤頁切換邏輯 (Multi-tab Navigation)
+    // ==========================================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('block');
+      });
+      document.querySelectorAll('.glass-tab').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      const activeSection = document.getElementById(tabId);
+      if (activeSection) {
+        activeSection.classList.remove('hidden');
+        activeSection.classList.add('block');
+      }
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+    }
+
+    // ==========================================
+    // 2. TAB 1: 認識比與集點兌換邏輯 (同步更新情境)
+    // ==========================================
+    let tab1Mode = 'doll'; // 'doll', 'notebook', 'juice'
+
+    const scenarioConfigs = {
+      doll: {
+        badge: '<i class="fa-solid fa-lightbulb"></i> 課本情境 1-2：交換情境認識比',
+        title: '集點獎勵制度：兩量的對應關係',
+        desc: '六年甲班的獎勵制度規定：<span class="font-bold text-indigo-600">每集滿 10 點可以換 3 隻玩偶</span>。兩數量的對應關係可以用比記成「<span class="font-bold text-pink-600 font-math text-lg">10 : 3</span>」，讀作「<span class="font-bold">10 比 3</span>」。',
+        sliderLabel: '<i class="fa-solid fa-sliders text-indigo-500 mr-1.5"></i> 調整皮皮收集的點數：',
+        antLabel: '前項 (點數)',
+        consLabel: '後項 (玩偶數)',
+        pointCardHeader: '點數卡（每張10點）：',
+        prizeHeader: '可兌換的玩偶（每10點得3隻）：',
+        iconClass: 'fa-solid fa-paw text-pink-500',
+        cardUnit: 10,
+        baseAnt: 10,
+        baseCons: 3,
+        sliderMin: 10,
+        sliderMax: 80,
+        sliderStep: 10,
+        ticks: ['10點(換3隻)', '20點(換6隻)', '30點(換9隻)', '50點(換15隻)', '80點(換24隻)']
+      },
+      notebook: {
+        badge: '<i class="fa-solid fa-book-open"></i> 課本情境 1-2 例題③：筆記本兌換',
+        title: '多多換筆記本：兩量的對應關係',
+        desc: '六年甲班的獎勵制度規定：<span class="font-bold text-indigo-600">多多集滿 50 點換了 4 本筆記本</span>。兩數量的對應關係可以用比記成「<span class="font-bold text-pink-600 font-math text-lg">50 : 4</span>」，讀作「<span class="font-bold">50 比 4</span>」。',
+        sliderLabel: '<i class="fa-solid fa-sliders text-indigo-500 mr-1.5"></i> 調整多多收集的點數：',
+        antLabel: '前項 (點數)',
+        consLabel: '後項 (筆記本數)',
+        pointCardHeader: '點數卡（每張25點）：',
+        prizeHeader: '可兌換的筆記本（每50點得4本）：',
+        iconClass: 'fa-solid fa-book-open text-emerald-500',
+        cardUnit: 25,
+        baseAnt: 50,
+        baseCons: 4,
+        sliderMin: 25,
+        sliderMax: 150,
+        sliderStep: 25,
+        ticks: ['25點(換2本)', '50點(換4本)', '75點(換6本)', '100點(換8本)', '150點(換12本)']
+      },
+      juice: {
+        badge: '<i class="fa-solid fa-bottle-water"></i> 課本第 52 頁類題：超市集點活動',
+        title: '超市集點兌換果汁：兩量的對應關係',
+        desc: '超市舉辦集點活動規定：<span class="font-bold text-indigo-600">每集滿 30 點可以換 4 罐果汁</span>（婷婷集滿 90 點換 12 罐、小杰集滿 210 點換 28 罐）。兩數量的對應關係可以用比記成「<span class="font-bold text-pink-600 font-math text-lg">90 : 12</span>」，讀作「<span class="font-bold">90 比 12</span>」。',
+        sliderLabel: '<i class="fa-solid fa-sliders text-indigo-500 mr-1.5"></i> 調整婷婷收集的點數：',
+        antLabel: '前項 (點數)',
+        consLabel: '後項 (果汁數)',
+        pointCardHeader: '點數卡（每張30點）：',
+        prizeHeader: '可兌換的果汁（每30點得4罐）：',
+        iconClass: 'fa-solid fa-bottle-water text-amber-500',
+        cardUnit: 30,
+        baseAnt: 30,
+        baseCons: 4,
+        sliderMin: 30,
+        sliderMax: 210,
+        sliderStep: 30,
+        ticks: ['30點(換4罐)', '60點(換8罐)', '90點(換12罐)', '150點(換20罐)', '210點(換28罐)']
+      }
+    };
+
+    function updateRatioTab1(points) {
+      points = parseInt(points);
+      const conf = scenarioConfigs[tab1Mode];
+      document.getElementById('pointSlider').value = points;
+      document.getElementById('pointValueDisplay').innerText = points + ' 點';
+
+      const antecedent = points;
+      const consequent = Math.round((points / conf.baseAnt) * conf.baseCons * 10) / 10;
+
+      document.getElementById('tab1AntDisplay').innerText = antecedent;
+      document.getElementById('tab1ConsDisplay').innerText = consequent;
+
+      document.getElementById('tab1ReadText').innerHTML = 
+        `記作「<b class="text-indigo-700 font-math text-base">${antecedent} : ${consequent}</b>」，` +
+        `讀作「<b class="text-slate-800">${antecedent} 比 ${consequent}</b>」。` +
+        `前項是 <b class="text-indigo-700 font-math text-base">${antecedent}</b>，後項是 <b class="text-pink-600 font-math text-base">${consequent}</b>。`;
+
+      const packs = (points / conf.baseAnt).toFixed(1);
+      document.getElementById('tab1PackMultiplier').innerText = `相當於 ${packs} 組基準兌換`;
+
+      // 渲染點數卡視覺
+      const pointsBox = document.getElementById('tab1PointsVisual');
+      pointsBox.innerHTML = '';
+      const numCards = Math.max(1, Math.round(points / conf.cardUnit));
+      for (let i = 0; i < numCards; i++) {
+        const card = document.createElement('div');
+        card.className = 'w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-300 flex flex-col items-center justify-center text-[10px] font-bold text-indigo-700 shadow-xs';
+        card.innerHTML = `<i class="fa-solid fa-ticket text-xs text-indigo-500"></i>${conf.cardUnit}`;
+        pointsBox.appendChild(card);
+      }
+
+      // 渲染獎勵品視覺
+      const dollsBox = document.getElementById('tab1DollsVisual');
+      dollsBox.innerHTML = '';
+      const itemsCount = Math.floor(consequent);
+      for (let j = 0; j < itemsCount; j++) {
+        const item = document.createElement('div');
+        item.className = 'w-8 h-8 rounded-lg bg-pink-50 border border-pink-200 flex items-center justify-center text-sm shadow-xs';
+        item.innerHTML = `<i class="${conf.iconClass}"></i>`;
+        dollsBox.appendChild(item);
+      }
+      if (itemsCount === 0) {
+        dollsBox.innerHTML = `<span class="text-xs text-slate-400">尚不足兌換標準</span>`;
+      }
+    }
+
+    function setTab1Scenario(mode, defaultPoints) {
+      tab1Mode = mode;
+      const conf = scenarioConfigs[mode];
+
+      document.getElementById('tab1Badge').innerHTML = conf.badge;
+      document.getElementById('tab1Title').innerText = conf.title;
+      document.getElementById('tab1Desc').innerHTML = conf.desc;
+      document.getElementById('tab1SliderLabel').innerHTML = conf.sliderLabel;
+      document.getElementById('tab1AntLabel').innerText = conf.antLabel;
+      document.getElementById('tab1ConsLabel').innerText = conf.consLabel;
+      document.getElementById('tab1PointCardHeader').innerText = conf.pointCardHeader;
+      document.getElementById('tab1PrizeHeader').innerText = conf.prizeHeader;
+
+      const slider = document.getElementById('pointSlider');
+      slider.min = conf.sliderMin;
+      slider.max = conf.sliderMax;
+      slider.step = conf.sliderStep;
+      slider.value = defaultPoints;
+
+      const ticksContainer = document.getElementById('tab1SliderTicks');
+      ticksContainer.innerHTML = conf.ticks.map(t => `<span>${t}</span>`).join('');
+
+      ['doll', 'notebook', 'juice'].forEach(id => {
+        const btn = document.getElementById('btnScen-' + id);
+        if (id === mode) {
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs md:text-sm bg-indigo-600 text-white font-semibold shadow-sm transition';
+        } else {
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs md:text-sm bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition';
+        }
+      });
+
+      updateRatioTab1(defaultPoints);
+    }
+
+    // ==========================================
+    // 3. TAB 2: 檸檬紅茶實驗室 (相等的比)
+    // ==========================================
+    function updateLemonTeaLab() {
+      const lemon = parseInt(document.getElementById('lemonSlider').value);
+      const tea = parseInt(document.getElementById('teaSlider').value);
+
+      document.getElementById('lemonVal').innerText = lemon;
+      document.getElementById('teaVal').innerText = tea;
+      document.getElementById('currentRatioFormula').innerText = `${lemon} : ${tea}`;
+
+      const currentRatio = lemon / tea;
+      const baseRatio = 2 / 5;
+      const isEquivalent = Math.abs(currentRatio - baseRatio) < 0.001;
+
+      const cupLiquid = document.getElementById('cupLiquid');
+      const liquidLabel = document.getElementById('liquidLabel');
+      const flavorBadge = document.getElementById('flavorBadge');
+      const mathExplanation = document.getElementById('mathExplanation');
+      const lemonMultiplierText = document.getElementById('lemonMultiplierText');
+      const teaMultiplierText = document.getElementById('teaMultiplierText');
+
+      const totalVolume = Math.min(100, Math.max(25, (lemon * 2 + tea * 2.5)));
+      cupLiquid.style.height = `${Math.min(92, totalVolume)}%`;
+      liquidLabel.innerText = `${lemon} : ${tea}`;
+
+      const lemonMult = Math.round((lemon / 2) * 100) / 100;
+      const teaMult = Math.round((tea / 5) * 100) / 100;
+
+      lemonMultiplierText.innerText = `× ${lemonMult} 倍`;
+      teaMultiplierText.innerText = `× ${teaMult} 倍`;
+
+      if (isEquivalent) {
+        cupLiquid.style.backgroundColor = '#d97706';
+        flavorBadge.className = 'w-full py-2 px-3 rounded-xl bg-emerald-100 text-emerald-800 text-xs md:text-sm font-bold flex items-center justify-center gap-1.5 border border-emerald-300';
+        flavorBadge.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i><span>黃金比例！口味與招牌完全一樣！(${lemonMult} 倍)</span>`;
+
+        mathExplanation.innerHTML = `
+          前項與後項同時 <b class="text-indigo-600">× ${lemonMult}</b>。<br>
+          <span class="font-math font-bold text-slate-800">2 × ${lemonMult} = ${lemon}</span> 且 <span class="font-math font-bold text-slate-800">5 × ${lemonMult} = ${tea}</span>。<br>
+          兩數同時乘上相同的數，所以 <b class="text-emerald-700 font-math">2 : 5 = ${lemon} : ${tea}</b> 是<b>相等的比</b>！
+        `;
+      } else {
+        if (currentRatio > baseRatio) {
+          cupLiquid.style.backgroundColor = '#eab308';
+          flavorBadge.className = 'w-full py-2 px-3 rounded-xl bg-amber-100 text-amber-900 text-xs md:text-sm font-bold flex items-center justify-center gap-1.5 border border-amber-300';
+          flavorBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i><span>口味太酸了！檸檬比例過高</span>`;
+        } else {
+          cupLiquid.style.backgroundColor = '#991b1b';
+          flavorBadge.className = 'w-full py-2 px-3 rounded-xl bg-rose-100 text-rose-800 text-xs md:text-sm font-bold flex items-center justify-center gap-1.5 border border-rose-300';
+          flavorBadge.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600"></i><span>檸檬味太淡了！紅茶比例過高</span>`;
+        }
+
+        mathExplanation.innerHTML = `
+          前項倍率為 <b class="text-indigo-600">× ${lemonMult}</b>，但後項倍率為 <b class="text-pink-600">× ${teaMult}</b>。<br>
+          因為前後項乘的倍數<b>不相同</b>，所以 <b class="text-rose-600 font-math">2 : 5 ≠ ${lemon} : ${tea}</b>，<b>不是相等的比</b>！
+        `;
+      }
+    }
+
+    function setLemonTeaPreset(lemon, tea) {
+      document.getElementById('lemonSlider').value = lemon;
+      document.getElementById('teaSlider').value = tea;
+      updateLemonTeaLab();
+    }
+
+    // ==========================================
+    // 4. TAB 3: 四項比例式與解題解密
+    // ==========================================
+    function loadProportionExample(type) {
+      ['pen', 'camp', 'oil', 'decimal'].forEach(id => {
+        const btn = document.getElementById('btnProp-' + id);
+        if (id === type) {
+          btn.className = 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow-sm';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200';
+        }
+      });
+
+      const titleEl = document.getElementById('proportionTitle');
+      const termA = document.getElementById('termA');
+      const termB = document.getElementById('termB');
+      const termC = document.getElementById('termC');
+      const termDVal = document.getElementById('termDVal');
+      const labelA = document.getElementById('label-termA');
+      const labelB = document.getElementById('label-termB');
+      const labelC = document.getElementById('label-termC');
+      const labelD = document.getElementById('label-termD');
+      const stepAnt = document.getElementById('stepAntecedent');
+      const stepCons = document.getElementById('stepConsequent');
+      const stepRes = document.getElementById('stepResult');
+      const fracContainer = document.getElementById('standardFractionDisplay');
+
+      if (type === 'pen') {
+        titleEl.innerText = '課本情境①：一袋原子筆有 2 枝紅筆、3 枝藍筆。丹丹買的袋子裡有 12 枝紅筆，藍筆有幾枝？';
+        labelA.innerText = '紅筆(枝)'; termA.innerText = '2';
+        labelB.innerText = '藍筆(枝)'; termB.innerText = '3';
+        labelC.innerText = '紅筆(枝)'; termC.innerText = '12';
+        labelD.innerText = '藍筆(枝)'; termDVal.innerText = '18';
+        stepAnt.innerHTML = `2 × <span class="text-indigo-600 font-math text-base mx-1">6</span> = 12 （12 ÷ 2 = 6 倍）`;
+        stepCons.innerHTML = `3 × <span class="text-pink-600 font-math text-base mx-1">6</span> = 18`;
+        stepRes.innerHTML = `<span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> 答：藍筆共有 18 枝</span><span class="text-xs text-indigo-600 font-semibold font-math">2 : 3 = 12 : 18</span>`;
+
+        fracContainer.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span>倍數關係：</span>
+            <span>12 ÷ 2 = 6</span>
+          </div>
+          <div class="flex items-center gap-2 border-l border-amber-200 pl-4">
+            <span>計算未知數：</span>
+            <span>3 × 6 = 18 (枝)</span>
+          </div>
+        `;
+      } 
+      else if (type === 'camp') {
+        titleEl.innerText = '課本情境⑤：夏令營每隊男女比相同。甲隊男生 9 人，女生未知；乙隊男生 36 人，女生 8 人。甲隊女生有幾人？';
+        labelA.innerText = '乙男(人)'; termA.innerText = '36';
+        labelB.innerText = '乙女(人)'; termB.innerText = '8';
+        labelC.innerText = '甲男(人)'; termC.innerText = '9';
+        labelD.innerText = '甲女(人)'; termDVal.innerText = '2';
+        stepAnt.innerHTML = `36 ÷ <span class="text-indigo-600 font-math text-base mx-1">4</span> = 9 （36 ÷ 9 = 4）`;
+        stepCons.innerHTML = `8 ÷ <span class="text-pink-600 font-math text-base mx-1">4</span> = 2`;
+        stepRes.innerHTML = `<span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> 答：甲隊女生有 2 人</span><span class="text-xs text-indigo-600 font-semibold font-math">36 : 8 = 9 : 2</span>`;
+
+        fracContainer.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span>縮小倍數：</span>
+            <span>36 ÷ 9 = 4</span>
+          </div>
+          <div class="flex items-center gap-2 border-l border-amber-200 pl-4">
+            <span>同除以 4 求解：</span>
+            <span>8 ÷ 4 = 2 (人)</span>
+          </div>
+        `;
+      } 
+      else if (type === 'oil') {
+        titleEl.innerText = '課本情境⑧：3 公升葵花油重 2700 公克，同樣的葵花油 5 公升重多少公克？';
+        labelA.innerText = '容量(L)'; termA.innerText = '3';
+        labelB.innerText = '重量(g)'; termB.innerText = '2700';
+        labelC.innerText = '容量(L)'; termC.innerText = '5';
+        labelD.innerText = '重量(g)'; termDVal.innerText = '4500';
+        stepAnt.innerHTML = `3 × <span class="math-fraction text-indigo-600"><span class="frac-stack"><span class="numerator">5</span><span class="denominator">3</span></span></span> = 5`;
+        stepCons.innerHTML = `2700 × <span class="math-fraction text-pink-600"><span class="frac-stack"><span class="numerator">5</span><span class="denominator">3</span></span></span> = 4500`;
+        stepRes.innerHTML = `<span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> 答：5 公升葵花油重 4500 公克</span><span class="text-xs text-indigo-600 font-semibold font-math">3 : 2700 = 5 : 4500</span>`;
+
+        fracContainer.innerHTML = `
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span>倍數推導：</span>
+            <span>5 ÷ 3 = </span>
+            <span class="math-fraction text-indigo-700 text-lg">
+              <span class="frac-stack">
+                <span class="numerator">5</span>
+                <span class="denominator">3</span>
+              </span>
+            </span>
+            <span class="text-xs text-slate-500">（或寫作帶分數</span>
+            <span class="math-fraction text-indigo-700 text-base">
+              <span class="integer-part">1</span>
+              <span class="frac-stack">
+                <span class="numerator">2</span>
+                <span class="denominator">3</span>
+              </span>
+            </span>
+            <span class="text-xs text-slate-500">倍）</span>
+          </div>
+          <div class="flex items-center gap-1.5 border-l border-amber-200 pl-4 flex-wrap">
+            <span>計算總重量：</span>
+            <span>2700 × </span>
+            <span class="math-fraction text-pink-700 text-lg">
+              <span class="frac-stack">
+                <span class="numerator">5</span>
+                <span class="denominator">3</span>
+              </span>
+            </span>
+            <span> = 4500 (公克)</span>
+          </div>
+        `;
+      } 
+      else if (type === 'decimal') {
+        titleEl.innerText = '課本情境⑦：7 : 9 = 7.7 : ( ? ) ，前後項同乘以小數求未知數。';
+        labelA.innerText = '前項1'; termA.innerText = '7';
+        labelB.innerText = '後項1'; termB.innerText = '9';
+        labelC.innerText = '前項2'; termC.innerText = '7.7';
+        labelD.innerText = '後項2'; termDVal.innerText = '9.9';
+        stepAnt.innerHTML = `7 × <span class="text-indigo-600 font-math text-base mx-1">1.1</span> = 7.7 （7.7 ÷ 7 = 1.1 倍）`;
+        stepCons.innerHTML = `9 × <span class="text-pink-600 font-math text-base mx-1">1.1</span> = 9.9`;
+        stepRes.innerHTML = `<span><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> 答：未知數為 9.9</span><span class="text-xs text-indigo-600 font-semibold font-math">7 : 9 = 7.7 : 9.9</span>`;
+
+        fracContainer.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span>小數倍率求法：</span>
+            <span>7.7 ÷ 7 = 1.1 (倍)</span>
+          </div>
+          <div class="flex items-center gap-2 border-l border-amber-200 pl-4">
+            <span>後項同乘 1.1：</span>
+            <span>9 × 1.1 = 9.9</span>
+          </div>
+        `;
+      }
+    }
+
+    // ==========================================
+    // 5. TAB 4: 隨堂測驗 (滿分 100 分、未作答與矛盾檢核)
+    // ==========================================
+    const quizQuestions = [
+      {
+        id: 1,
+        question: "在比的記法中，以「10 : 3」為例，下列敘述何者正確？",
+        options: [
+          "「10」記在比號前面稱為後項，「3」稱為前項",
+          "「10」記在比號前面稱為前項，「3」稱為後項",
+          "「10 : 3」的關係可以隨意對調寫成「3 : 10」，代表意義相同",
+          "比的中間符號「:」代表加號"
+        ],
+        answer: 1,
+        explanation: "「:」是比的符號，記在「:」前面的數稱為前項，記在後面的數稱為後項。因此 10 是前項、3 是後項。"
+      },
+      {
+        id: 2,
+        question: "招牌檸檬紅茶的黃金配方是 2 匙檸檬汁搭配 5 杯紅茶 (2 : 5)。若小芬用了 6 匙檸檬汁，想要調配出相同口味，需要幾杯紅茶？",
+        options: [
+          "10 杯",
+          "12 杯",
+          "15 杯",
+          "20 杯"
+        ],
+        answer: 2,
+        explanation: "檸檬汁從 2 匙變成 6 匙是擴大 3 倍 (6 ÷ 2 = 3)，因此紅茶也必須擴大 3 倍：5 × 3 = 15 (杯)。故 2 : 5 = 6 : 15。"
+      },
+      {
+        id: 3,
+        question: "下列哪一個比與「12 : 9」是【相等的比】？",
+        options: [
+          "3 : 5",
+          "4 : 3",
+          "24 : 16",
+          "36 : 24"
+        ],
+        answer: 1,
+        explanation: "將「12 : 9」的前項與後項同時除以 3：12 ÷ 3 = 4，9 ÷ 3 = 3，可得相等的比為「4 : 3」。"
+      },
+      {
+        id: 4,
+        question: "調製消毒環境用的漂白水，漂白水與水的比為 1 : 50。媽媽在水桶內裝入 2500 毫升的水，需要倒入多少毫升的漂白水？",
+        options: [
+          "25 毫升",
+          "50 毫升",
+          "100 毫升",
+          "500 毫升"
+        ],
+        answer: 1,
+        explanation: "列出比例式 1 : 50 = ( ? ) : 2500。後項的水擴大為 2500 ÷ 50 = 50 倍，前項漂白水也需同乘以 50：1 × 50 = 50 (毫升)。"
+      },
+      {
+        id: 5,
+        question: "3 公升葵花油重 2700 公克。若要利用直式分數倍率求「5 公升葵花油重多少公克」，前項擴大的倍數以直式分數應如何表示？",
+        options: [
+          "直式分數 <span class='math-fraction text-indigo-700'><span class='frac-stack'><span class='numerator'>3</span><span class='denominator'>5</span></span></span> 倍",
+          "直式分數 <span class='math-fraction text-indigo-700'><span class='frac-stack'><span class='numerator'>5</span><span class='denominator'>3</span></span></span> （即帶分數 <span class='math-fraction text-indigo-700'><span class='integer-part'>1</span><span class='frac-stack'><span class='numerator'>2</span><span class='denominator'>3</span></span></span>）倍",
+          "直式分數 <span class='math-fraction text-indigo-700'><span class='frac-stack'><span class='numerator'>2700</span><span class='denominator'>5</span></span></span> 倍",
+          "直式分數 <span class='math-fraction text-indigo-700'><span class='frac-stack'><span class='numerator'>3</span><span class='denominator'>2700</span></span></span> 倍"
+        ],
+        answer: 1,
+        explanation: "從 3 公升變成 5 公升，倍率為 5 ÷ 3 = <span class='math-fraction'><span class='frac-stack'><span class='numerator'>5</span><span class='denominator'>3</span></span></span> 倍（帶分數 <span class='math-fraction'><span class='integer-part'>1</span><span class='frac-stack'><span class='numerator'>2</span><span class='denominator'>3</span></span></span> 倍），將重量 2700 × <span class='math-fraction'><span class='frac-stack'><span class='numerator'>5</span><span class='denominator'>3</span></span></span> = 4500 (公克)。"
+      }
+    ];
+
+    let userAnswers = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizQuestions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white/95 p-5 md:p-6 rounded-2xl border border-slate-200 shadow-sm transition hover:shadow-md';
+        card.id = `qCard-${q.id}`;
+
+        let optionsHtml = '';
+        q.options.forEach((opt, optIdx) => {
+          optionsHtml += `
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 cursor-pointer hover:bg-indigo-50/50 transition">
+              <input type="radio" name="question_${q.id}" value="${optIdx}" 
+                class="w-4 h-4 text-indigo-600 accent-indigo-600 focus:ring-indigo-500"
+                onchange="recordOption(${q.id}, ${optIdx})">
+              <span class="text-xs md:text-sm text-slate-700 leading-normal">${opt}</span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white font-math font-bold flex items-center justify-center text-xs shrink-0">
+                ${idx + 1}
+              </span>
+              <h3 class="text-sm md:text-base font-bold text-slate-800">${q.question}</h3>
+            </div>
+            <span id="badge-${q.id}" class="text-xs font-bold px-2.5 py-1 rounded-md hidden shrink-0"></span>
+          </div>
+
+          <div class="space-y-2 mt-3">
+            ${optionsHtml}
+          </div>
+
+          <!-- 解析區塊 -->
+          <div id="expl-${q.id}" class="hidden mt-4 p-3.5 rounded-xl text-xs md:text-sm leading-relaxed border"></div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function recordOption(qId, selectedIdx) {
+      userAnswers[qId] = selectedIdx;
+    }
+
+    function submitQuiz() {
+      let score = 0;
+
+      quizQuestions.forEach(q => {
+        const selectedIdx = userAnswers[q.id];
+        const badge = document.getElementById(`badge-${q.id}`);
+        const expl = document.getElementById(`expl-${q.id}`);
+
+        // 重設樣式
+        badge.className = 'text-xs font-bold px-2.5 py-1 rounded-md shrink-0';
+        expl.className = 'mt-4 p-3.5 rounded-xl text-xs md:text-sm leading-relaxed border';
+
+        if (selectedIdx === undefined) {
+          // 規則 3：當送出的答案是空白時，解析的部分僅顯示"未作答。"(黃色系)，不顯示其他說明且不顯示正確答案
+          badge.classList.add('bg-amber-100', 'text-amber-800');
+          badge.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 未作答`;
+          expl.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800', 'font-bold');
+          expl.innerHTML = `未作答。`;
+        } else if (selectedIdx === q.answer) {
+          // 答對得 20 分 (共 5 題，滿分 100 分)
+          score += 20;
+          badge.classList.add('bg-emerald-100', 'text-emerald-700');
+          badge.innerHTML = `<i class="fa-solid fa-check mr-1"></i> 答對了 (+20分)`;
+          expl.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-950');
+          expl.innerHTML = `<b><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>作答正確！解析：</b>${q.explanation}`;
+        } else {
+          // 規則 4：答錯的題目解析中絕不出現「完全正確、答對了、太棒了」等矛盾敘述
+          badge.classList.add('bg-rose-100', 'text-rose-700');
+          badge.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> 答錯了`;
+          expl.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-950');
+          expl.innerHTML = `<b><i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i>作答有誤！正確觀念解析：</b>${q.explanation}`;
+        }
+      });
+
+      // 顯示總得分橫幅 (滿分 100 分)
+      const banner = document.getElementById('quizScoreBanner');
+      banner.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-300', 'text-emerald-900', 'bg-indigo-50', 'border-indigo-300', 'text-indigo-900');
+      if (score === 100) {
+        banner.classList.add('bg-emerald-50', 'border-emerald-300', 'text-emerald-900');
+        banner.innerHTML = `<div class="text-xl md:text-2xl font-black font-math">測驗得分：${score} / 100 分</div><div class="text-xs md:text-sm mt-1 font-medium">恭喜你全部答對，徹底掌握了「比和相等的比」所有核心概念！</div>`;
+      } else {
+        banner.classList.add('bg-indigo-50', 'border-indigo-300', 'text-indigo-900');
+        banner.innerHTML = `<div class="text-xl md:text-2xl font-black font-math">測驗得分：${score} / 100 分</div><div class="text-xs md:text-sm mt-1 font-medium">請參考上方各題的詳細解析訂正觀念，可點擊「重新測驗」再次挑戰滿分！</div>`;
+      }
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      renderQuiz();
+      const banner = document.getElementById('quizScoreBanner');
+      banner.classList.add('hidden');
+      banner.innerHTML = '';
+    }
+
+    // 頁面加載完成時初始化各互動模組
+    window.addEventListener('DOMContentLoaded', () => {
+      updateRatioTab1(30);
+      updateLemonTeaLab();
+      loadProportionExample('pen');
+      renderQuiz();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>間隔問題互動探索樂園 - 新海誠風教學網頁</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shinkai: {
+              sky: '#3877d9',
+              twilight: '#6366f1',
+              sunset: '#fb7185',
+              cloud: '#f0f9ff',
+              gold: '#f59e0b',
+              grass: '#10b981',
+              deep: '#1e293b'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+            maru: ['"Noto Sans TC"', 'sans-serif'],
+            mono: ['"Noto Sans TC"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 新海誠動漫天空背景與光暈效果 */
+    body {
+      background: linear-gradient(160deg, #1e3a8a 0%, #2563eb 25%, #60a5fa 60%, #fed7aa 90%, #fbcfe8 100%);
+      background-attachment: fixed;
+      font-family: 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* 確保所有文字元素皆為思源黑體，同時不影響 Font Awesome 圖示字型 */
+    *:not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands) {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    /* 雲朵與光芒微光氛圍 */
+    .shinkai-sunlight {
+      background: radial-gradient(circle at 80% 15%, rgba(255, 255, 255, 0.45) 0%, rgba(254, 240, 138, 0.25) 20%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* 玻璃擬態卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 16px 36px -8px rgba(30, 58, 138, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-card-subtle {
+      background: rgba(248, 250, 252, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    /* 標準小學直式分數排版 */
+    .fraction-wrap {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 0.35rem;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .fraction-int {
+      font-size: 1.25em;
+      margin-right: 0.25rem;
+      line-height: 1;
+    }
+    .fraction-body {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      line-height: 1;
+      font-size: 0.95em;
+    }
+    .fraction-num {
+      padding: 0 0.2rem 2px 0.2rem;
+      text-align: center;
+    }
+    .fraction-line {
+      width: 100%;
+      height: 2px;
+      background-color: currentColor;
+      border-radius: 1px;
+    }
+    .fraction-den {
+      padding: 2px 0.2rem 0 0.2rem;
+      text-align: center;
+    }
+
+    /* 滑桿美化 */
+    input[type=range] {
+      accent-color: #2563eb;
+    }
+
+    /* 櫻花飄落背景動態 */
+    .petal {
+      position: fixed;
+      background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 100%);
+      border-radius: 150% 0 150% 0;
+      opacity: 0.65;
+      pointer-events: none;
+      z-index: 0;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translate(0, -50px) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(120px, 105vh) rotate(360deg);
+        opacity: 0.1;
+      }
+    }
+
+    /* Tab 標籤動態切換 */
+    .tab-btn.active {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      box-shadow: 0 8px 18px -4px rgba(37, 99, 235, 0.45);
+    }
+  </style>
+</head>
+<body class="relative min-h-screen text-slate-800 antialiased overflow-x-hidden pb-16">
+
+  <!-- 新海誠太陽光斑 -->
+  <div class="fixed inset-0 shinkai-sunlight z-0"></div>
+
+  <!-- 漂浮櫻花容器 -->
+  <div id="petals-container" class="pointer-events-none fixed inset-0 overflow-hidden z-0"></div>
+
+  <!-- 頂部導航與標題列 -->
+  <header class="relative z-10 w-full pt-8 pb-5 px-4 text-center">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur border border-white text-blue-800 text-sm font-semibold tracking-wide shadow-sm mb-3">
+        <i class="fa-solid fa-cloud-sun text-amber-500"></i>
+        <span>國小六上數學 8-1 互動學習網頁</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight drop-shadow-md font-maru">
+        幾棵樹？幾個間隔？視覺化探索實驗室
+      </h1>
+      <p class="mt-2 text-white/95 text-base md:text-lg font-medium drop-shadow-sm max-w-2xl mx-auto">
+        動手調一調、拉一拉，不用死背公式，親自看見線段與圓形中「間隔數」與「物件數」的神秘關聯！
+      </p>
+    </div>
+
+    <!-- 標籤頁導航按鈕 -->
+    <nav class="mt-6 flex flex-wrap justify-center gap-2 md:gap-3 max-w-4xl mx-auto px-2">
+      <button onclick="switchTab('lineTab')" id="btn-lineTab" class="tab-btn active px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 flex items-center gap-2 bg-white/80 text-blue-900 hover:bg-white">
+        <i class="fa-solid fa-road"></i>
+        <span>情境一：線段直路</span>
+      </button>
+      <button onclick="switchTab('circleTab')" id="btn-circleTab" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 flex items-center gap-2 bg-white/80 text-blue-900 hover:bg-white">
+        <i class="fa-solid fa-circle-notch"></i>
+        <span>情境二：封閉環狀與圓</span>
+      </button>
+      <button onclick="switchTab('segmentTab')" id="btn-segmentTab" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 flex items-center gap-2 bg-white/80 text-blue-900 hover:bg-white">
+        <i class="fa-solid fa-arrows-left-right-to-line"></i>
+        <span>情境三：第M號到第N號</span>
+      </button>
+      <button onclick="switchTab('quizTab')" id="btn-quizTab" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 flex items-center gap-2 bg-white/80 text-blue-900 hover:bg-white">
+        <i class="fa-solid fa-feather-pointed"></i>
+        <span>隨堂測驗</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- 主內容展示區 -->
+  <main class="relative z-10 max-w-5xl mx-auto px-4 mt-2">
+
+    <!-- ==================== TAB 1: 線段直路情境 ==================== -->
+    <section id="lineTab" class="tab-content block">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        
+        <!-- 頂部情境說明 -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-blue-100 pb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">情境 1 • 直線情境</span>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mt-1">橋樑與步道路燈模型</h2>
+            <p class="text-slate-600 text-sm mt-1">透過調整道路長度與端點規則，觀察「路燈數」與「間隔數」的增減規律。</p>
+          </div>
+          <!-- 端點模式選擇按鈕組 -->
+          <div class="flex items-center gap-1.5 p-1.5 bg-blue-50/80 rounded-2xl border border-blue-200">
+            <button onclick="setLineMode('both')" id="lineMode-both" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-white text-blue-700 shadow-sm transition">
+              <i class="fa-solid fa-circle-dot mr-1"></i>兩端都設
+            </button>
+            <button onclick="setLineMode('one')" id="lineMode-one" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-blue-700 transition">
+              <i class="fa-regular fa-circle-dot mr-1"></i>只設一端
+            </button>
+            <button onclick="setLineMode('none')" id="lineMode-none" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-blue-700 transition">
+              <i class="fa-regular fa-circle mr-1"></i>兩端都不設
+            </button>
+          </div>
+        </div>
+
+        <!-- 互動控制面板 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 p-4 rounded-2xl bg-white/70 border border-blue-100 shadow-inner">
+          <!-- 橋樑總長度 -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-ruler-horizontal text-blue-600"></i>
+                <span>橋樑總長度：</span>
+              </label>
+              <span class="text-lg font-black text-blue-700 font-mono" id="disp-totalLength">80 公尺</span>
+            </div>
+            <input type="range" id="input-totalLength" min="30" max="150" step="10" value="80" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer" oninput="updateLineSimulation()">
+            <div class="flex justify-between text-xs font-semibold text-slate-400 mt-1">
+              <span>30 m</span>
+              <span id="scale-cur-totalLength" class="text-blue-600 font-bold">80 m</span>
+              <span>150 m</span>
+            </div>
+          </div>
+
+          <!-- 每個間隔長度 -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-arrows-split-up-and-left text-amber-500"></i>
+                <span>每個間隔長度：</span>
+              </label>
+              <span class="text-lg font-black text-amber-600 font-mono" id="disp-intervalLen">20 公尺</span>
+            </div>
+            <input type="range" id="input-intervalLen" min="5" max="30" step="5" value="20" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer" oninput="updateLineSimulation()">
+            <div class="flex justify-between text-xs font-semibold text-slate-400 mt-1">
+              <span>5 m</span>
+              <span id="scale-cur-intervalLen" class="text-amber-600 font-bold">20 m</span>
+              <span>30 m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 視覺模擬畫布 (動態 SVG) -->
+        <div class="relative w-full overflow-hidden bg-gradient-to-b from-sky-100/90 via-sky-50 to-white rounded-2xl border border-sky-200 p-4 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 mb-2 flex items-center justify-between">
+            <span><i class="fa-regular fa-eye mr-1 text-blue-500"></i>動態全景透視圖（黃色燈泡為路燈，虛線標示間隔）</span>
+            <span id="lineScaleHint" class="bg-blue-100/80 text-blue-700 px-2 py-0.5 rounded text-[11px]">比例縮放顯示中</span>
+          </div>
+          <div class="w-full overflow-x-auto py-4">
+            <svg id="lineSvg" class="w-full min-w-[550px] h-48 select-none" viewBox="0 0 750 180"></svg>
+          </div>
+        </div>
+
+        <!-- 即時探究核心數據與算式卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+          <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 text-center">
+            <div class="text-xs font-bold text-blue-600 mb-1">第一步：算間隔數</div>
+            <div class="text-xs text-slate-500">總長度 ÷ 間隔長</div>
+            <div class="text-xl font-extrabold text-blue-900 mt-2 font-mono" id="calc-step1">80 ÷ 20 = 4 個間隔</div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-center">
+            <div class="text-xs font-bold text-amber-600 mb-1">第二步：判斷端點關係</div>
+            <div class="text-xs text-slate-500" id="rule-desc">兩端都設：路燈數比間隔多 1</div>
+            <div class="text-xl font-extrabold text-amber-900 mt-2 font-mono" id="calc-step2">4 + 1 = 5 盞路燈</div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-center">
+            <div class="text-xs font-bold text-emerald-600 mb-1">心像歸納金鑰匙</div>
+            <div class="text-sm font-black text-emerald-800 mt-2 flex items-center justify-center gap-1" id="conclusion-key">
+              <i class="fa-solid fa-key text-amber-500"></i>
+              <span>路燈數 = 間隔數 + 1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 探究小思考提示 -->
+        <div class="mt-4 p-4 rounded-xl bg-indigo-50/80 border-l-4 border-indigo-500 text-sm text-indigo-900 flex items-start gap-3">
+          <i class="fa-solid fa-lightbulb text-indigo-500 text-lg mt-0.5"></i>
+          <div>
+            <strong>想想看：為什麼一端有一端沒有時，路燈數恰好等於間隔數？</strong>
+            <p class="text-indigo-800/90 text-xs mt-1">因為每一個間隔剛好能「配對」一盞路燈！就像一根手指配一個指環一樣，一一對應喔。</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 封閉圖形與圓形情境 ==================== -->
+    <section id="circleTab" class="tab-content hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-blue-100 pb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">情境 2 • 封閉環狀</span>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mt-1">圓形池塘與蛋糕裝飾模型</h2>
+            <p class="text-slate-600 text-sm mt-1">只要起點與終點首尾相接，間隔與物件的數量永遠具有神奇的對稱性！</p>
+          </div>
+
+          <!-- 物件主題切換 -->
+          <div class="flex items-center gap-2 bg-emerald-50/80 p-1.5 rounded-2xl border border-emerald-200">
+            <button onclick="setCircleTheme('cake')" id="cTheme-cake" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-white text-emerald-700 shadow-sm transition">
+              <i class="fa-solid fa-cake-candles mr-1 text-pink-500"></i>蛋糕奶油花
+            </button>
+            <button onclick="setCircleTheme('pond')" id="cTheme-pond" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-emerald-700 transition">
+              <i class="fa-solid fa-shield-halved mr-1 text-blue-500"></i>人工湖告示牌
+            </button>
+            <button onclick="setCircleTheme('track')" id="cTheme-track" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-emerald-700 transition">
+              <i class="fa-solid fa-flag-checkered mr-1 text-amber-500"></i>卡丁車跑道
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 p-4 rounded-2xl bg-white/70 border border-emerald-100 shadow-inner">
+          <!-- 封閉周長 -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-circle text-emerald-600"></i>
+                <span id="circle-perimeter-label">圓周總長度：</span>
+              </label>
+              <span class="text-lg font-black text-emerald-700 font-mono" id="disp-circlePerimeter">30 公分</span>
+            </div>
+            <input type="range" id="input-circlePerimeter" min="20" max="120" step="5" value="30" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer" oninput="updateCircleSimulation()">
+            <div class="flex justify-between text-xs text-slate-400 mt-1">
+              <span>20</span>
+              <span>60</span>
+              <span>120</span>
+            </div>
+          </div>
+
+          <!-- 物件數量 -->
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label class="font-bold text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-hashtag text-pink-500"></i>
+                <span id="circle-count-label">奶油花數量：</span>
+              </label>
+              <span class="text-lg font-black text-pink-600 font-mono" id="disp-circleCount">5 朵</span>
+            </div>
+            <input type="range" id="input-circleCount" min="3" max="16" step="1" value="5" 
+                   class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer" oninput="updateCircleSimulation()">
+            <div class="flex justify-between text-xs text-slate-400 mt-1">
+              <span>3</span>
+              <span>8</span>
+              <span>16</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 圓形動態視覺可視化 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-7 flex justify-center items-center bg-gradient-to-b from-teal-50/50 to-emerald-50/40 p-4 rounded-2xl border border-emerald-100">
+            <svg id="circleSvg" class="w-80 h-80 max-w-full drop-shadow-md select-none" viewBox="0 0 320 320"></svg>
+          </div>
+
+          <div class="lg:col-span-5 space-y-4">
+            <div class="p-5 rounded-2xl bg-white border border-emerald-200 shadow-sm">
+              <div class="text-xs font-bold text-emerald-600 mb-1 flex items-center gap-1">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 封閉圖形核心定律
+              </div>
+              <h3 class="text-xl font-black text-slate-800">物件數 ＝ 間隔數</h3>
+              <p class="text-xs text-slate-500 mt-1">
+                在首尾相連的圓圈上，剪開一刀就變成「只設一端」的線段！所以：
+              </p>
+              <div class="mt-3 p-3 bg-emerald-50 rounded-xl text-center">
+                <span class="text-sm font-bold text-emerald-900" id="circle-interv-match">
+                  5 朵花 ⟷ 剛好有 5 個間隔
+                </span>
+              </div>
+            </div>
+
+            <!-- 間隔長度計算展示（支援標準直式分數） -->
+            <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-200">
+              <div class="text-xs font-bold text-amber-700 mb-1">計算每個間隔長度：</div>
+              <div class="text-xs text-slate-600">周長 ÷ 間隔數 ＝ 間隔長</div>
+              
+              <div class="mt-3 flex items-center justify-start flex-wrap gap-2 text-lg font-bold text-amber-900 bg-white p-3 rounded-xl border border-amber-100" id="circle-fraction-area">
+                <!-- 動態注入直式分數或整數 -->
+              </div>
+            </div>
+
+            <!-- 髮圈剪刀實驗比喻 -->
+            <div class="p-4 rounded-2xl bg-rose-50/80 border border-rose-200 text-xs text-rose-900">
+              <div class="font-bold flex items-center gap-1.5 mb-1 text-sm text-rose-800">
+                <i class="fa-solid fa-scissors"></i> 美美的髮圈剪開思考法
+              </div>
+              把 6 朵花的髮圈沿著其中一朵花旁剪斷拉直，起點留有花朵，終點恰好沒有花朵，依然是 6 朵花與 6 個間隔！
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 第幾到第幾？區間跨距探究器 ==================== -->
+    <section id="segmentTab" class="tab-content hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        
+        <!-- 頂部標題與重點提示徽章 -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-chart-simple text-indigo-600 text-2xl"></i>
+              <h2 class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight font-maru">
+                第幾到第幾？區間跨距探究器
+              </h2>
+            </div>
+            <p class="text-slate-500 text-sm mt-1.5 font-medium">
+              對應課本第 122 頁：「從第 6 枝到第 16 枝旗子，共有幾個間隔？」
+            </p>
+          </div>
+          <div class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-indigo-50/90 border border-indigo-200 text-indigo-800 font-bold text-xs md:text-sm shadow-sm self-start md:self-auto">
+            <i class="fa-solid fa-lightbulb text-amber-500"></i>
+            <span>後數 － 前數 ＝ 間隔數</span>
+          </div>
+        </div>
+
+        <!-- 三欄式控制面板 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <!-- 起點物件編號 (A) -->
+          <div class="bg-slate-50/90 p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-slate-700 text-sm flex items-center gap-1.5">
+                <i class="fa-regular fa-circle-play text-indigo-600"></i>
+                <span>起點物件編號 (A)</span>
+              </span>
+              <span id="disp-segStart" class="px-3 py-1 bg-indigo-100/70 text-indigo-700 font-black text-sm rounded-xl font-mono">第 6 枝</span>
+            </div>
+            <input type="range" id="seg-start" min="1" max="19" value="6" 
+                   class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="handleSegStartChange()">
+            <div class="text-[11px] text-slate-400 mt-2 font-medium">選擇量測的起始物件編號。</div>
+          </div>
+
+          <!-- 終點物件編號 (B) -->
+          <div class="bg-slate-50/90 p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-slate-700 text-sm flex items-center gap-1.5">
+                <i class="fa-regular fa-circle-dot text-indigo-600"></i>
+                <span>終點物件編號 (B)</span>
+              </span>
+              <span id="disp-segEnd" class="px-3 py-1 bg-indigo-100/70 text-indigo-700 font-black text-sm rounded-xl font-mono">第 16 枝</span>
+            </div>
+            <input type="range" id="seg-end" min="2" max="20" value="16" 
+                   class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="handleSegEndChange()">
+            <div class="text-[11px] text-slate-400 mt-2 font-medium">終點編號必須大於起點編號。</div>
+          </div>
+
+          <!-- 每段間隔長 -->
+          <div class="bg-slate-50/90 p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-slate-700 text-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-arrows-left-right text-indigo-600"></i>
+                <span>每段間隔長</span>
+              </span>
+              <span id="disp-segUnit" class="px-3 py-1 bg-indigo-100/70 text-indigo-700 font-black text-sm rounded-xl font-mono">80 公分</span>
+            </div>
+            <input type="range" id="seg-unitLen" min="10" max="150" step="5" value="80" 
+                   class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="updateSegmentExplore()">
+            <div class="text-[11px] text-slate-400 mt-2 font-medium">調整旗子與旗子之間的距離。</div>
+          </div>
+        </div>
+
+        <!-- 旗幟跑道動態可視化畫布 -->
+        <div class="relative bg-gradient-to-b from-indigo-50/30 via-slate-50/40 to-white p-4 md:p-6 rounded-3xl border border-indigo-100 shadow-inner mb-6 overflow-x-auto">
+          <svg id="segmentTrackSvg" class="w-full min-w-[760px] h-48 select-none" viewBox="0 0 860 170"></svg>
+        </div>
+
+        <!-- 底部兩大步驟算式卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- 步驟一 -->
+          <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="text-xs md:text-sm font-bold text-slate-400 mb-1.5">【步驟一】算間隔數 (後數 － 前數)</div>
+              <div class="text-sm font-bold text-slate-700" id="step1-desc">
+                從第 <span class="text-indigo-600 font-black">6</span> 枝到第 <span class="text-indigo-600 font-black">16</span> 枝旗子：
+              </div>
+              <div class="mt-4 p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-indigo-700 font-black text-2xl md:text-3xl font-mono" id="step1-formula">
+                16 － 6 ＝ 10 (個間隔)
+              </div>
+            </div>
+            <div class="mt-4 text-xs text-slate-500 leading-relaxed flex items-start gap-1.5 pt-3 border-t border-slate-100">
+              <span class="text-amber-500 text-sm leading-none">💡</span>
+              <span>很多同學容易誤以為要加 1 或減 1，其實只要想「第 6 到第 7 是 1 個間隔 (7-6=1)」，所以就是後數減前數！</span>
+            </div>
+          </div>
+
+          <!-- 步驟二 -->
+          <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="text-xs md:text-sm font-bold text-slate-400 mb-1.5">【步驟二】算總間隔長度 (間隔長 × 間隔數)</div>
+              <div class="text-sm font-bold text-slate-700" id="step2-desc">
+                每個間隔長 <span class="text-amber-600 font-black">80</span> 公分，總共有 <span class="text-indigo-600 font-black">10</span> 個間隔：
+              </div>
+              <div class="mt-4 p-4 rounded-2xl bg-emerald-50/80 border border-emerald-100 text-emerald-600 font-black text-2xl md:text-3xl font-mono" id="step2-formula">
+                80 × 10 ＝ 800 (公分)
+              </div>
+            </div>
+            <div class="mt-4 text-xs font-semibold text-slate-600 leading-relaxed flex items-center gap-1.5 pt-3 border-t border-slate-100" id="step2-conclusion">
+              <span class="text-amber-500 text-sm leading-none">✨</span>
+              <span>答：總間隔長為 800 公分（即 8 公尺）。</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: 歷程性評量 ==================== -->
+    <section id="quizTab" class="tab-content hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-lg">即時檢測 • 歷程評量</span>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 mt-1">隨堂測驗</h2>
+            <p class="text-slate-600 text-sm mt-1">包含 5 道精心設計之情境題，作答完畢請點擊下方「提交答案」查看成績與解析！</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="px-4 py-2 bg-blue-100/70 rounded-2xl text-blue-900 font-bold text-sm">
+              得分：<span id="quizScore" class="text-xl font-black text-blue-600">0</span> / 100
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 題測驗清單容器 -->
+        <div id="quizListContainer" class="space-y-6 mt-6">
+          <!-- 由 JS 動態渲染題庫 -->
+        </div>
+
+        <!-- 底部並排置中按鈕區 -->
+        <div class="mt-8 flex justify-center items-center gap-4">
+          <button onclick="submitQuiz()" id="btn-submitQuiz" class="w-40 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>提交答案</span>
+          </button>
+          <button onclick="resetQuiz()" id="btn-resetQuiz" class="w-40 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-bold text-base shadow-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>重新測驗</span>
+          </button>
+        </div>
+
+        <!-- 總結回饋卡片 -->
+        <div id="quizCompletionSummary" class="hidden mt-8 p-6 rounded-3xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-center shadow-lg">
+          <div class="text-3xl mb-1">🎉</div>
+          <h3 class="text-2xl font-black font-maru">恭喜完成所有間隔問題挑戰！</h3>
+          <p class="text-white/90 text-sm mt-1" id="quizSummaryText">表現優異！你已經能自由掌握線段與環狀間隔的幾何規律了！</p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 互動邏輯 JavaScript ==================== -->
+  <script>
+    /* ============================================================
+       1. 新海誠風漂浮櫻花動態背景
+       ============================================================ */
+    function initCherryBlossoms() {
+      const container = document.getElementById('petals-container');
+      if (!container) return;
+      container.innerHTML = '';
+      const petalCount = 18;
+      for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        const size = Math.random() * 8 + 8;
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size * 1.3}px`;
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDuration = `${Math.random() * 6 + 6}s`;
+        petal.style.animationDelay = `${Math.random() * 8}s`;
+        petal.style.opacity = `${Math.random() * 0.5 + 0.3}`;
+        container.appendChild(petal);
+      }
+    }
+
+    /* ============================================================
+       2. 標籤頁切換邏輯
+       ============================================================ */
+    function switchTab(tabId) {
+      const tabs = ['lineTab', 'circleTab', 'segmentTab', 'quizTab'];
+      tabs.forEach(t => {
+        const content = document.getElementById(t);
+        const btn = document.getElementById(`btn-${t}`);
+        if (content) {
+          if (t === tabId) {
+            content.classList.remove('hidden');
+            content.classList.add('block');
+          } else {
+            content.classList.add('hidden');
+            content.classList.remove('block');
+          }
+        }
+        if (btn) {
+          if (t === tabId) {
+            btn.classList.add('active');
+            btn.classList.remove('bg-white/80', 'text-blue-900');
+          } else {
+            btn.classList.remove('active');
+            btn.classList.add('bg-white/80', 'text-blue-900');
+          }
+        }
+      });
+
+      if (tabId === 'lineTab') updateLineSimulation();
+      else if (tabId === 'circleTab') updateCircleSimulation();
+      else if (tabId === 'segmentTab') updateSegmentExplore();
+    }
+
+    /* ============================================================
+       3. 國小標準直式分數渲染與數學輔助函式
+       ============================================================ */
+    function gcd(a, b) {
+      return b === 0 ? a : gcd(b, a % b);
+    }
+
+    function renderVerticalFraction(intPart, num, den) {
+      let intHtml = intPart > 0 ? `<span class="fraction-int">${intPart}</span>` : '';
+      return `
+        <span class="fraction-wrap">
+          ${intHtml}
+          <span class="fraction-body">
+            <span class="fraction-num">${num}</span>
+            <span class="fraction-line"></span>
+            <span class="fraction-den">${den}</span>
+          </span>
+        </span>
+      `;
+    }
+
+    function formatFractionOrNumber(total, count) {
+      if (total % count === 0) {
+        return `<span>${total / count}</span>`;
+      }
+      const g = gcd(total, count);
+      const simpNum = total / g;
+      const simpDen = count / g;
+      const intPart = Math.floor(simpNum / simpDen);
+      const rem = simpNum % simpDen;
+      return renderVerticalFraction(intPart, rem, simpDen);
+    }
+
+    /* ============================================================
+       4. 情境一：線段直路互動模擬
+       ============================================================ */
+    let currentLineMode = 'both';
+
+    function setLineMode(mode) {
+      currentLineMode = mode;
+      ['both', 'one', 'none'].forEach(m => {
+        const btn = document.getElementById(`lineMode-${m}`);
+        if (btn) {
+          if (m === mode) {
+            btn.className = "px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-white text-blue-700 shadow-sm transition";
+          } else {
+            btn.className = "px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-blue-700 transition";
+          }
+        }
+      });
+      updateLineSimulation();
+    }
+
+    function updateLineSimulation() {
+      const totalInput = document.getElementById('input-totalLength');
+      const unitInput = document.getElementById('input-intervalLen');
+      if (!totalInput || !unitInput) return;
+
+      const totalLen = parseInt(totalInput.value);
+      const unitLen = parseInt(unitInput.value);
+
+      const dispTotal = document.getElementById('disp-totalLength');
+      if (dispTotal) dispTotal.textContent = `${totalLen} 公尺`;
+      const dispUnit = document.getElementById('disp-intervalLen');
+      if (dispUnit) dispUnit.textContent = `${unitLen} 公尺`;
+
+      const scaleTotal = document.getElementById('scale-cur-totalLength');
+      if (scaleTotal) scaleTotal.textContent = `${totalLen} m`;
+      const scaleUnit = document.getElementById('scale-cur-intervalLen');
+      if (scaleUnit) scaleUnit.textContent = `${unitLen} m`;
+
+      const intervals = Math.floor(totalLen / unitLen);
+      const isExact = (totalLen % unitLen === 0);
+
+      let lampCount = intervals;
+      let ruleDescText = "";
+      let conclusionText = "";
+
+      if (currentLineMode === 'both') {
+        lampCount = intervals + 1;
+        ruleDescText = "兩端都設：路燈數比間隔多 1";
+        conclusionText = "路燈數 = 間隔數 + 1";
+      } else if (currentLineMode === 'one') {
+        lampCount = intervals;
+        ruleDescText = "只設一端：路燈數和間隔數一樣";
+        conclusionText = "路燈數 = 間隔數";
+      } else {
+        lampCount = Math.max(0, intervals - 1);
+        ruleDescText = "兩端都不設：路燈數比間隔少 1";
+        conclusionText = "路燈數 = 間隔數 - 1";
+      }
+
+      const calcStep1 = document.getElementById('calc-step1');
+      if (calcStep1) {
+        calcStep1.textContent = `${totalLen} ÷ ${unitLen} = ${intervals} 個間隔${isExact ? '' : ' (取整)'}`;
+      }
+
+      const ruleDesc = document.getElementById('rule-desc');
+      if (ruleDesc) ruleDesc.textContent = ruleDescText;
+
+      const calcStep2 = document.getElementById('calc-step2');
+      if (calcStep2) {
+        if (currentLineMode === 'both') {
+          calcStep2.textContent = `${intervals} + 1 = ${lampCount} 盞路燈`;
+        } else if (currentLineMode === 'one') {
+          calcStep2.textContent = `${intervals} 盞路燈`;
+        } else {
+          calcStep2.textContent = `${intervals} - 1 = ${lampCount} 盞路燈`;
+        }
+      }
+
+      const concKey = document.getElementById('conclusion-key');
+      if (concKey) {
+        concKey.innerHTML = `<i class="fa-solid fa-key text-amber-500"></i><span>${conclusionText}</span>`;
+      }
+
+      drawLineSvg(totalLen, unitLen, intervals, lampCount, currentLineMode);
+    }
+
+    function drawLineSvg(totalLen, unitLen, intervals, lampCount, mode) {
+      const svg = document.getElementById('lineSvg');
+      if (!svg) return;
+      svg.innerHTML = '';
+
+      const padX = 60;
+      const roadY = 130;
+      const width = 750 - padX * 2;
+      const step = width / intervals;
+
+      // 橋面主體
+      const deck = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      deck.setAttribute("x", padX - 20);
+      deck.setAttribute("y", roadY);
+      deck.setAttribute("width", width + 40);
+      deck.setAttribute("height", "14");
+      deck.setAttribute("rx", "4");
+      deck.setAttribute("fill", "#64748b");
+      svg.appendChild(deck);
+
+      // 橋墩
+      for (let i = 0; i <= intervals; i++) {
+        const x = padX + i * step;
+        const pillar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        pillar.setAttribute("x", x - 4);
+        pillar.setAttribute("y", roadY + 14);
+        pillar.setAttribute("width", "8");
+        pillar.setAttribute("height", "26");
+        pillar.setAttribute("rx", "2");
+        pillar.setAttribute("fill", "#94a3b8");
+        svg.appendChild(pillar);
+      }
+
+      // 間隔標註線與數值
+      for (let i = 0; i < intervals; i++) {
+        const x1 = padX + i * step;
+        const x2 = padX + (i + 1) * step;
+        const midX = (x1 + x2) / 2;
+
+        const intLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        intLine.setAttribute("x1", x1 + 4);
+        intLine.setAttribute("y1", roadY + 45);
+        intLine.setAttribute("x2", x2 - 4);
+        intLine.setAttribute("y2", roadY + 45);
+        intLine.setAttribute("stroke", "#3b82f6");
+        intLine.setAttribute("stroke-width", "2");
+        intLine.setAttribute("stroke-dasharray", "3,3");
+        svg.appendChild(intLine);
+
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", midX);
+        text.setAttribute("y", roadY + 43);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-size", "10");
+        text.setAttribute("font-weight", "bold");
+        text.setAttribute("fill", "#2563eb");
+        text.textContent = `${unitLen}m`;
+        svg.appendChild(text);
+      }
+
+      // 繪製路燈
+      for (let i = 0; i <= intervals; i++) {
+        let hasLamp = false;
+        if (mode === 'both') {
+          hasLamp = true;
+        } else if (mode === 'one') {
+          hasLamp = (i > 0);
+        } else if (mode === 'none') {
+          hasLamp = (i > 0 && i < intervals);
+        }
+
+        const x = padX + i * step;
+
+        if (hasLamp) {
+          const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+          const pole = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          pole.setAttribute("x1", x);
+          pole.setAttribute("y1", roadY);
+          pole.setAttribute("x2", x);
+          pole.setAttribute("y2", roadY - 55);
+          pole.setAttribute("stroke", "#334155");
+          pole.setAttribute("stroke-width", "3.5");
+          pole.setAttribute("stroke-linecap", "round");
+          g.appendChild(pole);
+
+          const arm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          arm.setAttribute("d", `M ${x} ${roadY - 55} Q ${x + 8} ${roadY - 65} ${x + 12} ${roadY - 52}`);
+          arm.setAttribute("stroke", "#334155");
+          arm.setAttribute("stroke-width", "3");
+          arm.setAttribute("fill", "none");
+          g.appendChild(arm);
+
+          const glow = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          glow.setAttribute("cx", x + 12);
+          glow.setAttribute("cy", roadY - 50);
+          glow.setAttribute("r", "12");
+          glow.setAttribute("fill", "rgba(251, 191, 36, 0.35)");
+          g.appendChild(glow);
+
+          const bulb = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          bulb.setAttribute("cx", x + 12);
+          bulb.setAttribute("cy", roadY - 50);
+          bulb.setAttribute("r", "5.5");
+          bulb.setAttribute("fill", "#f59e0b");
+          g.appendChild(bulb);
+
+          svg.appendChild(g);
+        } else {
+          const emptySpot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          emptySpot.setAttribute("cx", x);
+          emptySpot.setAttribute("cy", roadY);
+          emptySpot.setAttribute("r", "4");
+          emptySpot.setAttribute("fill", "none");
+          emptySpot.setAttribute("stroke", "#94a3b8");
+          emptySpot.setAttribute("stroke-dasharray", "2,2");
+          emptySpot.setAttribute("stroke-width", "1.5");
+          svg.appendChild(emptySpot);
+        }
+      }
+    }
+
+    /* ============================================================
+       5. 情境二：封閉圖形與圓形模擬
+       ============================================================ */
+    let currentCircleTheme = 'cake';
+
+    const circleThemeData = {
+      cake: {
+        name: '蛋糕奶油花',
+        unit: '公分',
+        objName: '奶油花',
+        objUnit: '朵',
+        color: '#ec4899',
+        bgColor: '#fdf2f8'
+      },
+      pond: {
+        name: '人工湖告示牌',
+        unit: '公尺',
+        objName: '告示牌',
+        objUnit: '個',
+        color: '#0284c7',
+        bgColor: '#f0f9ff'
+      },
+      track: {
+        name: '卡丁車跑道',
+        unit: '公尺',
+        objName: '指標牌',
+        objUnit: '面',
+        color: '#f59e0b',
+        bgColor: '#fffbeb'
+      }
+    };
+
+    function setCircleTheme(theme) {
+      currentCircleTheme = theme;
+      const cfg = circleThemeData[theme];
+
+      ['cake', 'pond', 'track'].forEach(t => {
+        const btn = document.getElementById(`cTheme-${t}`);
+        if (btn) {
+          if (t === theme) {
+            btn.className = "px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-white text-emerald-700 shadow-sm transition";
+          } else {
+            btn.className = "px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-emerald-700 transition";
+          }
+        }
+      });
+
+      const pLabel = document.getElementById('circle-perimeter-label');
+      if (pLabel) pLabel.textContent = `${cfg.name.slice(-3)}總周長：`;
+      const cLabel = document.getElementById('circle-count-label');
+      if (cLabel) cLabel.textContent = `${cfg.objName}數量：`;
+
+      updateCircleSimulation();
+    }
+
+    function updateCircleSimulation() {
+      const pInput = document.getElementById('input-circlePerimeter');
+      const cInput = document.getElementById('input-circleCount');
+      if (!pInput || !cInput) return;
+
+      const perimeter = parseInt(pInput.value);
+      const count = parseInt(cInput.value);
+      const cfg = circleThemeData[currentCircleTheme] || circleThemeData.cake;
+
+      document.getElementById('disp-circlePerimeter').textContent = `${perimeter} ${cfg.unit}`;
+      document.getElementById('disp-circleCount').textContent = `${count} ${cfg.objUnit}`;
+
+      document.getElementById('circle-interv-match').textContent = `${count} ${cfg.objUnit}${cfg.objName} ⟷ 剛好有 ${count} 個間隔`;
+
+      const fractionArea = document.getElementById('circle-fraction-area');
+      if (fractionArea) {
+        const fractionDisplay = formatFractionOrNumber(perimeter, count);
+        fractionArea.innerHTML = `
+          <span>${perimeter} ÷ ${count} ＝ </span>
+          ${fractionDisplay}
+          <span class="text-slate-600 font-medium text-sm ml-1">(${cfg.unit})</span>
+        `;
+      }
+
+      drawCircleSvg(count, cfg);
+    }
+
+    function drawCircleSvg(count, cfg) {
+      const svg = document.getElementById('circleSvg');
+      if (!svg) return;
+      svg.innerHTML = '';
+
+      const cx = 160;
+      const cy = 160;
+      const r = 105;
+
+      const bgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      bgCircle.setAttribute("cx", cx);
+      bgCircle.setAttribute("cy", cy);
+      bgCircle.setAttribute("r", r);
+      bgCircle.setAttribute("fill", currentCircleTheme === 'pond' ? '#e0f2fe' : (currentCircleTheme === 'cake' ? '#fdf2f8' : '#f8fafc'));
+      bgCircle.setAttribute("stroke", "#cbd5e1");
+      bgCircle.setAttribute("stroke-width", "6");
+      svg.appendChild(bgCircle);
+
+      const pathCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      pathCircle.setAttribute("cx", cx);
+      pathCircle.setAttribute("cy", cy);
+      pathCircle.setAttribute("r", r);
+      pathCircle.setAttribute("fill", "none");
+      pathCircle.setAttribute("stroke", cfg.color);
+      pathCircle.setAttribute("stroke-width", "4");
+      pathCircle.setAttribute("stroke-dasharray", "6,4");
+      svg.appendChild(pathCircle);
+
+      const centerText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      centerText.setAttribute("x", cx);
+      centerText.setAttribute("y", cy - 6);
+      centerText.setAttribute("text-anchor", "middle");
+      centerText.setAttribute("font-size", "14");
+      centerText.setAttribute("font-weight", "bold");
+      centerText.setAttribute("fill", "#334155");
+      centerText.textContent = `${count} 個間隔`;
+      svg.appendChild(centerText);
+
+      const centerSubText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      centerSubText.setAttribute("x", cx);
+      centerSubText.setAttribute("y", cy + 16);
+      centerSubText.setAttribute("text-anchor", "middle");
+      centerSubText.setAttribute("font-size", "11");
+      centerSubText.setAttribute("fill", "#64748b");
+      centerSubText.textContent = `首尾相連成閉環`;
+      svg.appendChild(centerSubText);
+
+      for (let i = 0; i < count; i++) {
+        const angle = (2 * Math.PI * i / count) - Math.PI / 2;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+
+        const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+        const nodeBg = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        nodeBg.setAttribute("cx", x);
+        nodeBg.setAttribute("cy", y);
+        nodeBg.setAttribute("r", "14");
+        nodeBg.setAttribute("fill", "#ffffff");
+        nodeBg.setAttribute("stroke", cfg.color);
+        nodeBg.setAttribute("stroke-width", "2.5");
+        nodeG.appendChild(nodeBg);
+
+        const nodeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        nodeText.setAttribute("x", x);
+        nodeText.setAttribute("y", y + 4);
+        nodeText.setAttribute("text-anchor", "middle");
+        nodeText.setAttribute("font-size", "11");
+        nodeText.setAttribute("font-weight", "bold");
+        nodeText.setAttribute("fill", cfg.color);
+        nodeText.textContent = `${i + 1}`;
+        nodeG.appendChild(nodeText);
+
+        svg.appendChild(nodeG);
+      }
+    }
+
+    /* ============================================================
+       6. 情境三：第幾到第幾？區間跨距探究器 (完全同步課本題型)
+       ============================================================ */
+    const TOTAL_SEGMENT_FLAGS = 20;
+
+    function handleSegStartChange() {
+      const startInput = document.getElementById('seg-start');
+      const endInput = document.getElementById('seg-end');
+      let sVal = parseInt(startInput.value);
+      let eVal = parseInt(endInput.value);
+
+      if (sVal >= eVal) {
+        if (sVal < TOTAL_SEGMENT_FLAGS) {
+          endInput.value = sVal + 1;
+        } else {
+          startInput.value = TOTAL_SEGMENT_FLAGS - 1;
+          endInput.value = TOTAL_SEGMENT_FLAGS;
+        }
+      }
+      updateSegmentExplore();
+    }
+
+    function handleSegEndChange() {
+      const startInput = document.getElementById('seg-start');
+      const endInput = document.getElementById('seg-end');
+      let sVal = parseInt(startInput.value);
+      let eVal = parseInt(endInput.value);
+
+      if (eVal <= sVal) {
+        if (eVal > 1) {
+          startInput.value = eVal - 1;
+        } else {
+          endInput.value = 2;
+          startInput.value = 1;
+        }
+      }
+      updateSegmentExplore();
+    }
+
+    function updateSegmentExplore() {
+      const startInput = document.getElementById('seg-start');
+      const endInput = document.getElementById('seg-end');
+      const unitInput = document.getElementById('seg-unitLen');
+      if (!startInput || !endInput || !unitInput) return;
+
+      const startIdx = parseInt(startInput.value);
+      const endIdx = parseInt(endInput.value);
+      const unitLen = parseInt(unitInput.value);
+
+      // 更新控制板數值標註
+      document.getElementById('disp-segStart').textContent = `第 ${startIdx} 枝`;
+      document.getElementById('disp-segEnd').textContent = `第 ${endIdx} 枝`;
+      document.getElementById('disp-segUnit').textContent = `${unitLen} 公分`;
+
+      const intervals = endIdx - startIdx;
+      const totalDistance = intervals * unitLen;
+
+      // 更新步驟一
+      document.getElementById('step1-desc').innerHTML = `
+        從第 <span class="text-indigo-600 font-black">${startIdx}</span> 枝到第 <span class="text-indigo-600 font-black">${endIdx}</span> 枝旗子：
+      `;
+      document.getElementById('step1-formula').textContent = `${endIdx} － ${startIdx} ＝ ${intervals} (個間隔)`;
+
+      // 更新步驟二
+      document.getElementById('step2-desc').innerHTML = `
+        每個間隔長 <span class="text-amber-600 font-black">${unitLen}</span> 公分，總共有 <span class="text-indigo-600 font-black">${intervals}</span> 個間隔：
+      `;
+      document.getElementById('step2-formula').textContent = `${unitLen} × ${intervals} ＝ ${totalDistance} (公分)`;
+
+      const meterText = (totalDistance >= 100 && totalDistance % 100 === 0) 
+        ? `（即 ${totalDistance / 100} 公尺）` 
+        : (totalDistance >= 100 ? `（即 ${(totalDistance / 100).toFixed(1)} 公尺）` : '');
+
+      document.getElementById('step2-conclusion').innerHTML = `
+        <span class="text-amber-500 text-sm leading-none">✨</span>
+        <span>答：總間隔長為 ${totalDistance} 公分${meterText}。</span>
+      `;
+
+      drawSegmentTrackSvg(startIdx, endIdx, intervals, unitLen, totalDistance);
+    }
+
+    function drawSegmentTrackSvg(start, end, intervals, unitLen, totalDistance) {
+      const svg = document.getElementById('segmentTrackSvg');
+      if (!svg) return;
+      svg.innerHTML = '';
+
+      const totalFlags = TOTAL_SEGMENT_FLAGS;
+      const marginX = 35;
+      const width = 860 - marginX * 2;
+      const groundY = 126;
+      const flagHeight = 44;
+      const stepX = width / (totalFlags - 1);
+
+      const startX = marginX + (start - 1) * stepX;
+      const endX = marginX + (end - 1) * stepX;
+      const midX = (startX + endX) / 2;
+      const spanLineY = 32;
+
+      // 繪製跨距指示虛線 (橫貫起迄旗幟)
+      const spanDash = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      spanDash.setAttribute("x1", startX);
+      spanDash.setAttribute("y1", spanLineY);
+      spanDash.setAttribute("x2", endX);
+      spanDash.setAttribute("y2", spanLineY);
+      spanDash.setAttribute("stroke", "#4338ca");
+      spanDash.setAttribute("stroke-width", "2");
+      spanDash.setAttribute("stroke-dasharray", "4,3");
+      svg.appendChild(spanDash);
+
+      // 跨距中央膠囊標籤背景
+      const badgeWidth = Math.max(220, (endX - startX) * 0.75);
+      const badgeRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      badgeRect.setAttribute("x", midX - 110);
+      badgeRect.setAttribute("y", spanLineY - 12);
+      badgeRect.setAttribute("width", "220");
+      badgeRect.setAttribute("height", "24");
+      badgeRect.setAttribute("rx", "12");
+      badgeRect.setAttribute("fill", "#4338ca");
+      svg.appendChild(badgeRect);
+
+      // 膠囊內部文字
+      const badgeText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      badgeText.setAttribute("x", midX);
+      badgeText.setAttribute("y", spanLineY + 4);
+      badgeText.setAttribute("text-anchor", "middle");
+      badgeText.setAttribute("font-size", "11");
+      badgeText.setAttribute("font-weight", "bold");
+      badgeText.setAttribute("fill", "#ffffff");
+      badgeText.textContent = `第${start}枝到第${end}枝 : ${intervals} 個間隔 (${totalDistance}cm)`;
+      svg.appendChild(badgeText);
+
+      // 底部深色走道實線
+      const trackLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      trackLine.setAttribute("x1", marginX - 12);
+      trackLine.setAttribute("y1", groundY);
+      trackLine.setAttribute("x2", marginX + width + 12);
+      trackLine.setAttribute("y2", groundY);
+      trackLine.setAttribute("stroke", "#334155");
+      trackLine.setAttribute("stroke-width", "3.5");
+      trackLine.setAttribute("stroke-linecap", "round");
+      svg.appendChild(trackLine);
+
+      // 繪製 20 枝旗子與刻度編號
+      for (let i = 1; i <= totalFlags; i++) {
+        const x = marginX + (i - 1) * stepX;
+        const isStart = (i === start);
+        const isEnd = (i === end);
+        const isInside = (i > start && i < end);
+        const isSelected = (i >= start && i <= end);
+
+        // 旗面顏色與桿身顏色
+        let flagColor = "#cbd5e1"; // 預設淺灰
+        let poleColor = "#94a3b8";
+        if (isStart || isEnd) {
+          flagColor = "#f59e0b"; // 起迄為橘黃色
+          poleColor = "#475569";
+        } else if (isInside) {
+          flagColor = "#4338ca"; // 區間內部為藍紫色
+          poleColor = "#475569";
+        }
+
+        const flagG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+        // 旗桿
+        const pole = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        pole.setAttribute("x", x - 1.5);
+        pole.setAttribute("y", groundY - flagHeight);
+        pole.setAttribute("width", "3");
+        pole.setAttribute("height", flagHeight);
+        pole.setAttribute("rx", "1.5");
+        pole.setAttribute("fill", poleColor);
+        flagG.appendChild(pole);
+
+        // 旗面
+        const flagPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const topY = groundY - flagHeight;
+        flagPath.setAttribute("d", `M ${x} ${topY} C ${x + 6} ${topY - 3} ${x + 10} ${topY + 4} ${x + 18} ${topY + 1} L ${x + 18} ${topY + 14} C ${x + 10} ${topY + 17} ${x + 6} ${topY + 10} ${x} ${topY + 14} Z`);
+        flagPath.setAttribute("fill", flagColor);
+        flagG.appendChild(flagPath);
+
+        svg.appendChild(flagG);
+
+        // 下方編號
+        const numText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        numText.setAttribute("x", x);
+        numText.setAttribute("y", groundY + 18);
+        numText.setAttribute("text-anchor", "middle");
+        numText.setAttribute("font-size", isSelected ? "12" : "11");
+        numText.setAttribute("font-weight", isSelected ? "800" : "500");
+        numText.setAttribute("fill", isSelected ? "#1e3a8a" : "#94a3b8");
+        numText.textContent = `${i}`;
+        svg.appendChild(numText);
+      }
+    }
+
+    /* ============================================================
+       7. 歷程性評量 (5 題包含詳解與即時直式分數)
+       ============================================================ */
+    const quizData = [
+      {
+        id: 1,
+        title: "線段情境 • 兩端都設",
+        question: "快樂路全長 200 公尺，工務局計畫每隔 8 公尺種植一棵行道樹。若這條路的「兩端都要種樹」，總共要種幾棵樹？",
+        options: [
+          { text: "25 棵", isCorrect: false },
+          { text: "26 棵", isCorrect: true },
+          { text: "24 棵", isCorrect: false },
+          { text: "27 棵", isCorrect: false }
+        ],
+        explanation: "1. 先算間隔數：200 ÷ 8 ＝ 25 (個間隔)<br>2. 兩端都種樹，樹木比間隔多 1：25 ＋ 1 ＝ 26 棵樹。"
+      },
+      {
+        id: 2,
+        title: "線段情境 • 兩端都不設",
+        question: "奶奶要在一條長 104 公分的彩帶上縫 7 顆鈕扣，每顆鈕扣的間隔長都相同。若「兩端都不縫鈕扣」，奶奶每隔幾公分要縫一顆？",
+        options: [
+          { text: "13 公分", isCorrect: true },
+          { text: "14 公分", isCorrect: false },
+          { text: "15 公分", isCorrect: false },
+          { text: "12 公分", isCorrect: false }
+        ],
+        explanation: "兩端都不縫鈕扣時，間隔數比物件多 1：間隔數 ＝ 7 ＋ 1 ＝ 8 個間隔。<br>間隔長度 ＝ 104 ÷ 8 ＝ 13 公分。"
+      },
+      {
+        id: 3,
+        title: "封閉情境 • 圓形溜冰場",
+        question: "有一個圓形溜冰場的周長是 330 公尺，工作人員沿著周圍每隔相同長度設置一張長椅，共設置了 15 張長椅。請問相鄰兩張長椅間的間隔長是多少公尺？",
+        options: [
+          { text: "20 公尺", isCorrect: false },
+          { text: "21 公尺", isCorrect: false },
+          { text: "22 公尺", isCorrect: true },
+          { text: "23 公尺", isCorrect: false }
+        ],
+        explanation: "圓形屬於封閉圖形，長椅數量 ＝ 間隔數量 ＝ 15 個間隔。<br>每個間隔長度 ＝ 330 ÷ 15 ＝ 22 公尺。"
+      },
+      {
+        id: 4,
+        title: "區間計算 • 走廊排隊",
+        question: "學生在走廊上排成一列，每兩個學生之間的間隔長是 30 公分。請問從「第 8 個學生」到「第 20 個學生」的總間隔長是多少公分？",
+        options: [
+          { text: "360 公分", isCorrect: true },
+          { text: "390 公分", isCorrect: false },
+          { text: "330 公分", isCorrect: false },
+          { text: "600 公分", isCorrect: false }
+        ],
+        explanation: "第 8 個到第 20 個之間的間隔數是「後號碼 － 前號碼」：20 － 8 ＝ 12 (個間隔)。<br>總長度 ＝ 30 × 12 ＝ 360 公分。"
+      },
+      {
+        id: 5,
+        title: "進階分數探究 • 窗簾軌道",
+        question: "長 480 公尺的林蔭大道一側要擺放 24 個盆栽，若「兩端都不放」，每個盆栽間隔長度是多少公尺？",
+        options: [
+          { text: "20 公尺", isCorrect: false },
+          { text: "19.2 公尺", isCorrect: true },
+          { text: "21 公尺", isCorrect: false },
+          { text: "18.5 公尺", isCorrect: false }
+        ],
+        fractionAnswer: { integer: 19, num: 1, den: 5 },
+        explanation: "兩端都不放，間隔數比盆栽多 1：24 ＋ 1 ＝ 25 個間隔。<br>間隔長度 ＝ 480 ÷ 25 ＝ 19.2 公尺，以國小帶分數呈現為："
+      }
+    ];
+
+    let userAnswers = {};
+    let isQuizSubmitted = false;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizListContainer');
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = "p-5 rounded-2xl bg-white border border-slate-200 shadow-sm transition hover:shadow-md";
+        card.id = `quiz-card-${q.id}`;
+
+        let optionsHtml = '';
+        q.options.forEach((opt, oIdx) => {
+          optionsHtml += `
+            <button onclick="handleSelectQuiz(${q.id}, ${oIdx})" id="btn-opt-${q.id}-${oIdx}"
+                    class="w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50/60 hover:border-blue-300 font-semibold text-sm transition flex items-center justify-between">
+              <span>${String.fromCharCode(65 + oIdx)}. ${opt.text}</span>
+              <i class="fa-regular fa-circle text-slate-300 opt-icon"></i>
+            </button>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-md bg-blue-100 text-blue-700">第 ${idx + 1} 題 • ${q.title}</span>
+            <span class="text-xs font-semibold text-slate-400" id="status-tag-${q.id}">尚未作答</span>
+          </div>
+          <p class="font-bold text-slate-800 text-base mb-4 leading-relaxed">${q.question}</p>
+          <div class="space-y-2.5">${optionsHtml}</div>
+          <div id="feedback-${q.id}" class="hidden mt-4 p-4 rounded-xl text-xs md:text-sm leading-relaxed"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function handleSelectQuiz(questionId, optionIdx) {
+      if (isQuizSubmitted) return; // 已提交後鎖定不可更改
+
+      const q = quizData.find(item => item.id === questionId);
+      if (!q) return;
+
+      userAnswers[questionId] = optionIdx;
+
+      // 更新選項選取狀態（提交前僅標示已選取，不提前顯示對錯）
+      q.options.forEach((opt, idx) => {
+        const btn = document.getElementById(`btn-opt-${questionId}-${idx}`);
+        const icon = btn.querySelector('.opt-icon') || btn.querySelector('i');
+
+        if (idx === optionIdx) {
+          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-blue-500 bg-blue-50 font-bold text-sm text-blue-900 flex items-center justify-between";
+          if (icon) icon.className = "fa-solid fa-circle-dot text-blue-600 text-base opt-icon";
+        } else {
+          btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-blue-50/60 hover:border-blue-300 font-semibold text-sm transition flex items-center justify-between";
+          if (icon) icon.className = "fa-regular fa-circle text-slate-300 opt-icon";
+        }
+      });
+
+      const statusTag = document.getElementById(`status-tag-${questionId}`);
+      statusTag.textContent = "已選擇";
+      statusTag.className = "text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded";
+    }
+
+    function submitQuiz() {
+      isQuizSubmitted = true;
+      let score = 0;
+
+      const submitBtn = document.getElementById('btn-submitQuiz');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      quizData.forEach(q => {
+        const selectedIdx = userAnswers[q.id];
+        const statusTag = document.getElementById(`status-tag-${q.id}`);
+        const feedback = document.getElementById(`feedback-${q.id}`);
+        feedback.classList.remove('hidden');
+
+        // 情況 A：未作答（空白）
+        if (selectedIdx === undefined) {
+          q.options.forEach((opt, idx) => {
+            const btn = document.getElementById(`btn-opt-${q.id}-${idx}`);
+            btn.disabled = true;
+            btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-100/50 text-slate-400 text-sm flex items-center justify-between opacity-70";
+          });
+
+          statusTag.textContent = "未作答";
+          statusTag.className = "text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded";
+
+          // 黃色系，僅顯示「未作答。」，不顯示其他說明且不顯示正確答案
+          feedback.className = "mt-4 p-4 rounded-xl text-xs md:text-sm font-bold bg-amber-50 border border-amber-300 text-amber-800";
+          feedback.textContent = "未作答。";
+          return;
+        }
+
+        // 情況 B：已作答（判斷對錯）
+        const isCorrect = q.options[selectedIdx].isCorrect;
+        if (isCorrect) {
+          score += 20;
+        }
+
+        q.options.forEach((opt, idx) => {
+          const btn = document.getElementById(`btn-opt-${q.id}-${idx}`);
+          const icon = btn.querySelector('.opt-icon') || btn.querySelector('i');
+          btn.disabled = true;
+
+          if (idx === selectedIdx) {
+            if (isCorrect) {
+              btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm text-emerald-900 flex items-center justify-between";
+              if (icon) icon.className = "fa-solid fa-circle-check text-emerald-600 text-base opt-icon";
+            } else {
+              btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-rose-500 bg-rose-50 font-bold text-sm text-rose-900 flex items-center justify-between";
+              if (icon) icon.className = "fa-solid fa-circle-xmark text-rose-600 text-base opt-icon";
+            }
+          } else {
+            if (opt.isCorrect) {
+              btn.className = "w-full text-left p-3.5 rounded-xl border border-emerald-300 bg-emerald-50/40 text-emerald-800 font-semibold text-sm flex items-center justify-between";
+              if (icon) icon.className = "fa-regular fa-circle-check text-emerald-500 opt-icon";
+            } else {
+              btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-100/50 text-slate-400 text-sm flex items-center justify-between opacity-60";
+            }
+          }
+        });
+
+        if (isCorrect) {
+          statusTag.textContent = "答對了！";
+          statusTag.className = "text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded";
+          feedback.className = "mt-4 p-4 rounded-xl text-xs md:text-sm bg-emerald-50/90 border border-emerald-200 text-emerald-900";
+        } else {
+          statusTag.textContent = "答錯了";
+          statusTag.className = "text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded";
+          feedback.className = "mt-4 p-4 rounded-xl text-xs md:text-sm bg-rose-50/90 border border-rose-200 text-rose-900";
+        }
+
+        let extraFractionHtml = "";
+        if (q.fractionAnswer) {
+          extraFractionHtml = `
+            <div class="mt-2 inline-flex items-center font-bold text-slate-800">
+              標準直式分數表示：
+              ${renderVerticalFraction(q.fractionAnswer.integer, q.fractionAnswer.num, q.fractionAnswer.den)} 公尺
+            </div>
+          `;
+        }
+
+        feedback.innerHTML = `
+          <div class="font-bold flex items-center gap-1.5 mb-1.5 text-slate-800">
+            <i class="fa-solid fa-compass"></i> 解題說明：
+          </div>
+          <div>${q.explanation}</div>
+          ${extraFractionHtml}
+        `;
+      });
+
+      document.getElementById('quizScore').textContent = score;
+
+      const summary = document.getElementById('quizCompletionSummary');
+      summary.classList.remove('hidden');
+      const summaryText = document.getElementById('quizSummaryText');
+      if (score === 100) {
+        summaryText.textContent = "太厲害了！100 分滿分通關！你已經是間隔運算小達人了！";
+      } else if (score >= 80) {
+        summaryText.textContent = `獲得 ${score} 分！觀念非常紮實，細心觀察端點就能百發百中！`;
+      } else {
+        summaryText.textContent = `獲得 ${score} 分！可以回到情境一與情境二拉動滑桿再觀察一次，或點擊「重新測驗」再次挑戰！`;
+      }
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      isQuizSubmitted = false;
+      document.getElementById('quizScore').textContent = '0';
+      document.getElementById('quizCompletionSummary').classList.add('hidden');
+
+      const submitBtn = document.getElementById('btn-submitQuiz');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      renderQuiz();
+    }
+
+    /* ============================================================
+       8. 初始化啟動
+       ============================================================ */
+    window.onload = function() {
+      initCherryBlossoms();
+      updateLineSimulation();
+      updateCircleSimulation();
+      updateSegmentExplore();
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>

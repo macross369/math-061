@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>同分母分數的除法 - 奇幻天空探究教室</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body, button, input, select, textarea, .font-mono {
+      font-family: 'Noto Sans TC', sans-serif !important;
+    }
+
+    body {
+      background: linear-gradient(180deg, #1A365D 0%, #2B6CB0 35%, #63B3ED 70%, #FBD38D 100%);
+      min-height: 100vh;
+      color: #2D3748;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 新海誠風格動態光斑與雲彩層次感 */
+    .sky-glow {
+      position: fixed;
+      top: -10%;
+      left: 20%;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(254, 235, 200, 0.35) 0%, rgba(144, 205, 244, 0.15) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: pulseGlow 12s infinite alternate ease-in-out;
+    }
+    @keyframes pulseGlow {
+      0% { transform: scale(0.9) translate(-5%, -5%); opacity: 0.6; }
+      100% { transform: scale(1.1) translate(5%, 5%); opacity: 0.9; }
+    }
+
+    /* 玻璃擬態卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 16px 35px -5px rgba(26, 54, 93, 0.2), 0 8px 15px -6px rgba(26, 54, 93, 0.15);
+    }
+
+    /* 國小標準直式分數 CSS - 嚴格垂直置中與字型比例 */
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      line-height: 1.1;
+      font-weight: 700;
+      font-size: 0.95em;
+    }
+    .frac .num {
+      border-bottom: 2px solid currentColor;
+      padding: 1px 3px;
+      display: block;
+    }
+    .frac .den {
+      padding: 1px 3px;
+      display: block;
+    }
+    .mixed-frac {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .mixed-frac .whole {
+      margin-right: 3px;
+      font-size: 1.15em;
+    }
+
+    /* 分數算式大字體容器 */
+    .math-eq {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      vertical-align: middle;
+      font-size: 1.25rem;
+    }
+
+    /* 互動單位塊動態特效 */
+    .unit-block {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .unit-block:hover {
+      transform: translateY(-4px) scale(1.04);
+    }
+
+    /* 自訂平滑滑桿樣式 */
+    input[type=range] {
+      accent-color: #3182CE;
+      cursor: pointer;
+    }
+
+    /* 標籤頁切換效果 */
+    .tab-btn {
+      transition: all 0.25s ease;
+    }
+    .tab-btn.active {
+      background: white;
+      color: #2B6CB0;
+      box-shadow: 0 6px 16px rgba(43, 108, 176, 0.25);
+      border-bottom: 3px solid #3182CE;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 flex flex-col items-center">
+  <div class="sky-glow"></div>
+
+  <!-- 主容器 -->
+  <div class="relative z-10 w-full max-w-5xl mx-auto flex flex-col gap-5">
+    
+    <!-- 頁首：新海誠雲空主題標題列 -->
+    <header class="glass-card rounded-3xl p-5 md:p-7 text-center relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 opacity-20 pointer-events-none text-9xl text-sky-400">
+        <i class="fa-solid fa-cloud-sun"></i>
+      </div>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sky-100 text-sky-800 text-xs md:text-sm font-bold mb-2">
+        <i class="fa-solid fa-graduation-cap"></i> 國小六上數學 2-2 互動學習網頁
+      </div>
+      <h1 class="text-2xl md:text-4xl font-extrabold text-blue-900 tracking-wide flex items-center justify-center gap-3">
+        <i class="fa-solid fa-shapes text-sky-500"></i>
+        同分母分數的除法
+        <span class="text-xs md:text-sm font-normal px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-900 border border-amber-300">
+          單位轉換與同構
+        </span>
+      </h1>
+      <p class="text-gray-600 text-sm md:text-base mt-2 max-w-2xl mx-auto">
+        透過視覺化「分裝包裝」探索單位分量（<span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">n</span></span></span>）的累數，發現分數除法與整數除法奧妙的同構關係！
+      </p>
+
+      <!-- 標籤導航欄 -->
+      <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mt-6">
+        <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn active px-4 py-2.5 rounded-2xl text-sm md:text-base font-bold bg-white/60 hover:bg-white text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-wheat-awn text-amber-500"></i>
+          <span>同分母米袋分裝</span>
+        </button>
+        <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-4 py-2.5 rounded-2xl text-sm md:text-base font-bold bg-white/60 hover:bg-white text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-pizza-slice text-orange-500"></i>
+          <span>整數除以分數</span>
+        </button>
+        <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-4 py-2.5 rounded-2xl text-sm md:text-base font-bold bg-white/60 hover:bg-white text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-bottle-water text-cyan-500"></i>
+          <span>帶分數與量感估算</span>
+        </button>
+        <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn px-4 py-2.5 rounded-2xl text-sm md:text-base font-bold bg-white/60 hover:bg-white text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-medal text-yellow-500"></i>
+          <span>隨堂測驗</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- 標籤頁 1：同分母分數除法與同構 -->
+    <main id="tab-1" class="tab-content flex flex-col gap-5">
+      <section class="glass-card rounded-3xl p-5 md:p-7">
+        <div class="border-b border-sky-100 pb-4 mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-sky-950 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-xl bg-sky-500 text-white flex items-center justify-center text-sm shadow-md">1</span>
+              利用「單位分量累數」理解除法的同構關係
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">情境：丁老闆有米若干公斤，想依固定重量分裝成袋，全部裝完可以裝成幾袋？</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
+            課本第 28 頁核心情境
+          </span>
+        </div>
+
+        <!-- 互動控制面板 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-sky-50/70 p-4 md:p-5 rounded-2xl border border-sky-100">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1 flex items-center justify-between">
+              <span>總共米的重量（被除數）：</span>
+              <span id="t1-total-text" class="text-blue-700 font-extrabold text-base"></span>
+            </label>
+            <div class="flex items-center gap-3">
+              <input type="range" id="t1-total-slider" min="3" max="15" value="7" class="w-full h-2.5 bg-gray-200 rounded-lg" oninput="updateTab1()">
+              <span class="text-xs text-gray-500 w-12 text-right font-mono" id="t1-num-display">7 個單位</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">拖曳改變分子（有幾個單位分量）</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1 flex items-center justify-between">
+              <span>每袋裝多少重量（除數）：</span>
+              <span id="t1-perbag-text" class="text-sky-700 font-extrabold text-base"></span>
+            </label>
+            <div class="flex items-center gap-3">
+              <input type="range" id="t1-perbag-slider" min="1" max="6" value="2" class="w-full h-2.5 bg-gray-200 rounded-lg" oninput="updateTab1()">
+              <span class="text-xs text-gray-500 w-12 text-right font-mono" id="t1-den-display">每 2 個一袋</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">拖曳改變分裝量（每包包含幾個單位分量）</p>
+          </div>
+
+          <div class="md:col-span-2 flex flex-wrap items-center gap-3 pt-2 border-t border-sky-200/60">
+            <span class="text-xs font-bold text-gray-600">選擇單位量情境：</span>
+            <button onclick="setTab1Unit(9)" id="btn-unit-9" class="px-3 py-1 rounded-xl text-xs font-bold bg-sky-600 text-white shadow-sm transition">
+              每單位為 <span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">9</span></span></span> 公斤
+            </button>
+            <button onclick="setTab1Unit(5)" id="btn-unit-5" class="px-3 py-1 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-sky-100 transition">
+              每單位為 <span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">5</span></span></span> 公斤
+            </button>
+            <button onclick="setTab1Unit(1)" id="btn-unit-1" class="px-3 py-1 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-sky-100 transition">
+              整數情境（每單位 1 公斤）
+            </button>
+          </div>
+        </div>
+
+        <!-- 視覺化圖像區 -->
+        <div class="mt-6 bg-white/90 p-5 rounded-2xl border border-sky-100 shadow-inner">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-gray-700 flex items-center gap-2">
+              <i class="fa-solid fa-boxes-packing text-amber-500"></i>
+              視覺化分裝包裝流程（點擊方塊可互動高亮）
+            </h3>
+            <span class="text-xs bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200" id="t1-badge-info"></span>
+          </div>
+
+          <!-- 動態分組呈現容器 -->
+          <div id="t1-bags-container" class="flex flex-wrap gap-4 min-h-[120px] p-4 bg-sky-50/50 rounded-xl items-center justify-center">
+            <!-- 由 JS 動態生成每袋與剩餘的方塊 -->
+          </div>
+
+          <!-- 同構對照看板 -->
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50/70 p-4 rounded-xl border border-blue-200">
+              <h4 class="text-xs font-extrabold text-blue-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-arrows-split-up-and-left text-blue-600"></i>
+                單位轉換思維（思考步驟）
+              </h4>
+              <ul class="text-sm text-gray-700 space-y-1.5" id="t1-step-explanation">
+                <!-- 動態注入解說步驟 -->
+              </ul>
+            </div>
+
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50/70 p-4 rounded-xl border border-amber-200 flex flex-col justify-center">
+              <h4 class="text-xs font-extrabold text-amber-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-scale-balanced text-amber-600"></i>
+                分數除法與整數除法之同構結論
+              </h4>
+              <div class="math-eq text-gray-900 justify-center p-3 bg-white/80 rounded-xl border border-amber-100 shadow-sm" id="t1-math-result">
+                <!-- 動態數學算式 -->
+              </div>
+              <p class="text-xs text-center text-amber-900 mt-2 font-medium" id="t1-isom-desc"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 標籤頁 2：整數除以真分數與假分數 -->
+    <main id="tab-2" class="tab-content hidden flex flex-col gap-5">
+      <section class="glass-card rounded-3xl p-5 md:p-7">
+        <div class="border-b border-sky-100 pb-4 mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-sky-950 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center text-sm shadow-md">2</span>
+              整數除以分數：先換假分數，再做單位量轉換
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">情境：媽媽有 4 張蔥油餅，每袋裝 <span class="mixed-frac"><span class="frac"><span class="num">2</span><span class="den">3</span></span></span> 張，全部裝完可裝成幾袋？</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200">
+            課本第 29 頁核心情境
+          </span>
+        </div>
+
+        <!-- 互動參數設定 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-orange-50/60 p-4 rounded-2xl border border-orange-100">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">
+              整數被除數（張數/公斤）：<span id="t2-int-val" class="text-orange-600 font-extrabold text-base">4</span>
+            </label>
+            <input type="range" id="t2-int-slider" min="1" max="6" value="4" class="w-full h-2.5 bg-gray-200 rounded-lg" oninput="updateTab2()">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">
+              除數的分子（佔幾等分）：<span id="t2-num-val" class="text-orange-600 font-extrabold text-base">2</span>
+            </label>
+            <input type="range" id="t2-num-slider" min="1" max="5" value="2" class="w-full h-2.5 bg-gray-200 rounded-lg" oninput="updateTab2()">
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">
+              除數的分母（每張切幾塊）：<span id="t2-den-val" class="text-orange-600 font-extrabold text-base">3</span>
+            </label>
+            <input type="range" id="t2-den-slider" min="2" max="6" value="3" class="w-full h-2.5 bg-gray-200 rounded-lg" oninput="updateTab2()">
+          </div>
+        </div>
+
+        <!-- 蔥油餅切片與分組動畫圖示 -->
+        <div class="mt-6 bg-white/95 p-5 rounded-2xl border border-orange-100 shadow-inner">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-gray-700 flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-orange-500"></i>
+              蔥油餅切分與分裝袋視覺表徵
+            </h3>
+            <span class="text-xs text-orange-800 bg-orange-100 px-2.5 py-1 rounded-full font-bold" id="t2-status-pill"></span>
+          </div>
+
+          <!-- 圓形披薩/蔥油餅展示 -->
+          <div class="p-4 bg-amber-50/40 rounded-xl">
+            <p class="text-xs font-bold text-gray-500 mb-2">第一步：將整數換為同分母假分數（全部切成小等份）</p>
+            <div id="t2-pizzas-container" class="flex flex-wrap gap-5 justify-center items-center py-2">
+              <!-- SVG 圓形切片由 JS 動態生成 -->
+            </div>
+          </div>
+
+          <!-- 分裝袋結果展示 -->
+          <div class="mt-5 p-4 bg-sky-50/40 rounded-xl">
+            <p class="text-xs font-bold text-gray-500 mb-2">第二步：每幾小塊裝成一袋？</p>
+            <div id="t2-bags-container" class="flex flex-wrap gap-3 justify-center items-center py-2 min-h-[90px]">
+              <!-- 袋子群組由 JS 動態生成 -->
+            </div>
+          </div>
+
+          <!-- 數學式演繹方塊 -->
+          <div class="mt-6 p-4 rounded-xl bg-gradient-to-r from-orange-50 via-amber-50 to-yellow-50 border border-orange-200 flex flex-col items-center">
+            <h4 class="text-xs font-black text-orange-900 uppercase tracking-widest mb-3">完整解題歷程</h4>
+            <div class="math-eq text-gray-900 justify-center p-3 bg-white rounded-xl shadow-sm border border-orange-100 w-full md:w-auto" id="t2-math-flow">
+              <!-- 動態生成式子 -->
+            </div>
+            <p class="text-xs text-orange-800 mt-3 font-semibold text-center" id="t2-conclusion-text"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 標籤頁 3：帶分數除以帶分數與量感估算 -->
+    <main id="tab-3" class="tab-content hidden flex flex-col gap-5">
+      <section class="glass-card rounded-3xl p-5 md:p-7">
+        <div class="border-b border-sky-100 pb-4 mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-sky-950 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-xl bg-cyan-600 text-white flex items-center justify-center text-sm shadow-md">3</span>
+              帶分數相除與量感估算（包含被除數小於除數）
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">探索課本果汁分裝與洗衣精倒入空瓶的實際容量比較。</p>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 text-xs font-semibold border border-cyan-200">
+            課本第 30 頁核心情境
+          </span>
+        </div>
+
+        <!-- 模式切換按鈕 -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button onclick="setTab3Preset(1)" id="btn-t3-preset1" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white shadow-sm transition">
+            例題 5：果汁分裝（商大於 1）
+          </button>
+          <button onclick="setTab3Preset(2)" id="btn-t3-preset2" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-cyan-100 transition">
+            例題 6：洗衣精倒瓶（商小於 1，被除數 &lt; 除數）
+          </button>
+          <button onclick="setTab3Preset(3)" id="btn-t3-preset3" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-cyan-100 transition">
+            整數除以帶分數（牛奶桶分裝）
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-cyan-50/60 p-4 rounded-2xl border border-cyan-100">
+          <div>
+            <span class="text-xs font-bold text-gray-500 uppercase">總量（被除數）：</span>
+            <div class="text-lg font-black text-cyan-900 mt-1" id="t3-dividend-disp"></div>
+            <p class="text-xs text-cyan-700 mt-1" id="t3-dividend-sub"></p>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-gray-500 uppercase">每瓶/桶容量（除數）：</span>
+            <div class="text-lg font-black text-cyan-900 mt-1" id="t3-divisor-disp"></div>
+            <p class="text-xs text-cyan-700 mt-1" id="t3-divisor-sub"></p>
+          </div>
+        </div>
+
+        <!-- 水量條狀視覺化量筒對比 -->
+        <div class="mt-6 bg-white/95 p-5 rounded-2xl border border-cyan-100 shadow-inner">
+          <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-water text-cyan-500"></i>
+            容量條量感對比與估商分析
+          </h3>
+
+          <div class="space-y-4 p-4 bg-sky-50/40 rounded-xl">
+            <!-- 被除數量條 -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between text-xs font-bold text-gray-700 mb-1 gap-2">
+                <span id="t3-bar1-label" class="whitespace-nowrap">實際總量</span>
+                <span id="t3-bar1-val" class="inline-flex items-center"></span>
+              </div>
+              <div class="w-full h-8 bg-gray-200 rounded-lg overflow-hidden relative shadow-inner">
+                <div id="t3-bar-dividend" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-500 flex items-center justify-end pr-2 text-white font-bold text-xs"></div>
+              </div>
+            </div>
+
+            <!-- 除數量條 -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between text-xs font-bold text-gray-700 mb-1 gap-2">
+                <span id="t3-bar2-label" class="whitespace-nowrap">每瓶標準容量 (1瓶基準量)</span>
+                <span id="t3-bar2-val" class="inline-flex items-center"></span>
+              </div>
+              <div class="w-full h-8 bg-gray-200 rounded-lg overflow-hidden relative shadow-inner">
+                <div id="t3-bar-divisor" class="h-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-500 flex items-center justify-end pr-2 text-white font-bold text-xs"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 結構化推導步驟卡片（取代原估商提問與深色算式卡） -->
+          <div class="mt-5 p-5 md:p-6 rounded-2xl bg-white border border-sky-100 shadow-sm">
+            <h4 class="text-sm md:text-base font-black text-slate-800 flex items-center gap-2 mb-4">
+              <i class="fa-solid fa-list-check text-indigo-600"></i>
+              <span>結構化推導步驟</span>
+            </h4>
+            <div class="p-4 md:p-5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-3.5 text-sm md:text-base text-gray-800" id="t3-structured-steps">
+              <!-- 由 JS 動態填入步驟 1、步驟 2、步驟 3 與 答 -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 標籤頁 4：隨堂測驗 -->
+    <main id="tab-4" class="tab-content hidden flex flex-col gap-5">
+      <section class="glass-card rounded-3xl p-5 md:p-7">
+        <div class="border-b border-sky-100 pb-4 mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-sky-950 flex items-center gap-2">
+              <i class="fa-solid fa-flag-checkered text-yellow-500"></i>
+              隨堂測驗
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">透過題目檢驗是否真正掌握同分母分數除法、單位分量與同構思考。</p>
+          </div>
+          <div class="flex items-center gap-2 bg-yellow-50 px-4 py-2 rounded-2xl border border-yellow-200">
+            <span class="text-xs text-yellow-800 font-bold">目前得分：</span>
+            <span id="quiz-score" class="text-xl font-black text-yellow-600">0</span>
+            <span class="text-xs text-yellow-800">/ 100</span>
+          </div>
+        </div>
+
+        <!-- 5 道測驗題目容器 -->
+        <div class="space-y-6" id="quiz-list">
+          <!-- 題目 1 -->
+          <div class="quiz-item p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm" data-qid="1">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-bold">第 1 題 ‧ 單位分量與同構</span>
+              <span class="quiz-badge text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+            <div class="text-sm md:text-base font-bold text-gray-800 mb-3 flex items-center flex-wrap gap-1">
+              算式 <span class="mixed-frac"><span class="frac"><span class="num">7</span><span class="den">9</span></span></span> ÷ <span class="mixed-frac"><span class="frac"><span class="num">2</span><span class="den">9</span></span></span> 可以想成有 7 個 <span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">9</span></span></span>，每 2 個 <span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">9</span></span></span> 裝 1 袋，它的商和下列哪一個算式的商完全相同？
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <button onclick="selectOption(1, 'A')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">A</span>
+                <span>7 ÷ 9</span>
+              </button>
+              <button onclick="selectOption(1, 'B')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">B</span>
+                <span>7 ÷ 2</span>
+              </button>
+              <button onclick="selectOption(1, 'C')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">C</span>
+                <span>9 ÷ 2</span>
+              </button>
+              <button onclick="selectOption(1, 'D')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">D</span>
+                <span>2 ÷ 7</span>
+              </button>
+            </div>
+            <div class="feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl hidden"></div>
+          </div>
+
+          <!-- 題目 2 -->
+          <div class="quiz-item p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm" data-qid="2">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-bold">第 2 題 ‧ 整數除以真分數</span>
+              <span class="quiz-badge text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+            <div class="text-sm md:text-base font-bold text-gray-800 mb-3 flex items-center flex-wrap gap-1">
+              雜糧行進貨 9 公斤堅果，每 <span class="mixed-frac"><span class="frac"><span class="num">9</span><span class="den">8</span></span></span> 公斤裝成 1 桶，全部裝完可裝成幾桶？
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <button onclick="selectOption(2, 'A')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">A</span>
+                <span>8 桶</span>
+              </button>
+              <button onclick="selectOption(2, 'B')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">B</span>
+                <span>9 桶</span>
+              </button>
+              <button onclick="selectOption(2, 'C')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">C</span>
+                <span><span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">1</span><span class="den">8</span></span></span> 桶</span>
+              </button>
+              <button onclick="selectOption(2, 'D')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">D</span>
+                <span>72 桶</span>
+              </button>
+            </div>
+            <div class="feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl hidden"></div>
+          </div>
+
+          <!-- 題目 3 -->
+          <div class="quiz-item p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm" data-qid="3">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-bold">第 3 題 ‧ 帶分數化假分數相除</span>
+              <span class="quiz-badge text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+            <div class="text-sm md:text-base font-bold text-gray-800 mb-3 flex items-center flex-wrap gap-1">
+              有 <span class="mixed-frac"><span class="whole">2</span><span class="frac"><span class="num">3</span><span class="den">4</span></span></span> 公升的果汁，每 <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">1</span><span class="den">4</span></span></span> 公升裝 1 瓶，全部裝完可裝成幾瓶？
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <button onclick="selectOption(3, 'A')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">A</span>
+                <span><span class="mixed-frac"><span class="whole">2</span><span class="frac"><span class="num">1</span><span class="den">5</span></span></span> 瓶（或 <span class="mixed-frac"><span class="frac"><span class="num">11</span><span class="den">5</span></span></span> 瓶）</span>
+              </button>
+              <button onclick="selectOption(3, 'B')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">B</span>
+                <span><span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">2</span><span class="den">4</span></span></span> 瓶</span>
+              </button>
+              <button onclick="selectOption(3, 'C')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">C</span>
+                <span><span class="mixed-frac"><span class="frac"><span class="num">5</span><span class="den">11</span></span></span> 瓶</span>
+              </button>
+              <button onclick="selectOption(3, 'D')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">D</span>
+                <span>3 瓶</span>
+              </button>
+            </div>
+            <div class="feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl hidden"></div>
+          </div>
+
+          <!-- 題目 4 -->
+          <div class="quiz-item p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm" data-qid="4">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-bold">第 4 題 ‧ 被除數小於除數</span>
+              <span class="quiz-badge text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+            <div class="text-sm md:text-base font-bold text-gray-800 mb-3 flex items-center flex-wrap gap-1">
+              1 瓶洗衣精容量是 <span class="mixed-frac"><span class="whole">4</span><span class="frac"><span class="num">7</span><span class="den">8</span></span></span> 公升，媽媽將 <span class="mixed-frac"><span class="whole">1</span><span class="frac"><span class="num">5</span><span class="den">8</span></span></span> 公升補充包倒進空瓶，請問倒進去的洗衣精是多少瓶？
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <button onclick="selectOption(4, 'A')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">A</span>
+                <span>3 瓶</span>
+              </button>
+              <button onclick="selectOption(4, 'B')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">B</span>
+                <span><span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">3</span></span></span> 瓶</span>
+              </button>
+              <button onclick="selectOption(4, 'C')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">C</span>
+                <span><span class="mixed-frac"><span class="frac"><span class="num">13</span><span class="den">8</span></span></span> 瓶</span>
+              </button>
+              <button onclick="selectOption(4, 'D')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">D</span>
+                <span><span class="mixed-frac"><span class="whole">3</span><span class="frac"><span class="num">1</span><span class="den">4</span></span></span> 瓶</span>
+              </button>
+            </div>
+            <div class="feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl hidden"></div>
+          </div>
+
+          <!-- 題目 5 -->
+          <div class="quiz-item p-5 rounded-2xl bg-white/90 border border-sky-100 shadow-sm" data-qid="5">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-800 text-xs font-bold">第 5 題 ‧ 數感與合理範圍估商</span>
+              <span class="quiz-badge text-xs font-bold px-2 py-0.5 rounded hidden"></span>
+            </div>
+            <div class="text-sm md:text-base font-bold text-gray-800 mb-3 flex items-center flex-wrap gap-1">
+              若有 3 公斤的糖，每 <span class="mixed-frac"><span class="frac"><span class="num">2</span><span class="den">5</span></span></span> 公斤裝成 1 包。先不精確計算，因為「每 <span class="mixed-frac"><span class="frac"><span class="num">1</span><span class="den">2</span></span></span> 公斤裝 1 包時 1 公斤可裝 2 包」，則 3 公斤至少可以裝成幾包？
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <button onclick="selectOption(5, 'A')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">A</span>
+                <span>至少裝 3 包</span>
+              </button>
+              <button onclick="selectOption(5, 'B')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">B</span>
+                <span>至少裝 6 包</span>
+              </button>
+              <button onclick="selectOption(5, 'C')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">C</span>
+                <span>不到 2 包</span>
+              </button>
+              <button onclick="selectOption(5, 'D')" class="opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs">D</span>
+                <span>剛好 5 包</span>
+              </button>
+            </div>
+            <div class="feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl hidden"></div>
+          </div>
+        </div>
+
+        <!-- 隨堂測驗下方操作按鈕：提交答案（左）與 重新測驗（右），大小相同並排置中 -->
+        <div class="mt-8 flex justify-center items-center gap-4">
+          <button onclick="submitQuiz()" id="btn-submit-quiz" class="w-40 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-base shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>提交答案</span>
+          </button>
+          <button onclick="resetQuiz()" id="btn-reset-quiz" class="w-40 py-3 rounded-2xl bg-white hover:bg-gray-100 text-gray-700 font-bold text-base border border-gray-300 shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>重新測驗</span>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let currentTab = 1;
+    let tab1UnitDenom = 9; // 預設 1/9 公斤
+
+    function switchTab(tabIndex) {
+      currentTab = tabIndex;
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`tab-${i}`);
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (i === tabIndex) {
+          el.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      }
+      if (tabIndex === 1) updateTab1();
+      if (tabIndex === 2) updateTab2();
+      if (tabIndex === 3) updateTab3();
+    }
+
+    /* 輔助函式：產生垂直分數 HTML */
+    function renderFrac(num, den) {
+      return `<span class="mixed-frac"><span class="frac"><span class="num">${num}</span><span class="den">${den}</span></span></span>`;
+    }
+
+    function renderMixedFrac(whole, num, den) {
+      if (whole === 0) return renderFrac(num, den);
+      if (num === 0) return `<span class="mixed-frac"><span class="whole">${whole}</span></span>`;
+      return `<span class="mixed-frac"><span class="whole">${whole}</span><span class="frac"><span class="num">${num}</span><span class="den">${den}</span></span></span>`;
+    }
+
+    /* 假分數轉帶分數純數字 */
+    function toMixed(n, d) {
+      const whole = Math.floor(n / d);
+      const rem = n % d;
+      return { whole, rem, d };
+    }
+
+    /* 最大公因數 */
+    function gcd(a, b) {
+      return b === 0 ? a : gcd(b, a % b);
+    }
+
+    function setTab1Unit(val) {
+      tab1UnitDenom = val;
+      document.getElementById('btn-unit-9').className = val === 9 ? 'px-3 py-1 rounded-xl text-xs font-bold bg-sky-600 text-white shadow-sm transition' : 'px-3 py-1 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-sky-100 transition';
+      document.getElementById('btn-unit-5').className = val === 5 ? 'px-3 py-1 rounded-xl text-xs font-bold bg-sky-600 text-white shadow-sm transition' : 'px-3 py-1 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-sky-100 transition';
+      document.getElementById('btn-unit-1').className = val === 1 ? 'px-3 py-1 rounded-xl text-xs font-bold bg-sky-600 text-white shadow-sm transition' : 'px-3 py-1 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-sky-100 transition';
+      updateTab1();
+    }
+
+    function updateTab1() {
+      const totalUnits = parseInt(document.getElementById('t1-total-slider').value);
+      const perBagUnits = parseInt(document.getElementById('t1-perbag-slider').value);
+      
+      document.getElementById('t1-num-display').innerText = `${totalUnits} 個單位`;
+      document.getElementById('t1-den-display').innerText = `每 ${perBagUnits} 個一袋`;
+
+      const unitText = tab1UnitDenom === 1 ? '1' : renderFrac(1, tab1UnitDenom);
+      const totalWeightHtml = tab1UnitDenom === 1 ? `${totalUnits} 公斤` : `${renderFrac(totalUnits, tab1UnitDenom)} 公斤`;
+      const perBagWeightHtml = tab1UnitDenom === 1 ? `${perBagUnits} 公斤` : `${renderFrac(perBagUnits, tab1UnitDenom)} 公斤`;
+
+      document.getElementById('t1-total-text').innerHTML = totalWeightHtml;
+      document.getElementById('t1-perbag-text').innerHTML = perBagWeightHtml;
+
+      const bagsCount = Math.floor(totalUnits / perBagUnits);
+      const remainderUnits = totalUnits % perBagUnits;
+
+      document.getElementById('t1-badge-info').innerHTML = `全部可裝成 <b>${bagsCount}</b> 袋完整包裝${remainderUnits > 0 ? `，還剩下 <b>${remainderUnits}</b> 小塊` : ''}`;
+
+      // 繪製視覺化包裝區
+      const container = document.getElementById('t1-bags-container');
+      container.innerHTML = '';
+
+      // 完整的每一袋
+      for (let b = 0; b < bagsCount; b++) {
+        const bagDiv = document.createElement('div');
+        bagDiv.className = 'flex flex-col items-center bg-white p-3 rounded-2xl border-2 border-sky-300 shadow-md';
+        
+        const label = document.createElement('span');
+        label.className = 'text-xs font-black text-sky-800 mb-2 px-2 py-0.5 rounded-full bg-sky-100 flex items-center gap-1';
+        label.innerHTML = `<i class="fa-solid fa-bag-shopping text-sky-600"></i> 第 ${b + 1} 袋 (1袋)`;
+        bagDiv.appendChild(label);
+
+        const itemsRow = document.createElement('div');
+        itemsRow.className = 'flex gap-1.5';
+        for (let i = 0; i < perBagUnits; i++) {
+          const item = document.createElement('div');
+          item.className = 'unit-block w-9 h-11 bg-gradient-to-t from-sky-500 to-sky-400 text-white rounded-lg flex flex-col items-center justify-center text-[10px] font-bold shadow-sm cursor-pointer border border-sky-600';
+          item.innerHTML = tab1UnitDenom === 1 ? '1kg' : `<span class="frac"><span class="num">1</span><span class="den">${tab1UnitDenom}</span></span><span class="text-[8px] opacity-80">kg</span>`;
+          itemsRow.appendChild(item);
+        }
+        bagDiv.appendChild(itemsRow);
+        container.appendChild(bagDiv);
+      }
+
+      // 若有剩下的部分（不足一袋）
+      if (remainderUnits > 0) {
+        const remDiv = document.createElement('div');
+        remDiv.className = 'flex flex-col items-center bg-amber-50/90 p-3 rounded-2xl border-2 border-dashed border-amber-300 shadow-sm';
+        
+        const remLabel = document.createElement('span');
+        remLabel.className = 'text-xs font-black text-amber-800 mb-2 px-2 py-0.5 rounded-full bg-amber-100 flex items-center gap-1';
+        remLabel.innerHTML = `<i class="fa-solid fa-hourglass-half text-amber-600"></i> 剩下 ${renderFrac(remainderUnits, perBagUnits)} 袋`;
+        remDiv.appendChild(remLabel);
+
+        const remItemsRow = document.createElement('div');
+        remItemsRow.className = 'flex gap-1.5';
+        for (let i = 0; i < remainderUnits; i++) {
+          const item = document.createElement('div');
+          item.className = 'unit-block w-9 h-11 bg-gradient-to-t from-amber-400 to-amber-300 text-amber-900 rounded-lg flex flex-col items-center justify-center text-[10px] font-bold shadow-sm border border-amber-500';
+          item.innerHTML = tab1UnitDenom === 1 ? '1kg' : `<span class="frac"><span class="num">1</span><span class="den">${tab1UnitDenom}</span></span><span class="text-[8px] opacity-80">kg</span>`;
+          remItemsRow.appendChild(item);
+        }
+        remDiv.appendChild(remItemsRow);
+        container.appendChild(remDiv);
+      }
+
+      // 更新說明與思考步驟
+      const stepUl = document.getElementById('t1-step-explanation');
+      if (tab1UnitDenom === 1) {
+        stepUl.innerHTML = `
+          <li><i class="fa-solid fa-circle-check text-blue-500 mr-1.5"></i>全部有 <b>${totalUnits}</b> 個 1 公斤。</li>
+          <li><i class="fa-solid fa-circle-check text-blue-500 mr-1.5"></i>每 <b>${perBagUnits}</b> 個 1 公斤裝成 1 袋。</li>
+          <li><i class="fa-solid fa-circle-check text-blue-500 mr-1.5"></i>列出整數除法算式：<b>${totalUnits} ÷ ${perBagUnits} = ${renderFrac(totalUnits, perBagUnits)}</b> 袋。</li>
+        `;
+      } else {
+        stepUl.innerHTML = `
+          <li><i class="fa-solid fa-circle-check text-blue-500 mr-1.5"></i><b>${renderFrac(totalUnits, tab1UnitDenom)}</b> 公斤代表有 <b>${totalUnits}</b> 個 ${unitText} 公斤。</li>
+          <li><i class="fa-solid fa-circle-check text-blue-500 mr-1.5"></i>每 <b>${renderFrac(perBagUnits, tab1UnitDenom)}</b> 公斤是 <b>${perBagUnits}</b> 個 ${unitText} 公斤裝成 1 袋。</li>
+          <li><i class="fa-solid fa-circle-check text-blue-500 mr-1.5"></i>把題目轉化為「<b>${totalUnits} 個小單位，每 ${perBagUnits} 個小單位裝成 1 袋</b>」。</li>
+        `;
+      }
+
+      // 數學同構算式
+      const mixed = toMixed(totalUnits, perBagUnits);
+      const mixedStr = renderMixedFrac(mixed.whole, mixed.rem, mixed.d);
+      const fracStr = renderFrac(totalUnits, perBagUnits);
+
+      const mathBox = document.getElementById('t1-math-result');
+      if (tab1UnitDenom === 1) {
+        mathBox.innerHTML = `
+          <span>${totalUnits} ÷ ${perBagUnits}</span>
+          <span>=</span>
+          <span>${fracStr}</span>
+          ${mixed.rem > 0 ? `<span>（或 ${mixedStr}）袋</span>` : `<span>袋</span>`}
+        `;
+      } else {
+        mathBox.innerHTML = `
+          <span>${renderFrac(totalUnits, tab1UnitDenom)} ÷ ${renderFrac(perBagUnits, tab1UnitDenom)}</span>
+          <span>=</span>
+          <span>${totalUnits} ÷ ${perBagUnits}</span>
+          <span>=</span>
+          <span>${fracStr}</span>
+          ${mixed.rem > 0 ? `<span>（或 ${mixedStr}）袋</span>` : `<span>袋</span>`}
+        `;
+      }
+
+      document.getElementById('t1-isom-desc').innerText = 
+        `★ 關鍵發現：分母相同時，除法結果與分子直接相除（${totalUnits} ÷ ${perBagUnits}）的商完全相同！`;
+    }
+
+    function updateTab2() {
+      const intVal = parseInt(document.getElementById('t2-int-slider').value);
+      const numVal = parseInt(document.getElementById('t2-num-slider').value);
+      const denVal = parseInt(document.getElementById('t2-den-slider').value);
+
+      document.getElementById('t2-int-val').innerText = intVal;
+      document.getElementById('t2-num-val').innerText = numVal;
+      document.getElementById('t2-den-val').innerText = denVal;
+
+      const totalSlices = intVal * denVal;
+      const bags = Math.floor(totalSlices / numVal);
+      const rem = totalSlices % numVal;
+
+      document.getElementById('t2-status-pill').innerText = 
+        `${intVal} 張切開共有 ${totalSlices} 塊，每 ${numVal} 塊裝一袋`;
+
+      // 繪製圓形蔥油餅
+      const pizzasContainer = document.getElementById('t2-pizzas-container');
+      pizzasContainer.innerHTML = '';
+
+      for (let p = 0; p < intVal; p++) {
+        const svgBox = document.createElement('div');
+        svgBox.className = 'flex flex-col items-center';
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('class', 'w-16 h-16 md:w-20 md:h-20 drop-shadow-sm');
+
+        // 底圓
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute('cx', '50');
+        circle.setAttribute('cy', '50');
+        circle.setAttribute('r', '44');
+        circle.setAttribute('fill', '#FED7AA');
+        circle.setAttribute('stroke', '#F97316');
+        circle.setAttribute('stroke-width', '3');
+        svg.appendChild(circle);
+
+        // 切片線條
+        for (let s = 0; s < denVal; s++) {
+          const angle = (s * 360 / denVal) * (Math.PI / 180);
+          const x2 = 50 + 44 * Math.cos(angle);
+          const y2 = 50 + 44 * Math.sin(angle);
+
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute('x1', '50');
+          line.setAttribute('y1', '50');
+          line.setAttribute('x2', x2.toString());
+          line.setAttribute('y2', y2.toString());
+          line.setAttribute('stroke', '#EA580C');
+          line.setAttribute('stroke-width', '2');
+          svg.appendChild(line);
+        }
+
+        svgBox.appendChild(svg);
+        const lbl = document.createElement('span');
+        lbl.className = 'text-[11px] font-bold text-orange-950 mt-1';
+        lbl.innerHTML = `第 ${p + 1} 張 (${denVal}個${renderFrac(1, denVal)})`;
+        svgBox.appendChild(lbl);
+
+        pizzasContainer.appendChild(svgBox);
+      }
+
+      // 繪製分裝袋
+      const bagsContainer = document.getElementById('t2-bags-container');
+      bagsContainer.innerHTML = '';
+
+      for (let b = 0; b < bags; b++) {
+        const bagDiv = document.createElement('div');
+        bagDiv.className = 'px-3 py-2 rounded-xl bg-white border border-orange-200 shadow-sm flex items-center gap-2';
+        bagDiv.innerHTML = `
+          <i class="fa-solid fa-box-open text-orange-500"></i>
+          <span class="text-xs font-black text-gray-800">第 ${b + 1} 袋</span>
+          <span class="text-[10px] text-orange-700 bg-orange-100 px-1.5 py-0.5 rounded font-bold">${numVal} 塊</span>
+        `;
+        bagsContainer.appendChild(bagDiv);
+      }
+
+      if (rem > 0) {
+        const remDiv = document.createElement('div');
+        remDiv.className = 'px-3 py-2 rounded-xl bg-amber-50 border border-dashed border-amber-300 shadow-sm flex items-center gap-2';
+        remDiv.innerHTML = `
+          <i class="fa-solid fa-cookie text-amber-500"></i>
+          <span class="text-xs font-black text-amber-900">剩下 ${rem} 塊</span>
+          <span class="text-[10px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-bold">即 ${renderFrac(rem, numVal)} 袋</span>
+        `;
+        bagsContainer.appendChild(remDiv);
+      }
+
+      // 數學演算歷程
+      const mathFlow = document.getElementById('t2-math-flow');
+      const improperNum = intVal * denVal;
+      const mixed = toMixed(improperNum, numVal);
+
+      mathFlow.innerHTML = `
+        <span>${intVal} ÷ ${renderFrac(numVal, denVal)}</span>
+        <span>=</span>
+        <span>${renderFrac(improperNum, denVal)} ÷ ${renderFrac(numVal, denVal)}</span>
+        <span>=</span>
+        <span>${improperNum} ÷ ${numVal}</span>
+        <span>=</span>
+        <span>${renderFrac(improperNum, numVal)}</span>
+        ${rem === 0 ? `<span>= <b>${bags}</b>（袋）</span>` : `<span>（或 ${renderMixedFrac(mixed.whole, mixed.rem, mixed.d)} 袋）</span>`}
+      `;
+
+      document.getElementById('t2-conclusion-text').innerHTML = 
+        `★ 觀念關鍵：整數先通分為假分數（${intVal} = ${renderFrac(improperNum, denVal)}），同分母後即為「${improperNum} 個切片 ÷ 每袋 ${numVal} 個切片」！`;
+    }
+
+    let tab3Mode = 1;
+
+    function setTab3Preset(mode) {
+      tab3Mode = mode;
+      document.getElementById('btn-t3-preset1').className = mode === 1 ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white shadow-sm transition' : 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-cyan-100 transition';
+      document.getElementById('btn-t3-preset2').className = mode === 2 ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white shadow-sm transition' : 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-cyan-100 transition';
+      document.getElementById('btn-t3-preset3').className = mode === 3 ? 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-600 text-white shadow-sm transition' : 'px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-gray-700 hover:bg-cyan-100 transition';
+      updateTab3();
+    }
+
+    function updateTab3() {
+      let divWhole, divNum, divDen;
+      let dvrWhole, dvrNum, dvrDen;
+      let title1, title2, hint, resultText;
+
+      if (tab3Mode === 1) {
+        // 例題 5：果汁 2 3/4 除以 1 1/4
+        divWhole = 2; divNum = 3; divDen = 4;
+        dvrWhole = 1; dvrNum = 1; dvrDen = 4;
+        title1 = "果汁總量";
+        title2 = "每瓶標準容量";
+        hint = "2 大約比 1 的兩倍還多一點點，所以可以裝成 2 瓶多（大於 2 瓶）。";
+        resultText = "帶分數先轉為假分數後，同分母直接以分子相除！";
+      } else if (tab3Mode === 2) {
+        // 例題 6：洗衣精 1 5/8 倒進 4 7/8
+        divWhole = 1; divNum = 5; divDen = 8;
+        dvrWhole = 4; dvrNum = 7; dvrDen = 8;
+        title1 = "倒進去的補充包洗衣精";
+        title2 = "空瓶的滿裝容量 (1滿瓶)";
+        hint = "1 瓶是 4 又 7/8 公升（接近 5 公升），而補充包只有 1 又 5/8 公升（不到 2 公升），因此倒進去「絕對不滿 1 瓶」，結果必小於 1！大約佔 2/5 瓶左右。";
+        resultText = "被除數小於除數時，商必定小於 1（真分數）。";
+      } else {
+        // 整數除以帶分數：26除以 6 1/2
+        divWhole = 26; divNum = 0; divDen = 2;
+        dvrWhole = 6; dvrNum = 1; dvrDen = 2;
+        title1 = "牛奶總量";
+        title2 = "每個桶子容量";
+        hint = "26 大約是 6 的 4 倍，且 6 又 1/2 × 4 = 26，心算即可預測剛好裝滿 4 個桶子！";
+        resultText = "整數換成假分數後，分子相除剛好整除！";
+      }
+
+      // 假分數運算
+      const divImpNum = divWhole * divDen + divNum;
+      const dvrImpNum = dvrWhole * dvrDen + dvrNum;
+
+      // 顯示標籤文字
+      document.getElementById('t3-bar1-label').innerText = title1;
+      document.getElementById('t3-bar2-label').innerText = title2;
+
+      document.getElementById('t3-dividend-disp').innerHTML = `${renderMixedFrac(divWhole, divNum, divDen)} 公升`;
+      document.getElementById('t3-dividend-sub').innerHTML = `換算假分數：${renderFrac(divImpNum, divDen)} 公升（即 ${divImpNum} 個 ${renderFrac(1, divDen)} 公升）`;
+
+      document.getElementById('t3-divisor-disp').innerHTML = `${renderMixedFrac(dvrWhole, dvrNum, dvrDen)} 公升`;
+      document.getElementById('t3-divisor-sub').innerHTML = `換算假分數：${renderFrac(dvrImpNum, dvrDen)} 公升（即 ${dvrImpNum} 個 ${renderFrac(1, dvrDen)} 公升）`;
+
+      // 條狀量筒長度比例
+      const maxVal = Math.max(divImpNum / divDen, dvrImpNum / dvrDen) * 1.15;
+      const pct1 = Math.min(100, Math.round(((divImpNum / divDen) / maxVal) * 100));
+      const pct2 = Math.min(100, Math.round(((dvrImpNum / dvrDen) / maxVal) * 100));
+
+      const bar1 = document.getElementById('t3-bar-dividend');
+      const bar2 = document.getElementById('t3-bar-divisor');
+      bar1.style.width = `${pct1}%`;
+      bar1.innerText = `${(divImpNum / divDen).toFixed(2)} L`;
+      bar2.style.width = `${pct2}%`;
+      bar2.innerText = `${(dvrImpNum / dvrDen).toFixed(2)} L`;
+
+      document.getElementById('t3-bar1-val').innerHTML = `${renderMixedFrac(divWhole, divNum, divDen)} 公升`;
+      document.getElementById('t3-bar2-val').innerHTML = `${renderMixedFrac(dvrWhole, dvrNum, dvrDen)} 公升`;
+
+      // 結構化推導步驟運算
+      const g = gcd(divImpNum, dvrImpNum);
+      const simplifiedNum = divImpNum / g;
+      const simplifiedDen = dvrImpNum / g;
+      const mixedRes = toMixed(simplifiedNum, simplifiedDen);
+      const unitName = tab3Mode === 3 ? '桶' : '瓶';
+
+      // 步驟 1：化為假分數文字
+      let step1Html = '';
+      if (divWhole === 0) {
+        step1Html += `${renderFrac(divNum, divDen)} 公升；`;
+      } else if (divNum === 0) {
+        step1Html += `${divWhole} = ${renderFrac(divImpNum, divDen)} 公升；`;
+      } else {
+        step1Html += `${renderMixedFrac(divWhole, divNum, divDen)} = ${renderFrac(divImpNum, divDen)} 公升；`;
+      }
+
+      if (dvrWhole === 0) {
+        step1Html += ` ${renderFrac(dvrNum, dvrDen)} 公升`;
+      } else if (dvrNum === 0) {
+        step1Html += ` ${dvrWhole} = ${renderFrac(dvrImpNum, dvrDen)} 公升`;
+      } else {
+        step1Html += ` ${renderMixedFrac(dvrWhole, dvrNum, dvrDen)} = ${renderFrac(dvrImpNum, dvrDen)} 公升`;
+      }
+
+      // 步驟 2：單位量累數轉換
+      const step2Html = `共有 ${divImpNum} 個 ${renderFrac(1, divDen)} 公升，每 ${dvrImpNum} 個 ${renderFrac(1, dvrDen)} 公升裝成 1 ${unitName}。`;
+
+      // 步驟 3：整數同構運算
+      let step3Html = `${renderFrac(divImpNum, divDen)} ÷ ${renderFrac(dvrImpNum, dvrDen)} = ${divImpNum} ÷ ${dvrImpNum} = `;
+      if (g > 1 && simplifiedDen !== 1) {
+        step3Html += `${renderFrac(divImpNum, dvrImpNum)} = ${renderFrac(simplifiedNum, simplifiedDen)}`;
+      } else if (simplifiedDen === 1) {
+        step3Html += `<b>${simplifiedNum}</b>`;
+      } else {
+        step3Html += `${renderFrac(simplifiedNum, simplifiedDen)}`;
+      }
+
+      // 答（符合圖 1 的紅字與直式分數樣式）
+      let answerHtml = '';
+      if (simplifiedDen === 1) {
+        answerHtml = `<span class="font-extrabold text-rose-600">${simplifiedNum} ${unitName}</span>`;
+      } else if (mixedRes.whole > 0) {
+        answerHtml = `
+          <span class="font-extrabold text-rose-600">${renderFrac(simplifiedNum, simplifiedDen)} ${unitName}</span>
+          <span class="text-gray-600 font-bold ml-1">（或 ${renderMixedFrac(mixedRes.whole, mixedRes.rem, mixedRes.d)} ${unitName}）</span>
+        `;
+      } else {
+        answerHtml = `<span class="font-extrabold text-rose-600">${renderFrac(simplifiedNum, simplifiedDen)} ${unitName}</span>`;
+      }
+
+      // 填入結構化推導步驟卡片容器
+      const stepsContainer = document.getElementById('t3-structured-steps');
+      stepsContainer.innerHTML = `
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="font-extrabold text-indigo-900 whitespace-nowrap">步驟 1 [化為假分數]：</span>
+          <div class="inline-flex items-center flex-wrap gap-1.5">${step1Html}</div>
+        </div>
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="font-extrabold text-indigo-900 whitespace-nowrap">步驟 2 [單位量累數轉換]：</span>
+          <div class="inline-flex items-center flex-wrap gap-1.5">${step2Html}</div>
+        </div>
+        <div class="flex items-center flex-wrap gap-2">
+          <span class="font-extrabold text-indigo-900 whitespace-nowrap">步驟 3 [整數同構運算]：</span>
+          <div class="inline-flex items-center flex-wrap gap-1.5 font-bold">${step3Html}</div>
+        </div>
+        <hr class="border-gray-200 my-2">
+        <div class="flex items-center flex-wrap gap-1.5 pt-1 text-base md:text-lg">
+          <span class="font-extrabold text-rose-600">答：</span>
+          ${answerHtml}
+        </div>
+      `;
+    }
+
+    const quizData = {
+      1: {
+        correct: 'B',
+        explain: `同分母分數相除時，單位分量相同。7 個 ${renderFrac(1, 9)} 公斤除以每 2 個 ${renderFrac(1, 9)} 公斤裝成 1 袋，可透過整數除法同構概念列式為 7 ÷ 2 = ${renderFrac(7, 2)} 袋。`
+      },
+      2: {
+        correct: 'A',
+        explain: `9 ÷ ${renderFrac(9, 8)} = ${renderFrac(72, 8)} ÷ ${renderFrac(9, 8)} = 72 ÷ 9 = 8（桶）。先將整數 9 化為同分母假分數 ${renderFrac(72, 8)}，再將分子相除即可求出答案。`
+      },
+      3: {
+        correct: 'A',
+        explain: `${renderMixedFrac(2, 3, 4)} 化為假分數是 ${renderFrac(11, 4)}；${renderMixedFrac(1, 1, 4)} 化為假分數是 ${renderFrac(5, 4)}。算式為 ${renderFrac(11, 4)} ÷ ${renderFrac(5, 4)} = 11 ÷ 5 = ${renderFrac(11, 5)} = ${renderMixedFrac(2, 1, 5)}（瓶）。`
+      },
+      4: {
+        correct: 'B',
+        explain: `補充包 ${renderMixedFrac(1, 5, 8)} 公升 = ${renderFrac(13, 8)} 公升；滿瓶 ${renderMixedFrac(4, 7, 8)} 公升 = ${renderFrac(39, 8)} 公升。倒進去的瓶數為 ${renderFrac(13, 8)} ÷ ${renderFrac(39, 8)} = 13 ÷ 39 = ${renderFrac(13, 39)} = ${renderFrac(1, 3)}（瓶）。`
+      },
+      5: {
+        correct: 'B',
+        explain: `每包裝 ${renderFrac(2, 5)} 公斤比半公斤（${renderFrac(1, 2)} 公斤）還少，因此 1 公斤可以裝 2 包以上。3 公斤至少可以裝 3 × 2 = 6 包（實際計算：3 ÷ ${renderFrac(2, 5)} = ${renderFrac(15, 2)} = ${renderMixedFrac(7, 1, 2)} 包）。`
+      }
+    };
+
+    let userAnswers = {};
+    let isQuizSubmitted = false;
+
+    function selectOption(qid, choice) {
+      if (isQuizSubmitted) return;
+      userAnswers[qid] = choice;
+
+      const itemCard = document.querySelector(`.quiz-item[data-qid="${qid}"]`);
+      const buttons = itemCard.querySelectorAll('.opt-btn');
+
+      buttons.forEach((btn, idx) => {
+        const letter = ['A', 'B', 'C', 'D'][idx];
+        if (letter === choice) {
+          btn.className = 'opt-btn p-3 rounded-xl border-2 border-sky-500 bg-sky-50 text-sky-950 font-bold text-left transition flex items-center gap-2 shadow-sm';
+        } else {
+          btn.className = 'opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2';
+        }
+      });
+    }
+
+    function submitQuiz() {
+      isQuizSubmitted = true;
+      let score = 0;
+
+      for (let qid = 1; qid <= 5; qid++) {
+        const q = quizData[qid];
+        const choice = userAnswers[qid];
+        const itemCard = document.querySelector(`.quiz-item[data-qid="${qid}"]`);
+        const buttons = itemCard.querySelectorAll('.opt-btn');
+        const badge = itemCard.querySelector('.quiz-badge');
+        const feedback = itemCard.querySelector('.feedback-box');
+
+        buttons.forEach(btn => {
+          btn.disabled = true;
+          btn.classList.remove('hover:bg-sky-50');
+        });
+
+        badge.classList.remove('hidden');
+        feedback.classList.remove('hidden');
+
+        if (!choice) {
+          // 空白未作答：僅顯示黃色系「未作答。」，不顯示其他說明且不顯示正確答案
+          badge.className = 'quiz-badge text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300';
+          badge.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> 未作答';
+          feedback.className = 'feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 font-bold';
+          feedback.innerHTML = '未作答。';
+        } else if (choice === q.correct) {
+          score += 20;
+          buttons.forEach((btn, idx) => {
+            const letter = ['A', 'B', 'C', 'D'][idx];
+            if (letter === q.correct) {
+              btn.className = 'opt-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-bold text-left transition flex items-center gap-2';
+            }
+          });
+          badge.className = 'quiz-badge text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300';
+          badge.innerHTML = '<i class="fa-solid fa-check"></i> 答對了';
+          feedback.className = 'feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200';
+          feedback.innerHTML = `<b>【解析】</b> 正確答案為 <b>(${q.correct})</b>。<br>${q.explain}`;
+        } else {
+          buttons.forEach((btn, idx) => {
+            const letter = ['A', 'B', 'C', 'D'][idx];
+            if (letter === q.correct) {
+              btn.className = 'opt-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-bold text-left transition flex items-center gap-2';
+            } else if (letter === choice) {
+              btn.className = 'opt-btn p-3 rounded-xl border-2 border-rose-400 bg-rose-100 text-rose-900 font-bold text-left transition flex items-center gap-2';
+            }
+          });
+          badge.className = 'quiz-badge text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300';
+          badge.innerHTML = '<i class="fa-solid fa-xmark"></i> 答錯了';
+          feedback.className = 'feedback-box mt-3 text-xs md:text-sm p-3 rounded-xl bg-rose-50 text-rose-900 border border-rose-200';
+          feedback.innerHTML = `<b>【解析】</b> 您的作答為 (${choice})，正確答案為 <b>(${q.correct})</b>。<br>${q.explain}`;
+        }
+      }
+
+      document.getElementById('quiz-score').innerText = score;
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      isQuizSubmitted = false;
+      document.getElementById('quiz-score').innerText = '0';
+
+      document.querySelectorAll('.quiz-item').forEach(item => {
+        const badge = item.querySelector('.quiz-badge');
+        const feedback = item.querySelector('.feedback-box');
+        badge.classList.add('hidden');
+        feedback.classList.add('hidden');
+
+        const buttons = item.querySelectorAll('.opt-btn');
+        buttons.forEach(btn => {
+          btn.disabled = false;
+          btn.className = 'opt-btn p-3 rounded-xl border border-gray-200 text-left hover:bg-sky-50 transition flex items-center gap-2';
+        });
+      });
+    }
+
+    window.onload = function() {
+      updateTab1();
+      updateTab2();
+      updateTab3();
+    };
+  </script>
+</body>
+</html>

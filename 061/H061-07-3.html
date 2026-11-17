@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學 7-3 認識比例尺互動探究教室</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 圖示庫 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* 新海誠動漫天空風格背景與調色盤，全站套用思源黑體 (不覆蓋 FontAwesome 圖示字體) */
+    body, button, input, select, textarea {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 35%, #6dd5ed 70%, #ffb199 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* 雲朵與星光光暈效果 */
+    .sky-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 85% 15%, rgba(255, 236, 179, 0.45) 0%, rgba(255, 255, 255, 0) 45%),
+                  radial-gradient(circle at 15% 85%, rgba(255, 140, 148, 0.3) 0%, rgba(255, 255, 255, 0) 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 毛玻璃卡片質感 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    /* 國小數學課本標準直式分數 (垂直置中) */
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 0.25rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .fraction .numerator {
+      border-bottom: 2px solid currentColor;
+      padding-bottom: 1px;
+      display: block;
+    }
+    .fraction .denominator {
+      padding-top: 1px;
+      display: block;
+    }
+    .mixed-num {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+    .mixed-num .whole {
+      margin-right: 0.2rem;
+      font-weight: 700;
+    }
+
+    /* 漸層標題文字 */
+    .shinkai-title {
+      background: linear-gradient(120deg, #1e3a8a, #0369a1, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 標籤按鈕樣式 */
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    /* 動態圖示比例尺繪製 */
+    .scale-bar-line {
+      height: 6px;
+      background: #0284c7;
+      position: relative;
+    }
+    .scale-bar-tick {
+      position: absolute;
+      top: -6px;
+      width: 2px;
+      height: 18px;
+      background: #0284c7;
+    }
+
+    /* 圖示尺黑白交錯方格風格 (如同圖1) */
+    .graphic-scale-bar {
+      display: flex;
+      width: 100%;
+      height: 10px;
+      border: 1px solid #0f172a;
+    }
+    .graphic-scale-bar .bar-seg-black {
+      background-color: #0f172a;
+      flex: 1;
+    }
+    .graphic-scale-bar .bar-seg-white {
+      background-color: #ffffff;
+      flex: 1;
+      border-left: 1px solid #0f172a;
+    }
+
+    /* 隱藏滾動條但可滑動 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="relative p-3 sm:p-6 md:p-8">
+  <div class="sky-glow"></div>
+
+  <div class="relative z-10 max-w-5xl mx-auto space-y-6">
+    <!-- 頂部 Header -->
+    <header class="glass-card rounded-3xl p-6 text-center border-b-4 border-sky-400">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-sky-100 text-sky-800 rounded-full text-sm font-semibold mb-2">
+        <i class="fa-solid fa-cloud-sun text-amber-500"></i> 國小六上數學 7-3 互動學習網頁
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight shinkai-title">
+        認識比例尺：縮放世界的秘密
+      </h1>
+      <p class="mt-2 text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
+        動動手指拉動滑桿，觀察地圖長度與實際長度如何透過「比」、「比值」與「圖示尺」建立神奇的連結！
+      </p>
+
+      <!-- 標籤導覽列 (分頁切換) -->
+    <nav class="flex flex-wrap justify-center gap-2 sm:gap-3 mt-6">
+      <button onclick="switchTab('tab1')" id="tabBtn-tab1" class="tab-btn active px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2">
+        <i class="fa-solid fa-shapes"></i> 1. 塗鴉牆與三種表示法
+      </button>
+      <button onclick="switchTab('tab2')" id="tabBtn-tab2" class="tab-btn bg-white/70 hover:bg-white text-slate-700 px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2">
+        <i class="fa-solid fa-compass-drafting"></i> 2. 雙向長度換算機
+      </button>
+      <button onclick="switchTab('tab3')" id="tabBtn-tab3" class="tab-btn bg-white/70 hover:bg-white text-slate-700 px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2">
+        <i class="fa-solid fa-map-location-dot"></i> 3. 實境地圖測量員
+      </button>
+      <button onclick="switchTab('tab4')" id="tabBtn-tab4" class="tab-btn bg-white/70 hover:bg-white text-slate-700 px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2">
+        <i class="fa-solid fa-draw-polygon"></i> 4. 幾何縮放探究
+      </button>
+      <button onclick="switchTab('tab5')" id="tabBtn-tab5" class="tab-btn bg-white/70 hover:bg-white text-slate-700 px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2">
+        <i class="fa-solid fa-graduation-cap"></i> 5. 隨堂測驗
+      </button>
+    </nav>
+  </header>
+
+  <!-- 分頁 1: 塗鴉牆縮小圖與比例尺三種表示法 -->
+  <main id="tab1" class="tab-content block space-y-6">
+    <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-8">
+      <!-- 標題與情境說明 -->
+      <div class="border-b pb-4 border-slate-200">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+            1
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800">塗鴉作品與縮小倍數探究</h2>
+            <p class="text-slate-500 text-sm">課本情境：校園內有一面長 600 公分、寬 400 公分的大塗鴉牆作品</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 區塊一：多多與丹丹的等比例畫作並列呈現 (仿照圖2與磚牆箭頭圖案) -->
+      <div class="bg-slate-50/90 p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <span class="text-sm font-bold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-cubes-stacked text-sky-500"></i>
+            縮小圖等比例尺寸對照（依實際長寬比例並排）
+          </span>
+          <span class="text-xs bg-sky-100 text-sky-800 font-semibold px-2.5 py-1 rounded-full">
+            塗鴉牆原圖：600cm × 400cm
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <!-- 多多的畫作：6cm x 4cm (比例 1/100) -->
+          <div class="md:col-span-7 flex flex-col items-center">
+            <!-- 標註頂部尺寸 -->
+            <div class="w-full max-w-[280px] sm:max-w-[320px] text-center border-b-2 border-dashed border-sky-400 pb-1 mb-1 text-xs sm:text-sm font-bold text-sky-700">
+              6 cm
+            </div>
+            <div class="flex items-center w-full max-w-[340px] justify-center gap-1">
+              <!-- 左側尺寸標註 -->
+              <div class="text-xs sm:text-sm font-bold text-sky-700 border-r-2 border-dashed border-sky-400 pr-1 py-4 [writing-mode:vertical-lr] rotate-180">
+                4 cm
+              </div>
+              <!-- 外框 (已移除背景格線，改為純淨白色底) -->
+              <div class="relative w-[280px] sm:w-[300px] h-[186px] sm:h-[200px] bg-white rounded-2xl border-2 border-slate-300 shadow-md flex items-center justify-center p-3">
+                <!-- 簡約綠色箭頭 (已移除內部其他圖案與紅線) -->
+                <svg viewBox="0 0 260 160" class="w-full h-full">
+                  <polygon points="25,50 150,50 150,20 240,80 150,140 150,110 25,110" 
+                           fill="#22c55e" 
+                           stroke="#15803d" 
+                           stroke-width="3" 
+                           stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <!-- 多多學生名稱 -->
+            <div class="mt-2 text-center">
+              <span class="inline-flex items-center gap-1 px-3 py-1 bg-sky-100 text-sky-800 rounded-full font-bold text-xs sm:text-sm">
+                <i class="fa-solid fa-user-pen text-sky-600"></i> 多多的畫作
+              </span>
+              <p class="text-xs text-slate-500 mt-1">縮小為原圖的 <span class="fraction text-sky-700 font-bold"><span class="numerator">1</span><span class="denominator">100</span></span> 倍</p>
+            </div>
+          </div>
+
+          <!-- 丹丹的畫作：3cm x 2cm (比例 1/200，完全 1:2 尺寸比例對稱) -->
+          <div class="md:col-span-5 flex flex-col items-center">
+            <!-- 標註頂部尺寸 -->
+            <div class="w-full max-w-[140px] sm:max-w-[150px] text-center border-b-2 border-dashed border-amber-400 pb-1 mb-1 text-xs sm:text-sm font-bold text-amber-700">
+              3 cm
+            </div>
+            <div class="flex items-center w-full max-w-[180px] justify-center gap-1">
+              <!-- 左側尺寸標註 -->
+              <div class="text-xs sm:text-sm font-bold text-amber-700 border-r-2 border-dashed border-amber-400 pr-1 py-2 [writing-mode:vertical-lr] rotate-180">
+                2 cm
+              </div>
+              <!-- 外框 (已移除背景格線，長寬恰為多多的 1/2) -->
+              <div class="relative w-[140px] sm:w-[150px] h-[93px] sm:h-[100px] bg-white rounded-xl border-2 border-slate-300 shadow-sm flex items-center justify-center p-2">
+                <!-- 簡約綠色箭頭 (同樣以綠色呈現，長寬等比例縮小) -->
+                <svg viewBox="0 0 260 160" class="w-full h-full">
+                  <polygon points="25,50 150,50 150,20 240,80 150,140 150,110 25,110" 
+                           fill="#22c55e" 
+                           stroke="#15803d" 
+                           stroke-width="3" 
+                           stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <!-- 丹丹學生名稱 -->
+            <div class="mt-2 text-center">
+              <span class="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-xs sm:text-sm">
+                <i class="fa-solid fa-user-pen text-amber-600"></i> 丹丹的畫作
+              </span>
+              <p class="text-xs text-slate-500 mt-1">縮小為原圖的 <span class="fraction text-amber-700 font-bold"><span class="numerator">1</span><span class="denominator">200</span></span> 倍</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 思考對話框 (如圖2下方) -->
+        <div class="mt-6 p-4 bg-sky-50 rounded-2xl border border-sky-200 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-sky-500 text-white flex items-center justify-center shrink-0 text-lg shadow">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div class="text-xs sm:text-sm text-slate-700">
+            <span class="font-bold text-sky-900">想想看，為什麼他們做出來的縮小圖不一樣大呢？</span><br>
+            <span class="text-rose-600 font-bold">答：因為縮小的倍數不同！</span>
+            多多的縮小圖長度是原圖的 <span class="fraction"><span class="numerator">1</span><span class="denominator">100</span></span>，丹丹的是 <span class="fraction"><span class="numerator">1</span><span class="denominator">200</span></span>。
+            像這樣用比或比值來溝通縮小圖長度與實際長度的關係，就稱為「<strong>比例尺</strong>」。
+          </div>
+        </div>
+      </div>
+
+      <!-- 區塊二：比例尺三種表示法（仿照圖 1 的版面架構，採用柔和新海誠色調） -->
+      <div class="space-y-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced text-indigo-600"></i>
+            比例尺三種表示法：比、比值、圖示形式
+          </h2>
+          <p class="text-slate-500 text-xs sm:text-sm mt-1">
+            比例尺的本質就是「<strong>圖上長度 : 實際長度</strong>」。透過單位化為相同基準（公分），就能自由轉換！
+          </p>
+        </div>
+
+        <!-- 動態轉換模擬器操作列 (圖1上方藍色卡片) -->
+        <div class="bg-gradient-to-r from-sky-50 via-indigo-50 to-blue-50 border border-sky-200 p-5 rounded-2xl shadow-sm">
+          <div class="text-xs sm:text-sm font-bold text-sky-900 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-sky-600"></i> 動態轉換模擬器：設定地圖與實際距離
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+            <!-- 地圖上的長度 -->
+            <div class="sm:col-span-3">
+              <label class="block text-xs font-bold text-slate-600 mb-1">地圖上的長度 (公分)</label>
+              <input type="number" id="input-map-cm" value="1" min="0.1" step="0.5" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 text-center focus:outline-none focus:ring-2 focus:ring-sky-500">
+            </div>
+
+            <!-- 實際距離數值 -->
+            <div class="sm:col-span-3">
+              <label class="block text-xs font-bold text-slate-600 mb-1">實際距離</label>
+              <input type="number" id="input-real-val" value="1" min="1" step="1" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 text-center focus:outline-none focus:ring-2 focus:ring-sky-500">
+            </div>
+
+            <!-- 實際距離單位 -->
+            <div class="sm:col-span-3">
+              <label class="block text-xs font-bold text-slate-600 mb-1">單位選擇</label>
+              <select id="select-real-unit" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-700 text-center focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <option value="km" selected>公里 (km)</option>
+                <option value="m">公尺 (m)</option>
+                <option value="cm">公分 (cm)</option>
+              </select>
+            </div>
+
+            <!-- 產生按鈕 -->
+            <div class="sm:col-span-3">
+              <button onclick="generateThreeFormats()" class="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate"></i> 產生三種表示法
+              </button>
+            </div>
+          </div>
+
+          <!-- 快速預設情境按鈕 -->
+          <div class="flex flex-wrap items-center gap-2 mt-3 text-xs">
+            <span class="text-slate-500 font-medium">快速帶入課本範例：</span>
+            <button onclick="setSamplePreset(1, 1, 'm')" class="px-2.5 py-1 bg-white hover:bg-sky-100 border border-slate-200 text-slate-700 rounded-lg font-semibold transition-colors">
+              多多塗鴉 (1cm:1m)
+            </button>
+            <button onclick="setSamplePreset(1, 2, 'm')" class="px-2.5 py-1 bg-white hover:bg-sky-100 border border-slate-200 text-slate-700 rounded-lg font-semibold transition-colors">
+              丹丹塗鴉 (1cm:2m)
+            </button>
+            <button onclick="setSamplePreset(1, 60, 'm')" class="px-2.5 py-1 bg-white hover:bg-sky-100 border border-slate-200 text-slate-700 rounded-lg font-semibold transition-colors">
+              老街地圖 (1:6000)
+            </button>
+            <button onclick="setSamplePreset(1, 1, 'km')" class="px-2.5 py-1 bg-white hover:bg-sky-100 border border-slate-200 text-slate-700 rounded-lg font-semibold transition-colors">
+              大橋地圖 (1cm:1km)
+            </button>
+          </div>
+        </div>
+
+        <!-- 下方三欄展示卡片 (比、比值、圖示形式) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- 1. 比形式 (Ratio) -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 font-bold text-sky-700 mb-1">
+                <i class="fa-solid fa-arrows-left-right text-base"></i>
+                <h3 class="text-base">比形式 (Ratio)</h3>
+              </div>
+              <p class="text-xs text-slate-400 mb-4">化為同單位（公分）後最簡化比：圖上 : 實際</p>
+
+              <!-- 比值數值框 -->
+              <div class="bg-slate-50 rounded-xl p-4 text-center my-3 border border-slate-100 min-h-[72px] flex items-center justify-center">
+                <span id="card-ratio-val" class="text-xl sm:text-2xl font-black text-sky-800 tracking-wider">
+                  1 : 100000
+                </span>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-3 text-xs text-slate-500">
+              說明：圖上 1 公分相當於實際 <strong id="card-ratio-desc" class="text-sky-700 font-bold">100000</strong> 公分
+            </div>
+          </div>
+
+          <!-- 2. 比值形式 (Fraction) -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 font-bold text-indigo-700 mb-1">
+                <i class="fa-solid fa-divide text-base"></i>
+                <h3 class="text-base">比值形式 (Fraction)</h3>
+              </div>
+              <p class="text-xs text-slate-400 mb-4">以標準直式分數表示縮小倍率</p>
+
+              <!-- 直式分數展示框 -->
+              <div class="bg-slate-50 rounded-xl p-4 text-center my-3 border border-slate-100 min-h-[72px] flex items-center justify-center">
+                <span class="fraction text-xl sm:text-2xl text-indigo-700">
+                  <span class="numerator">1</span>
+                  <span class="denominator" id="card-frac-denom">100000</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-3 text-xs text-slate-500 flex items-center justify-between">
+              <span>說明：地圖是實際物體的</span>
+              <span class="text-indigo-700 font-bold flex items-center gap-1">
+                <span class="fraction text-xs">
+                  <span class="numerator">1</span>
+                  <span class="denominator" id="card-frac-desc">100000</span>
+                </span> 倍縮小圖
+              </span>
+            </div>
+          </div>
+
+          <!-- 3. 圖示形式 (Graphic Bar) -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 font-bold text-emerald-700 mb-1">
+                <i class="fa-solid fa-ruler-horizontal text-base"></i>
+                <h3 class="text-base">圖示形式 (Graphic Bar)</h3>
+              </div>
+              <p class="text-xs text-slate-400 mb-4">線段每 1 公分代表的實際長度標註</p>
+
+              <!-- 黑白線段條與標記 (如同圖1) -->
+              <div class="bg-slate-50 rounded-xl p-4 my-3 border border-slate-100 min-h-[72px] flex flex-col justify-center">
+                <!-- 上方真實距離刻度 -->
+                <div class="flex justify-between text-xs font-bold text-slate-800 mb-1 font-mono px-0.5">
+                  <span>0</span>
+                  <span id="bar-tick-1">1km</span>
+                  <span id="bar-tick-2">2km</span>
+                </div>
+                <!-- 黑白相間線段 (如同圖1) -->
+                <div class="graphic-scale-bar">
+                  <div class="bar-seg-black"></div>
+                  <div class="bar-seg-white"></div>
+                </div>
+                <!-- 下方圖上公分標籤 -->
+                <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1 px-0.5">
+                  <span>0cm</span>
+                  <span>1cm</span>
+                  <span>2cm</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-100 pt-3 text-xs text-slate-500">
+              說明：圖上每 1 公分線段代表實際 <strong id="card-bar-desc" class="text-emerald-700 font-bold">1 公里</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+    <!-- 分頁 2: 雙向長度與單位即時換算機 -->
+    <main id="tab2" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8">
+        <div class="flex items-center gap-3 border-b pb-4 mb-6 border-slate-200">
+          <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+            2
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800">雙向長度換算機（求圖長 / 求實際長）</h2>
+            <p class="text-slate-500 text-sm">課本核心概念：已知比例尺，在同單位下輕鬆轉換圖上與實地距離</p>
+          </div>
+        </div>
+
+        <!-- 單位換算提醒卡 -->
+        <div class="bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-300 p-4 rounded-2xl flex items-center justify-around flex-wrap gap-2 text-xs sm:text-sm font-bold text-amber-900 shadow-sm">
+          <span><i class="fa-solid fa-lightbulb text-amber-500"></i> 解題換算小錦囊：</span>
+          <span class="bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200">1 公尺 (m) = 100 公分 (cm)</span>
+          <span class="bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200">1 公里 (km) = 1,000 公尺 = 100,000 公分</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <!-- 區塊 A: 給定實際長度與比例尺 -> 求地圖長度 -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-2 text-indigo-700 font-bold">
+              <i class="fa-solid fa-magnifying-glass-minus text-xl"></i>
+              <h3>情況 A：求地圖上的長度</h3>
+            </div>
+            <p class="text-xs text-slate-500">例：老街旁一條溪流長 1800 公尺，在 1:6000 地圖上是幾公分？</p>
+
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                  <span>設定實際長度：<span id="label-actual" class="text-indigo-600 font-bold">1800</span> 公尺</span>
+                </div>
+                <input type="range" id="slider-actual" min="300" max="3600" step="300" value="1800" oninput="calcMapLength()" class="w-full accent-indigo-600 cursor-pointer">
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold text-slate-700 mb-1 block">選擇地圖比例尺：</label>
+                <select id="select-scale-a" onchange="calcMapLength()" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 focus:outline-indigo-500">
+                  <option value="6000">1 : 6,000（即比值 1/6000）</option>
+                  <option value="30000">1 : 30,000（即比值 1/30000）</option>
+                  <option value="100000">1 : 100,000（1公分代表1公里）</option>
+                </select>
+              </div>
+
+              <!-- 解題流程逐步展示 -->
+              <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-100 text-xs sm:text-sm space-y-2 text-indigo-950 font-medium">
+                <div>① 單位換算：<span id="step-a1" class="font-bold">1800 m = 180,000 cm</span></div>
+                <div class="flex items-center gap-1">
+                  ② 圖上長度 = 實際長度 × 比值：
+                </div>
+                <div class="pl-3 py-1 font-mono text-indigo-800 flex items-center gap-1.5 flex-wrap">
+                  <span id="step-a2-act">180000</span> × 
+                  <span class="fraction text-indigo-600 font-bold">
+                    <span class="numerator">1</span>
+                    <span class="denominator" id="step-a2-scale">6000</span>
+                  </span> = <span id="res-map-len" class="text-base font-black text-rose-600">30</span> 公分
+                </div>
+                <div class="text-[11px] text-slate-500 pt-1 border-t border-indigo-200">
+                  <i class="fa-regular fa-circle-check text-emerald-600"></i> 地圖上的長度為 <strong id="res-map-final" class="text-rose-600">30</strong> 公分！
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 區塊 B: 給定地圖長度與比例尺 -> 求實際長度 -->
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-2 text-sky-700 font-bold">
+              <i class="fa-solid fa-magnifying-glass-plus text-xl"></i>
+              <h3>情況 B：求實際真實長度</h3>
+            </div>
+            <p class="text-xs text-slate-500">例：比例尺 1:100000 的地圖上一座橋長 7 公分，實際長是幾公里？</p>
+
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+                  <span>設定地圖長度：<span id="label-map" class="text-sky-600 font-bold">7</span> 公分</span>
+                </div>
+                <input type="range" id="slider-map" min="1" max="15" step="0.5" value="7" oninput="calcRealLength()" class="w-full accent-sky-600 cursor-pointer">
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold text-slate-700 mb-1 block">選擇地圖比例尺：</label>
+                <select id="select-scale-b" onchange="calcRealLength()" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 focus:outline-sky-500">
+                  <option value="100000">1 : 100,000（比值 1/100000）</option>
+                  <option value="200000">1 : 200,000（比值 1/200000）</option>
+                  <option value="350000">1 : 350,000（比值 1/350000）</option>
+                  <option value="400000">1 : 400,000（比值 1/400000）</option>
+                </select>
+              </div>
+
+              <!-- 解題流程逐步展示 -->
+              <div class="bg-sky-50/70 p-4 rounded-xl border border-sky-100 text-xs sm:text-sm space-y-2 text-sky-950 font-medium">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  ① 實際長度(cm) = 圖上長度 ÷ 
+                  <span class="fraction text-sky-600 font-bold">
+                    <span class="numerator">1</span>
+                    <span class="denominator" id="step-b-scale">100000</span>
+                  </span>
+                </div>
+                <div class="pl-3 py-1 font-mono text-sky-800">
+                  <span id="step-b-map">7</span> × <span id="step-b-scale2">100000</span> = <span id="res-cm-len" class="font-bold">700,000</span> 公分
+                </div>
+                <div class="border-t border-sky-200 pt-1.5 flex justify-between items-center">
+                  <span>② 換算為公里 (÷ 100000)：</span>
+                  <span class="text-base font-black text-rose-600"><span id="res-km-len">7</span> 公里</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 分頁 3: 實境地圖測量員 (金門大橋 & 輕旅行探究) -->
+    <main id="tab3" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8">
+        <div class="flex items-center gap-3 border-b pb-4 mb-6 border-slate-200">
+          <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+            3
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800">實境地圖探究：金門大橋與輕旅行</h2>
+            <p class="text-slate-500 text-sm">點選地圖上的目標地點，觀察測量長度並推算真實地理距離</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- 互動地圖模擬畫布 -->
+          <div class="lg:col-span-7 bg-slate-900 rounded-3xl p-4 shadow-xl border border-slate-700 relative overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center text-xs text-slate-300 mb-2 px-2">
+              <span class="flex items-center gap-1.5 font-bold text-sky-400">
+                <i class="fa-solid fa-satellite"></i> 衛星模擬地圖視圖
+              </span>
+              <span class="bg-slate-800/80 px-2 py-0.5 rounded text-[11px] border border-slate-600">點擊景點測量</span>
+            </div>
+
+            <!-- SVG 擬真地圖互動區 -->
+            <div class="relative bg-gradient-to-b from-sky-900 via-teal-900 to-emerald-950 rounded-2xl h-80 w-full overflow-hidden border border-teal-500/30">
+              <!-- 海洋波紋與島嶼形狀 -->
+              <svg viewBox="0 0 500 320" class="w-full h-full select-none">
+                <!-- 陸地輪廓 (大金門與烈嶼) -->
+                <path d="M 40,140 Q 60,110 90,130 T 120,200 T 70,250 T 30,190 Z" fill="#15803d" opacity="0.85" />
+                <text x="60" y="190" fill="#f0fdf4" font-size="13" font-weight="bold">烈嶼鄉</text>
+
+                <path d="M 220,90 Q 280,40 370,60 T 460,140 T 390,260 T 260,240 T 230,160 Z" fill="#16a34a" opacity="0.85" />
+                <text x="310" y="170" fill="#f0fdf4" font-size="15" font-weight="bold">大金門 (金寧/金城)</text>
+
+                <!-- 地標點位 -->
+                <!-- 烈嶼端 -->
+                <circle cx="105" cy="155" r="7" fill="#fbbf24" stroke="#ffffff" stroke-width="2" />
+                <!-- 金寧端 -->
+                <circle cx="245" cy="130" r="7" fill="#fbbf24" stroke="#ffffff" stroke-width="2" />
+
+                <!-- 金門大橋 (紅色連接線) -->
+                <line id="bridge-line" x1="105" y1="155" x2="245" y2="130" stroke="#f43f5e" stroke-width="4" stroke-dasharray="4,2" />
+                
+                <!-- 其他探究點：小籠包店 (B)、飲料店 (3cm) -->
+                <g class="cursor-pointer" onclick="selectMapSpot('bridge')">
+                  <rect x="135" y="125" width="80" height="26" rx="6" fill="#f43f5e" />
+                  <text x="142" y="142" fill="white" font-size="11" font-weight="bold">金門大橋</text>
+                </g>
+
+                <g class="cursor-pointer" onclick="selectMapSpot('drink')">
+                  <circle cx="280" cy="90" r="6" fill="#38bdf8" />
+                  <text x="292" y="94" fill="#e0f2fe" font-size="11" font-weight="bold">飲料店 (3cm)</text>
+                </g>
+
+                <g class="cursor-pointer" onclick="selectMapSpot('dumpling')">
+                  <circle cx="360" cy="220" r="6" fill="#fb923c" />
+                  <text x="372" y="225" fill="#ffedd5" font-size="11" font-weight="bold">B:小籠包店 (8cm)</text>
+                </g>
+              </svg>
+
+              <!-- 圖示比例尺 (固定於地圖右下方) -->
+              <div class="absolute bottom-3 right-3 bg-slate-900/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-600 text-white shadow-lg pointer-events-none">
+                <div class="text-[10px] text-slate-300 font-bold mb-1">地圖圖示比例尺 (2cm 表示 5km)</div>
+                <div class="w-32 h-1.5 bg-sky-400 relative">
+                  <div class="absolute -top-1.5 left-0 w-0.5 h-4 bg-sky-400"></div>
+                  <div class="absolute -top-1.5 left-1/2 w-0.5 h-4 bg-sky-400"></div>
+                  <div class="absolute -top-1.5 right-0 w-0.5 h-4 bg-sky-400"></div>
+                </div>
+                <div class="flex justify-between text-[10px] font-mono text-sky-200 mt-1">
+                  <span>0</span>
+                  <span>2.5km</span>
+                  <span>5km</span>
+                </div>
+              </div>
+            </div>
+            
+            <p class="text-slate-400 text-xs mt-2 px-1">
+              <i class="fa-solid fa-hand-pointer text-sky-400"></i> 請點擊地圖上的紅/藍/橘標籤查看實測與計算結果！
+            </p>
+          </div>
+
+          <!-- 右側：測量解密報告 -->
+          <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-md space-y-4">
+            <div class="border-b pb-3">
+              <span class="text-xs font-bold text-sky-600 uppercase tracking-wider">實時測量推算報告</span>
+              <h3 id="spot-title" class="text-xl font-black text-slate-800 mt-1">金門大橋 (2022通車跨海大橋)</h3>
+            </div>
+
+            <!-- 動態資料卡 -->
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between p-2.5 bg-slate-50 rounded-xl">
+                <span class="text-slate-500">地圖上測量長度：</span>
+                <span id="spot-map-len" class="font-extrabold text-indigo-700">2.2 公分</span>
+              </div>
+              <div class="flex justify-between p-2.5 bg-slate-50 rounded-xl">
+                <span class="text-slate-500">地圖比例尺關係：</span>
+                <span class="font-bold text-slate-700">1 cm 代表 2.5 公里</span>
+              </div>
+              <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 space-y-2">
+                <div class="font-bold text-amber-900 text-xs flex items-center gap-1">
+                  <i class="fa-solid fa-calculator"></i> 計算算式推演：
+                </div>
+                <div id="spot-calc-detail" class="font-mono text-sm text-amber-950 font-bold">
+                  2.2 × 2.5 = 5.5 (公里)
+                </div>
+                <p id="spot-desc" class="text-xs text-amber-800/90 leading-relaxed">
+                  大橋跨越金烈水道，地圖上約 2.2 cm，依每公分 2.5 km 比例尺推算，實際全長約為 5.5 公里。
+                </p>
+              </div>
+
+              <!-- 思考探索問題卡 -->
+              <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-200 text-xs text-indigo-900 space-y-1">
+                <span class="font-bold"><i class="fa-solid fa-brain text-indigo-600 mr-1"></i> 比例尺大小概念辨析：</span>
+                <p>若另一幅地圖的比例尺為 
+                  <span class="fraction text-indigo-700 font-bold">
+                    <span class="numerator">1</span>
+                    <span class="denominator">10,000</span>
+                  </span>，因為 
+                  <span class="fraction font-bold">
+                    <span class="numerator">1</span>
+                    <span class="denominator">10,000</span>
+                  </span> &gt; 
+                  <span class="fraction font-bold">
+                    <span class="numerator">1</span>
+                    <span class="denominator">250,000</span>
+                  </span>，則表示它放得比較大、看到的細節會更清楚！
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 分頁 4: 幾何縮放探究 (如圖 1~2，標題圖示如圖 3) -->
+    <main id="tab4" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+        <!-- 頂部重點標籤與標題 (圖3樣式) -->
+        <div class="border-b pb-4 border-slate-200">
+          <div class="inline-block px-3 py-1 bg-pink-100 text-pink-700 font-bold text-xs rounded-full mb-2">
+            課本第 114 頁重點探究
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-pink-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+              4
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800">
+                幾何放大與縮小：邊長變了，那角度呢？
+              </h2>
+              <p class="text-slate-500 text-xs sm:text-sm mt-0.5">
+                透過探究鳶形與鈍角三角形，動手放大或縮小圖形，猜測並驗證「對應角」與「對應邊」的變化規律！
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- 左側控制與觀察卡片 -->
+          <div class="lg:col-span-5 space-y-5 bg-white/90 p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <!-- 選擇探究圖形 -->
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2">選擇探究圖形：</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="geo-btn-kite" onclick="switchGeoShape('kite')" class="px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all bg-pink-600 text-white shadow-sm flex items-center justify-center gap-1">
+                  課本例題：幾何鳶形
+                </button>
+                <button id="geo-btn-tri" onclick="switchGeoShape('triangle')" class="px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center justify-center gap-1">
+                  課本練習：鈍角三角形
+                </button>
+              </div>
+            </div>
+
+            <!-- 縮放倍數控制 -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-bold text-slate-500">縮放倍數控制：</label>
+                <span id="geo-scale-label" class="text-sm font-extrabold text-pink-600">放大 2 倍</span>
+              </div>
+              <!-- 滑桿：0.5, 1, 2, 3 -->
+              <input type="range" id="geo-scale-slider" min="0" max="3" step="1" value="2" oninput="updateGeoScale(this.value)" class="w-full accent-amber-500 cursor-pointer">
+              <div class="flex justify-between text-[11px] font-bold text-slate-400 mt-1">
+                <span>0.5倍(縮小)</span>
+                <span>1倍(原圖)</span>
+                <span>2倍(放大)</span>
+                <span>3倍(放大)</span>
+              </div>
+            </div>
+
+            <!-- 動態對照數據卡片 -->
+            <div class="p-4 rounded-2xl border border-pink-100 bg-pink-50/40 space-y-3">
+              <div class="text-xs font-bold text-slate-700">動態對照數據：</div>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-2xs">
+                  <div class="text-[11px] text-slate-400 font-medium">圖形狀態：</div>
+                  <div id="geo-state-text" class="text-sm font-black text-slate-800 mt-0.5">放大圖 (2 倍)</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-2xs">
+                  <div class="text-[11px] text-slate-400 font-medium">邊長比例關係：</div>
+                  <div id="geo-ratio-text" class="text-sm font-black text-blue-600 mt-0.5">原長度的 2 倍</div>
+                </div>
+              </div>
+
+              <!-- 對應角大小提醒 -->
+              <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-2xs">
+                <div class="text-[11px] text-slate-400 font-medium">對應角大小：</div>
+                <div class="text-sm font-black text-emerald-600 flex items-center gap-1.5 mt-0.5">
+                  <i class="fa-solid fa-check"></i> 完全不變！保持相等！
+                </div>
+              </div>
+
+              <!-- 重要結論黃色小錦囊 -->
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
+                💡 <strong>重要結論：</strong>放大圖或縮小圖的「<strong>對應邊長</strong>」會變成原本的 <span id="geo-conclusion-scale">2 倍</span>，但「<strong>對應角</strong>」大小<strong>絕對不會改變</strong>！
+              </div>
+            </div>
+          </div>
+
+          <!-- 右側圖形即時對照區 (原圖 vs 縮放圖) -->
+          <div class="lg:col-span-7 bg-white/90 p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between text-xs font-bold pb-2 border-b border-slate-100">
+              <span class="text-slate-600 flex items-center gap-1.5">
+                <i class="fa-solid fa-clone text-indigo-500"></i> 原圖 vs 縮放圖 同步對照
+              </span>
+              <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md font-mono text-[11px]">即時幾何繪製 (SVG)</span>
+            </div>
+
+            <!-- 兩欄圖形對照畫布 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- 原圖 甲 基準圖 -->
+              <div class="border border-slate-200 rounded-2xl p-4 flex flex-col items-center bg-slate-50/50">
+                <span class="text-xs font-bold text-slate-600 mb-2">【原圖 甲】基準圖</span>
+                <div id="svg-container-orig" class="w-full h-52 flex items-center justify-center">
+                  <!-- 原圖 SVG -->
+                </div>
+              </div>
+
+              <!-- 新圖 乙 縮放結果 -->
+              <div class="border border-indigo-200 rounded-2xl p-4 flex flex-col items-center bg-indigo-50/20">
+                <span id="geo-target-label" class="text-xs font-bold text-indigo-700 mb-2">【新圖 乙】縮放結果</span>
+                <div id="svg-container-scaled" class="w-full h-52 flex items-center justify-center">
+                  <!-- 縮放圖 SVG -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 幾何要素對照表格 -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-xs text-left text-slate-700">
+                <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                  <tr>
+                    <th class="py-2.5 px-3">幾何要素</th>
+                    <th class="py-2.5 px-3">原圖 (甲)</th>
+                    <th class="py-2.5 px-3" id="th-target-name">新圖 (乙)</th>
+                    <th class="py-2.5 px-3 text-right">對應倍數關係</th>
+                  </tr>
+                </thead>
+                <tbody id="geo-table-body" class="divide-y divide-slate-100 font-medium">
+                  <!-- 動態填入幾何要素數據 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 分頁 5: 隨堂測驗 (5 題測驗與自我修正) -->
+    <main id="tab5" class="tab-content hidden space-y-6">
+      <div class="glass-card rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4 mb-6 border-slate-200">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+              5
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-800">隨堂測驗</h2>
+              <p class="text-slate-500 text-sm">課本重點 5 題精選診斷，作答完畢請點擊下方「提交答案」檢視結果！</p>
+            </div>
+          </div>
+          <!-- 計分徽章 -->
+          <div class="bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-5 py-2.5 rounded-2xl shadow font-bold flex items-center gap-2">
+            <i class="fa-solid fa-award text-yellow-300 text-lg"></i>
+            <span>目前得分：<span id="quiz-score" class="text-xl font-black">0</span> / 100</span>
+          </div>
+        </div>
+
+        <!-- 5 題測驗題清單容器 -->
+        <div id="quiz-container" class="space-y-6">
+          <!-- 題目會由 JS 自動渲染產生，確保符合課本內容與直式分數規範 -->
+        </div>
+
+        <!-- 並排置中的「提交答案」與「重新測驗」按鈕 -->
+        <div class="mt-8 flex justify-center items-center gap-4 flex-wrap">
+          <button onclick="submitQuiz()" id="btn-submit-quiz" class="w-40 py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white rounded-2xl font-bold transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-40 py-3 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-bold transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-arrow-rotate-right"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript 邏輯控制中心 -->
+  <script>
+    // 1. 分頁切換功能
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-blue-600', 'text-white');
+        btn.classList.add('bg-white/70', 'text-slate-700');
+      });
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('tabBtn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.classList.remove('bg-white/70', 'text-slate-700');
+      }
+    }
+
+    // 2. 比例尺三種表示法動態模擬器 (仿照圖 1 與圖 4)
+    function generateThreeFormats() {
+      const mapCm = parseFloat(document.getElementById('input-map-cm').value) || 1;
+      const realVal = parseFloat(document.getElementById('input-real-val').value) || 1;
+      const unit = document.getElementById('select-real-unit').value;
+
+      // 換算為公分基準
+      let realCm = realVal;
+      if (unit === 'km') {
+        realCm = realVal * 100000;
+      } else if (unit === 'm') {
+        realCm = realVal * 100;
+      }
+
+      // 比例尺比值分母 N (1 : N)
+      let n = Math.round(realCm / mapCm);
+      if (n < 1) n = 1;
+
+      // 更新比形式
+      document.getElementById('card-ratio-val').textContent = '1 : ' + n.toLocaleString();
+      document.getElementById('card-ratio-desc').textContent = n.toLocaleString();
+
+      // 更新比值形式
+      document.getElementById('card-frac-denom').textContent = n.toLocaleString();
+      document.getElementById('card-frac-desc').textContent = n.toLocaleString();
+
+      // 計算圖示尺 (1cm代表的實際單位)
+      let perCmRealKm = n / 100000;
+      let tick1Str = '', tick2Str = '', descStr = '';
+
+      if (perCmRealKm >= 1) {
+        // 以公里標示
+        const km1 = Math.round(perCmRealKm * 10) / 10;
+        const km2 = Math.round(perCmRealKm * 2 * 10) / 10;
+        tick1Str = km1 + 'km';
+        tick2Str = km2 + 'km';
+        descStr = km1 + ' 公里';
+      } else if (n >= 100) {
+        // 以公尺標示
+        const m1 = Math.round(n / 100);
+        const m2 = Math.round((n * 2) / 100);
+        tick1Str = m1 + 'm';
+        tick2Str = m2 + 'm';
+        descStr = m1 + ' 公尺';
+      } else {
+        // 以公分標示
+        tick1Str = n + 'cm';
+        tick2Str = (n * 2) + 'cm';
+        descStr = n + ' 公分';
+      }
+
+      document.getElementById('bar-tick-1').textContent = tick1Str;
+      document.getElementById('bar-tick-2').textContent = tick2Str;
+      document.getElementById('card-bar-desc').textContent = descStr;
+    }
+
+    // 快速範例填入
+    function setSamplePreset(mapCm, realVal, unit) {
+      document.getElementById('input-map-cm').value = mapCm;
+      document.getElementById('input-real-val').value = realVal;
+      document.getElementById('select-real-unit').value = unit;
+      generateThreeFormats();
+    }
+
+    // 3. 雙向長度計算機 (情況 A: 求圖長)
+    function calcMapLength() {
+      const realMeters = parseFloat(document.getElementById('slider-actual').value);
+      const scaleN = parseFloat(document.getElementById('select-scale-a').value);
+      document.getElementById('label-actual').textContent = realMeters.toLocaleString();
+
+      const realCm = realMeters * 100;
+      const mapCm = realCm / scaleN;
+
+      document.getElementById('step-a1').textContent = realMeters + ' m = ' + realCm.toLocaleString() + ' cm';
+      document.getElementById('step-a2-act').textContent = realCm.toLocaleString();
+      document.getElementById('step-a2-scale').textContent = scaleN.toLocaleString();
+      
+      const formattedMapCm = (Math.round(mapCm * 10) / 10).toString();
+      document.getElementById('res-map-len').textContent = formattedMapCm;
+      document.getElementById('res-map-final').textContent = formattedMapCm;
+    }
+
+    // 雙向長度計算機 (情況 B: 求實際長)
+    function calcRealLength() {
+      const mapCm = parseFloat(document.getElementById('slider-map').value);
+      const scaleN = parseFloat(document.getElementById('select-scale-b').value);
+      document.getElementById('label-map').textContent = mapCm;
+
+      const totalCm = mapCm * scaleN;
+      const totalKm = totalCm / 100000;
+
+      document.getElementById('step-b-scale').textContent = scaleN.toLocaleString();
+      document.getElementById('step-b-map').textContent = mapCm;
+      document.getElementById('step-b-scale2').textContent = scaleN.toLocaleString();
+      document.getElementById('res-cm-len').textContent = totalCm.toLocaleString();
+      document.getElementById('res-km-len').textContent = (Math.round(totalKm * 100) / 100).toString();
+    }
+
+    // 4. 實境地圖地點點擊互動 (分頁 3)
+    const mapSpotData = {
+      bridge: {
+        title: "金門大橋 (2022通車跨海大橋)",
+        mapLen: "2.2 公分",
+        calcDetail: "2.2 × 2.5 = 5.5 (公里)",
+        desc: "大橋跨越金烈水道，地圖上約 2.2 cm，依每公分 2.5 km 比例尺推算，實際全長約為 5.5 公里。"
+      },
+      drink: {
+        title: "輕旅行路線：人氣飲料店",
+        mapLen: "3 公分",
+        calcDetail: "3 × 2.5 = 7.5 (公里)",
+        desc: "從出發點到飲料店在地圖上距離為 3 公分，換算成實際距離為 7.5 公里（若為課本 1:30000 地圖則為 900 公尺）。"
+      },
+      dumpling: {
+        title: "輕旅行路線：B 點小籠包店",
+        mapLen: "8 公分",
+        calcDetail: "8 × 2.5 = 20 (公里)",
+        desc: "從出發點到 B 點小籠包店在地圖上距離為 8 公分，依此地圖比例尺換算實際距離為 20 公里（若為課本 1:30000 地圖則為 2400 公尺）。"
+      }
+    };
+
+    function selectMapSpot(spotKey) {
+      const data = mapSpotData[spotKey];
+      if (!data) return;
+      document.getElementById('spot-title').textContent = data.title;
+      document.getElementById('spot-map-len').textContent = data.mapLen;
+      document.getElementById('spot-calc-detail').textContent = data.calcDetail;
+      document.getElementById('spot-desc').textContent = data.desc;
+    }
+
+    // 5. 歷程性評量 (5 題課本精準題庫，已檢核所有解析確保客觀無矛盾)
+    const questions = [
+      {
+        id: 1,
+        question: "塗鴉牆長 600 公分，多多畫成 6 公分的縮小圖，這張縮小圖長度和塗鴉牆實際長度的「比值」是多少？",
+        options: [
+          { text: "標準分數形式：<span class='fraction'><span class='numerator'>1</span><span class='denominator'>100</span></span>", correct: true },
+          { text: "標準分數形式：<span class='fraction'><span class='numerator'>1</span><span class='denominator'>10</span></span>", correct: false },
+          { text: "標準分數形式：<span class='fraction'><span class='numerator'>1</span><span class='denominator'>60</span></span>", correct: false },
+          { text: "100", correct: false }
+        ],
+        explanation: "6 ÷ 600 = 6/600，約分後比值為直式分數 1/100。"
+      },
+      {
+        id: 2,
+        question: "在比例尺 1 : 6000 的地圖上，1 公分代表實際長度多少公尺？",
+        options: [
+          { text: "6 公尺", correct: false },
+          { text: "60 公尺", correct: true },
+          { text: "600 公尺", correct: false },
+          { text: "6000 公尺", correct: false }
+        ],
+        explanation: "1 : 6000 表示圖上 1 公分代表實際 6000 公分。因為 100 公分 = 1 公尺，所以 6000 ÷ 100 = 60 公尺。"
+      },
+      {
+        id: 3,
+        question: "在比例尺為 <span class='fraction'><span class='numerator'>1</span><span class='denominator'>100000</span></span> 的地圖上，量得一座橋長 7 公分，這座橋的實際長度是多少公里？",
+        options: [
+          { text: "0.7 公里", correct: false },
+          { text: "7 公里", correct: true },
+          { text: "70 公里", correct: false },
+          { text: "700 公里", correct: false }
+        ],
+        explanation: "7 ÷ (1/100000) = 700000 公分。因為 100000 公分 = 1 公里，所以 700000 公分 = 7 公里。"
+      },
+      {
+        id: 4,
+        question: "甲校平面圖比例尺是 1:2000，乙校平面圖比例尺是 1:8000。若兩張平面圖畫得一樣大，哪一所學校的實際面積比較大？",
+        options: [
+          { text: "甲校比較大", correct: false },
+          { text: "乙校比較大", correct: true },
+          { text: "兩校一樣大", correct: false },
+          { text: "無法判斷", correct: false }
+        ],
+        explanation: "乙校比值是 1/8000，代表地圖縮小了 8000 倍才與甲校一樣大，因此乙校實際的長度和面積都比甲校大。"
+      },
+      {
+        id: 5,
+        question: "國道 2 號長 20.4 公里，在比例尺 <span class='fraction'><span class='numerator'>1</span><span class='denominator'>400000</span></span> 的地圖上，地圖上的長度是多少公分？",
+        options: [
+          { text: "4.1 公分", correct: false },
+          { text: "5.1 公分", correct: true },
+          { text: "8.1 公分", correct: false },
+          { text: "20.4 公分", correct: false }
+        ],
+        explanation: "20.4 公里 = 2,040,000 公分。2,040,000 × (1/400000) = 5.1 公分。"
+      }
+    ];
+
+    let userAnswers = {};
+    let isQuizSubmitted = false;
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      questions.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = "bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4";
+
+        let optionsHtml = '';
+        q.options.forEach((opt, optIndex) => {
+          optionsHtml += `
+            <button onclick="selectOption(${q.id}, ${optIndex})" id="btn-q${q.id}-${optIndex}" class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-sky-400 hover:bg-sky-50/50 transition-all text-sm font-medium flex items-center justify-between group cursor-pointer">
+              <span class="flex items-center gap-2">
+                <span id="badge-q${q.id}-${optIndex}" class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                  ${String.fromCharCode(65 + optIndex)}
+                </span>
+                <span>${opt.text}</span>
+              </span>
+              <span id="icon-q${q.id}-${optIndex}" class="text-base"></span>
+            </button>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-start gap-3">
+            <span class="px-2.5 py-1 bg-sky-100 text-sky-800 rounded-lg text-xs font-black shrink-0">第 ${index + 1} 題</span>
+            <div class="text-base font-bold text-slate-800 leading-snug">${q.question}</div>
+          </div>
+          <div class="space-y-2.5">
+            ${optionsHtml}
+          </div>
+          <div id="feedback-${q.id}" class="hidden p-3.5 rounded-xl text-xs sm:text-sm font-medium leading-relaxed"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 選擇選項（提交前可自由切換選項）
+    function selectOption(questionId, optionIndex) {
+      if (isQuizSubmitted) return; // 提交後鎖定作答
+      userAnswers[questionId] = optionIndex;
+
+      const q = questions.find(item => item.id === questionId);
+      q.options.forEach((opt, idx) => {
+        const btn = document.getElementById(`btn-q${questionId}-${idx}`);
+        const badge = document.getElementById(`badge-q${questionId}-${idx}`);
+        if (idx === optionIndex) {
+          btn.classList.add('bg-sky-50', 'border-sky-500', 'text-sky-900', 'font-bold');
+          badge.classList.remove('bg-slate-100', 'text-slate-600');
+          badge.classList.add('bg-sky-600', 'text-white');
+        } else {
+          btn.classList.remove('bg-sky-50', 'border-sky-500', 'text-sky-900', 'font-bold');
+          badge.classList.add('bg-slate-100', 'text-slate-600');
+          badge.classList.remove('bg-sky-600', 'text-white');
+        }
+      });
+    }
+
+    // 提交答案並批改
+    function submitQuiz() {
+      if (isQuizSubmitted) return;
+      isQuizSubmitted = true;
+
+      let correctCount = 0;
+
+      questions.forEach(q => {
+        const chosen = userAnswers[q.id];
+        const feedbackEl = document.getElementById(`feedback-${q.id}`);
+        feedbackEl.classList.remove('hidden');
+
+        // 情況 1：空白未作答 -> 僅顯示黃色系「未作答。」，不顯示正確答案與其他解析
+        if (chosen === undefined) {
+          q.options.forEach((opt, idx) => {
+            const btn = document.getElementById(`btn-q${q.id}-${idx}`);
+            btn.disabled = true;
+            btn.classList.remove('hover:border-sky-400', 'hover:bg-sky-50/50', 'cursor-pointer');
+          });
+          feedbackEl.className = 'p-3.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-50 border border-amber-300 text-amber-800';
+          feedbackEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1.5"></i>未作答。`;
+          return;
+        }
+
+        // 情況 2：已作答 -> 批改對錯並顯示解析
+        const isCorrect = q.options[chosen].correct;
+        if (isCorrect) correctCount++;
+
+        q.options.forEach((opt, idx) => {
+          const btn = document.getElementById(`btn-q${q.id}-${idx}`);
+          const icon = document.getElementById(`icon-q${q.id}-${idx}`);
+          btn.disabled = true;
+          btn.classList.remove('bg-sky-50', 'border-sky-500', 'text-sky-900', 'hover:border-sky-400', 'hover:bg-sky-50/50', 'cursor-pointer');
+
+          if (opt.correct) {
+            btn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+            icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i>';
+          } else if (idx === chosen && !isCorrect) {
+            btn.classList.add('bg-rose-50', 'border-rose-400', 'text-rose-900');
+            icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500"></i>';
+          }
+        });
+
+        if (isCorrect) {
+          feedbackEl.className = 'p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-emerald-50 border border-emerald-200 text-emerald-900';
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1 font-bold"></i> <strong>回答正確！</strong> ${q.explanation}`;
+        } else {
+          feedbackEl.className = 'p-3.5 rounded-xl text-xs sm:text-sm font-medium bg-rose-50 border border-rose-200 text-rose-900';
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-500 mr-1 font-bold"></i> <strong>回答錯誤！</strong> ${q.explanation}`;
+        }
+      });
+
+      document.getElementById('quiz-score').textContent = correctCount * 20;
+
+      // 停用提交按鈕避免重複提交
+      const submitBtn = document.getElementById('btn-submit-quiz');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    // 重新測驗
+    function resetQuiz() {
+      userAnswers = {};
+      isQuizSubmitted = false;
+      document.getElementById('quiz-score').textContent = '0';
+
+      const submitBtn = document.getElementById('btn-submit-quiz');
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      renderQuiz();
+    }
+
+    // 6. 幾何縮放探究邏輯 (鳶形與鈍角三角形)
+    let currentGeoShape = 'kite'; // 'kite' 或 'triangle'
+    const scaleValues = [0.5, 1, 2, 3];
+    let currentScaleIndex = 2; // 預設 2 倍
+
+    function switchGeoShape(shape) {
+      currentGeoShape = shape;
+      const btnKite = document.getElementById('geo-btn-kite');
+      const btnTri = document.getElementById('geo-btn-tri');
+
+      if (shape === 'kite') {
+        btnKite.className = 'px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all bg-pink-600 text-white shadow-sm flex items-center justify-center gap-1';
+        btnTri.className = 'px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center justify-center gap-1';
+      } else {
+        btnTri.className = 'px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all bg-pink-600 text-white shadow-sm flex items-center justify-center gap-1';
+        btnKite.className = 'px-3 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center justify-center gap-1';
+      }
+      renderGeoDisplay();
+    }
+
+    function updateGeoScale(index) {
+      currentScaleIndex = parseInt(index);
+      renderGeoDisplay();
+    }
+
+    function renderGeoDisplay() {
+      const scale = scaleValues[currentScaleIndex];
+      const scaleLabel = document.getElementById('geo-scale-label');
+      const stateText = document.getElementById('geo-state-text');
+      const ratioText = document.getElementById('geo-ratio-text');
+      const conclusionScale = document.getElementById('geo-conclusion-scale');
+      const tableBody = document.getElementById('geo-table-body');
+
+      // 更新倍數標示文字
+      if (scale === 1) {
+        scaleLabel.textContent = '1 倍 (原圖大小)';
+        stateText.textContent = '原圖 (1 倍)';
+        ratioText.textContent = '原長度的 1 倍 (相等)';
+        conclusionScale.textContent = '1 倍';
+      } else if (scale < 1) {
+        scaleLabel.textContent = '縮小 0.5 倍 (1/2)';
+        stateText.textContent = '縮小圖 (0.5 倍)';
+        ratioText.textContent = '原長度的 0.5 倍 (1/2)';
+        conclusionScale.innerHTML = '<span class="fraction"><span class="numerator">1</span><span class="denominator">2</span></span> 倍';
+      } else {
+        scaleLabel.textContent = `放大 ${scale} 倍`;
+        stateText.textContent = `放大圖 (${scale} 倍)`;
+        ratioText.textContent = `原長度的 ${scale} 倍`;
+        conclusionScale.textContent = `${scale} 倍`;
+      }
+
+      // 渲染 SVG 圖形與表格
+      if (currentGeoShape === 'kite') {
+        renderKite(scale);
+      } else {
+        renderTriangle(scale);
+      }
+    }
+
+    // 繪製鳶形 (圖 1)
+    function renderKite(scale) {
+      const origContainer = document.getElementById('svg-container-orig');
+      const scaledContainer = document.getElementById('svg-container-scaled');
+
+      // 原圖 甲：A(100,20), B(55,80), C(100,165), D(145,80)
+      origContainer.innerHTML = `
+        <svg viewBox="0 0 200 190" class="w-full h-full">
+          <polygon points="100,25 145,85 100,165 55,85" fill="#fed7aa" stroke="#ea580c" stroke-width="2.5" />
+          <line x1="100" y1="25" x2="100" y2="165" stroke="#16a34a" stroke-width="2" stroke-dasharray="3,3" />
+          <text x="100" y="18" fill="#9a3412" font-size="12" font-weight="bold" text-anchor="middle">A</text>
+          <text x="40" y="88" fill="#9a3412" font-size="11" font-weight="bold">B(105°)</text>
+          <text x="100" y="180" fill="#9a3412" font-size="11" font-weight="bold" text-anchor="middle">C(90°)</text>
+          <text x="150" y="88" fill="#9a3412" font-size="12" font-weight="bold">D</text>
+          <text x="68" y="52" fill="#c2410c" font-size="10" font-weight="bold">24cm</text>
+        </svg>
+      `;
+
+      // 縮放圖 乙 (比例換算視覺縮放，限定在畫布內)
+      // 基準縮放係數 (以原圖 0.75 為 1 倍)
+      const visualScale = 0.5 + (scale * 0.28); 
+      const sideLength = 24 * scale;
+
+      scaledContainer.innerHTML = `
+        <svg viewBox="0 0 200 190" class="w-full h-full">
+          <g transform="translate(100, 95) scale(${visualScale}) translate(-100, -95)">
+            <polygon points="100,25 145,85 100,165 55,85" fill="#fce7f3" stroke="#db2777" stroke-width="${3 / visualScale}" />
+            <line x1="100" y1="25" x2="100" y2="165" stroke="#16a34a" stroke-width="${2.5 / visualScale}" stroke-dasharray="3,3" />
+            <text x="100" y="18" fill="#831843" font-size="${13 / visualScale}" font-weight="bold" text-anchor="middle">E</text>
+            <text x="35" y="88" fill="#831843" font-size="${12 / visualScale}" font-weight="bold">F(105°)</text>
+            <text x="100" y="180" fill="#831843" font-size="${12 / visualScale}" font-weight="bold" text-anchor="middle">G(90°)</text>
+            <text x="152" y="88" fill="#831843" font-size="${13 / visualScale}" font-weight="bold">H</text>
+            <text x="66" y="52" fill="#be185d" font-size="${11 / visualScale}" font-weight="bold">${sideLength}cm</text>
+          </g>
+        </svg>
+      `;
+
+      // 表格內容
+      const tableBody = document.getElementById('geo-table-body');
+      tableBody.innerHTML = `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">對應邊長 (AB vs EF)</td>
+          <td class="py-2.5 px-3">24 公分</td>
+          <td class="py-2.5 px-3 text-pink-600 font-bold">${sideLength} 公分</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-700">${scale} 倍</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">對應角 (∠B vs ∠F)</td>
+          <td class="py-2.5 px-3">105 度</td>
+          <td class="py-2.5 px-3 text-emerald-600 font-bold">105 度</td>
+          <td class="py-2.5 px-3 text-right text-emerald-600 font-bold">保持不變 (1倍)</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">對應角 (∠C vs ∠G)</td>
+          <td class="py-2.5 px-3">90 度 (直角)</td>
+          <td class="py-2.5 px-3 text-emerald-600 font-bold">90 度 (直角)</td>
+          <td class="py-2.5 px-3 text-right text-emerald-600 font-bold">保持不變 (1倍)</td>
+        </tr>
+      `;
+    }
+
+    // 繪製鈍角三角形 (圖 2)
+    function renderTriangle(scale) {
+      const origContainer = document.getElementById('svg-container-orig');
+      const scaledContainer = document.getElementById('svg-container-scaled');
+
+      // 原圖 甲 (鈍角三角形：A, B, C)
+      origContainer.innerHTML = `
+        <svg viewBox="0 0 220 180" class="w-full h-full">
+          <polygon points="40,50 120,135 180,135" fill="#fef08a" stroke="#ca8a04" stroke-width="2.5" />
+          <text x="32" y="44" fill="#854d0e" font-size="12" font-weight="bold">A</text>
+          <text x="110" y="152" fill="#854d0e" font-size="11" font-weight="bold">B (135°)</text>
+          <text x="185" y="140" fill="#854d0e" font-size="12" font-weight="bold">C</text>
+          <text x="58" y="96" fill="#a16207" font-size="10" font-weight="bold">22cm</text>
+          <text x="140" y="130" fill="#a16207" font-size="10" font-weight="bold">16cm</text>
+        </svg>
+      `;
+
+      // 縮放圖 (N, M, O)
+      const visualScale = 0.5 + (scale * 0.28);
+      const lenAB = 22 * scale;
+      const lenBC = 16 * scale;
+
+      scaledContainer.innerHTML = `
+        <svg viewBox="0 0 220 180" class="w-full h-full">
+          <g transform="translate(110, 95) scale(${visualScale}) translate(-110, -95)">
+            <polygon points="40,50 120,135 180,135" fill="#e0e7ff" stroke="#4f46e5" stroke-width="${3 / visualScale}" />
+            <text x="32" y="44" fill="#3730a3" font-size="${13 / visualScale}" font-weight="bold">N</text>
+            <text x="110" y="152" fill="#3730a3" font-size="${12 / visualScale}" font-weight="bold">M (135°)</text>
+            <text x="185" y="140" fill="#3730a3" font-size="${13 / visualScale}" font-weight="bold">O</text>
+            <text x="58" y="96" fill="#4338ca" font-size="${11 / visualScale}" font-weight="bold">${lenAB}cm</text>
+            <text x="140" y="130" fill="#4338ca" font-size="${11 / visualScale}" font-weight="bold">${lenBC}cm</text>
+          </g>
+        </svg>
+      `;
+
+      // 表格內容
+      const tableBody = document.getElementById('geo-table-body');
+      tableBody.innerHTML = `
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">底邊長 (BC vs MO)</td>
+          <td class="py-2.5 px-3">16 公分</td>
+          <td class="py-2.5 px-3 text-indigo-600 font-bold">${lenBC} 公分</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-700">${scale} 倍</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">斜邊長 (AB vs NM)</td>
+          <td class="py-2.5 px-3">22 公分</td>
+          <td class="py-2.5 px-3 text-indigo-600 font-bold">${lenAB} 公分</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-700">${scale} 倍</td>
+        </tr>
+        <tr class="hover:bg-slate-50">
+          <td class="py-2.5 px-3 font-bold text-slate-800">鈍角大小 (∠B vs ∠M)</td>
+          <td class="py-2.5 px-3">135 度</td>
+          <td class="py-2.5 px-3 text-emerald-600 font-bold">135 度</td>
+          <td class="py-2.5 px-3 text-right text-emerald-600 font-bold">完全不變！</td>
+        </tr>
+      `;
+    }
+
+    // 初始化頁面數值與測驗
+    window.onload = function () {
+      generateThreeFormats();
+      calcMapLength();
+      calcRealLength();
+      renderQuiz();
+      renderGeoDisplay();
+    };
+  </script>
+</body>
+</html>

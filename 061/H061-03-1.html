@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>單元 3-1 除以一位小數 互動探索教室</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    body, .font-mono, .division-table, button, input, select {
+      font-family: 'Noto Sans TC', sans-serif !important;
+    }
+    body {
+      background: linear-gradient(135deg, #1b3866 0%, #2f69a8 35%, #7aa8d8 70%, #fcd6b7 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* 新海誠動漫風格光暈與玻璃擬態 */
+    .shinkai-glass {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px -5px rgba(25, 55, 100, 0.25), 0 0 20px 2px rgba(186, 230, 253, 0.4) inset;
+    }
+
+    .shinkai-card-glow {
+      box-shadow: 0 8px 24px -4px rgba(47, 105, 168, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8);
+    }
+
+    /* 國小標準直式分數排版：垂直置中，分子在上、分母在下，中間分隔線 */
+    .vertical-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-size: 0.95em;
+      line-height: 1.1;
+    }
+    .fraction-top {
+      border-bottom: 1.8px solid currentColor;
+      padding-bottom: 2px;
+      font-weight: 700;
+    }
+    .fraction-bottom {
+      padding-top: 2px;
+      font-weight: 700;
+    }
+    .fraction-row {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 600;
+    }
+
+    /* 雲朵浮動裝飾動畫 */
+    @keyframes floatCloud {
+      0%, 100% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-8px) translateX(12px); }
+    }
+    .floating-cloud {
+      animation: floatCloud 9s ease-in-out infinite;
+    }
+
+    /* 直式除法專用網格排版 */
+    .division-table {
+      border-collapse: collapse;
+      font-family: 'Noto Sans TC', sans-serif !important;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .division-table td {
+      padding: 1px 3px;
+      text-align: center;
+      vertical-align: middle;
+      min-width: 1.4ch;
+      line-height: 1.25;
+    }
+    .step-shift-badge {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 固定除號與除數專用錨定槽：維持原生 table-cell 讓 border-collapse 無縫接合，徹底解決線段不連續問題 */
+    .div-left-slot {
+      width: 5ch;
+      min-width: 5ch;
+      text-align: right;
+      white-space: nowrap;
+      padding-right: 4px !important;
+    }
+    .div-sign-slot {
+      width: 1.8ch;
+      min-width: 1.8ch;
+      text-align: center;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    /* 舊小數點/前置數字專用保留槽，確保劃掉的字元不影響後續位值垂直對齊 */
+    .div-old-slot {
+      width: 2ch;
+      min-width: 2ch;
+      text-align: right;
+      padding-right: 0 !important;
+    }
+    /* 數值與小數點專屬固定寬度欄位，確保直式運算自始至終垂直對齊 */
+    .div-num-slot {
+      width: 1.5ch;
+      min-width: 1.5ch;
+      text-align: center;
+    }
+    .div-dot-slot {
+      width: 0.8ch;
+      min-width: 0.8ch;
+      text-align: center;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 text-slate-800 flex flex-col items-center">
+
+  <div class="w-full max-w-5xl">
+    
+    <!-- 頂部新海誠蔚藍天空標題列 -->
+    <header class="shinkai-glass rounded-3xl p-5 md:p-6 mb-6 text-center relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-48 h-48 bg-sky-300 rounded-full blur-3xl opacity-50 floating-cloud"></div>
+      <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-amber-200 rounded-full blur-2xl opacity-40"></div>
+      
+      <div class="relative z-10 flex flex-col items-center justify-center gap-2 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/80 text-blue-700 text-xs font-bold mb-1">
+          <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 3-1 互動學習網頁
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight flex items-center justify-center gap-2">
+          除以一位小數 探索學習室
+        </h1>
+        <p class="text-sm text-slate-600">
+          透過「單位換算」與「小數點同步位移」，輕鬆搞懂小數直式除法！
+        </p>
+      </div>
+
+      <!-- 四大單元導覽標籤頁 (Tab Navigation) - 字體與尺寸加大 -->
+      <nav class="flex flex-wrap gap-3 mt-5 pt-4 border-t border-slate-200/60 justify-center">
+        <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn px-5 py-3 rounded-xl font-bold text-base md:text-lg transition-all flex items-center gap-2 bg-blue-600 text-white shadow-md shadow-blue-500/30">
+          <i class="fa-solid fa-scissors"></i> 1. 繩子剪切與單位換算
+        </button>
+        <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-5 py-3 rounded-xl font-bold text-base md:text-lg transition-all flex items-center gap-2 bg-white/70 text-slate-700 hover:bg-white">
+          <i class="fa-solid fa-calculator"></i> 2. 雙小數點位移直式模擬
+        </button>
+        <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-5 py-3 rounded-xl font-bold text-base md:text-lg transition-all flex items-center gap-2 bg-white/70 text-slate-700 hover:bg-white">
+          <i class="fa-solid fa-shapes"></i> 3. 課本四大題型
+        </button>
+        <button onclick="switchTab('tab5')" id="btn-tab5" class="tab-btn px-5 py-3 rounded-xl font-bold text-base md:text-lg transition-all flex items-center gap-2 bg-white/70 text-slate-700 hover:bg-white">
+          <i class="fa-solid fa-clipboard-check"></i> 4. 隨堂測驗
+        </button>
+      </nav>
+    </header>
+
+    <main id="content-tab1" class="tab-content block space-y-6">
+      <div class="shinkai-glass rounded-3xl p-6 shinkai-card-glow">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+          <h2 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center text-sm shadow">01</span>
+            情境探索：一位小數除以一位小數（包含除概念）
+          </h2>
+          <span class="text-xs bg-sky-100 text-sky-800 font-bold px-2.5 py-1 rounded-lg">課本第 39 頁</span>
+        </div>
+
+        <div class="bg-blue-50/60 p-4 rounded-2xl mb-6 border border-blue-100 flex flex-col md:flex-row items-center gap-4">
+          <div class="text-4xl text-sky-500"><i class="fa-solid fa-ruler-combined"></i></div>
+          <div class="text-sm md:text-base text-slate-700 leading-relaxed">
+            <strong>【生活情境】</strong> 一條長 <span class="font-bold text-blue-600">2.4 公尺</span> 的彩帶，每 <span class="font-bold text-amber-600">0.3 公尺</span> 剪成一段，全部剪完，可以剪成幾段？
+          </div>
+        </div>
+
+        <!-- 互動控制：拉動滑桿改變彩帶每段長度與全長 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/80 p-5 rounded-2xl border border-slate-100 mb-6">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">
+              總繩長：<span id="tab1-total-len" class="text-blue-600 text-lg">2.4</span> 公尺
+            </label>
+            <input type="range" id="tab1-total-slider" min="0.6" max="4.8" step="0.3" value="2.4" 
+              class="w-full h-2.5 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              oninput="updateRopeSimulation()">
+            <div class="flex justify-between text-xs text-slate-400 mt-1">
+              <span>0.6m</span><span>2.4m</span><span>4.8m</span>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">
+              每段長度：<span id="tab1-step-len" class="text-amber-600 text-lg">0.3</span> 公尺
+            </label>
+            <input type="range" id="tab1-step-slider" min="0.1" max="1.2" step="0.1" value="0.3" 
+              class="w-full h-2.5 bg-amber-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+              oninput="updateRopeSimulation()">
+            <div class="flex justify-between text-xs text-slate-400 mt-1">
+              <span>0.1m</span><span>0.3m</span><span>1.2m</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-sky-900/5 p-5 rounded-2xl border border-sky-100 mb-6">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-sm font-bold text-slate-700"><i class="fa-solid fa-eye text-sky-500"></i> 彩帶分段視覺圖解</span>
+            <span id="tab1-cut-count-badge" class="px-3 py-1 bg-sky-500 text-white font-black text-sm rounded-full shadow">可剪成 8 段</span>
+          </div>
+          
+          <div class="w-full bg-slate-200 h-10 rounded-xl overflow-hidden p-1 flex gap-1 relative shadow-inner" id="rope-canvas">
+            <!-- 剪裁片段由 JS 動態生成 -->
+          </div>
+
+          <div class="flex justify-between text-xs text-slate-500 mt-2 px-1">
+            <span>0 公尺</span>
+            <span id="rope-max-mark">2.4 公尺</span>
+          </div>
+        </div>
+
+        <!-- 丹丹與多多的兩種思維比較 (參照圖 2 設計) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 丹丹的分數單位思考法 -->
+          <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-200 flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center gap-2.5 mb-2 font-bold text-amber-900 text-base">
+                <span class="w-7 h-7 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center font-black text-sm shrink-0 shadow-sm">丹</span>
+                丹丹的分數單位思考法：
+              </div>
+              <p class="text-xs md:text-sm text-slate-700 mb-3">
+                將小數換成以 <span class="vertical-fraction font-bold text-amber-900"><span class="fraction-top">1</span><span class="fraction-bottom">10</span></span> 公尺（也就是 0.1 公尺）為基本單位：
+              </p>
+              
+              <!-- 聚焦運算白卡 -->
+              <div class="bg-white rounded-2xl border border-amber-200 p-4 text-center shadow-sm space-y-2 mb-3">
+                <div id="tab1-dandan-eq" class="font-bold text-slate-800 text-base md:text-lg">
+                  <!-- 由 JS 動態生成 -->
+                </div>
+                <div id="tab1-dandan-sub" class="text-xs md:text-sm font-bold text-indigo-700">
+                  <!-- 由 JS 動態生成 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 底部思考重點 -->
+            <div id="tab1-dandan-note" class="text-xs text-amber-900/90 flex items-center gap-1.5 font-medium pt-1">
+              <!-- 由 JS 動態填入 -->
+            </div>
+          </div>
+
+          <!-- 多多的 0.1 計數換位思考法 -->
+          <div class="p-5 rounded-2xl bg-teal-50/70 border border-teal-200 flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center gap-2.5 mb-2 font-bold text-teal-900 text-base">
+                <span class="w-7 h-7 rounded-full bg-teal-200 text-teal-800 flex items-center justify-center font-black text-sm shrink-0 shadow-sm">多</span>
+                多多的 0.1 計數換位思考法：
+              </div>
+              <p class="text-xs md:text-sm text-slate-700 mb-3">
+                直接把公尺想成以「0.1 公尺」為 1 份：
+              </p>
+
+              <!-- 聚焦運算白卡 -->
+              <div class="bg-white rounded-2xl border border-teal-300 p-4 text-center shadow-sm space-y-1.5 mb-3">
+                <div id="tab1-duoduo-eq" class="font-bold text-slate-800 text-sm md:text-base space-y-1">
+                  <!-- 由 JS 動態生成 -->
+                </div>
+                <div id="tab1-duoduo-calc" class="text-emerald-700 font-black text-base md:text-lg pt-1">
+                  <!-- 由 JS 動態生成 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 底部結論 -->
+            <div class="text-xs text-teal-900/90 flex items-start gap-1.5 font-medium pt-1">
+              <i class="fa-solid fa-lightbulb text-teal-600 shrink-0 mt-0.5"></i>
+              <span>結論：被除數與除數同時乘以 10（換成以 0.1 為單位），商的值完全不變！</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <main id="content-tab3" class="tab-content hidden space-y-6">
+      <div class="shinkai-glass rounded-3xl p-6 shinkai-card-glow">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-6">
+          <h2 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm shadow">02</span>
+            直式解密：小數除法逐步直式操作模擬器
+          </h2>
+          <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2.5 py-1 rounded-lg">課本第 41 頁核心法則</span>
+        </div>
+
+        <!-- 核心法則條例三步驟圖卡 (完全參照圖 2 設計) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 pt-2">
+          <!-- STEP 1 卡片 -->
+          <div class="relative bg-gradient-to-b from-sky-50 to-blue-50/50 rounded-3xl p-5 border-2 border-sky-300 shadow-sm flex flex-col justify-between">
+            <div class="absolute -top-3.5 left-5">
+              <span class="px-3.5 py-1 rounded-full bg-sky-600 text-white text-xs font-black tracking-wider uppercase shadow-sm">
+                STEP 1
+              </span>
+            </div>
+            <div class="pt-2">
+              <h3 class="text-base font-black text-sky-950 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-arrow-right text-sky-500"></i> 1. 除數變整數
+              </h3>
+              <p class="text-xs md:text-sm text-slate-700 leading-relaxed mb-4">
+                把除數的小數點向右移，變成整數（例如 <span id="card-step1-example" class="bg-white px-2 py-0.5 rounded border border-sky-200 font-mono font-bold text-sky-800">2.7 ➔ 27</span>）。
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl p-3 text-center border border-sky-200/80 shadow-sm">
+              <span class="text-xs md:text-sm font-black text-sky-900 leading-snug block">
+                除數移幾位，是被除數移動的依據！
+              </span>
+            </div>
+          </div>
+
+          <!-- STEP 2 卡片 -->
+          <div class="relative bg-gradient-to-b from-purple-50 to-indigo-50/50 rounded-3xl p-5 border-2 border-purple-300 shadow-sm flex flex-col justify-between">
+            <div class="absolute -top-3.5 left-5">
+              <span class="px-3.5 py-1 rounded-full bg-purple-600 text-white text-xs font-black tracking-wider uppercase shadow-sm">
+                STEP 2
+              </span>
+            </div>
+            <div class="pt-2">
+              <h3 class="text-base font-black text-purple-950 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-turn-up text-purple-600"></i> 2. 被除數跟著移
+              </h3>
+              <p class="text-xs md:text-sm text-slate-700 leading-relaxed mb-4">
+                被除數的小數點也要跟著向右移動相同的位數。若位數不足，要在末尾<strong>「補0」</strong>！
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl p-3 text-center border border-purple-200/80 shadow-sm">
+              <span id="card-step2-example" class="text-xs md:text-sm font-black font-mono text-purple-800 tracking-wide block">
+                4.05 ÷ 2.7 ➔ 40.5 ÷ 27
+              </span>
+            </div>
+          </div>
+
+          <!-- STEP 3 卡片 -->
+          <div class="relative bg-gradient-to-b from-rose-50 to-red-50/50 rounded-3xl p-5 border-2 border-rose-300 shadow-sm flex flex-col justify-between">
+            <div class="absolute -top-3.5 left-5">
+              <span class="px-3.5 py-1 rounded-full bg-rose-600 text-white text-xs font-black tracking-wider uppercase shadow-sm">
+                STEP 3
+              </span>
+            </div>
+            <div class="pt-2">
+              <h3 class="text-base font-black text-rose-950 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-location-dot text-rose-500"></i> 3. 商對齊「新點」
+              </h3>
+              <p class="text-xs md:text-sm text-slate-700 leading-relaxed mb-4">
+                按照整數除法完成計算後，<strong>商的小數點一定要與被除數「新移動後的小數點」垂直向上對齊！</strong>
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl p-3 text-center border border-rose-200/80 shadow-sm">
+              <span class="text-xs md:text-sm font-black text-rose-700 block">
+                絕不是對齊舊的原本小數點！
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 模擬器控制區 -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 bg-white/90 p-5 rounded-2xl border border-slate-200">
+          <div class="md:col-span-5 space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-1">挑選範例題目：</label>
+              <select id="sim-problem-select" onchange="loadSimProblem()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-700 text-sm focus:ring-2 focus:ring-indigo-400">
+                <option value="p1">例題 1: 4.05 ÷ 2.7 (二位小數除以一位小數)</option>
+                <option value="p2">例題 2: 0.3 ÷ 0.5 (一位小數除以一位小數，商為純小數)</option>
+                <option value="p3">例題 3: 5.46 ÷ 3.9 (二位小數除以一位小數)</option>
+                <option value="p4">例題 4: 3.4 ÷ 6.8 (補 0 續除)</option>
+              </select>
+            </div>
+
+            <!-- 步驟控制按鈕 -->
+            <div class="space-y-2">
+              <span class="block text-xs font-bold text-slate-500">直式引導步進器：</span>
+              <div class="flex gap-2">
+                <button onclick="simStepPrev()" class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-arrow-left"></i> 上一步
+                </button>
+                <button onclick="simStepNext()" class="flex-1 py-2 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-indigo-300 flex items-center justify-center gap-1">
+                  下一步 <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button onclick="simStepReset()" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-rotate-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 當前步驟說明方塊 -->
+            <div id="sim-explanation" class="p-3.5 bg-indigo-50/60 rounded-xl border border-indigo-100 text-xs text-indigo-900 leading-relaxed min-h-[90px] flex items-center">
+              點擊「下一步」按鈕，逐步觀察小數點是如何移動與對齊的！
+            </div>
+          </div>
+
+          <!-- 右側直式視覺呈現面板 -->
+          <div class="md:col-span-7 flex flex-col items-center justify-center bg-slate-50/80 p-6 rounded-2xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400 mb-2 flex items-center gap-1">
+              <i class="fa-solid fa-chalkboard-user"></i> 直式黑板示意
+            </div>
+            
+            <div id="vertical-math-board" class="font-mono text-xl md:text-2xl leading-none text-slate-800 bg-white p-6 rounded-xl shadow-inner border border-slate-200 min-w-[240px]">
+              <!-- 直式內容由 JS 根據步驟動態渲染 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 新增：四大題型動態情境沙盒 (Tab 4) -->
+    <main id="content-tab4" class="tab-content hidden space-y-6">
+      <div class="shinkai-glass rounded-3xl p-6 shinkai-card-glow">
+        <!-- 頂部大標題（比照圖 1 的 03 標號樣式） -->
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-6">
+          <h2 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center text-sm shadow font-black">03</span>
+            課本四大題型 ‧ 動態情境沙盒
+          </h2>
+          <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg">動態操作探究</span>
+        </div>
+        <p class="text-xs md:text-sm text-slate-500 -mt-3 mb-6">
+          點擊切換不同生活情境，觀察容器容量、重量天平與面積劃分的小數計算變化！
+        </p>
+
+        <!-- 頂部四大題型切換卡 (單選模式) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+          <!-- 卡片 1 -->
+          <button onclick="switchSandbox(1)" id="sb-btn-1" class="sb-card-btn p-4 rounded-2xl bg-white border-2 border-blue-500 shadow-md text-center transition-all flex flex-col items-center justify-center gap-1.5 hover:shadow-lg">
+            <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-wine-bottle"></i>
+            </div>
+            <span class="text-xs md:text-sm font-black text-slate-800">① 包含分裝 (商整數)</span>
+            <span class="text-[11px] font-mono text-slate-400">2.8L 果汁 ÷ 0.7L</span>
+          </button>
+
+          <!-- 卡片 2 -->
+          <button onclick="switchSandbox(2)" id="sb-btn-2" class="sb-card-btn p-4 rounded-2xl bg-white/70 border border-slate-200 text-center transition-all flex flex-col items-center justify-center gap-1.5 hover:bg-white hover:shadow-md">
+            <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-pump-medical"></i>
+            </div>
+            <span class="text-xs md:text-sm font-black text-slate-700">② 整數補0除 (酒精)</span>
+            <span class="text-[11px] font-mono text-slate-400">6L 酒精 ÷ 0.5L</span>
+          </button>
+
+          <!-- 卡片 3 -->
+          <button onclick="switchSandbox(3)" id="sb-btn-3" class="sb-card-btn p-4 rounded-2xl bg-white/70 border border-slate-200 text-center transition-all flex flex-col items-center justify-center gap-1.5 hover:bg-white hover:shadow-md">
+            <div class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-jar"></i>
+            </div>
+            <span class="text-xs md:text-sm font-black text-slate-700">③ 商小於1補0 (砂糖)</span>
+            <span class="text-[11px] font-mono text-slate-400">0.3kg ÷ 0.5kg</span>
+          </button>
+
+          <!-- 卡片 4 -->
+          <button onclick="switchSandbox(4)" id="sb-btn-4" class="sb-card-btn p-4 rounded-2xl bg-white/70 border border-slate-200 text-center transition-all flex flex-col items-center justify-center gap-1.5 hover:bg-white hover:shadow-md">
+            <div class="w-9 h-9 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center text-base">
+              <i class="fa-solid fa-seedling"></i>
+            </div>
+            <span class="text-xs md:text-sm font-black text-slate-700">④ 二位小數除 (除草)</span>
+            <span class="text-[11px] font-mono text-slate-400">4.05公頃 ÷ 2.7公頃</span>
+          </button>
+        </div>
+
+        <!-- 內容呈現外框 -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm min-h-[380px]">
+          
+          <!-- 情境一：包含分裝 (商整數) -->
+          <div id="sb-panel-1" class="sb-panel space-y-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div>
+                <h3 class="text-base md:text-lg font-black text-blue-700 flex items-center gap-2">
+                  <i class="fa-solid fa-wine-bottle"></i> 情境一：2.8 公升果汁分裝杯 (一位除以一位，商整數)
+                </h3>
+                <p class="text-xs md:text-sm text-slate-600 mt-1">
+                  一瓶果汁有 2.8 公升，每 0.7 公升裝成一杯，全部裝完可以裝成幾杯？
+                </p>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-full text-blue-700 font-mono font-black text-sm shrink-0">
+                2.8 ÷ 0.7 = 4 (杯)
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <!-- 左側單位計算卡 -->
+              <div class="md:col-span-6 bg-blue-50/40 p-5 rounded-2xl border border-blue-200 space-y-3">
+                <div class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-calculator text-blue-600"></i> 單位計算法則
+                </div>
+                <div class="text-xs md:text-sm text-slate-700 space-y-1.5 font-medium">
+                  <div>1. 2.8 公升是 <strong>28 個 0.1 公升</strong>。</div>
+                  <div>2. 0.7 公升是 <strong>7 個 0.1 公升</strong>。</div>
+                  <div>3. 換算算式：28 ÷ 7 = <strong>4 (杯)</strong>。</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-blue-200 text-xs text-slate-600 leading-relaxed">
+                  <span class="font-bold text-blue-700">直式小數點移位：</span>除數 0.7 向右移 1 位變成 7，被除數 2.8 同步右移 1 位變成 28，商記 4。
+                </div>
+              </div>
+
+              <!-- 右側視覺容器展示 -->
+              <div class="md:col-span-6 bg-sky-50/50 p-6 rounded-2xl border border-sky-100 flex items-center justify-center gap-6">
+                <div class="flex flex-col items-center">
+                  <div class="w-16 h-28 bg-gradient-to-t from-blue-500 to-sky-400 rounded-b-2xl rounded-t-md shadow-md flex items-end justify-center pb-2 text-white font-mono font-black text-xs">
+                    2.8L
+                  </div>
+                  <span class="text-xs font-bold text-slate-600 mt-2">整瓶大果汁</span>
+                </div>
+                <div class="text-slate-400 text-xl font-bold">➔</div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="w-12 h-14 bg-amber-400/90 border-2 border-amber-500 rounded-b-xl rounded-t-sm flex items-center justify-center text-[11px] font-black text-amber-950 shadow-sm">
+                    0.7L
+                  </div>
+                  <div class="w-12 h-14 bg-amber-400/90 border-2 border-amber-500 rounded-b-xl rounded-t-sm flex items-center justify-center text-[11px] font-black text-amber-950 shadow-sm">
+                    0.7L
+                  </div>
+                  <div class="w-12 h-14 bg-amber-400/90 border-2 border-amber-500 rounded-b-xl rounded-t-sm flex items-center justify-center text-[11px] font-black text-amber-950 shadow-sm">
+                    0.7L
+                  </div>
+                  <div class="w-12 h-14 bg-amber-400/90 border-2 border-amber-500 rounded-b-xl rounded-t-sm flex items-center justify-center text-[11px] font-black text-amber-950 shadow-sm">
+                    0.7L
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 情境二：整數補0除 (酒精) -->
+          <div id="sb-panel-2" class="sb-panel hidden space-y-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div>
+                <h3 class="text-base md:text-lg font-black text-emerald-700 flex items-center gap-2">
+                  <i class="fa-solid fa-pump-medical"></i> 情境二：6 公升酒精分裝隨身瓶 (整數除以小數，被除數補 0)
+                </h3>
+                <p class="text-xs md:text-sm text-slate-600 mt-1">
+                  將 6 公升的消毒酒精分裝，每 0.5 公升裝成一瓶，全部裝完可以裝成幾瓶？
+                </p>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-full text-blue-700 font-mono font-black text-sm shrink-0">
+                6 ÷ 0.5 = 12 (瓶)
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <!-- 左側關鍵技巧卡 -->
+              <div class="md:col-span-6 bg-emerald-50/40 p-5 rounded-2xl border border-emerald-200 space-y-3">
+                <div class="font-bold text-emerald-900 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-lightbulb text-emerald-600"></i> 整數除以小數關鍵技巧
+                </div>
+                <div class="text-xs md:text-sm text-slate-700 space-y-1.5 font-medium">
+                  <div>1. 6 公升是整數，可以看成 <strong>6.0 公升</strong>（60 個 0.1 公升）。</div>
+                  <div>2. 0.5 公升是 <strong>5 個 0.1 公升</strong>。</div>
+                  <div>3. 6 ÷ 0.5 可以看成 <strong>60 ÷ 5 = 12 (瓶)</strong>。</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-emerald-200 text-xs text-slate-600 leading-relaxed">
+                  <span class="font-bold text-emerald-700">直式小數點移位：</span>除數 0.5 右移 1 位變 5，被除數 6 後面<strong class="text-rose-600">必須補一個 0</strong> 變成 60。
+                </div>
+              </div>
+
+              <!-- 右側隨身瓶可視化 -->
+              <div class="md:col-span-6 bg-teal-50/50 p-5 rounded-2xl border border-teal-100 flex flex-col items-center">
+                <span class="text-xs font-bold text-slate-700 mb-3">酒精瓶分裝可視化 (共 12 瓶)：</span>
+                <div class="grid grid-cols-6 gap-2 w-full max-w-sm">
+                  <!-- 1~12 瓶 -->
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">1</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">2</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">3</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">4</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">5</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">6</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">7</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">8</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">9</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">10</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">11</span></div>
+                  <div class="bg-white border border-teal-300 rounded-xl p-1.5 flex flex-col items-center shadow-sm"><i class="fa-solid fa-flask text-teal-600 text-sm"></i><span class="text-[10px] font-bold text-slate-600 mt-1">12</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 情境三：商小於1補0 (砂糖) -->
+          <div id="sb-panel-3" class="sb-panel hidden space-y-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div>
+                <h3 class="text-base md:text-lg font-black text-amber-700 flex items-center gap-2">
+                  <i class="fa-solid fa-jar"></i> 情境三：0.3 公斤砂糖分裝袋 (商小於 1，商補 0)
+                </h3>
+                <p class="text-xs md:text-sm text-slate-600 mt-1">
+                  老闆想將砂糖每 0.5 公斤裝成一包，0.3 公斤的砂糖可以裝成幾包？
+                </p>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-full text-blue-700 font-mono font-black text-sm shrink-0">
+                0.3 ÷ 0.5 = 0.6 (包)
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <!-- 左側防錯指引卡 -->
+              <div class="md:col-span-6 bg-amber-50/40 p-5 rounded-2xl border border-amber-200 space-y-3">
+                <div class="font-bold text-amber-900 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-scale-balanced text-amber-600"></i> 商小於 1 的防錯指引
+                </div>
+                <div class="text-xs md:text-sm text-slate-700 space-y-2 font-medium leading-relaxed">
+                  <div>1. 0.3 比 0.5 小，裝不滿一整包，因此商一定是<strong>純小數 (0.x)</strong>。</div>
+                  <div>2. 小數點各右移 1 位，看成 <strong>3 ÷ 5</strong>。</div>
+                  <div>3. 3 個 1 不夠除以 5，<strong class="text-rose-600">在商的個位記 0 並點小數點</strong>，被除數補 0 變 3.0（30 個 0.1）。</div>
+                  <div>4. 30 ÷ 5 = 6，十分位記 6，得 <strong>0.6 (包)</strong>。</div>
+                </div>
+              </div>
+
+              <!-- 右側進度條比例尺展示 -->
+              <div class="md:col-span-6 bg-amber-50/30 p-6 rounded-2xl border border-amber-100 flex flex-col justify-center">
+                <div class="w-full bg-slate-200 h-8 rounded-full overflow-hidden p-1 relative shadow-inner">
+                  <div class="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full flex items-center justify-center text-xs font-black text-amber-950 transition-all duration-500 shadow-sm" style="width: 60%;">
+                    0.3 kg (佔一包0.5kg的 60% = 0.6包)
+                  </div>
+                </div>
+                <div class="flex justify-between text-xs text-slate-500 mt-3 px-1 font-bold">
+                  <span>0 kg (0包)</span>
+                  <span class="text-amber-700">0.3 kg (0.6包)</span>
+                  <span>0.5 kg (滿1包)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 情境四：二位小數除以一位小數 (除草) -->
+          <div id="sb-panel-4" class="sb-panel hidden space-y-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+              <div>
+                <h3 class="text-base md:text-lg font-black text-teal-800 flex items-center gap-2">
+                  <i class="fa-solid fa-seedling"></i> 情境四：4.05 公頃除草工程 (二位小數除以一位小數)
+                </h3>
+                <p class="text-xs md:text-sm text-slate-600 mt-1">
+                  一塊面積 4.05 公頃的草地，每小時可除草 2.7 公頃，需要多少小時全部完成？
+                </p>
+              </div>
+              <div class="bg-blue-50 border border-blue-200 px-4 py-1.5 rounded-full text-blue-700 font-mono font-black text-sm shrink-0">
+                4.05 ÷ 2.7 = 1.5 (小時)
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <!-- 左側小數點對齊金牌法則 -->
+              <div class="md:col-span-6 bg-emerald-50/40 p-5 rounded-2xl border border-emerald-200 space-y-3">
+                <div class="font-bold text-teal-900 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-clock text-teal-600"></i> 小數點對齊金牌法則
+                </div>
+                <div class="text-xs md:text-sm text-slate-700 space-y-2 font-medium">
+                  <div>1. <strong>只看除數：</strong>除數 2.7 只有 1 位小數，因此小數點<strong class="text-blue-700">只向右移動 1 位</strong>。</div>
+                  <div>2. <strong>被除數跟隨：</strong>被除數 4.05 也跟著右移 1 位，新小數點停在 <strong>40.5</strong>！</div>
+                  <div>3. 換算算式：<strong>40.5 ÷ 27 = 1.5 (小時)</strong>。</div>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-rose-200 text-xs text-rose-700 font-bold leading-relaxed shadow-sm">
+                  注意：商的小數點要和「40.5」的新小數點垂直對齊，不能對齊原來的舊點！
+                </div>
+              </div>
+
+              <!-- 右側面積劃分色塊可視化 -->
+              <div class="md:col-span-6 bg-teal-50/40 p-5 rounded-2xl border border-teal-100 flex flex-col items-center">
+                <div class="flex items-center gap-3 justify-center w-full">
+                  <div class="bg-emerald-600 text-white rounded-2xl p-4 text-center shadow-md flex-1">
+                    <div class="text-xs opacity-90 mb-1">第 1 小時完成</div>
+                    <div class="text-base font-black font-mono">2.7 公頃</div>
+                  </div>
+                  <div class="bg-emerald-400 text-white rounded-2xl p-4 text-center shadow-md flex-1">
+                    <div class="text-xs opacity-95 mb-1">第 0.5 小時完成</div>
+                    <div class="text-base font-black font-mono">1.35 公頃</div>
+                  </div>
+                  <div class="bg-white border-2 border-emerald-600 text-slate-800 rounded-2xl p-4 text-center shadow-sm flex-1">
+                    <div class="text-xs text-slate-500 mb-1">合計全部完成</div>
+                    <div class="text-base font-black font-mono text-emerald-800">4.05 公頃</div>
+                  </div>
+                </div>
+                <div class="text-xs font-bold text-teal-800 mt-4">
+                  2.7 + 1.35 = 4.05 公頃，需花費 1 + 0.5 = 1.5 小時。
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- 隨堂測驗 (Tab 5) -->
+    <main id="content-tab5" class="tab-content hidden space-y-6">
+      <div class="shinkai-glass rounded-3xl p-6 shinkai-card-glow">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+          <h2 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-pink-500 text-white flex items-center justify-center text-sm shadow">04</span>
+            隨堂測驗
+          </h2>
+          <span class="text-xs bg-pink-100 text-pink-800 font-bold px-2.5 py-1 rounded-lg">滿分 100 分（每題 20 分）</span>
+        </div>
+
+        <p class="text-xs md:text-sm text-slate-600 mb-4">
+          請點選各題答案後，按下底部的「提交答案」按鈕進行批改與計分！
+        </p>
+
+        <!-- 測驗總分顯示面板 -->
+        <div id="quiz-score-banner" class="hidden mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <div>
+              <div class="text-xs opacity-90 font-medium">測驗批改結果</div>
+              <div id="quiz-score-detail" class="text-sm font-bold">共答對 0 題</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs opacity-90">總分</span>
+            <span id="quiz-score-number" class="text-3xl font-black ml-1">0</span>
+            <span class="text-sm font-bold">/ 100 分</span>
+          </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-5">
+          <!-- 題目卡片 1 -->
+          <div class="quiz-card p-4 rounded-2xl bg-white/85 border border-slate-200" id="q1-box">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="font-bold text-slate-800 text-sm md:text-base">
+                1. 計算 2.8 ÷ 0.7 時，如果利用分數換算單位，相當於下列哪一個算式？
+              </h3>
+              <span id="badge-q1" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">待作答</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+              <button onclick="selectQuizOption(1, 'A')" id="q1-opt-A" class="q-opt-1 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition flex items-center">
+                (A) <span class="vertical-fraction mx-1.5"><span class="fraction-top">28</span><span class="fraction-bottom">100</span></span> ÷ <span class="vertical-fraction mx-1.5"><span class="fraction-top">7</span><span class="fraction-bottom">10</span></span>
+              </button>
+              <button onclick="selectQuizOption(1, 'B')" id="q1-opt-B" class="q-opt-1 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition flex items-center">
+                (B) <span class="vertical-fraction mx-1.5"><span class="fraction-top">28</span><span class="fraction-bottom">10</span></span> ÷ <span class="vertical-fraction mx-1.5"><span class="fraction-top">7</span><span class="fraction-bottom">10</span></span>
+              </button>
+              <button onclick="selectQuizOption(1, 'C')" id="q1-opt-C" class="q-opt-1 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition flex items-center">
+                (C) 28 ÷ 70
+              </button>
+              <button onclick="selectQuizOption(1, 'D')" id="q1-opt-D" class="q-opt-1 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition flex items-center">
+                (D) 2.8 ÷ 7
+              </button>
+            </div>
+            <div id="feedback-q1" class="mt-2 text-xs font-bold hidden p-2.5 rounded-xl"></div>
+          </div>
+
+          <!-- 題目卡片 2 -->
+          <div class="quiz-card p-4 rounded-2xl bg-white/85 border border-slate-200" id="q2-box">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="font-bold text-slate-800 text-sm md:text-base">
+                2. 算式「6 ÷ 0.5」在用直式計算時，除數 0.5 向右移一位變成 5，被除數 6 應該變成多少？
+              </h3>
+              <span id="badge-q2" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">待作答</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+              <button onclick="selectQuizOption(2, 'A')" id="q2-opt-A" class="q-opt-2 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (A) 保持 6 不變
+              </button>
+              <button onclick="selectQuizOption(2, 'B')" id="q2-opt-B" class="q-opt-2 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (B) 變成 0.6
+              </button>
+              <button onclick="selectQuizOption(2, 'C')" id="q2-opt-C" class="q-opt-2 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (C) 補 0 變成 60
+              </button>
+              <button onclick="selectQuizOption(2, 'D')" id="q2-opt-D" class="q-opt-2 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (D) 補兩個 0 變成 600
+              </button>
+            </div>
+            <div id="feedback-q2" class="mt-2 text-xs font-bold hidden p-2.5 rounded-xl"></div>
+          </div>
+
+          <!-- 題目卡片 3 -->
+          <div class="quiz-card p-4 rounded-2xl bg-white/85 border border-slate-200" id="q3-box">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="font-bold text-slate-800 text-sm md:text-base">
+                3. 計算 4.05 ÷ 2.7 時，商的小數點應該對齊哪一個位置？
+              </h3>
+              <span id="badge-q3" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">待作答</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+              <button onclick="selectQuizOption(3, 'A')" id="q3-opt-A" class="q-opt-3 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (A) 被除數原本的小數點（4 和 0 之間）
+              </button>
+              <button onclick="selectQuizOption(3, 'B')" id="q3-opt-B" class="q-opt-3 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (B) 被除數移動後的新小數點（0 和 5 之間）
+              </button>
+              <button onclick="selectQuizOption(3, 'C')" id="q3-opt-C" class="q-opt-3 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (C) 除數原本的小數點
+              </button>
+              <button onclick="selectQuizOption(3, 'D')" id="q3-opt-D" class="q-opt-3 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (D) 最後餘數的小數點
+              </button>
+            </div>
+            <div id="feedback-q3" class="mt-2 text-xs font-bold hidden p-2.5 rounded-xl"></div>
+          </div>
+
+          <!-- 題目卡片 4 -->
+          <div class="quiz-card p-4 rounded-2xl bg-white/85 border border-slate-200" id="q4-box">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="font-bold text-slate-800 text-sm md:text-base">
+                4. 老闆將 0.3 公斤的砂糖每 0.5 公斤裝成一包，算式為 0.3 ÷ 0.5，答案是多少包？
+              </h3>
+              <span id="badge-q4" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">待作答</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+              <button onclick="selectQuizOption(4, 'A')" id="q4-opt-A" class="q-opt-4 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (A) 0.6 包
+              </button>
+              <button onclick="selectQuizOption(4, 'B')" id="q4-opt-B" class="q-opt-4 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (B) 6 包
+              </button>
+              <button onclick="selectQuizOption(4, 'C')" id="q4-opt-C" class="q-opt-4 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (C) 1.6 包
+              </button>
+              <button onclick="selectQuizOption(4, 'D')" id="q4-opt-D" class="q-opt-4 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (D) 0.06 包
+              </button>
+            </div>
+            <div id="feedback-q4" class="mt-2 text-xs font-bold hidden p-2.5 rounded-xl"></div>
+          </div>
+
+          <!-- 題目卡片 5 -->
+          <div class="quiz-card p-4 rounded-2xl bg-white/85 border border-slate-200" id="q5-box">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="font-bold text-slate-800 text-sm md:text-base">
+                5. 烘焙坊買進 36 公斤的麵粉，每 1.2 公斤裝成一袋，全部裝完共可裝成幾袋？
+              </h3>
+              <span id="badge-q5" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">待作答</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+              <button onclick="selectQuizOption(5, 'A')" id="q5-opt-A" class="q-opt-5 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (A) 3 袋
+              </button>
+              <button onclick="selectQuizOption(5, 'B')" id="q5-opt-B" class="q-opt-5 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (B) 30 袋
+              </button>
+              <button onclick="selectQuizOption(5, 'C')" id="q5-opt-C" class="q-opt-5 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (C) 300 袋
+              </button>
+              <button onclick="selectQuizOption(5, 'D')" id="q5-opt-D" class="q-opt-5 p-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-left hover:bg-blue-50 transition">
+                (D) 0.3 袋
+              </button>
+            </div>
+            <div id="feedback-q5" class="mt-2 text-xs font-bold hidden p-2.5 rounded-xl"></div>
+          </div>
+        </div>
+
+        <!-- 提交答案與重新測驗按鈕（字體加大、大小相同並排置中） -->
+        <div class="pt-6 flex flex-wrap justify-center items-center gap-4">
+          <button onclick="submitQuiz()" class="w-44 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-base shadow-md shadow-blue-500/30 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-44 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-black rounded-xl text-base shadow-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrows-rotate"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 頁尾嵌入說明資訊已移除版本標示 -->
+    <footer class="mt-6 pb-6"></footer>
+
+  </div>
+
+  <script>
+    // 標籤頁切換
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-500/30');
+        btn.classList.add('bg-white/70', 'text-slate-700');
+      });
+
+      const activeContent = document.getElementById('content-' + tabId);
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-white/70', 'text-slate-700');
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-md', 'shadow-blue-500/30');
+      }
+
+      // 如果切換到第一頁或第三頁，觸發即時圖表初始化
+      if(tabId === 'tab1') updateRopeSimulation();
+      if(tabId === 'tab3') renderSimulator();
+    }
+
+    // 四大題型動態沙盒切換函式
+    function switchSandbox(num) {
+      document.querySelectorAll('.sb-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.sb-card-btn').forEach(btn => {
+        btn.classList.remove('border-2', 'border-blue-500', 'shadow-md');
+        btn.classList.add('border', 'border-slate-200', 'bg-white/70');
+      });
+
+      const targetPanel = document.getElementById('sb-panel-' + num);
+      const targetBtn = document.getElementById('sb-btn-' + num);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+      if (targetBtn) {
+        targetBtn.classList.remove('border', 'border-slate-200', 'bg-white/70');
+        targetBtn.classList.add('border-2', 'border-blue-500', 'shadow-md', 'bg-white');
+      }
+    }
+
+    function updateRopeSimulation() {
+      const totalLen = parseFloat(document.getElementById('tab1-total-slider').value);
+      const stepLen = parseFloat(document.getElementById('tab1-step-slider').value);
+
+      document.getElementById('tab1-total-len').textContent = totalLen.toFixed(1);
+      document.getElementById('tab1-step-len').textContent = stepLen.toFixed(1);
+      document.getElementById('rope-max-mark').textContent = totalLen.toFixed(1) + ' 公尺';
+
+      const count = Math.floor((totalLen + 0.0001) / stepLen);
+      const remainder = +(totalLen - count * stepLen).toFixed(2);
+
+      const badge = document.getElementById('tab1-cut-count-badge');
+      if (remainder === 0) {
+        badge.textContent = `可剪成 ${count} 段（剛好剪完）`;
+      } else {
+        badge.textContent = `可剪成 ${count} 段，剩下 ${remainder} 公尺`;
+      }
+
+      // 繪製彩色繩段：紅、粉紅、橙、黃、綠、藍、紫、奶茶色（具備半透明光感與柔和邊框）
+      const canvas = document.getElementById('rope-canvas');
+      canvas.innerHTML = '';
+      const colors = [
+        'bg-red-500/75 border border-red-300/60 text-slate-900',        // 1. 紅
+        'bg-pink-400/75 border border-pink-200/60 text-slate-900',      // 2. 粉紅
+        'bg-orange-400/75 border border-orange-200/60 text-slate-900',  // 3. 橙
+        'bg-amber-300/80 border border-yellow-200/60 text-amber-950',   // 4. 黃
+        'bg-emerald-400/75 border border-emerald-200/60 text-slate-900',// 5. 綠
+        'bg-sky-400/75 border border-sky-200/60 text-slate-900',        // 6. 藍
+        'bg-purple-400/75 border border-purple-200/60 text-slate-900',  // 7. 紫
+        'bg-[#cbb29b]/80 border border-[#e5d8cb]/70 text-[#422f20]'     // 8. 奶茶色
+      ];
+
+      for (let i = 0; i < count; i++) {
+        const seg = document.createElement('div');
+        seg.className = `${colors[i % colors.length]} h-full rounded-md flex items-center justify-center text-xs font-black shadow-sm transition-all duration-300 backdrop-blur-[2px]`;
+        const pct = (stepLen / totalLen) * 100;
+        seg.style.width = `${pct}%`;
+        seg.title = `第 ${i+1} 段 (${stepLen}m)`;
+        seg.innerHTML = `${(i+1)}`;
+        canvas.appendChild(seg);
+      }
+
+      if (remainder > 0) {
+        const remSeg = document.createElement('div');
+        remSeg.className = `bg-rose-300/70 border border-dashed border-rose-500 h-full rounded-md flex items-center justify-center text-[10px] font-bold text-rose-900 backdrop-blur-[2px]`;
+        const remPct = (remainder / totalLen) * 100;
+        remSeg.style.width = `${remPct}%`;
+        remSeg.title = `剩下 ${remainder}m`;
+        remSeg.innerHTML = `剩`;
+        canvas.appendChild(remSeg);
+      }
+
+      // 算式更新 (符合圖 2 樣式與直式分數規範)
+      const totalTenths = Math.round(totalLen * 10);
+      const stepTenths = Math.round(stepLen * 10);
+
+      // 丹丹的思維內容渲染
+      document.getElementById('tab1-dandan-eq').innerHTML = `
+        ${totalLen.toFixed(1)} <i class="fa-solid fa-divide text-xs mx-1"></i> ${stepLen.toFixed(1)} = 
+        <span class="vertical-fraction text-blue-700"><span class="fraction-top">${totalTenths}</span><span class="fraction-bottom">10</span></span>
+        <i class="fa-solid fa-divide text-xs mx-1"></i>
+        <span class="vertical-fraction text-blue-700"><span class="fraction-top">${stepTenths}</span><span class="fraction-bottom">10</span></span>
+      `;
+
+      let dandanSubHtml = `<span class="text-indigo-700 font-bold">&rArr; 分母相同，相當於 </span><span class="text-rose-600 font-black">${totalTenths} <i class="fa-solid fa-divide text-xs mx-0.5"></i> ${stepTenths} = ${count}`;
+      if (remainder > 0) {
+        dandanSubHtml += ` · · · 剩 ${remainder}</span>`;
+      } else {
+        dandanSubHtml += ` (段)</span>`;
+      }
+      document.getElementById('tab1-dandan-sub').innerHTML = dandanSubHtml;
+
+      document.getElementById('tab1-dandan-note').innerHTML = `
+        <i class="fa-solid fa-circle-check text-amber-600 shrink-0"></i>
+        <span>有 ${totalTenths} 個 <span class="vertical-fraction"><span class="fraction-top">1</span><span class="fraction-bottom">10</span></span> 公尺，每 ${stepTenths} 個 <span class="vertical-fraction"><span class="fraction-top">1</span><span class="fraction-bottom">10</span></span> 公尺剪成一段，即剪成 ${count} 段${remainder > 0 ? `（剩 ${remainder} 公尺）` : ''}。</span>
+      `;
+
+      // 多多的思維內容渲染
+      document.getElementById('tab1-duoduo-eq').innerHTML = `
+        <div>${totalLen.toFixed(1)} 公尺是 <strong>${totalTenths}</strong> 個 0.1 公尺</div>
+        <div>每 ${stepLen.toFixed(1)} 公尺是 <strong>${stepTenths}</strong> 個 0.1 公尺</div>
+      `;
+
+      document.getElementById('tab1-duoduo-calc').innerHTML = `
+        算式：${totalTenths} <i class="fa-solid fa-divide text-xs"></i> ${stepTenths} = ${count} (段)${remainder > 0 ? ` · · · 剩 ${remainder}` : ''}
+      `;
+    }
+
+    const simProblems = {
+      p1: {
+        title: "4.05 ÷ 2.7",
+        dividend: "4.05",
+        divisor: "2.7",
+        step1Example: "2.7 ➔ 27",
+        step2Formula: "4.05 ÷ 2.7 ➔ 40.5 ÷ 27",
+        steps: [
+          {
+            desc: "【原式呈現】除數是 2.7（一位小數），被除數是 4.05。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">2.7</td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"></td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 1：除數化為整數】將除數 2.7 的小數點向右移 1 位變成 27，保留原小數點移位痕跡。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">2<span class="text-slate-300 line-through">.</span>7<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"></td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 2：被除數同步移位】被除數 4.05 小數點也同步向右移 1 位，原小數點標註淡灰色痕跡，新小數點在 0 與 5 之間！",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">2<span class="text-slate-300 line-through">.</span>7<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 3：商與新小數點對齊】40 除以 27 商記 1（對齊個位 0）；商的小數點立即對齊被除數新的小數點！",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-black text-rose-600">1</td>
+    <td class="div-dot-slot font-black text-rose-600">.</td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">2<span class="text-slate-300 line-through">.</span>7<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">2</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">7</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800"></td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot">1</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">3</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">5</td>
+    <td class="w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 4：算出十分位商】135 ÷ 27 = 5，餘數為 0，小數點位移痕跡完整保留至計算結束！商為 1.5。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-black text-blue-600">1</td>
+    <td class="div-dot-slot font-black text-blue-600">.</td>
+    <td class="div-num-slot font-black text-blue-600">5</td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">2<span class="text-slate-300 line-through">.</span>7<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">2</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">7</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800"></td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot">1</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">3</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">5</td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">1</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">5</td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">0</td>
+    <td class="w-3"></td>
+  </tr>
+</table>
+            `
+          }
+        ]
+      },
+      p2: {
+        title: "0.3 ÷ 0.5",
+        dividend: "0.3",
+        divisor: "0.5",
+        step1Example: "0.5 ➔ 5",
+        step2Formula: "0.3 ÷ 0.5 ➔ 3 ÷ 5",
+        steps: [
+          {
+            desc: "【步驟 1：原式呈現】除數是 0.5（一位小數），被除數是 0.3。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-old-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">0.5</td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-old-slot border-t-2 border-slate-800">0</td>
+    <td class="div-num-slot border-t-2 border-slate-800">.</td>
+    <td class="div-dot-slot border-t-2 border-slate-800">3</td>
+    <td class="div-num-slot border-t-2 border-slate-800"></td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 2：同步位移】除數與被除數小數點同時向右移 1 位，原 0. 以灰色劃記保留痕跡，看作 3 ÷ 5。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-old-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold"><span class="text-slate-300 line-through">0.</span>5<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-old-slot border-t-2 border-slate-800"><span class="text-slate-300 line-through">0.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800 font-bold">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800"></td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 3：不夠除商補 0】3 不能被 5 整除，個位商記 0（對齊個位 3），商小數點對齊新小數點，被除數補 0 續除。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-old-slot"></td>
+    <td class="div-num-slot font-black text-rose-600">0</td>
+    <td class="div-dot-slot font-black text-rose-600">.</td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold"><span class="text-slate-300 line-through">0.</span>5<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-old-slot border-t-2 border-slate-800"><span class="text-slate-300 line-through">0.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800 font-bold">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 4：續除得出結果】30 ÷ 5 = 6，在商的十分位記 6，整除！商為 0.6，個位與小數點精確對齊。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-old-slot"></td>
+    <td class="div-num-slot font-black text-blue-600">0</td>
+    <td class="div-dot-slot font-black text-blue-600">.</td>
+    <td class="div-num-slot font-black text-blue-600">6</td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold"><span class="text-slate-300 line-through">0.</span>5<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-old-slot border-t-2 border-slate-800"><span class="text-slate-300 line-through">0.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800 font-bold">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-old-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">0</td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-old-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">0</td>
+    <td class="w-3"></td>
+  </tr>
+</table>
+            `
+          }
+        ]
+      },
+      p3: {
+        title: "5.46 ÷ 3.9",
+        dividend: "5.46",
+        divisor: "3.9",
+        step1Example: "3.9 ➔ 39",
+        step2Formula: "5.46 ÷ 3.9 ➔ 54.6 ÷ 39",
+        steps: [
+          {
+            desc: "【步驟 1：原式呈現】除數是 3.9（一位小數），被除數是 5.46。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">3.9</td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="div-dot-slot border-t-2 border-slate-800">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"></td>
+    <td class="div-num-slot border-t-2 border-slate-800">6</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 2：小數點同步位移】除數與被除數的小數點同時向右移 1 位，化為 39 除以 54.6，舊小數點以灰色劃記保留。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">3<span class="text-slate-300 line-through">.</span>9<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">6</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 3：商定位與相除】54 ÷ 39 商記 1（對齊新個位 4）；商的小數點立即對齊 54.6 的新小數點！54 - 39 = 15，落下 6 成 156（6 與 54.6 的 6 對齊）。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-black text-rose-600">1</td>
+    <td class="div-dot-slot font-black text-rose-600">.</td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">3<span class="text-slate-300 line-through">.</span>9<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">6</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">9</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800"></td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot">1</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">5</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-bold">6</td>
+    <td class="w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 4：算商十分位整除】156 ÷ 39 = 4，商記 4，整除餘 0！答案為 1.4，全程保留小數點位移痕跡方便回溯檢查。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-black text-blue-600">1</td>
+    <td class="div-dot-slot font-black text-blue-600">.</td>
+    <td class="div-num-slot font-black text-blue-600">4</td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">3<span class="text-slate-300 line-through">.</span>9<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">5</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">6</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">9</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800"></td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot">1</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">5</td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-bold">6</td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">1</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">5</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">6</td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">0</td>
+    <td class="w-3"></td>
+  </tr>
+</table>
+            `
+          }
+        ]
+      },
+      p4: {
+        title: "3.4 ÷ 6.8",
+        dividend: "3.4",
+        divisor: "6.8",
+        step1Example: "6.8 ➔ 68",
+        step2Formula: "3.4 ÷ 6.8 ➔ 34 ÷ 68",
+        steps: [
+          {
+            desc: "【步驟 1：原式呈現】除數是 6.8（一位小數），被除數是 3.4。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">6.8</td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"></td>
+    <td class="div-num-slot border-t-2 border-slate-800"></td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 2：小數點同步位移】除數與被除數的小數點同時向右移 1 位，除數變成 68，被除數變成 34.，原小數點以灰色劃記保留。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">6<span class="text-slate-300 line-through">.</span>8<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800 font-bold">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800"></td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 3：商定位與補 0 續除】34 不能被 68 整除，商的個位記 0（對齊新個位 4），商的小數點對齊新小數點，並在被除數十分位補 0 續除。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-black text-rose-600">0</td>
+    <td class="div-dot-slot font-black text-rose-600">.</td>
+    <td class="div-num-slot"></td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">6<span class="text-slate-300 line-through">.</span>8<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800 font-bold">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+</table>
+            `
+          },
+          {
+            desc: "【步驟 4：算出十分位商並整除】340 ÷ 68 = 5，商的十分位記 5，整除餘 0！商為 0.5，小數點位移痕跡全程清楚保留。",
+            board: `
+<table class="division-table mx-auto">
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot font-black text-blue-600">0</td>
+    <td class="div-dot-slot font-black text-blue-600">.</td>
+    <td class="div-num-slot font-black text-blue-600">5</td>
+    <td class="w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot font-bold">6<span class="text-slate-300 line-through">.</span>8<span class="text-emerald-600 font-bold">.</span></td>
+    <td class="div-sign-slot border-t-2 border-slate-800">)</td>
+    <td class="div-num-slot border-t-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-t-2 border-slate-800 text-slate-300 line-through">.</td>
+    <td class="div-num-slot border-t-2 border-slate-800 font-bold">4</td>
+    <td class="div-dot-slot border-t-2 border-slate-800"><span class="text-rose-600 font-black">.</span></td>
+    <td class="div-num-slot border-t-2 border-slate-800">0</td>
+    <td class="border-t-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">3</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">4</td>
+    <td class="div-dot-slot border-b-2 border-slate-800"></td>
+    <td class="div-num-slot border-b-2 border-slate-800">0</td>
+    <td class="border-b-2 border-slate-800 w-3"></td>
+  </tr>
+  <tr>
+    <td class="div-left-slot"></td>
+    <td class="div-sign-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot"></td>
+    <td class="div-dot-slot"></td>
+    <td class="div-num-slot">0</td>
+    <td class="w-3"></td>
+  </tr>
+</table>
+            `
+          }
+        ]
+      }
+    };
+
+    let currentSimKey = 'p1';
+    let currentSimStep = 0;
+
+    function loadSimProblem() {
+      currentSimKey = document.getElementById('sim-problem-select').value;
+      currentSimStep = 0;
+      updateStepCards();
+      renderSimulator();
+    }
+
+    function updateStepCards() {
+      const prob = simProblems[currentSimKey];
+      const step1El = document.getElementById('card-step1-example');
+      const step2El = document.getElementById('card-step2-example');
+      if (step1El && prob.step1Example) {
+        step1El.textContent = prob.step1Example;
+      }
+      if (step2El && prob.step2Formula) {
+        step2El.textContent = prob.step2Formula;
+      }
+    }
+
+    function simStepNext() {
+      const prob = simProblems[currentSimKey];
+      if (currentSimStep < prob.steps.length - 1) {
+        currentSimStep++;
+        renderSimulator();
+      }
+    }
+
+    function simStepPrev() {
+      if (currentSimStep > 0) {
+        currentSimStep--;
+        renderSimulator();
+      }
+    }
+
+    function simStepReset() {
+      currentSimStep = 0;
+      renderSimulator();
+    }
+
+    function renderSimulator() {
+      const prob = simProblems[currentSimKey];
+      const step = prob.steps[currentSimStep];
+      document.getElementById('sim-explanation').innerHTML = `
+        <div>
+          <span class="inline-block px-2 py-0.5 rounded bg-indigo-200 text-indigo-800 font-bold mr-1">步驟 ${currentSimStep + 1} / ${prob.steps.length}</span>
+          ${step.desc}
+        </div>
+      `;
+      document.getElementById('vertical-math-board').innerHTML = step.board;
+    }
+
+    // 題庫與純觀念解析（不含「答對了」、「太棒了」等讚美詞，避免答錯時顯示解析造成語意矛盾）
+    const correctAnswers = {
+      1: { ans: 'B', expl: "2.8 是 28 個 1/10（即 28/10），0.7 是 7 個 1/10（即 7/10），因此 2.8 ÷ 0.7 相當於 28/10 ÷ 7/10。" },
+      2: { ans: 'C', expl: "整數 6 可看作 6.0，當除數 0.5 的小數點向右移一位變成 5 時，被除數的小數點也要同步向右移一位，補 0 變成 60。" },
+      3: { ans: 'B', expl: "在直式計算除數為小數的除法時，商的小數點必須與被除數「移動後的新小數點」垂直對齊。" },
+      4: { ans: 'A', expl: "將 0.3 ÷ 0.5 的小數點同步向右移一位，看作 3 ÷ 5，計算得出 0.6 包。" },
+      5: { ans: 'B', expl: "將 36 ÷ 1.2 的小數點同步向右移一位，被除數補 0 變成 360 ÷ 12，計算得出 30 袋。" }
+    };
+
+    let selectedAnswers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+
+    // 點選選項：記錄學生選擇並高亮顯示選取狀態
+    function selectQuizOption(qNum, opt) {
+      selectedAnswers[qNum] = opt;
+
+      const buttons = document.querySelectorAll(`.q-opt-${qNum}`);
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-900', 'ring-2', 'ring-blue-400');
+        btn.classList.add('border-slate-200');
+      });
+
+      const activeBtn = document.getElementById(`q${qNum}-opt-${opt}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-slate-200');
+        activeBtn.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-900', 'ring-2', 'ring-blue-400');
+      }
+
+      const badge = document.getElementById(`badge-q${qNum}`);
+      if (badge) {
+        badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700";
+        badge.textContent = `已選 (${opt})`;
+      }
+    }
+
+    // 提交答案：統一批改、顯示解析與計算總分（滿分 100 分）
+    function submitQuiz() {
+      let correctCount = 0;
+
+      for (let qNum = 1; qNum <= 5; qNum++) {
+        const selected = selectedAnswers[qNum];
+        const qData = correctAnswers[qNum];
+        const fbBox = document.getElementById(`feedback-q${qNum}`);
+        const badge = document.getElementById(`badge-q${qNum}`);
+
+        fbBox.classList.remove(
+          'hidden',
+          'bg-emerald-100', 'text-emerald-800', 'border-emerald-300',
+          'bg-rose-100', 'text-rose-800', 'border-rose-300',
+          'bg-amber-100', 'text-amber-800', 'border-amber-300'
+        );
+
+        if (!selected) {
+          // 未作答時：僅顯示黃色系「未作答。」，不顯示其他說明且不顯示正確答案
+          badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700";
+          badge.textContent = "未作答";
+          fbBox.classList.add('bg-amber-100', 'text-amber-800', 'border', 'border-amber-300');
+          fbBox.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-600 mr-1"></i> 未作答。`;
+        } else if (selected === qData.ans) {
+          // 答對時
+          correctCount++;
+          badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700";
+          badge.textContent = "答對 (+20分)";
+          fbBox.classList.add('bg-emerald-100', 'text-emerald-800', 'border', 'border-emerald-300');
+          fbBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> 答對了！解析：${qData.expl}`;
+        } else {
+          // 答錯時：明確指出答錯與正確選項，並接續中立的觀念解析，無矛盾讚美詞
+          badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700";
+          badge.textContent = "答錯 (0分)";
+          fbBox.classList.add('bg-rose-100', 'text-rose-800', 'border', 'border-rose-300');
+          fbBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> 答錯了，正確答案為 (${qData.ans})。解析：${qData.expl}`;
+        }
+      }
+
+      // 計算總分（滿分 100 分，每題 20 分）
+      const totalScore = correctCount * 20;
+      const banner = document.getElementById('quiz-score-banner');
+      const scoreNum = document.getElementById('quiz-score-number');
+      const scoreDetail = document.getElementById('quiz-score-detail');
+
+      if (banner && scoreNum && scoreDetail) {
+        banner.classList.remove('hidden');
+        scoreNum.textContent = totalScore;
+        scoreDetail.textContent = `共 5 題，答對 ${correctCount} 題`;
+      }
+    }
+
+    // 重新測驗：清空所有選取狀態、解析與分數橫幅
+    function resetQuiz() {
+      for (let i = 1; i <= 5; i++) {
+        selectedAnswers[i] = null;
+
+        const fb = document.getElementById(`feedback-q${i}`);
+        if (fb) {
+          fb.classList.add('hidden');
+          fb.innerHTML = '';
+        }
+
+        const badge = document.getElementById(`badge-q${i}`);
+        if (badge) {
+          badge.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500";
+          badge.textContent = "待作答";
+        }
+
+        const buttons = document.querySelectorAll(`.q-opt-${i}`);
+        buttons.forEach(btn => {
+          btn.classList.remove('bg-blue-100', 'border-blue-500', 'text-blue-900', 'ring-2', 'ring-blue-400');
+          btn.classList.add('border-slate-200');
+        });
+      }
+
+      const banner = document.getElementById('quiz-score-banner');
+      if (banner) banner.classList.add('hidden');
+    }
+
+    // 視窗載入完成後初始化
+    window.onload = function() {
+      updateRopeSimulation();
+      updateStepCards();
+      renderSimulator();
+    };
+  </script>
+</body>
+</html>

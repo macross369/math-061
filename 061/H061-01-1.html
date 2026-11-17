@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>質數與合數互動實驗室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+            /* Enhanced Shinkai Starry Cosmic Background */
+            background-color: #070a1e;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.35) 0%, transparent 60%),
+                radial-gradient(circle at 15% 30%, rgba(168, 85, 247, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 85% 70%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
+                radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 100px 150px, #e2e8f0, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 200px 80px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 300px 280px, #a5f3fc, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 420px 190px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 550px 360px, #fef08a, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 670px 90px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 800px 220px, #f472b6, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 910px 330px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 1050px 120px, #e0e7ff, rgba(0,0,0,0));
+            background-size: 100% 100%, 100% 100%, 100% 100%, 250px 250px, 350px 350px, 450px 450px, 550px 550px, 400px 400px, 500px 500px, 600px 600px, 650px 650px, 700px 700px, 750px 750px;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Shinkai Glassmorphism Cards */
+        .shinkai-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            border-radius: 1.25rem;
+        }
+
+        .shinkai-tab-active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #ffffff !important;
+            box-shadow: 0 0 20px rgba(129, 140, 248, 0.6), 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .shinkai-tab-inactive {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            color: #f1f5f9 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .shinkai-tab-inactive:hover {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #ffffff !important;
+        }
+
+        /* Standard Vertical Fraction Display Style */
+        .math-fraction {
+            display: inline-flex;
+            vertical-align: middle;
+            align-items: center;
+            margin: 0 4px;
+        }
+        .math-fraction .integer {
+            font-weight: 700;
+            margin-right: 4px;
+            font-size: 1.1em;
+        }
+        .math-fraction .fraction-body {
+            display: inline-flex;
+            flex-direction: column;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.9em;
+            line-height: 1.1;
+        }
+        .math-fraction .numerator {
+            border-bottom: 2px solid currentColor;
+            padding: 0 3px 1px 3px;
+            font-weight: 700;
+        }
+        .math-fraction .denominator {
+            padding: 1px 3px 0 3px;
+            font-weight: 700;
+        }
+
+        .grid-block-glow {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .grid-block-glow:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="p-3 md:p-6 min-h-screen flex flex-col justify-between">
+
+    <div class="max-w-6xl mx-auto w-full">
+        <!-- Main Title Header -->
+        <header class="text-center mb-6 pt-2">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-950/60 backdrop-blur-md rounded-full border border-indigo-400/40 text-amber-300 text-xs md:text-sm font-bold mb-3 shadow-lg shadow-indigo-950/50">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> 國小六上數學 1-1 互動學習網頁
+            </div>
+            <h1 class="text-3xl md:text-5xl font-black text-white tracking-wide drop-shadow-[0_4px_12px_rgba(99,102,241,0.5)]">
+                質數與合數互動實驗室
+            </h1>
+            <p class="text-indigo-100/90 text-xs md:text-sm mt-2.5 font-medium tracking-wider drop-shadow">
+                透過圖像矩陣、埃拉托斯特尼篩法、倍數特徵篩檢與積木拆解，輕鬆掌握質數與合數的秘密！
+            </p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-6">
+            <button id="tab-btn-1" onclick="switchTab(1)" class="shinkai-tab-active px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm">
+                <i class="fa-solid fa-shapes text-base"></i>
+                <span>質數與合數探索</span>
+            </button>
+            <button id="tab-btn-2" onclick="switchTab(2)" class="shinkai-tab-inactive px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm">
+                <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                <span>質數查找</span>
+            </button>
+            <button id="tab-btn-3" onclick="switchTab(3)" class="shinkai-tab-inactive px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm">
+                <i class="fa-solid fa-filter text-base"></i>
+                <span>倍數判別與篩法</span>
+            </button>
+            <button id="tab-btn-4" onclick="switchTab(4)" class="shinkai-tab-inactive px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm">
+                <i class="fa-solid fa-cubes-stacked text-base"></i>
+                <span>3的倍數積木拆解</span>
+            </button>
+            <button id="tab-btn-5" onclick="switchTab(5)" class="shinkai-tab-inactive px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm">
+                <i class="fa-solid fa-award text-base"></i>
+                <span>隨堂測驗</span>
+            </button>
+        </div>
+
+        <!-- ================= TAB 1: 質數與合數探索 ================= -->
+        <div id="tab-content-1" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Control Panel -->
+                <div class="lg:col-span-5 shinkai-card p-6 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-indigo-950 mb-3 flex items-center gap-2 border-b pb-2.5 border-slate-200">
+                            <i class="fa-solid fa-magnifying-glass-chart text-indigo-600"></i>
+                            數字因數分析器
+                        </h2>
+
+                        <!-- Number Slider / Input -->
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-bold text-slate-700">選擇測試數字：</label>
+                                <span id="selected-num-display" class="text-3xl font-black text-indigo-600">12</span>
+                            </div>
+                            <input type="range" id="num-slider" min="1" max="100" value="12" oninput="updateFactorAnalysis(this.value)" class="w-full h-2.5 bg-indigo-100 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                            
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-slate-500 font-semibold">快速手動輸入：</span>
+                                <input type="number" id="num-input" min="1" max="100" value="12" onchange="updateFactorAnalysis(this.value)" class="w-20 px-2 py-1 text-center font-bold border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Factor Details Output -->
+                        <div class="bg-indigo-50/70 rounded-xl p-3.5 border border-indigo-100 space-y-2.5">
+                            <div class="text-xs font-bold text-indigo-900 flex items-center justify-between">
+                                <span>所有因數 (Factor List)：</span>
+                                <span id="factor-count-text" class="px-2 py-0.5 bg-indigo-200 text-indigo-800 rounded-full font-black">6 個</span>
+                            </div>
+                            <div id="factor-list-pills" class="flex flex-wrap gap-1.5">
+                                <!-- JS Dynamic Pills -->
+                            </div>
+
+                            <div id="number-type-badge" class="mt-2.5 p-2.5 rounded-lg text-center font-black text-sm shadow-sm transition-all">
+                                <!-- JS Dynamic Badge -->
+                            </div>
+                        </div>
+
+                        <!-- Conceptual Definition Cards -->
+                        <div class="mt-4 pt-3 border-t border-slate-200 space-y-3">
+                            <h3 class="text-base font-extrabold text-indigo-950 flex items-center gap-2 mb-1">
+                                <i class="fa-solid fa-book-open text-indigo-600"></i>
+                                概念整理：1 不是質數也不是合數
+                            </h3>
+                            
+                            <!-- Card 1: Number 1 -->
+                            <div class="p-3.5 bg-amber-50/90 rounded-xl border border-amber-200 text-sm text-amber-950 shadow-sm space-y-1">
+                                <div class="font-bold text-amber-800 text-base">【數字 1】</div>
+                                <div>只有 <strong class="text-amber-600 font-extrabold">1 個因數</strong>（就是1本身）。不符合質數或合數的定義。</div>
+                            </div>
+
+                            <!-- Card 2: Prime -->
+                            <div class="p-3.5 bg-rose-50/90 rounded-xl border border-rose-200 text-sm text-rose-950 space-y-1">
+                                <div class="font-bold text-rose-700 text-base">【質數 Prime】</div>
+                                <div>大於 1 的整數，<strong class="text-rose-600 font-extrabold">恰好只有 2 個因數</strong>（1 和它本身）。例如：2, 3, 5, 7, 11, 13...</div>
+                            </div>
+
+                            <!-- Card 3: Composite -->
+                            <div class="p-3.5 bg-sky-50/90 rounded-xl border border-sky-200 text-sm text-sky-950 space-y-1">
+                                <div class="font-bold text-sky-700 text-base">【合數 Composite】</div>
+                                <div>大於 1 的整數，除了 1 和本身外，<strong class="text-sky-600 font-extrabold">還有其他因數</strong>（3 個或以上）。例如：4, 6, 8, 9, 10...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Multiplication Pair & Matrix Panel -->
+                <div class="lg:col-span-7 shinkai-card p-6 flex flex-col justify-between space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-indigo-950 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                            <i class="fa-solid fa-border-all text-purple-500"></i>
+                            圖像矩陣與因數配對觀測
+                        </h2>
+
+                        <!-- Visual Grid Container -->
+                        <div class="bg-slate-900/5 p-4 rounded-xl border border-slate-200/60 flex flex-col items-center justify-center">
+                            <div class="text-xs font-semibold text-slate-500 mb-3 text-center">
+                                將 <span id="matrix-num-text" class="font-bold text-indigo-600">12</span> 顆星排列成矩陣 (點選不同的乘法配對)：
+                            </div>
+                            <!-- Multiplication Pair Tabs -->
+                            <div id="pair-buttons" class="flex flex-wrap justify-center gap-2 mb-4">
+                                <!-- JS Dynamic Buttons -->
+                            </div>
+                            <!-- Dot Matrix Output -->
+                            <div id="matrix-display" class="p-4 bg-white rounded-xl shadow-inner border border-slate-200 max-w-full overflow-x-auto flex flex-col items-center gap-1 w-full">
+                                <!-- JS Dynamic Grid -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Factor Rainbow Visualization -->
+                    <div class="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100 flex flex-col items-center">
+                        <div class="text-center mb-3">
+                            <h3 class="text-base font-extrabold text-indigo-950 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rainbow text-pink-500 text-lg"></i>
+                                因數配對彩虹圖 (Factor Rainbow)
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                成對的因數相乘會等於目標數 <span id="rainbow-target-num" class="font-bold text-indigo-600">12</span>
+                            </p>
+                        </div>
+
+                        <!-- SVG Rainbow Canvas -->
+                        <div class="w-full max-w-lg overflow-x-auto flex justify-center py-2">
+                            <svg id="rainbow-svg" viewBox="0 0 500 240" class="w-full h-auto min-w-[320px] max-w-[480px]">
+                                <!-- Dynamic SVG elements generated by JS -->
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: 質數查找 (埃拉托斯特尼篩法) ================= -->
+        <div id="tab-content-2" class="space-y-6 hidden">
+            <div class="shinkai-card p-6 space-y-6">
+                <!-- 1~100 Number Sieve Filter Section -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-table-cells text-indigo-600"></i>
+                            1 ~ 100 質數篩選器 (點擊按鈕快速標示)
+                        </h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button onclick="highlightFilter('prime')" class="px-3 py-1.5 text-xs rounded-lg font-bold bg-sky-100 text-sky-700 hover:bg-sky-200 border border-sky-300 shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-filter"></i>只看質數
+                        </button>
+                        <button onclick="highlightFilter('composite')" class="px-3 py-1.5 text-xs rounded-lg font-bold bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-300 shadow-sm flex items-center gap-1">
+                            <i class="fa-solid fa-filter"></i>只看合數
+                        </button>
+                        <button onclick="highlightFilter('even')" class="px-3 py-1.5 text-xs rounded-lg font-bold bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-300 shadow-sm">
+                            2的倍數(偶數)
+                        </button>
+                        <button onclick="highlightFilter('three')" class="px-3 py-1.5 text-xs rounded-lg font-bold bg-amber-100 text-amber-700 hover:bg-amber-200 border border-amber-300 shadow-sm">
+                            3的倍數
+                        </button>
+                        <button onclick="highlightFilter('reset')" class="px-3 py-1.5 text-xs rounded-lg font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 shadow-sm">
+                            重設標記
+                        </button>
+                    </div>
+
+                    <!-- 1-100 Grid -->
+                    <div id="grid-1-50" class="grid grid-cols-10 gap-1.5 p-3.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 text-center font-bold text-xs">
+                        <!-- JS dynamic numbers 1 to 100 -->
+                    </div>
+                </div>
+
+                <!-- 1~100 Sieve Grid Section -->
+                <div class="border-t border-slate-200 pt-6">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-4 mb-6 gap-4">
+                        <div>
+                            <div class="inline-flex items-center gap-2 text-indigo-900 font-extrabold text-xl md:text-2xl">
+                                <i class="fa-solid fa-filter-circle-xmark text-sky-500"></i>
+                                <span>1 ~ 100 埃拉托斯特尼篩法 (Sieve Grid)</span>
+                            </div>
+                            <p class="text-xs md:text-sm text-slate-600 mt-1">
+                                點擊步驟按鈕，依序刪除合數，留下美麗的質數星空！
+                            </p>
+                        </div>
+
+                        <!-- Step Action Buttons -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button onclick="stepSieve('removeOne')" id="btn-sieve-1" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-indigo-100 hover:bg-indigo-200 text-indigo-800 border border-indigo-300 shadow-sm">
+                                劃掉 1
+                            </button>
+                            <button onclick="stepSieve(2)" id="btn-sieve-2" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-sky-100 hover:bg-sky-200 text-sky-800 border border-sky-300 shadow-sm">
+                                篩 2 的倍數
+                            </button>
+                            <button onclick="stepSieve(3)" id="btn-sieve-3" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-purple-100 hover:bg-purple-200 text-purple-800 border border-purple-300 shadow-sm">
+                                篩 3 的倍數
+                            </button>
+                            <button onclick="stepSieve(5)" id="btn-sieve-5" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-teal-100 hover:bg-teal-200 text-teal-800 border border-teal-300 shadow-sm">
+                                篩 5 的倍數
+                            </button>
+                            <button onclick="stepSieve(7)" id="btn-sieve-7" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-pink-100 hover:bg-pink-200 text-pink-800 border border-pink-300 shadow-sm">
+                                篩 7 的倍數
+                            </button>
+                            <button onclick="resetSieve()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-rose-500 hover:bg-rose-600 text-white shadow-sm flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-left"></i> 重設
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 10x10 Grid Board -->
+                    <div class="bg-indigo-950/90 p-4 md:p-6 rounded-2xl border border-indigo-300/30 shadow-2xl mb-4">
+                        <div id="grid-1-100" class="grid grid-cols-10 gap-1.5 md:gap-2">
+                            <!-- JS Dynamic 1 to 100 Grid Cells -->
+                        </div>
+                    </div>
+
+                    <!-- Legend & Status Footer -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-2 text-xs font-semibold text-slate-600">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded bg-emerald-400 border border-emerald-500 inline-block"></span>
+                                <span>質數 (Prime)</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded bg-slate-700/60 border border-slate-600 inline-block"></span>
+                                <span>已排除合數</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-3.5 h-3.5 rounded bg-amber-400 border border-amber-500 inline-block"></span>
+                                <span>數字 1</span>
+                            </div>
+                        </div>
+
+                        <div id="sieve-status-text" class="text-indigo-900 font-bold bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+                            已重置，共有 100 個數字
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 3: 倍數判別與篩法 ================= -->
+        <div id="tab-content-3" class="space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Control & Inspection Panel -->
+                <div class="lg:col-span-5 shinkai-card p-6 flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex items-center gap-2 border-b pb-3 border-slate-200 mb-4">
+                            <i class="fa-solid fa-filter text-indigo-600 text-xl"></i>
+                            <div>
+                                <h2 class="text-xl font-bold text-indigo-950">快速倍數特徵篩檢</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">點擊按鈕可以在右側百數表中，著色標示出具備特定因數的數：</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature Filters List -->
+                        <div class="space-y-3 mb-6">
+                            <!-- Factor 2 Toggle -->
+                            <button id="btn-feature-2" onclick="toggleFeatureFilter(2)" class="w-full p-3 rounded-xl border-2 border-emerald-400 bg-emerald-50/80 hover:bg-emerald-100 transition-all flex items-center justify-between text-left shadow-sm">
+                                <div class="flex items-center gap-2">
+                                    <i id="icon-feature-2" class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                                    <span class="font-bold text-emerald-950 text-sm">因數 2 (偶數)</span>
+                                </div>
+                                <span class="text-xs font-semibold text-emerald-700">個位數為 0, 2, 4, 6, 8</span>
+                            </button>
+
+                            <!-- Factor 5 Toggle -->
+                            <button id="btn-feature-5" onclick="toggleFeatureFilter(5)" class="w-full p-3 rounded-xl border-2 border-amber-300 bg-amber-50/80 hover:bg-amber-100 transition-all flex items-center justify-between text-left shadow-sm">
+                                <div class="flex items-center gap-2">
+                                    <i id="icon-feature-5" class="fa-solid fa-circle-check text-amber-600 text-base"></i>
+                                    <span class="font-bold text-amber-950 text-sm">因數 5</span>
+                                </div>
+                                <span class="text-xs font-semibold text-amber-700">個位數為 0 或 5</span>
+                            </button>
+
+                            <!-- Factor 3 Toggle -->
+                            <button id="btn-feature-3" onclick="toggleFeatureFilter(3)" class="w-full p-3 rounded-xl border-2 border-indigo-300 bg-indigo-50/80 hover:bg-indigo-100 transition-all flex items-center justify-between text-left shadow-sm">
+                                <div class="flex items-center gap-2">
+                                    <i id="icon-feature-3" class="fa-solid fa-circle-check text-indigo-600 text-base"></i>
+                                    <span class="font-bold text-indigo-950 text-sm">因數 3</span>
+                                </div>
+                                <span class="text-xs font-semibold text-indigo-700">各位數字相加為 3 的倍數</span>
+                            </button>
+
+                            <!-- Reset All Filters -->
+                            <button onclick="resetFeatureFilters()" class="w-full py-2 bg-slate-200/80 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-rotate-left text-xs"></i> 重設所有標記
+                            </button>
+                        </div>
+
+                        <!-- Single Number Inspection Box -->
+                        <div class="bg-indigo-950 text-white p-5 rounded-2xl shadow-xl space-y-3">
+                            <div class="text-xs text-indigo-200 font-semibold mb-1">點擊百數表中的任意數進行檢驗：</div>
+                            <div class="flex items-center gap-3">
+                                <span id="inspect-num" class="text-4xl font-black text-amber-300">1</span>
+                                <span id="inspect-badge" class="px-2.5 py-1 rounded-md text-xs font-black bg-amber-500 text-white">既非質數非合數</span>
+                            </div>
+
+                            <div class="space-y-1.5 text-xs text-indigo-100 font-medium pt-2 border-t border-indigo-800/80">
+                                <div id="inspect-even-text" class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-chevron-right text-amber-400 text-[10px]"></i>
+                                    <span>個位數為 <strong>1</strong>：非偶數</span>
+                                </div>
+                                <div id="inspect-three-text" class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-chevron-right text-amber-400 text-[10px]"></i>
+                                    <span>數字和 <strong>1 = 1</strong>：非 3 的倍數</span>
+                                </div>
+                                <div id="inspect-five-text" class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-chevron-right text-amber-400 text-[10px]"></i>
+                                    <span>個位數為 <strong>1</strong>：非 5 的倍數</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t border-indigo-800/80 text-xs font-mono text-amber-300">
+                                所有因數：<span id="inspect-factors">[ 1 ]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right 1 ~ 100 Grid Table -->
+                <div class="lg:col-span-7 shinkai-card p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4 border-b pb-3 border-slate-200">
+                            <h2 class="text-xl font-bold text-indigo-950 flex items-center gap-2">
+                                <i class="fa-solid fa-table-cells text-indigo-600"></i>
+                                1 ~ 100 數字篩法表
+                            </h2>
+                            <div class="flex items-center gap-3 text-xs font-bold text-slate-600">
+                                <span class="flex items-center gap-1">
+                                    <span class="w-3 h-3 rounded-full bg-pink-500 inline-block"></span> 質數
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="w-3 h-3 rounded-full bg-slate-300 inline-block"></span> 合數
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 10x10 Grid -->
+                        <div id="grid-feature-100" class="grid grid-cols-10 gap-1.5 p-3.5 bg-slate-100/90 rounded-2xl border border-slate-200/80 text-center font-bold text-xs">
+                            <!-- Dynamic JS grid cells -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 4: 3的倍數積木拆解 ================= -->
+        <div id="tab-content-4" class="space-y-6 hidden">
+            <!-- Top Concept Banner -->
+            <div class="shinkai-card p-5 text-center space-y-2">
+                <div class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">
+                    重點觀念原理探究
+                </div>
+                <h2 class="text-xl md:text-2xl font-black text-indigo-950">
+                    為什麼「各數位數字和是 3 的倍數」，該數就是 3 的倍數？
+                </h2>
+                <p class="text-xs md:text-sm font-semibold text-slate-600">
+                    利用課本第3頁「積木分組」原理：每 100 個積木每 3 個一組會剩下 1 個；每 10 個積木每 3 個一組也會剩下 1 個！
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Panel: Input & Control -->
+                <div class="lg:col-span-4 shinkai-card p-6 flex flex-col justify-between space-y-6">
+                    <div class="space-y-5">
+                        <h2 class="text-lg font-extrabold text-indigo-950 flex items-center gap-2 border-b pb-3 border-slate-200">
+                            <i class="fa-solid fa-cubes text-amber-500"></i>
+                            設定欲拆解的數字
+                        </h2>
+
+                        <!-- Custom Input -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-700">輸入三位數或二位數：</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="breakdown-num-input" min="1" max="999" value="261" class="w-full px-3 py-2.5 text-lg font-black text-slate-800 border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none text-center">
+                                <button onclick="loadCustomBreakdownNum()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-sm transition-all shadow-md">
+                                    載入
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Textbook Examples -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-500">或選取課本經典範例：</label>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="loadBreakdownPreset(261)" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 transition-all">
+                                    261 (課本例5)
+                                </button>
+                                <button onclick="loadBreakdownPreset(117)" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 transition-all">
+                                    117
+                                </button>
+                                <button onclick="loadBreakdownPreset(51)" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 transition-all">
+                                    51
+                                </button>
+                                <button onclick="loadBreakdownPreset(85)" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-700 transition-all">
+                                    85
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button onclick="startBreakdownCalculation()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black rounded-xl text-sm shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-play text-xs"></i> 開始「每3個一組」拆解積木
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Visual Stage (Light Shinkai Background) -->
+                <div class="lg:col-span-8 shinkai-card p-6 flex flex-col justify-between space-y-6">
+                    <div>
+                        <!-- Header & Equation -->
+                        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+                            <span class="text-xs text-slate-500 font-bold">積木拆解視覺舞台</span>
+                            <span id="stage-equation-text" class="text-lg md:text-xl font-black text-indigo-900">
+                                261 = 2個百 + 6個十 + 1個一
+                            </span>
+                        </div>
+
+                        <!-- Blocks Container -->
+                        <div class="space-y-5 mt-4">
+                            <!-- Hundreds Block Section -->
+                            <div class="space-y-2">
+                                <div id="h-blocks-title" class="text-xs font-bold text-slate-700">百位積木 (2 個 100)</div>
+                                <div id="h-blocks-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                                    <!-- JS dynamic hundreds blocks -->
+                                </div>
+                            </div>
+
+                            <!-- Tens Block Section -->
+                            <div class="space-y-2">
+                                <div id="t-blocks-title" class="text-xs font-bold text-slate-700">十位積木 (6 個 10)</div>
+                                <div id="t-blocks-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                                    <!-- JS dynamic tens blocks -->
+                                </div>
+                            </div>
+
+                            <!-- Ones Block Section -->
+                            <div class="space-y-2">
+                                <div id="o-blocks-title" class="text-xs font-bold text-slate-700">個位積木 (1 個 1)</div>
+                                <div id="o-blocks-container" class="flex flex-wrap gap-2">
+                                    <!-- JS dynamic ones blocks -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Result Box -->
+                    <div id="breakdown-result-box" class="p-4 bg-indigo-50/80 rounded-xl border border-indigo-100 text-xs md:text-sm font-semibold space-y-2">
+                        <div class="text-amber-600 font-extrabold flex items-center gap-1.5">
+                            <i class="fa-solid fa-lightbulb"></i> 拆解計算結果：
+                        </div>
+                        <div id="breakdown-result-content" class="text-slate-700 leading-relaxed">
+                            準備拆解 261... 點擊左側按鈕開始「每 3 個一組」進行拆解！
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TAB 5: 隨堂測驗 ================= -->
+        <div id="tab-content-5" class="space-y-6 hidden">
+            <div class="shinkai-card p-6 space-y-6">
+                <div class="flex items-center justify-between border-b pb-4 border-slate-200">
+                    <div>
+                        <h2 class="text-xl font-bold text-indigo-950 flex items-center gap-2">
+                            <i class="fa-solid fa-award text-amber-500"></i>
+                            隨堂測驗
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">請完成下方 5 道題目後，點擊「提交答案」核對答案！</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-500 font-bold">測驗得分</span>
+                        <div id="quiz-score" class="text-2xl font-black text-indigo-600">0 / 100</div>
+                    </div>
+                </div>
+
+                <!-- Quiz Questions List Container -->
+                <div id="quiz-container" class="space-y-6">
+                    <!-- JS Dynamic Quiz Cards -->
+                </div>
+
+                <!-- Action Buttons: Side-by-side & Centered -->
+                <div class="flex items-center justify-center gap-4 pt-4 border-t border-slate-200">
+                    <button onclick="submitQuiz()" class="w-1/2 sm:w-48 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> 提交答案
+                    </button>
+                    <button onclick="resetQuiz()" class="w-1/2 sm:w-48 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-black rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> 重新測驗
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // Global State Variables
+        let currentTab = 1;
+        let currentNum = 12;
+        let selectedPair = [1, 12];
+        let sieveState = {
+            removedOne: false,
+            sievedTwo: false,
+            sievedThree: false,
+            sievedFive: false,
+            sievedSeven: false
+        };
+        let featureFilters = { 2: false, 5: false, 3: false };
+        let inspectedNumber = 1;
+        let activeBreakdownNum = 261;
+        let isBreakdownExecuted = false;
+        let userAnswers = {};
+        let quizSubmitted = false;
+
+        // Quiz Question Database
+        const quizData = [
+            {
+                id: 1,
+                question: "關於數字「1」，下列敘述何者正確？",
+                options: ["1 是最小的質數", "1 是最小的合數", "1 既不是質數也不是合數", "1 有 2 個因數"],
+                answer: 2,
+                explanation: "1 只有 1 個因數（就是它自己）。質數必須恰好有 2 個因數，合數則有 3 個以上的因數，因此 1 既非質數也非合數。"
+            },
+            {
+                id: 2,
+                question: "下列哪一個數字是質數？",
+                options: ["9", "15", "17", "21"],
+                answer: 2,
+                explanation: "17 的因數只有 1 和 17，符合質數定義。其餘數的因數：9 (1,3,9)、15 (1,3,5,15)、21 (1,3,7,21) 均為合數。"
+            },
+            {
+                id: 3,
+                question: "若一個三位數「52□」是 3 的倍數，□ 內「不可能」填入下列哪一個數字？",
+                options: ["2", "5", "8", "4"],
+                answer: 3,
+                explanation: "5 + 2 = 7。填入 2 (7+2=9)、5 (7+5=12)、8 (7+8=15) 的數字和均為 3 的倍數；若填入 4，數字和為 11，非 3 的倍數。"
+            },
+            {
+                id: 4,
+                question: "在 1 ~ 100 之中，最大的質數是多少？",
+                options: ["91", "93", "97", "99"],
+                answer: 2,
+                explanation: "97 只有 1 和 97 兩個因數，是 100 以內最大的質數。註：91 = 7 × 13、93 = 3 × 31、99 = 9 × 11 均為合數。"
+            },
+            {
+                id: 5,
+                question: "下列關於質數與合數的觀念敘述，何者正確？",
+                options: ["所有的偶數都是合數", "所有的奇數都是質數", "2 是唯一的偶數質數", "質數必定只有奇數因數"],
+                answer: 2,
+                explanation: "2 是最小的質數，也是唯一的偶數質數！其餘所有的偶數都含有因數 2，因此都是合數。"
+            }
+        ];
+
+        // Math Helper: Get array of all factors of a number
+        function getFactors(num) {
+            const factors = [];
+            for (let i = 1; i <= num; i++) {
+                if (num % i === 0) {
+                    factors.push(i);
+                }
+            }
+            return factors;
+        }
+
+        // Math Helper: Get array of factor pairs [a, b] where a * b = num
+        function getFactorPairs(num) {
+            const pairs = [];
+            for (let i = 1; i * i <= num; i++) {
+                if (num % i === 0) {
+                    pairs.push([i, num / i]);
+                }
+            }
+            return pairs;
+        }
+
+        // Tab Switcher
+        function switchTab(tabNum) {
+            currentTab = tabNum;
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                const content = document.getElementById(`tab-content-${i}`);
+                if (btn && content) {
+                    if (i === tabNum) {
+                        btn.className = "shinkai-tab-active px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm";
+                        content.classList.remove('hidden');
+                    } else {
+                        btn.className = "shinkai-tab-inactive px-4 py-2.5 rounded-xl font-bold transition-all duration-300 flex items-center space-x-2 text-xs md:text-sm";
+                        content.classList.add('hidden');
+                    }
+                }
+            }
+        }
+
+        // Core Function: Factor Analysis Updates (Tab 1)
+        function updateFactorAnalysis(val) {
+            let num = parseInt(val);
+            if (isNaN(num) || num < 1) num = 1;
+            if (num > 100) num = 100;
+
+            currentNum = num;
+
+            // Sync Slider & Input Displays
+            const displayEl = document.getElementById('selected-num-display');
+            const sliderEl = document.getElementById('num-slider');
+            const inputEl = document.getElementById('num-input');
+            const matrixNumText = document.getElementById('matrix-num-text');
+            const rainbowTargetNum = document.getElementById('rainbow-target-num');
+
+            if (displayEl) displayEl.innerText = num;
+            if (sliderEl) sliderEl.value = num;
+            if (inputEl) inputEl.value = num;
+            if (matrixNumText) matrixNumText.innerText = num;
+            if (rainbowTargetNum) rainbowTargetNum.innerText = num;
+
+            // Calculate Factors
+            const factors = getFactors(num);
+            const count = factors.length;
+
+            // Update Factor Count & List Pills
+            const countEl = document.getElementById('factor-count-text');
+            if (countEl) countEl.innerText = `${count} 個`;
+
+            const pillsContainer = document.getElementById('factor-list-pills');
+            if (pillsContainer) {
+                pillsContainer.innerHTML = '';
+                factors.forEach(f => {
+                    const pill = document.createElement('span');
+                    pill.className = "px-2.5 py-1 bg-indigo-600 text-white font-bold rounded-lg text-xs shadow-sm";
+                    pill.innerText = f;
+                    pillsContainer.appendChild(pill);
+                });
+            }
+
+            // Update Prime / Composite Badge
+            const badgeEl = document.getElementById('number-type-badge');
+            if (badgeEl) {
+                if (num === 1) {
+                    badgeEl.className = "mt-3 p-3 rounded-lg text-center font-black text-sm shadow-sm transition-all bg-amber-100 text-amber-900 border border-amber-300";
+                    badgeEl.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-600 mr-1.5"></i> 數字 1 (既非質數，也非合數)`;
+                } else if (count === 2) {
+                    badgeEl.className = "mt-3 p-3 rounded-lg text-center font-black text-sm shadow-sm transition-all bg-emerald-500 text-white border border-emerald-600 shadow-emerald-500/30";
+                    badgeEl.innerHTML = `<i class="fa-solid fa-star text-amber-300 mr-1.5"></i> 質數 (Prime Number)`;
+                } else {
+                    badgeEl.className = "mt-3 p-3 rounded-lg text-center font-black text-sm shadow-sm transition-all bg-purple-600 text-white border border-purple-700 shadow-purple-500/30";
+                    badgeEl.innerHTML = `<i class="fa-solid fa-cubes text-purple-200 mr-1.5"></i> 合數 (Composite Number)`;
+                }
+            }
+
+            // Generate Multiplication Pair Buttons
+            const pairs = getFactorPairs(num);
+            const pairsContainer = document.getElementById('pair-buttons');
+            if (pairsContainer) {
+                pairsContainer.innerHTML = '';
+                selectedPair = pairs[pairs.length - 1] || [1, num];
+
+                pairs.forEach((p) => {
+                    const btn = document.createElement('button');
+                    const isSelected = (selectedPair[0] === p[0] && selectedPair[1] === p[1]);
+                    btn.className = isSelected 
+                        ? "px-3 py-1.5 rounded-lg font-black text-xs bg-indigo-600 text-white shadow-md border border-indigo-400"
+                        : "px-3 py-1.5 rounded-lg font-bold text-xs bg-white text-slate-700 hover:bg-indigo-50 border border-slate-300 transition-all";
+                    btn.innerHTML = `${p[0]} &times; ${p[1]}`;
+                    btn.onclick = () => {
+                        selectedPair = p;
+                        Array.from(pairsContainer.children).forEach(b => {
+                            b.className = "px-3 py-1.5 rounded-lg font-bold text-xs bg-white text-slate-700 hover:bg-indigo-50 border border-slate-300 transition-all";
+                        });
+                        btn.className = "px-3 py-1.5 rounded-lg font-black text-xs bg-indigo-600 text-white shadow-md border border-indigo-400";
+                        renderDotMatrix(p[0], p[1]);
+                    };
+                    pairsContainer.appendChild(btn);
+                });
+            }
+
+            // Render Initial Matrix & Rainbow SVG
+            renderDotMatrix(selectedPair[0], selectedPair[1]);
+            renderRainbowSVG(num);
+        }
+
+        // Render Dot Matrix Visualization
+        function renderDotMatrix(rows, cols) {
+            const container = document.getElementById('matrix-display');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex flex-col gap-1.5 items-center my-2 max-h-[220px] overflow-y-auto p-2";
+
+            for (let r = 0; r < rows; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = "flex gap-1.5 justify-center";
+                for (let c = 0; c < cols; c++) {
+                    const dot = document.createElement('div');
+                    dot.className = "w-6 h-6 rounded-md bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold shadow-sm transition-transform hover:scale-110";
+                    dot.innerText = r * cols + c + 1;
+                    rowDiv.appendChild(dot);
+                }
+                wrapper.appendChild(rowDiv);
+            }
+
+            container.appendChild(wrapper);
+
+            const caption = document.createElement('div');
+            caption.className = "text-xs font-bold text-indigo-900 mt-2 text-center";
+            caption.innerText = `${currentNum} 可以排成 ${rows} 行 &times; ${cols} 列 的矩陣陣列`;
+            container.appendChild(caption);
+        }
+
+        // Render SVG Factor Rainbow
+        function renderRainbowSVG(num) {
+            const svg = document.getElementById('rainbow-svg');
+            if (!svg) return;
+            svg.innerHTML = '';
+
+            const factors = getFactors(num);
+            const n = factors.length;
+            if (n === 0) return;
+
+            const svgWidth = 500;
+            const svgHeight = 240;
+            const startX = 40;
+            const endX = svgWidth - 40;
+            const stepX = n > 1 ? (endX - startX) / (n - 1) : 0;
+            const nodeY = 200;
+
+            const colors = [
+                '#ec4899', '#f97316', '#eab308', '#10b981', 
+                '#06b6d4', '#6366f1', '#a855f7', '#3b82f6'
+            ];
+
+            const pairCount = Math.ceil(n / 2);
+            for (let i = 0; i < pairCount; i++) {
+                const leftIdx = i;
+                const rightIdx = n - 1 - i;
+
+                const x1 = startX + leftIdx * stepX;
+                const x2 = startX + rightIdx * stepX;
+
+                const color = colors[i % colors.length];
+
+                if (leftIdx === rightIdx) {
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    const radius = 22;
+                    const d = `M ${x1 - radius} ${nodeY} A ${radius} ${radius} 0 0 1 ${x1 + radius} ${nodeY}`;
+                    path.setAttribute("d", d);
+                    path.setAttribute("fill", "none");
+                    path.setAttribute("stroke", color);
+                    path.setAttribute("stroke-width", "4");
+                    path.setAttribute("stroke-linecap", "round");
+                    svg.appendChild(path);
+                } else {
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    const rx = (x2 - x1) / 2;
+                    const ry = Math.min(160, rx * 0.85);
+                    const d = `M ${x1} ${nodeY} A ${rx} ${ry} 0 0 1 ${x2} ${nodeY}`;
+                    path.setAttribute("d", d);
+                    path.setAttribute("fill", "none");
+                    path.setAttribute("stroke", color);
+                    path.setAttribute("stroke-width", "4");
+                    path.setAttribute("stroke-linecap", "round");
+                    svg.appendChild(path);
+                }
+            }
+
+            factors.forEach((f, idx) => {
+                const cx = startX + idx * stepX;
+
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", cx);
+                circle.setAttribute("cy", nodeY);
+                circle.setAttribute("r", "16");
+                circle.setAttribute("fill", "#4f46e5");
+                circle.setAttribute("stroke", "#ffffff");
+                circle.setAttribute("stroke-width", "2");
+                circle.setAttribute("class", "shadow-md");
+                svg.appendChild(circle);
+
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", cx);
+                text.setAttribute("y", nodeY + 5);
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("fill", "#ffffff");
+                text.setAttribute("font-weight", "bold");
+                text.setAttribute("font-size", "12");
+                text.textContent = f;
+                svg.appendChild(text);
+            });
+        }
+
+        // Render 1 to 100 Grid for Filter
+        function renderGrid1to50() {
+            const grid = document.getElementById('grid-1-50');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 100; i++) {
+                const cell = document.createElement('div');
+                cell.id = `num-cell-${i}`;
+                cell.className = "py-2 md:py-2.5 rounded-lg border border-slate-200 bg-white text-slate-800 font-bold hover:bg-slate-100 cursor-pointer grid-block-glow flex flex-col items-center justify-center transition-all duration-200";
+                cell.innerText = i;
+                cell.onclick = () => updateFactorAnalysis(i);
+                grid.appendChild(cell);
+            }
+        }
+
+        // Highlight Filters for 1~100 Grid in Tab 2
+        function highlightFilter(type) {
+            for (let i = 1; i <= 100; i++) {
+                const cell = document.getElementById(`num-cell-${i}`);
+                if (!cell) continue;
+                const factors = getFactors(i);
+
+                const baseClass = "py-2 md:py-2.5 rounded-lg border cursor-pointer grid-block-glow flex flex-col items-center justify-center transition-all duration-200 ";
+
+                if (type === 'prime' && factors.length === 2) {
+                    cell.className = baseClass + "bg-sky-500 text-white font-black border-sky-600 shadow-md ring-2 ring-sky-300 scale-105";
+                } else if (type === 'composite' && factors.length > 2) {
+                    cell.className = baseClass + "bg-purple-600 text-white font-black border-purple-700 shadow-md scale-105";
+                } else if (type === 'even' && i % 2 === 0) {
+                    cell.className = baseClass + "bg-emerald-500 text-white font-black border-emerald-600 shadow-md scale-105";
+                } else if (type === 'three' && i % 3 === 0) {
+                    cell.className = baseClass + "bg-amber-500 text-white font-black border-amber-600 shadow-md scale-105";
+                } else {
+                    cell.className = baseClass + "bg-white border-slate-200 text-slate-800 font-bold hover:bg-slate-100";
+                }
+            }
+        }
+
+        // Sieve Controller (Tab 2)
+        function stepSieve(action) {
+            if (action === 'removeOne') {
+                sieveState.removedOne = true;
+            } else if (typeof action === 'number') {
+                if (action === 2) sieveState.sievedTwo = true;
+                if (action === 3) sieveState.sievedThree = true;
+                if (action === 5) sieveState.sievedFive = true;
+                if (action === 7) sieveState.sievedSeven = true;
+            }
+            renderSieveGrid();
+        }
+
+        function resetSieve() {
+            sieveState = {
+                removedOne: false,
+                sievedTwo: false,
+                sievedThree: false,
+                sievedFive: false,
+                sievedSeven: false
+            };
+            renderSieveGrid();
+        }
+
+        // Render Sieve Grid 1 ~ 100
+        function renderSieveGrid() {
+            const grid = document.getElementById('grid-1-100');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            let eliminatedCount = 0;
+            let primeCount = 0;
+
+            for (let i = 1; i <= 100; i++) {
+                const item = document.createElement('div');
+                let isEliminated = false;
+
+                if (i === 1) {
+                    if (sieveState.removedOne) {
+                        item.className = "py-2 md:py-2.5 rounded-lg bg-amber-400 text-indigo-950 font-black text-xs md:text-sm border-2 border-amber-300 flex items-center justify-center shadow-md scale-95 opacity-80";
+                        item.innerHTML = `<span>1</span>`;
+                        eliminatedCount++;
+                    } else {
+                        item.className = "py-2 md:py-2.5 rounded-lg bg-slate-800 text-slate-200 font-bold text-xs md:text-sm border border-slate-700 flex items-center justify-center hover:bg-slate-700 cursor-pointer";
+                        item.innerHTML = `<span>1</span>`;
+                    }
+                } else {
+                    if (sieveState.sievedTwo && i > 2 && i % 2 === 0) isEliminated = true;
+                    else if (sieveState.sievedThree && i > 3 && i % 3 === 0) isEliminated = true;
+                    else if (sieveState.sievedFive && i > 5 && i % 5 === 0) isEliminated = true;
+                    else if (sieveState.sievedSeven && i > 7 && i % 7 === 0) isEliminated = true;
+
+                    if (isEliminated) {
+                        item.className = "py-2 md:py-2.5 rounded-lg bg-slate-900/60 text-slate-500 font-bold text-xs md:text-sm border border-slate-800 flex items-center justify-center line-through opacity-40 scale-95 transition-all duration-300";
+                        item.innerHTML = `<span>${i}</span>`;
+                        eliminatedCount++;
+                    } else {
+                        const isAllSieved = sieveState.removedOne && sieveState.sievedTwo && sieveState.sievedThree && sieveState.sievedFive && sieveState.sievedSeven;
+                        const factors = getFactors(i);
+                        const isPrime = factors.length === 2;
+
+                        if (isAllSieved && isPrime) {
+                            item.className = "py-2 md:py-2.5 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-400 text-white font-black text-xs md:text-sm border border-emerald-300 flex items-center justify-center shadow-lg shadow-emerald-500/30 scale-105 transition-all duration-300";
+                            item.innerHTML = `<span class="flex items-center gap-0.5"><i class="fa-solid fa-star text-[8px] text-amber-300"></i>${i}</span>`;
+                            primeCount++;
+                        } else {
+                            item.className = "py-2 md:py-2.5 rounded-lg bg-slate-800/90 text-slate-100 font-bold text-xs md:text-sm border border-slate-700/80 flex items-center justify-center hover:bg-sky-600/80 hover:text-white transition cursor-pointer";
+                            item.innerHTML = `<span>${i}</span>`;
+                        }
+                    }
+                }
+                grid.appendChild(item);
+            }
+
+            const statusEl = document.getElementById('sieve-status-text');
+            const isAllSieved = sieveState.removedOne && sieveState.sievedTwo && sieveState.sievedThree && sieveState.sievedFive && sieveState.sievedSeven;
+
+            if (statusEl) {
+                if (isAllSieved) {
+                    statusEl.className = "text-emerald-700 font-black bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 shadow-sm";
+                    statusEl.innerHTML = `🎉 篩選完成！1~100 中共有 <span class="text-emerald-800 text-base font-extrabold">25</span> 個質數！`;
+                } else if (eliminatedCount > 0) {
+                    statusEl.className = "text-indigo-900 font-bold bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200";
+                    statusEl.innerText = `已排除 ${eliminatedCount} 個合數/數字1，持續點擊步驟按鈕...`;
+                } else {
+                    statusEl.className = "text-indigo-900 font-bold bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200";
+                    statusEl.innerText = `已重置，共有 100 個數字`;
+                }
+            }
+        }
+
+        // Feature Filters Logic (Tab 3)
+        function toggleFeatureFilter(factor) {
+            featureFilters[factor] = !featureFilters[factor];
+
+            const btn = document.getElementById(`btn-feature-${factor}`);
+            const icon = document.getElementById(`icon-feature-${factor}`);
+
+            if (btn && icon) {
+                const baseClass = "w-full p-3 rounded-xl transition-all flex items-center justify-between text-left shadow-sm ";
+                
+                if (featureFilters[factor]) {
+                    if (factor === 2) btn.className = baseClass + "border-2 border-emerald-400 bg-emerald-50/80 hover:bg-emerald-100 ring-4 ring-indigo-400 z-10";
+                    if (factor === 5) btn.className = baseClass + "border-2 border-amber-300 bg-amber-50/80 hover:bg-amber-100 ring-4 ring-indigo-400 z-10";
+                    if (factor === 3) btn.className = baseClass + "border-2 border-indigo-300 bg-indigo-50/80 hover:bg-indigo-100 ring-4 ring-indigo-400 z-10";
+                    icon.className = "fa-solid fa-circle-check text-base " + (factor === 2 ? "text-emerald-600" : factor === 5 ? "text-amber-600" : "text-indigo-600");
+                } else {
+                    if (factor === 2) btn.className = baseClass + "border-2 border-emerald-400 bg-emerald-50/80 hover:bg-emerald-100";
+                    if (factor === 5) btn.className = baseClass + "border-2 border-amber-300 bg-amber-50/80 hover:bg-amber-100";
+                    if (factor === 3) btn.className = baseClass + "border-2 border-indigo-300 bg-indigo-50/80 hover:bg-indigo-100";
+                    icon.className = "fa-solid fa-circle-check text-base " + (factor === 2 ? "text-emerald-600" : factor === 5 ? "text-amber-600" : "text-indigo-600");
+                }
+            }
+
+            renderGridFeature100();
+        }
+
+        function resetFeatureFilters() {
+            featureFilters = { 2: false, 5: false, 3: false };
+            [2, 5, 3].forEach(factor => {
+                const btn = document.getElementById(`btn-feature-${factor}`);
+                const icon = document.getElementById(`icon-feature-${factor}`);
+                if (btn && icon) {
+                    const baseClass = "w-full p-3 rounded-xl transition-all flex items-center justify-between text-left shadow-sm ";
+                    if (factor === 2) btn.className = baseClass + "border-2 border-emerald-400 bg-emerald-50/80 hover:bg-emerald-100";
+                    if (factor === 5) btn.className = baseClass + "border-2 border-amber-300 bg-amber-50/80 hover:bg-amber-100";
+                    if (factor === 3) btn.className = baseClass + "border-2 border-indigo-300 bg-indigo-50/80 hover:bg-indigo-100";
+                    icon.className = "fa-solid fa-circle-check text-base " + (factor === 2 ? "text-emerald-600" : factor === 5 ? "text-amber-600" : "text-indigo-600");
+                }
+            });
+            renderGridFeature100();
+        }
+
+        function inspectNumber(num) {
+            inspectedNumber = num;
+            const factors = getFactors(num);
+            const isPrime = factors.length === 2;
+
+            const inspectNumEl = document.getElementById('inspect-num');
+            if (inspectNumEl) inspectNumEl.innerText = num;
+
+            const badge = document.getElementById('inspect-badge');
+            if (badge) {
+                if (num === 1) {
+                    badge.className = "px-2.5 py-1 rounded-md text-xs font-black bg-amber-500 text-white";
+                    badge.innerText = "既非質數非合數";
+                } else if (isPrime) {
+                    badge.className = "px-2.5 py-1 rounded-md text-xs font-black bg-pink-500 text-white";
+                    badge.innerText = "質數";
+                } else {
+                    badge.className = "px-2.5 py-1 rounded-md text-xs font-black bg-emerald-500 text-white";
+                    badge.innerText = "合數";
+                }
+            }
+
+            const lastDigit = num % 10;
+            const isEven = num % 2 === 0;
+            const evenEl = document.getElementById('inspect-even-text');
+            if (evenEl) {
+                evenEl.innerHTML = `
+                    <i class="fa-solid fa-chevron-right text-amber-400 text-[10px]"></i>
+                    <span>個位數為 <strong>${lastDigit}</strong>：${isEven ? "是偶數 (有因數 2)" : "非偶數"}</span>
+                `;
+            }
+
+            const digits = num.toString().split('').map(Number);
+            const sum = digits.reduce((a, b) => a + b, 0);
+            const isThree = sum % 3 === 0;
+            const threeEl = document.getElementById('inspect-three-text');
+            if (threeEl) {
+                threeEl.innerHTML = `
+                    <i class="fa-solid fa-chevron-right text-amber-400 text-[10px]"></i>
+                    <span>數字和 <strong>${digits.join(' + ')} = ${sum}</strong>：${isThree ? "是 3 的倍數 (有因數 3)" : "非 3 的倍數"}</span>
+                `;
+            }
+
+            const isFive = num % 5 === 0;
+            const fiveEl = document.getElementById('inspect-five-text');
+            if (fiveEl) {
+                fiveEl.innerHTML = `
+                    <i class="fa-solid fa-chevron-right text-amber-400 text-[10px]"></i>
+                    <span>個位數為 <strong>${lastDigit}</strong>：${isFive ? "有因數 5" : "非 5 的倍數"}</span>
+                `;
+            }
+
+            const factorsEl = document.getElementById('inspect-factors');
+            if (factorsEl) factorsEl.innerText = `[ ${factors.join(', ')} ]`;
+
+            renderGridFeature100();
+        }
+
+        // Render 1 to 100 Grid in Tab 3
+        function renderGridFeature100() {
+            const grid = document.getElementById('grid-feature-100');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 100; i++) {
+                const cell = document.createElement('div');
+                const factors = getFactors(i);
+                const isPrime = factors.length === 2;
+
+                const has2 = featureFilters[2] && i % 2 === 0;
+                const has5 = featureFilters[5] && i % 5 === 0;
+                const has3 = featureFilters[3] && i % 3 === 0;
+
+                let bgClass = "bg-white text-slate-700 border-slate-200";
+                if (has2 && has5 && has3) bgClass = "bg-indigo-600 text-white border-indigo-700 shadow-sm";
+                else if (has2 && has5) bgClass = "bg-amber-500 text-white border-amber-600 shadow-sm";
+                else if (has2 && has3) bgClass = "bg-purple-600 text-white border-purple-700 shadow-sm";
+                else if (has5 && has3) bgClass = "bg-indigo-600 text-white border-indigo-700 shadow-sm";
+                else if (has2) bgClass = "bg-emerald-500 text-white border-emerald-600 shadow-sm";
+                else if (has5) bgClass = "bg-amber-500 text-white border-amber-600 shadow-sm";
+                else if (has3) bgClass = "bg-indigo-500 text-white border-indigo-600 shadow-sm";
+
+                const isInspected = inspectedNumber === i;
+                const ringClass = isInspected ? "ring-4 ring-amber-400 z-10 scale-105 " : "";
+                const primeTextClass = (!has2 && !has5 && !has3 && isPrime) ? "border-pink-300 text-pink-600 font-extrabold bg-pink-50/50 " : "";
+
+                cell.className = `py-2 rounded-lg border cursor-pointer grid-block-glow flex items-center justify-center font-bold text-xs transition-all duration-200 ${ringClass} ${bgClass} ${primeTextClass}`;
+                cell.innerText = i;
+                cell.onclick = () => inspectNumber(i);
+                grid.appendChild(cell);
+            }
+        }
+
+        // Render 3-Digit Breakdown Stage (Tab 4)
+        function renderBreakdownStage(num, executed = false) {
+            activeBreakdownNum = num;
+            isBreakdownExecuted = executed;
+
+            const inputEl = document.getElementById('breakdown-num-input');
+            if (inputEl) inputEl.value = num;
+
+            const h = Math.floor(num / 100);
+            const t = Math.floor((num % 100) / 10);
+            const o = num % 10;
+
+            // Header Equation
+            const eqEl = document.getElementById('stage-equation-text');
+            if (eqEl) {
+                const parts = [];
+                if (h > 0) parts.push(`${h}個百`);
+                if (t > 0 || h > 0) parts.push(`${t}個十`);
+                parts.push(`${o}個一`);
+                eqEl.innerText = `${num} = ${parts.join(' + ')}`;
+            }
+
+            // Hundreds Container
+            const hTitle = document.getElementById('h-blocks-title');
+            const hContainer = document.getElementById('h-blocks-container');
+            if (hTitle && hContainer) {
+                hTitle.innerText = `百位積木 (${h} 個 100)`;
+                hContainer.innerHTML = '';
+                if (h === 0) {
+                    hContainer.innerHTML = `<div class="col-span-full text-xs text-slate-400 py-1 font-semibold">(無百位積木)</div>`;
+                } else {
+                    for (let i = 0; i < h; i++) {
+                        const box = document.createElement('div');
+                        box.className = "p-2.5 bg-indigo-50 border border-indigo-200/90 rounded-xl flex items-center justify-between text-xs font-bold text-indigo-950 shadow-sm";
+                        box.innerHTML = `
+                            <span class="text-[11px]">100格 <span class="text-slate-500 text-[10px]">(3&times;33+1)</span></span>
+                            <span class="text-[11px]">分完餘 <strong class="text-amber-600 text-xs">1</strong></span>
+                        `;
+                        hContainer.appendChild(box);
+                    }
+                }
+            }
+
+            // Tens Container
+            const tTitle = document.getElementById('t-blocks-title');
+            const tContainer = document.getElementById('t-blocks-container');
+            if (tTitle && tContainer) {
+                tTitle.innerText = `十位積木 (${t} 個 10)`;
+                tContainer.innerHTML = '';
+                if (t === 0) {
+                    tContainer.innerHTML = `<div class="col-span-full text-xs text-slate-400 py-1 font-semibold">(無十位積木)</div>`;
+                } else {
+                    for (let i = 0; i < t; i++) {
+                        const box = document.createElement('div');
+                        box.className = "p-2.5 bg-emerald-50 border border-emerald-200/90 rounded-xl flex items-center justify-between text-xs font-bold text-emerald-950 shadow-sm";
+                        box.innerHTML = `
+                            <span class="text-[11px]">10格 <span class="text-slate-500 text-[10px]">(3&times;3+1)</span></span>
+                            <span class="text-[11px]">分完餘 <strong class="text-amber-600 text-xs">1</strong></span>
+                        `;
+                        tContainer.appendChild(box);
+                    }
+                }
+            }
+
+            // Ones Container
+            const oTitle = document.getElementById('o-blocks-title');
+            const oContainer = document.getElementById('o-blocks-container');
+            if (oTitle && oContainer) {
+                oTitle.innerText = `個位積木 (${o} 個 1)`;
+                oContainer.innerHTML = '';
+                if (o === 0) {
+                    oContainer.innerHTML = `<div class="text-xs text-slate-400 py-1 font-semibold">(無個位積木)</div>`;
+                } else {
+                    for (let i = 0; i < o; i++) {
+                        const tile = document.createElement('div');
+                        tile.className = "w-7 h-7 bg-pink-600 text-white font-black rounded-lg flex items-center justify-center text-xs shadow-md border border-pink-400";
+                        tile.innerText = "1";
+                        oContainer.appendChild(tile);
+                    }
+                }
+            }
+
+            // Result Content
+            const resContent = document.getElementById('breakdown-result-content');
+            if (resContent) {
+                if (!executed) {
+                    resContent.innerText = `準備拆解 ${num}... 點擊左側按鈕開始「每 3 個一組」進行拆解！`;
+                } else {
+                    const hRem = h * 1;
+                    const tRem = t * 1;
+                    const oRem = o * 1;
+                    const totalRem = hRem + tRem + oRem;
+                    const isThreeMultiple = totalRem % 3 === 0;
+
+                    const digitsParts = [];
+                    if (h > 0) digitsParts.push(h);
+                    if (t > 0 || h > 0) digitsParts.push(t);
+                    digitsParts.push(o);
+
+                    resContent.innerHTML = `
+                        <div class="space-y-2 py-1 text-center">
+                            <div class="text-xs md:text-sm text-slate-500 font-semibold">
+                                最後剩下的積木總和 (各個數字相加)
+                            </div>
+                            <div class="text-2xl md:text-3xl font-black text-amber-500 tracking-wider">
+                                ${digitsParts.join(' + ')} = ${totalRem}
+                            </div>
+                            <div class="text-sm md:text-base font-extrabold ${isThreeMultiple ? 'text-emerald-600' : 'text-rose-600'}">
+                                ${isThreeMultiple 
+                                    ? `各數字和 ${totalRem} &divide; 3 = ${totalRem / 3} (能整除)！因此 ${num} 有因數 3，是合數！`
+                                    : `各數字和 ${totalRem} 無法被 3 整除！因此 ${num} 沒有因數 3。`
+                                }
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function loadCustomBreakdownNum() {
+            const inputEl = document.getElementById('breakdown-num-input');
+            let val = parseInt(inputEl?.value || 261);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > 999) val = 999;
+            renderBreakdownStage(val, false);
+        }
+
+        function loadBreakdownPreset(num) {
+            renderBreakdownStage(num, false);
+        }
+
+        function startBreakdownCalculation() {
+            const inputEl = document.getElementById('breakdown-num-input');
+            let val = parseInt(inputEl?.value || activeBreakdownNum);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > 999) val = 999;
+            renderBreakdownStage(val, true);
+        }
+
+        // Render Quiz Cards (Tab 5)
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            quizData.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm space-y-4";
+
+                let optionsHTML = '';
+                q.options.forEach((opt, optIndex) => {
+                    const isSelected = userAnswers[qIndex] === optIndex;
+                    let btnStyle = "border-slate-300 bg-white text-slate-700 hover:bg-indigo-50 hover:border-indigo-300";
+                    let iconStyle = "fa-regular fa-circle text-slate-300";
+
+                    if (isSelected) {
+                        btnStyle = "border-indigo-500 bg-indigo-50 text-indigo-900 font-black ring-2 ring-indigo-300";
+                        iconStyle = "fa-solid fa-circle-dot text-indigo-600";
+                    }
+
+                    optionsHTML += `
+                        <button onclick="selectOption(${qIndex}, ${optIndex})" id="quiz-btn-${qIndex}-${optIndex}" class="w-full text-left p-3.5 rounded-xl border font-bold transition-all text-xs md:text-sm flex items-center justify-between ${btnStyle}">
+                            <span>${String.fromCharCode(65 + optIndex)}. ${opt}</span>
+                            <i id="quiz-icon-${qIndex}-${optIndex}" class="${iconStyle}"></i>
+                        </button>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="px-2.5 py-1 bg-indigo-600 text-white rounded-lg font-black text-xs">第 ${q.id} 題</span>
+                        <h3 class="text-sm md:text-base font-extrabold text-slate-800 leading-snug">${q.question}</h3>
+                    </div>
+                    <div class="space-y-2.5">
+                        ${optionsHTML}
+                    </div>
+                    <div id="quiz-feedback-${qIndex}" class="hidden p-3.5 rounded-xl text-xs md:text-sm font-semibold leading-relaxed"></div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Select option before submitting
+        function selectOption(qIndex, optIndex) {
+            if (quizSubmitted) return; // Locked after submitting until reset
+
+            userAnswers[qIndex] = optIndex;
+            renderQuiz();
+        }
+
+        // Submit Quiz
+        function submitQuiz() {
+            quizSubmitted = true;
+            let totalScore = 0;
+
+            quizData.forEach((q, qIndex) => {
+                const selectedOpt = userAnswers[qIndex];
+                const feedback = document.getElementById(`quiz-feedback-${qIndex}`);
+
+                if (selectedOpt === undefined || selectedOpt === null) {
+                    // Unanswered question
+                    if (feedback) {
+                        feedback.classList.remove('hidden');
+                        feedback.className = "p-3.5 rounded-xl text-xs md:text-sm font-bold leading-relaxed bg-amber-100 text-amber-900 border border-amber-300";
+                        feedback.innerHTML = `⚠️ 未作答。`;
+                    }
+                } else {
+                    const isCorrect = selectedOpt === q.answer;
+                    if (isCorrect) {
+                        totalScore += 20; // 5 questions = 100 points
+                    }
+
+                    // Style options
+                    q.options.forEach((_, optIndex) => {
+                        const btn = document.getElementById(`quiz-btn-${qIndex}-${optIndex}`);
+                        const icon = document.getElementById(`quiz-icon-${qIndex}-${optIndex}`);
+
+                        if (btn && icon) {
+                            if (optIndex === q.answer) {
+                                btn.className = "w-full text-left p-3.5 rounded-xl border border-emerald-400 bg-emerald-50 font-black text-emerald-900 text-xs md:text-sm flex items-center justify-between";
+                                icon.className = "fa-solid fa-circle-check text-emerald-600 text-base";
+                            } else if (optIndex === selectedOpt && !isCorrect) {
+                                btn.className = "w-full text-left p-3.5 rounded-xl border border-rose-400 bg-rose-50 font-bold text-rose-900 text-xs md:text-sm flex items-center justify-between";
+                                icon.className = "fa-solid fa-circle-xmark text-rose-500 text-base";
+                            } else {
+                                btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-100/60 font-semibold text-slate-400 text-xs md:text-sm opacity-60 flex items-center justify-between cursor-not-allowed";
+                            }
+                        }
+                    });
+
+                    // Feedback box
+                    if (feedback) {
+                        feedback.classList.remove('hidden');
+                        if (isCorrect) {
+                            feedback.className = "p-3.5 rounded-xl text-xs md:text-sm font-semibold leading-relaxed bg-emerald-100 text-emerald-950 border border-emerald-300";
+                            feedback.innerHTML = `<strong>🎉 回答正確！</strong><br>${q.explanation}`;
+                        } else {
+                            feedback.className = "p-3.5 rounded-xl text-xs md:text-sm font-semibold leading-relaxed bg-rose-100 text-rose-950 border border-rose-300";
+                            feedback.innerHTML = `<strong>❌ 回答錯誤！</strong><br>${q.explanation}`;
+                        }
+                    }
+                }
+            });
+
+            // Update score text
+            const scoreEl = document.getElementById('quiz-score');
+            if (scoreEl) {
+                scoreEl.innerText = `${totalScore} / 100`;
+            }
+        }
+
+        // Reset Quiz
+        function resetQuiz() {
+            quizSubmitted = false;
+            userAnswers = {};
+
+            const scoreEl = document.getElementById('quiz-score');
+            if (scoreEl) {
+                scoreEl.innerText = `0 / 100`;
+            }
+
+            renderQuiz();
+        }
+
+        // Global Onload Initializer
+        window.onload = function() {
+            updateFactorAnalysis(12);
+            renderGrid1to50();
+            renderSieveGrid();
+            inspectNumber(1);
+            resetFeatureFilters();
+            renderBreakdownStage(261, false);
+            renderQuiz();
+        };
+    </script>
+</body>
+</html>

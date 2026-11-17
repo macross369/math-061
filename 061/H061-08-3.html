@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學 8-3 選擇與組合 - 奇幻探索學習館</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 圖標 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC (思源黑體) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* 新海誠動漫美學：暮光雲海與天青漸層 */
+    :root {
+      --shinkai-sky-1: #1a2a6c;
+      --shinkai-sky-2: #275994;
+      --shinkai-pink: #f49ac2;
+      --shinkai-sunset: #ff9966;
+      --shinkai-star: #ffffff;
+    }
+    body, button, input, select, textarea {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    body {
+      background: linear-gradient(160deg, #152238 0%, #1e3c72 30%, #2a5298 60%, #e0c3fc 95%, #8ec5fc 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+    /* 確保 FontAwesome 圖示字體不被覆蓋 */
+    .fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+    }
+    /* 玻璃擬態質感卡片 */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 16px 36px -8px rgba(26, 42, 108, 0.22);
+    }
+    .glass-panel-subtle {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    /* 標籤頁活動狀態 */
+    .tab-btn.active {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 18px -4px rgba(59, 130, 246, 0.5);
+      border-color: transparent;
+      transform: translateY(-2px);
+    }
+    /* 飄浮光點動畫 */
+    @keyframes floatParticle {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+      50% { transform: translateY(-12px) rotate(8deg); opacity: 1; }
+    }
+    .animate-float {
+      animation: floatParticle 4.5s ease-in-out infinite;
+    }
+    /* 課本直式分數樣式規範 */
+    .vertical-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1.1;
+      padding: 0 4px;
+      font-weight: 700;
+    }
+    .vertical-fraction .numerator {
+      border-bottom: 2px solid currentColor;
+      padding-bottom: 1px;
+    }
+    .vertical-fraction .denominator {
+      padding-top: 1px;
+    }
+    /* 數字卡片質感 */
+    .num-card {
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .num-card:hover {
+      transform: translateY(-4px) scale(1.05);
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 md:p-8">
+
+  <!-- 頂部頁首導覽 -->
+  <header class="max-w-6xl mx-auto mb-6 text-center text-white">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-amber-200 text-sm font-semibold tracking-wide mb-2 shadow-inner border border-white/30 animate-pulse">
+      <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 8-3 互動學習網頁
+    </div>
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight drop-shadow-md text-white">
+      選擇與組合 <span class="text-amber-300 font-extrabold text-2xl sm:text-3xl">・ 加法與乘法原理</span>
+    </h1>
+    <p class="text-blue-100 text-sm sm:text-base mt-2 max-w-2xl mx-auto opacity-95">
+      「選A就不能選B用加法；選完A還要接著配B用乘法！」動手拉拉看、點點看，發現數量的規律！
+    </p>
+
+    <!-- 主標籤頁切換區 -->
+    <nav class="flex flex-wrap justify-center gap-2 sm:gap-3 mt-6">
+      <button onclick="switchTab('tab-add')" id="btn-tab-add" class="tab-btn active px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base border border-white/40 bg-white/30 text-white backdrop-blur transition-all flex items-center gap-2">
+        <i class="fa-solid fa-utensils text-amber-300"></i> 加法原理（分類互斥）
+      </button>
+      <button onclick="switchTab('tab-mult')" id="btn-tab-mult" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base border border-white/40 bg-white/30 text-white backdrop-blur transition-all flex items-center gap-2">
+        <i class="fa-solid fa-shirt text-cyan-300"></i> 乘法原理（穿搭與套餐）
+      </button>
+      <button onclick="switchTab('tab-routes')" id="btn-tab-routes" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base border border-white/40 bg-white/30 text-white backdrop-blur transition-all flex items-center gap-2">
+        <i class="fa-solid fa-route text-emerald-300"></i> 路線探究（步道與橋）
+      </button>
+      <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="tab-btn px-4 sm:px-6 py-2.5 rounded-2xl font-bold text-sm sm:text-base border border-white/40 bg-white/30 text-white backdrop-blur transition-all flex items-center gap-2">
+        <i class="fa-solid fa-star-half-stroke text-yellow-300"></i> 隨堂測驗
+      </button>
+    </nav>
+  </header>
+
+  <!-- 主要內容容器 -->
+  <main class="max-w-6xl mx-auto">
+
+    <!-- ==================== TAB 1: 加法原理 ==================== -->
+    <section id="tab-add" class="tab-content space-y-6">
+      <!-- 觀念引導框 -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border-l-8 border-amber-400">
+        <div class="flex items-start gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shrink-0 shadow-sm">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800">教學核心：選A就不能選B，用「加法」！</h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-1">
+              當我們把事情分類後，<strong>不同選擇之間會「互相干擾或互斥」</strong>（例如肚子只有一個，只能點一份主餐），這時各類的數量加起來，就是所有可選擇的總數量。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 互動子情境 1-1：餐廳點餐盤 -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-black rounded-full uppercase tracking-wider">情境 1</span>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-1">皮皮點午餐：只能選 1 個餐，有幾種選擇？</h3>
+          </div>
+          <div class="text-right bg-blue-50/80 px-4 py-2 rounded-2xl border border-blue-100">
+            <span class="text-xs text-slate-500 font-bold block">總計可選方法數</span>
+            <span id="food-total-badge" class="text-2xl sm:text-3xl font-black text-rose-500">24 種</span>
+          </div>
+        </div>
+
+        <!-- 頂部滑桿控制區 (圖2 上半部) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+          <!-- 義大利麵滑桿 -->
+          <div class="bg-white/95 rounded-2xl p-5 shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2 font-bold text-amber-800 text-lg">
+                <i class="fa-solid fa-bowl-rice text-amber-600"></i>
+                <span>義大利麵類</span>
+              </div>
+              <span id="slider-pasta-badge" class="font-extrabold text-amber-600 text-xl font-mono">8 種</span>
+            </div>
+            <input type="range" id="range-pasta" min="1" max="8" value="8" class="w-full h-2.5 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="updateFoodSliders()">
+            <p class="text-xs text-slate-400 mt-3 truncate">例如：海鮮、奶油、蘑菇、臘腸、蛤蜊...</p>
+          </div>
+
+          <!-- 燉飯滑桿 -->
+          <div class="bg-white/95 rounded-2xl p-5 shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2 font-bold text-sky-800 text-lg">
+                <i class="fa-solid fa-cloud text-sky-600"></i>
+                <span>燉飯類</span>
+              </div>
+              <span id="slider-risotto-badge" class="font-extrabold text-sky-600 text-xl font-mono">8 種</span>
+            </div>
+            <input type="range" id="range-risotto" min="1" max="8" value="8" class="w-full h-2.5 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="updateFoodSliders()">
+            <p class="text-xs text-slate-400 mt-3 truncate">例如：海鮮、臘腸、蘑菇、雞肉、南瓜、墨魚...</p>
+          </div>
+
+          <!-- 披薩滑桿 -->
+          <div class="bg-white/95 rounded-2xl p-5 shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2 font-bold text-teal-800 text-lg">
+                <i class="fa-solid fa-pizza-slice text-teal-600"></i>
+                <span>披薩類</span>
+              </div>
+              <span id="slider-pizza-badge" class="font-extrabold text-teal-600 text-xl font-mono">8 種</span>
+            </div>
+            <input type="range" id="range-pizza" min="1" max="8" value="8" class="w-full h-2.5 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="updateFoodSliders()">
+            <p class="text-xs text-slate-400 mt-3 truncate">例如：海鮮披薩、總匯披薩、海陸披薩...</p>
+          </div>
+        </div>
+
+        <!-- 中間菜單展示卡 (圖2 中間膠囊標籤區) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-6">
+          <!-- 義大利麵菜單清單 -->
+          <div class="bg-amber-50/70 rounded-2xl p-5 border border-amber-200/80 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-bold text-amber-900 text-base">義大利麵菜單</span>
+                <span id="tag-pasta-count" class="bg-amber-200 text-amber-900 text-xs px-2.5 py-0.5 rounded-full font-bold">8 款</span>
+              </div>
+              <div id="capsule-pasta-list" class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                <!-- 動態注入膠囊標籤 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 燉飯菜單清單 -->
+          <div class="bg-sky-50/70 rounded-2xl p-5 border border-sky-200/80 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-bold text-sky-900 text-base">燉飯菜單</span>
+                <span id="tag-risotto-count" class="bg-sky-200 text-sky-900 text-xs px-2.5 py-0.5 rounded-full font-bold">8 款</span>
+              </div>
+              <div id="capsule-risotto-list" class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                <!-- 動態注入膠囊標籤 -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 披薩菜單清單 -->
+          <div class="bg-teal-50/70 rounded-2xl p-5 border border-teal-200/80 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-bold text-teal-900 text-base">披薩菜單</span>
+                <span id="tag-pizza-count" class="bg-teal-200 text-teal-900 text-xs px-2.5 py-0.5 rounded-full font-bold">8 款</span>
+              </div>
+              <div id="capsule-pizza-list" class="grid grid-cols-2 gap-2 text-xs sm:text-sm">
+                <!-- 動態注入膠囊標籤 -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部加法算式展示板 (圖2 底部大算式卡) -->
+        <div class="mt-6 p-6 rounded-2xl bg-white/95 border border-blue-200 shadow-sm text-center">
+          <p class="text-slate-700 text-sm sm:text-base font-bold mb-4">
+            只點 1 個餐，不同類別彼此互斥不能同時選，因此使用「加法算式」：
+          </p>
+          <div class="flex items-center justify-center flex-wrap gap-3 font-mono font-black">
+            <!-- 義大利麵數 -->
+            <span id="formula-pasta" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-50 text-amber-600 text-2xl sm:text-3xl flex items-center justify-center border border-amber-200 shadow-inner">
+              8
+            </span>
+            <span class="text-2xl sm:text-3xl text-slate-500 font-bold">+</span>
+            <!-- 燉飯數 -->
+            <span id="formula-risotto" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-sky-50 text-sky-600 text-2xl sm:text-3xl flex items-center justify-center border border-sky-200 shadow-inner">
+              8
+            </span>
+            <span class="text-2xl sm:text-3xl text-slate-500 font-bold">+</span>
+            <!-- 披薩數 -->
+            <span id="formula-pizza" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-teal-50 text-teal-600 text-2xl sm:text-3xl flex items-center justify-center border border-teal-200 shadow-inner">
+              8
+            </span>
+            <span class="text-2xl sm:text-3xl text-slate-500 font-bold">=</span>
+            <!-- 總計 -->
+            <span id="formula-total" class="px-5 h-14 sm:h-16 rounded-2xl bg-rose-50 text-rose-500 text-3xl sm:text-4xl flex items-center justify-center border border-rose-200 shadow-inner tracking-wider">
+              24
+            </span>
+            <span class="text-slate-800 text-lg sm:text-xl font-bold ml-1 font-sans">種選擇！</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 互動子情境 1-2：數字卡拼二位偶數/奇數 -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl">
+        <div class="pb-4 border-b border-slate-200">
+          <span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-black rounded-full uppercase tracking-wider">情境 2</span>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-1">數字卡排二位數：分類思維探究</h3>
+          <p class="text-slate-600 text-sm mt-1">
+            從卡片 <span class="font-bold px-2 py-0.5 bg-amber-100 rounded text-amber-800">0</span>、<span class="font-bold px-2 py-0.5 bg-amber-100 rounded text-amber-800">3</span>、<span class="font-bold px-2 py-0.5 bg-amber-100 rounded text-amber-800">5</span>、<span class="font-bold px-2 py-0.5 bg-amber-100 rounded text-amber-800">8</span> 中挑選 2 張，數字不能重複。要排成<strong>「偶數」</strong>，有幾種方法？
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <!-- 思考步驟互動器 -->
+          <div class="space-y-4">
+            <h4 class="font-bold text-slate-700 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+              分類核心：由「個位數」決定是偶數還是奇數！
+            </h4>
+            <div class="flex gap-3">
+              <button onclick="toggleCardMode('even')" id="btn-mode-even" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm transition">
+                排偶數 (個位數為 0 或 8)
+              </button>
+              <button onclick="toggleCardMode('odd')" id="btn-mode-odd" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-slate-200 text-slate-600 hover:bg-slate-50 transition">
+                排奇數 (個位數為 3 或 5)
+              </button>
+            </div>
+
+            <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs sm:text-sm text-amber-900 leading-relaxed">
+              ⚠️ <strong>注意陷阱：</strong>二位數的十位數<strong>不能為 0</strong>！當個位數是 0 或其它數字時，十位數能選的卡片數量不同喔！
+            </div>
+          </div>
+
+          <!-- 視覺化分類卡片樹 -->
+          <div class="bg-white/80 p-5 rounded-2xl border border-slate-200 shadow-sm" id="digit-tree-visual">
+            <!-- 渲染即時分類展開 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 乘法原理 ==================== -->
+    <section id="tab-mult" class="tab-content hidden space-y-6">
+      <!-- 觀念引導框 -->
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border-l-8 border-cyan-400">
+        <div class="flex items-start gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-2xl shrink-0 shadow-sm">
+            <i class="fa-solid fa-shapes"></i>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800">教學核心：選了A還要配B，用「乘法」！</h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-1">
+              當我們同時需要多個類別的搭配，<strong>彼此不互相干擾，且每種選擇都能配對另一種選擇時</strong>，總搭配數就是「第一類數量 × 第二類數量」！
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 互動子情境 2-1：美美的試衣間：穿搭連線實驗室 (圖 1 & 圖 2 風格) -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl">
+        <!-- 標題與單件聚焦模式切換按鈕 -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4">
+          <h3 class="text-xl sm:text-2xl font-black text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-pink-500"></i> 美美的試衣間：穿搭連線實驗室
+          </h3>
+          <button id="btn-focus-mode" onclick="toggleFocusMode()" class="px-4 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-600 text-xs sm:text-sm font-bold flex items-center gap-2 hover:bg-blue-100 transition shadow-xs">
+            <i class="fa-regular fa-eye"></i> 單件聚焦觀察模式
+          </button>
+        </div>
+
+        <!-- 雙滑桿控制卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+          <!-- 上衣滑桿卡 -->
+          <div class="bg-pink-50/40 rounded-2xl p-5 border border-pink-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2 font-bold text-pink-700 text-base sm:text-lg">
+                <i class="fa-solid fa-shirt text-pink-500"></i>
+                <span>上衣數量</span>
+              </div>
+              <span id="shirt-badge-num" class="font-black text-pink-600 text-2xl font-mono">4 件</span>
+            </div>
+            <input type="range" id="range-clothes-shirt" min="1" max="4" value="4" class="w-full h-2.5 bg-pink-100 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="onClothesSliderChange()">
+            <div class="flex justify-between text-xs text-slate-400 mt-2 font-mono">
+              <span>1件</span><span>2件</span><span>3件</span><span>4件</span>
+            </div>
+          </div>
+
+          <!-- 褲子滑桿卡 -->
+          <div class="bg-blue-50/40 rounded-2xl p-5 border border-blue-200/80 shadow-xs">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2 font-bold text-blue-800 text-base sm:text-lg">
+                <i class="fa-solid fa-socks text-blue-500"></i>
+                <span>褲子數量</span>
+              </div>
+              <span id="pant-badge-num" class="font-black text-blue-600 text-2xl font-mono">4 件</span>
+            </div>
+            <input type="range" id="range-clothes-pant" min="1" max="5" value="4" class="w-full h-2.5 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="onClothesSliderChange()">
+            <div class="flex justify-between text-xs text-slate-400 mt-2 font-mono">
+              <span>1件</span><span>2件</span><span>3件</span><span>4件</span><span>5件</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 試衣間畫布與連線展示區 -->
+        <div class="mt-6 bg-white/95 rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm relative">
+          <!-- 提示標籤 -->
+          <div class="text-center mb-4">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-sky-100 text-sky-800 text-xs sm:text-sm font-bold shadow-xs">
+              點擊任一件上衣，可單獨觀察該上衣的配對連線！
+            </span>
+          </div>
+
+          <!-- 上衣列表 -->
+          <div id="shirts-row" class="flex justify-around items-center gap-2 sm:gap-4 relative z-10">
+            <!-- 動態注入上衣卡 -->
+          </div>
+
+          <!-- 中間連線 SVG Canvas -->
+          <div class="relative w-full h-32 sm:h-36 my-1">
+            <svg id="clothesSvgLines" class="w-full h-full overflow-visible pointer-events-none"></svg>
+          </div>
+
+          <!-- 褲子列表 -->
+          <div id="pants-row" class="flex justify-around items-center gap-2 sm:gap-4 relative z-10">
+            <!-- 動態注入褲子卡 -->
+          </div>
+        </div>
+
+        <!-- 底部算式與思維解析卡 -->
+        <div class="mt-6 p-5 sm:p-6 rounded-2xl bg-white/95 border border-blue-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-5">
+          <div class="space-y-1.5 text-xs sm:text-sm text-slate-700">
+            <div>
+              <strong class="text-slate-900 font-bold">多多這樣想：</strong>
+              1件上衣有 <span id="explain-pants-1" class="text-blue-600 font-black">4</span> 種褲子可配，
+              <span id="explain-shirts-1" class="text-pink-600 font-black">4</span> 件上衣有幾種搭配？
+            </div>
+            <div>
+              <strong class="text-slate-900 font-bold">美美這樣想：</strong>
+              1件褲子有 <span id="explain-shirts-2" class="text-pink-600 font-black">4</span> 種上衣可配，
+              <span id="explain-pants-2" class="text-blue-600 font-black">4</span> 件褲子有幾種搭配？
+            </div>
+          </div>
+
+          <!-- 大算式框 -->
+          <div class="px-6 py-3 rounded-2xl border-2 border-blue-200 bg-blue-50/30 flex items-center gap-2 shrink-0 shadow-inner">
+            <span id="calc-shirts" class="text-2xl sm:text-3xl font-black text-pink-600 font-mono">4</span>
+            <span class="text-xl sm:text-2xl text-slate-400 font-bold">×</span>
+            <span id="calc-pants" class="text-2xl sm:text-3xl font-black text-blue-600 font-mono">4</span>
+            <span class="text-xl sm:text-2xl text-slate-400 font-bold">=</span>
+            <span id="calc-total" class="text-3xl sm:text-4xl font-black text-rose-500 font-mono">16</span>
+            <span class="text-slate-700 text-sm sm:text-base font-bold ml-1">種組合</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 互動子情境 2-2：速食店三階段超值套餐 -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-200">
+          <div>
+            <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-black rounded-full uppercase tracking-wider">情境 2</span>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-1">皮皮點速食套餐：主餐 × 副餐 × 飲料</h3>
+            <p class="text-slate-600 text-sm mt-1">選一種主餐、一種副餐和一種飲料，共有幾種搭配組合？</p>
+          </div>
+          <div class="bg-amber-50 px-4 py-2 rounded-2xl border border-amber-200 text-right">
+            <span class="text-xs text-slate-500 font-bold block">總組合數</span>
+            <span id="combo-total-badge" class="text-2xl sm:text-3xl font-black text-amber-600">24 種</span>
+          </div>
+        </div>
+
+        <!-- 三步驟選單 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <!-- 主餐 -->
+          <div class="bg-white/95 p-4 rounded-2xl border-2 border-amber-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-slate-800"><i class="fa-solid fa-burger text-amber-500 mr-1"></i> 第一步：主餐 (<span class="text-amber-600 font-black">3</span>種)</span>
+            </div>
+            <div class="space-y-2 text-sm" id="combo-main">
+              <!-- 點擊標記預覽 -->
+            </div>
+          </div>
+          <!-- 副餐 -->
+          <div class="bg-white/95 p-4 rounded-2xl border-2 border-rose-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-slate-800"><i class="fa-solid fa-cookie-bite text-rose-500 mr-1"></i> 第二步：副餐 (<span class="text-rose-600 font-black">4</span>種)</span>
+            </div>
+            <div class="space-y-2 text-sm" id="combo-side">
+              <!-- 副餐 -->
+            </div>
+          </div>
+          <!-- 飲料 -->
+          <div class="bg-white/95 p-4 rounded-2xl border-2 border-emerald-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-bold text-slate-800"><i class="fa-solid fa-glass-water text-emerald-500 mr-1"></i> 第三步：飲料 (<span class="text-emerald-600 font-black">2</span>種)</span>
+            </div>
+            <div class="space-y-2 text-sm" id="combo-drink">
+              <!-- 飲料 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 組合結果與算式卡 -->
+        <div class="mt-6 p-5 rounded-2xl bg-white border-2 border-amber-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="text-xs font-bold text-slate-400 uppercase">當前選擇我的專屬套餐</div>
+            <div id="combo-current-picked" class="text-base font-bold text-slate-700 mt-0.5">
+              <!-- 動態注入色系名稱 -->
+            </div>
+          </div>
+          <div class="bg-amber-50/90 font-mono text-xl sm:text-2xl font-black px-6 py-2.5 rounded-2xl border-2 border-amber-200 flex items-center gap-2">
+            <span class="text-amber-600">3</span>
+            <span class="text-slate-500 font-sans">×</span>
+            <span class="text-rose-600">4</span>
+            <span class="text-slate-500 font-sans">×</span>
+            <span class="text-emerald-600">2</span>
+            <span class="text-slate-500 font-sans">=</span>
+            <span class="text-slate-800">24</span>
+            <span class="text-slate-700 font-sans text-base ml-1">種</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 路線探究 ==================== -->
+    <section id="tab-routes" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-5 sm:p-6 rounded-3xl border-l-8 border-emerald-400">
+        <div class="flex items-start gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shrink-0 shadow-sm">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-800">教學核心：分段抵達的路線組合</h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-1">
+              當我們從起點經過中繼站（如橋樑）前往終點時，<strong>前段每一條路都可以搭配後段的每一條路</strong>，所以是「前段路線數 × 後段路線數」！
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 互動子情境 3-1：妮妮家過橋到學校 -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-200">
+          <div>
+            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-black rounded-full uppercase tracking-wider">路線探究</span>
+            <h3 class="text-xl sm:text-2xl font-black text-slate-800 mt-1">妮妮家 ➔ 橋 ➔ 學校：動態小人行走模擬</h3>
+          </div>
+          <div class="bg-emerald-50 px-4 py-2 rounded-2xl border border-emerald-200 text-right">
+            <span class="text-xs text-slate-500 font-bold block">總走法數量</span>
+            <span id="route-total-badge" class="text-2xl sm:text-3xl font-black text-emerald-600">6 種</span>
+          </div>
+        </div>
+
+        <!-- 路線數量調整滑桿 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 my-4 bg-white/60 p-4 rounded-2xl border border-white">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm font-bold text-slate-700">🏠 家到橋有幾條路？</label>
+              <span id="route-a-val" class="font-black text-emerald-600">3 條</span>
+            </div>
+            <input type="range" id="route-a-range" min="1" max="4" value="3" class="w-full h-2 bg-emerald-200 rounded-lg appearance-none cursor-pointer accent-emerald-600" oninput="updateRouteSimulation()">
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm font-bold text-slate-700">🌉 橋到學校有幾條路？</label>
+              <span id="route-b-val" class="font-black text-cyan-600">2 條</span>
+            </div>
+            <input type="range" id="route-b-range" min="1" max="4" value="2" class="w-full h-2 bg-cyan-200 rounded-lg appearance-none cursor-pointer accent-cyan-500" oninput="updateRouteSimulation()">
+          </div>
+        </div>
+
+        <!-- 路線圖 Canvas 與互動按鈕 -->
+        <div class="relative w-full bg-slate-900/10 rounded-3xl p-3 border border-emerald-100 flex flex-col items-center">
+          <canvas id="routeCanvas" class="w-full h-64 sm:h-80 block"></canvas>
+
+          <!-- 播放行進動畫按鈕 -->
+          <div class="flex flex-wrap items-center justify-center gap-3 mt-3">
+            <button onclick="playWalkAnimation()" class="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-sm shadow-md hover:scale-105 active:scale-95 transition flex items-center gap-2">
+              <i class="fa-solid fa-person-walking"></i> 動態出發走走看！
+            </button>
+            <span id="walk-path-desc" class="text-xs sm:text-sm font-bold text-emerald-800 bg-white/80 px-3 py-1.5 rounded-xl border border-emerald-200">
+              當前示範路線：路徑 A1 ➔ 橋 ➔ 路徑 B1
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <span class="inline-block bg-white/80 px-6 py-2 rounded-2xl shadow-sm text-slate-700 font-mono text-lg font-black border border-emerald-200" id="route-math-text">
+            <span class="text-emerald-600">3</span> × <span class="text-cyan-600">2</span> = 6 種走法
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: 歷程性評量 ==================== -->
+    <section id="tab-quiz" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-5 border-b border-slate-200">
+          <div>
+            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-black rounded-full uppercase tracking-wider">即時評量</span>
+            <h3 class="text-2xl sm:text-3xl font-black text-slate-800 mt-1">隨堂測驗</h3>
+            <p class="text-slate-600 text-sm mt-1">請先點選各題答案，完成後點擊下方「提交答案」進行批改與查看解析（滿分 100 分）。</p>
+          </div>
+          <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-3 rounded-2xl shadow-md text-center">
+            <span class="text-xs font-bold block opacity-90">目前得分</span>
+            <span id="quiz-score-badge" class="text-3xl font-black">0 / 100</span>
+          </div>
+        </div>
+
+        <!-- 5 道測驗題容器 -->
+        <div id="quiz-container" class="space-y-6 mt-6">
+          <!-- JS 動態生成題目 -->
+        </div>
+
+        <!-- 提交答案與重新測驗按鈕（大小相同並排置中） -->
+        <div class="flex flex-wrap justify-center items-center gap-4 pt-8">
+          <button onclick="submitQuiz()" id="btn-submit-quiz" class="w-40 py-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold hover:from-indigo-700 hover:to-blue-700 transition shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-40 py-3 rounded-2xl bg-white border-2 border-indigo-500 text-indigo-600 font-bold hover:bg-indigo-50 transition shadow-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-left"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 頁腳 -->
+  <footer class="max-w-6xl mx-auto mt-10 mb-6 text-center text-white/80 text-xs sm:text-sm">
+  </footer>
+
+  <!-- ==================== JAVASCRIPT 邏輯層 ==================== -->
+  <script>
+    /* 1. 標籤頁切換 */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.add('bg-white/30', 'text-white');
+      });
+
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) activeTab.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.classList.remove('bg-white/30', 'text-white');
+      }
+
+      // 重繪特定畫布與連線
+      if (tabId === 'tab-mult') {
+        setTimeout(drawSvgConnections, 100);
+      } else if (tabId === 'tab-routes') {
+        setTimeout(drawRoutes, 100);
+      }
+    }
+
+    /* 2. 單元一：餐廳點餐盤數據與互動 (圖2 滑桿與膠囊菜單風格) */
+    const allMenuData = {
+      pasta: [
+        '海鮮義大利麵', '奶油義大利麵',
+        '蘑菇義大利麵', '臘腸義大利麵',
+        '蛤蜊義大利麵', '青醬燻雞麵',
+        '肉醬千層麵', '鮮蝦干貝麵'
+      ],
+      risotto: [
+        '海鮮燉飯', '臘腸燉飯',
+        '蘑菇燉飯', '雞肉燉飯',
+        '南瓜燉飯', '墨魚燉飯',
+        '松露燉飯', '西班牙燉飯'
+      ],
+      pizza: [
+        '海鮮披薩', '總匯披薩',
+        '海陸披薩', '夏威夷披薩',
+        '瑪格麗特披薩', '美式臘腸披薩',
+        '起司四重奏', 'BBQ燻雞披薩'
+      ]
+    };
+
+    function updateFoodSliders() {
+      const pastaCount = parseInt(document.getElementById('range-pasta').value);
+      const risottoCount = parseInt(document.getElementById('range-risotto').value);
+      const pizzaCount = parseInt(document.getElementById('range-pizza').value);
+
+      // 更新滑桿右上角徽章
+      document.getElementById('slider-pasta-badge').innerText = `${pastaCount} 種`;
+      document.getElementById('slider-risotto-badge').innerText = `${risottoCount} 種`;
+      document.getElementById('slider-pizza-badge').innerText = `${pizzaCount} 種`;
+
+      // 更新菜單卡右上角徽章
+      document.getElementById('tag-pasta-count').innerText = `${pastaCount} 款`;
+      document.getElementById('tag-risotto-count').innerText = `${risottoCount} 款`;
+      document.getElementById('tag-pizza-count').innerText = `${pizzaCount} 款`;
+
+      // 渲染膠囊菜單按鈕
+      renderCapsuleList('capsule-pasta-list', allMenuData.pasta, pastaCount, 'bg-amber-100/90 text-amber-900 border border-amber-200');
+      renderCapsuleList('capsule-risotto-list', allMenuData.risotto, risottoCount, 'bg-sky-100/90 text-sky-900 border border-sky-200');
+      renderCapsuleList('capsule-pizza-list', allMenuData.pizza, pizzaCount, 'bg-teal-100/90 text-teal-900 border border-teal-200');
+
+      // 更新算式與總和
+      const total = pastaCount + risottoCount + pizzaCount;
+      document.getElementById('formula-pasta').innerText = pastaCount;
+      document.getElementById('formula-risotto').innerText = risottoCount;
+      document.getElementById('formula-pizza').innerText = pizzaCount;
+      document.getElementById('formula-total').innerText = total;
+      document.getElementById('food-total-badge').innerText = `${total} 種`;
+    }
+
+    function renderCapsuleList(containerId, items, count, activeStyle) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = items.slice(0, count).map(name => `
+        <div class="px-3 py-2 rounded-xl text-center font-bold shadow-xs truncate ${activeStyle} transition-all duration-200 hover:scale-102">
+          ${name}
+        </div>
+      `).join('');
+    }
+
+    /* 3. 單元一：數字卡二位數排列 (偶數/奇數) */
+    let currentCardMode = 'even'; // 'even' or 'odd'
+
+    function toggleCardMode(mode) {
+      currentCardMode = mode;
+      const btnEven = document.getElementById('btn-mode-even');
+      const btnOdd = document.getElementById('btn-mode-odd');
+
+      if (mode === 'even') {
+        btnEven.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm transition';
+        btnOdd.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-slate-200 text-slate-600 hover:bg-slate-50 transition';
+      } else {
+        btnOdd.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm transition';
+        btnEven.className = 'flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-slate-200 text-slate-600 hover:bg-slate-50 transition';
+      }
+      renderDigitTree();
+    }
+
+    function renderDigitTree() {
+      const container = document.getElementById('digit-tree-visual');
+      if (currentCardMode === 'even') {
+        // 卡片 0, 3, 5, 8 排偶數
+        container.innerHTML = `
+          <h5 class="text-sm font-bold text-slate-700 mb-3 flex items-center justify-between">
+            <span>分類一覽：個位數必須是 0 或 8</span>
+            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-black">加法分類</span>
+          </h5>
+          <div class="space-y-4">
+            <!-- 分類 1: 個位數是 0 -->
+            <div class="p-3 rounded-xl bg-blue-50/70 border border-blue-100">
+              <div class="flex items-center justify-between text-xs font-bold text-blue-900 mb-1.5">
+                <span>類別 ①：個位數是 0 (十位數可選 3, 5, 8)</span>
+                <span class="text-blue-600 font-black">共 3 種</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-blue-200">30</span>
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-blue-200">50</span>
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-blue-200">80</span>
+              </div>
+            </div>
+
+            <!-- 分類 2: 個位數是 8 -->
+            <div class="p-3 rounded-xl bg-purple-50/70 border border-purple-100">
+              <div class="flex items-center justify-between text-xs font-bold text-purple-900 mb-1.5">
+                <span>類別 ②：個位數是 8 (十位數不能為 0，只可選 3, 5)</span>
+                <span class="text-purple-600 font-black">共 2 種</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-purple-200">38</span>
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-purple-200">58</span>
+                <span class="text-xs text-rose-500 font-bold self-center">（08 不是二位數）</span>
+              </div>
+            </div>
+
+            <!-- 結論算式 -->
+            <div class="p-3 rounded-xl bg-indigo-600 text-white flex justify-between items-center">
+              <span class="text-xs font-bold">加法原理算式：</span>
+              <span class="font-mono font-black text-lg">3 + 2 = 5 種</span>
+            </div>
+          </div>
+        `;
+      } else {
+        // 卡片 0, 3, 5, 8 排奇數
+        container.innerHTML = `
+          <h5 class="text-sm font-bold text-slate-700 mb-3 flex items-center justify-between">
+            <span>分類一覽：個位數必須是 3 或 5</span>
+            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-black">加法分類</span>
+          </h5>
+          <div class="space-y-4">
+            <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-100">
+              <div class="flex items-center justify-between text-xs font-bold text-amber-900 mb-1.5">
+                <span>類別 ①：個位數是 3 (十位數不能是 0，可選 5, 8)</span>
+                <span class="text-amber-600 font-black">共 2 種</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-amber-200">53</span>
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-amber-200">83</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-rose-50/70 border border-rose-100">
+              <div class="flex items-center justify-between text-xs font-bold text-rose-900 mb-1.5">
+                <span>類別 ②：個位數是 5 (十位數不能是 0，可選 3, 8)</span>
+                <span class="text-rose-600 font-black">共 2 種</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-rose-200">35</span>
+                <span class="num-card px-3 py-1 bg-white font-mono font-bold text-slate-800 rounded-lg shadow-sm border border-rose-200">85</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-indigo-600 text-white flex justify-between items-center">
+              <span class="text-xs font-bold">加法原理算式：</span>
+              <span class="font-mono font-black text-lg">2 + 2 = 4 種</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /* 4. 單元二：美美的試衣間 (穿搭連線實驗室) 數據與互動 */
+    const shirtData = [
+      {
+        id: 0,
+        name: '星星紫T',
+        bg: 'bg-[#7c3aed]',
+        color: '#8b5cf6',
+        svg: `<svg class="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" viewBox="0 0 24 24"><path d="M12 2l4 2 4-1.5 2 4-2 3v12.5H4V9.5L2 6.5l2-4 4 1.5 4-2z"/><polygon points="12,7 13.5,10.2 17,10.7 14.5,13.1 15.1,16.6 12,14.9 8.9,16.6 9.5,13.1 7,10.7 10.5,10.2" fill="#facc15"/></svg>`
+      },
+      {
+        id: 1,
+        name: '甜心粉T',
+        bg: 'bg-[#ec4899]',
+        color: '#ec4899',
+        svg: `<svg class="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" viewBox="0 0 24 24"><path d="M12 2l4 2 4-1.5 2 4-2 3v12.5H4V9.5L2 6.5l2-4 4 1.5 4-2z"/></svg>`
+      },
+      {
+        id: 2,
+        name: '薄荷綠T',
+        bg: 'bg-[#059669]',
+        color: '#10b981',
+        svg: `<svg class="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" viewBox="0 0 24 24"><path d="M12 2l4 2 4-1.5 2 4-2 3v12.5H4V9.5L2 6.5l2-4 4 1.5 4-2z"/></svg>`
+      },
+      {
+        id: 3,
+        name: '陽光橘T',
+        bg: 'bg-[#f59e0b]',
+        color: '#f59e0b',
+        svg: `<svg class="w-8 h-8 sm:w-10 sm:h-10 text-white fill-current" viewBox="0 0 24 24"><path d="M12 2l4 2 4-1.5 2 4-2 3v12.5H4V9.5L2 6.5l2-4 4 1.5 4-2z"/></svg>`
+      }
+    ];
+
+    const pantData = [
+      {
+        id: 0,
+        name: '牛仔長褲',
+        bg: 'bg-[#2563eb]',
+        color: '#2563eb',
+        svg: `<svg class="w-7 h-7 sm:w-9 sm:h-9 text-white fill-current" viewBox="0 0 24 24"><path d="M6 2h12v4l-1 16h-4l-1-10-1 10H7L6 6V2z"/><path d="M9 7h6v2H9z" fill="#93c5fd"/></svg>`
+      },
+      {
+        id: 1,
+        name: '桃紅短褲',
+        bg: 'bg-[#db2777]',
+        color: '#db2777',
+        svg: `<svg class="w-7 h-7 sm:w-9 sm:h-9 text-white fill-current" viewBox="0 0 24 24"><path d="M6 3h12v4l-1 11h-4l-1-7-1 7H7L6 7V3z"/></svg>`
+      },
+      {
+        id: 2,
+        name: '條紋長褲',
+        bg: 'bg-[#dc2626]',
+        color: '#dc2626',
+        svg: `<svg class="w-7 h-7 sm:w-9 sm:h-9 text-white fill-current" viewBox="0 0 24 24"><path d="M6 2h12v4l-1 16h-4l-1-10-1 10H7L6 6V2z"/><line x1="8" y1="12" x2="16" y2="12" stroke="#ffffff" stroke-width="2"/><line x1="8" y1="15" x2="16" y2="15" stroke="#ffffff" stroke-width="2"/></svg>`
+      },
+      {
+        id: 3,
+        name: '翠綠短褲',
+        bg: 'bg-[#047857]',
+        color: '#047857',
+        svg: `<svg class="w-7 h-7 sm:w-9 sm:h-9 text-white fill-current" viewBox="0 0 24 24"><path d="M6 3h12v4l-1 11h-4l-1-7-1 7H7L6 7V3z"/></svg>`
+      },
+      {
+        id: 4,
+        name: '卡其長褲',
+        bg: 'bg-[#d97706]',
+        color: '#d97706',
+        svg: `<svg class="w-7 h-7 sm:w-9 sm:h-9 text-white fill-current" viewBox="0 0 24 24"><path d="M6 2h12v4l-1 16h-4l-1-10-1 10H7L6 6V2z"/></svg>`
+      }
+    ];
+
+    let selectedFocusShirt = null; // null: 顯示全部; 0~3: 聚焦特定上衣
+    let isFocusModeEnabled = false;
+
+    function toggleFocusMode() {
+      isFocusModeEnabled = !isFocusModeEnabled;
+      const btn = document.getElementById('btn-focus-mode');
+      if (isFocusModeEnabled) {
+        btn.className = 'px-4 py-2 rounded-xl border border-blue-600 bg-blue-600 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm transition';
+        if (selectedFocusShirt === null) selectedFocusShirt = 0;
+      } else {
+        btn.className = 'px-4 py-2 rounded-xl border border-blue-400 bg-blue-50 text-blue-600 text-xs sm:text-sm font-bold flex items-center gap-2 hover:bg-blue-100 transition shadow-xs';
+        selectedFocusShirt = null;
+      }
+      renderClothesStage();
+    }
+
+    function selectShirtCard(idx) {
+      if (selectedFocusShirt === idx && isFocusModeEnabled) {
+        selectedFocusShirt = null;
+      } else {
+        selectedFocusShirt = idx;
+        if (!isFocusModeEnabled) {
+          isFocusModeEnabled = true;
+          document.getElementById('btn-focus-mode').className = 'px-4 py-2 rounded-xl border border-blue-600 bg-blue-600 text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm transition';
+        }
+      }
+      renderClothesStage();
+    }
+
+    function onClothesSliderChange() {
+      renderClothesStage();
+    }
+
+    function renderClothesStage() {
+      const shirtCount = parseInt(document.getElementById('range-clothes-shirt').value);
+      const pantCount = parseInt(document.getElementById('range-clothes-pant').value);
+
+      // 更新徽章數字
+      document.getElementById('shirt-badge-num').innerText = `${shirtCount} 件`;
+      document.getElementById('pant-badge-num').innerText = `${pantCount} 件`;
+
+      // 檢查聚焦上衣索引是否超界
+      if (selectedFocusShirt !== null && selectedFocusShirt >= shirtCount) {
+        selectedFocusShirt = shirtCount - 1;
+      }
+
+      // 渲染上衣卡
+      const shirtsRow = document.getElementById('shirts-row');
+      shirtsRow.innerHTML = shirtData.slice(0, shirtCount).map((s, idx) => {
+        const isDimmed = (selectedFocusShirt !== null && selectedFocusShirt !== idx);
+        const isFocused = (selectedFocusShirt === idx);
+        return `
+          <div onclick="selectShirtCard(${idx})" class="flex flex-col items-center cursor-pointer transition-all duration-200 ${isDimmed ? 'opacity-35 scale-90' : 'opacity-100 scale-100'}" id="shirt-node-${idx}">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl ${s.bg} flex items-center justify-center shadow-md transition-all hover:scale-105 ${isFocused ? 'ring-4 ring-offset-2 ring-indigo-500 scale-105' : ''}">
+              ${s.svg}
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-slate-700 mt-2 tracking-tight">${s.name}</span>
+          </div>
+        `;
+      }).join('');
+
+      // 渲染褲子卡
+      const pantsRow = document.getElementById('pants-row');
+      pantsRow.innerHTML = pantData.slice(0, pantCount).map((p, idx) => {
+        return `
+          <div class="flex flex-col items-center" id="pant-node-${idx}">
+            <div class="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl ${p.bg} flex items-center justify-center shadow-md">
+              ${p.svg}
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-slate-700 mt-2 tracking-tight">${p.name}</span>
+          </div>
+        `;
+      }).join('');
+
+      // 更新解析文字與算式
+      const total = shirtCount * pantCount;
+      document.getElementById('explain-pants-1').innerText = pantCount;
+      document.getElementById('explain-shirts-1').innerText = shirtCount;
+      document.getElementById('explain-shirts-2').innerText = shirtCount;
+      document.getElementById('explain-pants-2').innerText = pantCount;
+
+      document.getElementById('calc-shirts').innerText = shirtCount;
+      document.getElementById('calc-pants').innerText = pantCount;
+      document.getElementById('calc-total').innerText = total;
+
+      // 重新繪製 SVG 彩色虛線
+      setTimeout(drawSvgConnections, 20);
+    }
+
+    function drawSvgConnections() {
+      const svg = document.getElementById('clothesSvgLines');
+      if (!svg) return;
+
+      const shirtCount = parseInt(document.getElementById('range-clothes-shirt').value);
+      const pantCount = parseInt(document.getElementById('range-clothes-pant').value);
+      const stageRect = svg.getBoundingClientRect();
+
+      let linesHtml = '';
+
+      for (let s = 0; s < shirtCount; s++) {
+        // 若啟用聚焦，非選定上衣直接不繪製或半透明
+        if (selectedFocusShirt !== null && selectedFocusShirt !== s) continue;
+
+        const sEl = document.getElementById(`shirt-node-${s}`);
+        if (!sEl) continue;
+        const sRect = sEl.getBoundingClientRect();
+        // 上衣卡底部中心相對 SVG 的坐標
+        const x1 = sRect.left + sRect.width / 2 - stageRect.left;
+        const y1 = 0;
+
+        for (let p = 0; p < pantCount; p++) {
+          const pEl = document.getElementById(`pant-node-${p}`);
+          if (!pEl) continue;
+          const pRect = pEl.getBoundingClientRect();
+          // 褲子卡頂部中心相對 SVG 的坐標
+          const x2 = pRect.left + pRect.width / 2 - stageRect.left;
+          const y2 = stageRect.height;
+
+          // 繪製直觀清晰的直線虛線
+          const strokeColor = shirtData[s].color;
+          const strokeWidth = (selectedFocusShirt === s) ? 2.5 : 2;
+          const strokeDash = '6, 4';
+
+          linesHtml += `
+            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+                  stroke="${strokeColor}"
+                  stroke-width="${strokeWidth}"
+                  stroke-dasharray="${strokeDash}"
+                  stroke-linecap="round"
+                  opacity="0.85" />
+          `;
+        }
+      }
+
+      svg.innerHTML = linesHtml;
+    }
+
+    /* 5. 單元二：速食套餐三步驟 */
+    const comboOptions = {
+      mains: ['豬肉堡', '牛肉堡', '鱈魚堡'],
+      sides: ['薯條', '蛋塔', '沙拉', '熱狗'],
+      drinks: ['汽水', '綠茶']
+    };
+    let currentCombo = { main: 0, side: 0, drink: 0 };
+
+    function renderComboSelector() {
+      // 主餐
+      document.getElementById('combo-main').innerHTML = comboOptions.mains.map((name, idx) => `
+        <button onclick="pickCombo('main', ${idx})" class="w-full text-left px-3 py-2 rounded-xl transition flex justify-between items-center ${currentCombo.main === idx ? 'bg-amber-500 text-white font-bold shadow' : 'bg-white hover:bg-slate-100 text-slate-700'}">
+          <span>${name}</span>
+          ${currentCombo.main === idx ? '<i class="fa-solid fa-check"></i>' : ''}
+        </button>
+      `).join('');
+
+      // 副餐
+      document.getElementById('combo-side').innerHTML = comboOptions.sides.map((name, idx) => `
+        <button onclick="pickCombo('side', ${idx})" class="w-full text-left px-3 py-2 rounded-xl transition flex justify-between items-center ${currentCombo.side === idx ? 'bg-rose-500 text-white font-bold shadow' : 'bg-white hover:bg-slate-100 text-slate-700'}">
+          <span>${name}</span>
+          ${currentCombo.side === idx ? '<i class="fa-solid fa-check"></i>' : ''}
+        </button>
+      `).join('');
+
+      // 飲料
+      document.getElementById('combo-drink').innerHTML = comboOptions.drinks.map((name, idx) => `
+        <button onclick="pickCombo('drink', ${idx})" class="w-full text-left px-3 py-2 rounded-xl transition flex justify-between items-center ${currentCombo.drink === idx ? 'bg-emerald-500 text-white font-bold shadow' : 'bg-white hover:bg-slate-100 text-slate-700'}">
+          <span>${name}</span>
+          ${currentCombo.drink === idx ? '<i class="fa-solid fa-check"></i>' : ''}
+        </button>
+      `).join('');
+
+      document.getElementById('combo-current-picked').innerHTML =
+        `<span class="text-amber-600 font-black">${comboOptions.mains[currentCombo.main]}</span> ＋ <span class="text-rose-600 font-black">${comboOptions.sides[currentCombo.side]}</span> ＋ <span class="text-emerald-600 font-black">${comboOptions.drinks[currentCombo.drink]}</span>`;
+    }
+
+    function pickCombo(type, idx) {
+      currentCombo[type] = idx;
+      renderComboSelector();
+    }
+
+    /* 6. 單元三：路線探究 Canvas 與行走模擬 */
+    let walkProgress = 0;
+    let isWalking = false;
+    let currentPathA = 0;
+    let currentPathB = 0;
+
+    function updateRouteSimulation() {
+      const a = parseInt(document.getElementById('route-a-range').value);
+      const b = parseInt(document.getElementById('route-b-range').value);
+
+      document.getElementById('route-a-val').innerText = `${a} 條`;
+      document.getElementById('route-b-val').innerText = `${b} 條`;
+
+      const total = a * b;
+      document.getElementById('route-total-badge').innerText = `${total} 種`;
+      document.getElementById('route-math-text').innerHTML = `<span class="text-emerald-600 font-black">${a}</span> × <span class="text-cyan-600 font-black">${b}</span> = <span class="text-slate-800 font-black">${total}</span> 種走法`;
+
+      drawRoutes();
+    }
+
+    function drawRoutes(walkerT = null) {
+      const canvas = document.getElementById('routeCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio || 600;
+      canvas.height = rect.height * window.devicePixelRatio || 260;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const routeA = parseInt(document.getElementById('route-a-range').value);
+      const routeB = parseInt(document.getElementById('route-b-range').value);
+
+      // 三大節點坐標
+      const homeNode = { x: 50, y: h / 2 };
+      const bridgeNode = { x: w / 2, y: h / 2 };
+      const schoolNode = { x: w - 50, y: h / 2 };
+
+      // 繪製家到橋的路線
+      for (let i = 0; i < routeA; i++) {
+        const offset = (i - (routeA - 1) / 2) * (h * 0.38);
+        ctx.beginPath();
+        ctx.moveTo(homeNode.x, homeNode.y);
+        ctx.bezierCurveTo(homeNode.x + 80, homeNode.y + offset, bridgeNode.x - 80, bridgeNode.y + offset, bridgeNode.x, bridgeNode.y);
+        ctx.strokeStyle = (i === currentPathA) ? '#10b981' : 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = (i === currentPathA) ? 5 : 3;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // 繪製橋到學校的路線
+      for (let j = 0; j < routeB; j++) {
+        const offset = (j - (routeB - 1) / 2) * (h * 0.38);
+        ctx.beginPath();
+        ctx.moveTo(bridgeNode.x, bridgeNode.y);
+        ctx.bezierCurveTo(bridgeNode.x + 80, bridgeNode.y + offset, schoolNode.x - 80, schoolNode.y + offset, schoolNode.x, schoolNode.y);
+        ctx.strokeStyle = (j === currentPathB) ? '#06b6d4' : 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = (j === currentPathB) ? 5 : 3;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // 繪製節點標記
+      drawMapNode(ctx, homeNode.x, homeNode.y, '🏡 妮妮家', '#3b82f6');
+      drawMapNode(ctx, bridgeNode.x, bridgeNode.y, '🌉 橋樑', '#f59e0b');
+      drawMapNode(ctx, schoolNode.x, schoolNode.y, '🏫 學校', '#10b981');
+
+      // 繪製正在行進的小人
+      if (walkerT !== null) {
+        let posX, posY;
+        if (walkerT <= 0.5) {
+          // 在前半段
+          const t1 = walkerT * 2;
+          const offset = (currentPathA - (routeA - 1) / 2) * (h * 0.38);
+          posX = Math.pow(1 - t1, 3) * homeNode.x +
+                 3 * Math.pow(1 - t1, 2) * t1 * (homeNode.x + 80) +
+                 3 * (1 - t1) * Math.pow(t1, 2) * (bridgeNode.x - 80) +
+                 Math.pow(t1, 3) * bridgeNode.x;
+          posY = Math.pow(1 - t1, 3) * homeNode.y +
+                 3 * Math.pow(1 - t1, 2) * t1 * (homeNode.y + offset) +
+                 3 * (1 - t1) * Math.pow(t1, 2) * (bridgeNode.y + offset) +
+                 Math.pow(t1, 3) * bridgeNode.y;
+        } else {
+          // 在後半段
+          const t2 = (walkerT - 0.5) * 2;
+          const offset = (currentPathB - (routeB - 1) / 2) * (h * 0.38);
+          posX = Math.pow(1 - t2, 3) * bridgeNode.x +
+                 3 * Math.pow(1 - t2, 2) * t2 * (bridgeNode.x + 80) +
+                 3 * (1 - t2) * Math.pow(t2, 2) * (schoolNode.x - 80) +
+                 Math.pow(t2, 3) * schoolNode.x;
+          posY = Math.pow(1 - t2, 3) * bridgeNode.y +
+                 3 * Math.pow(1 - t2, 2) * t2 * (bridgeNode.y + offset) +
+                 3 * (1 - t2) * Math.pow(t2, 2) * (schoolNode.y + offset) +
+                 Math.pow(t2, 3) * schoolNode.y;
+        }
+
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(posX, posY, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 11px "Noto Sans TC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🚶‍♀️ 妮妮', posX, posY - 14);
+      }
+    }
+
+    function drawMapNode(ctx, x, y, label, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(label, x, y + 26);
+    }
+
+    function playWalkAnimation() {
+      if (isWalking) return;
+      isWalking = true;
+      const routeA = parseInt(document.getElementById('route-a-range').value);
+      const routeB = parseInt(document.getElementById('route-b-range').value);
+
+      // 隨機挑一條路徑示範
+      currentPathA = Math.floor(Math.random() * routeA);
+      currentPathB = Math.floor(Math.random() * routeB);
+
+      document.getElementById('walk-path-desc').innerText =
+        `當前示範路線：前段路徑 ${currentPathA + 1} ➔ 橋 ➔ 後段路徑 ${currentPathB + 1}`;
+
+      let start = null;
+      const duration = 2200; // 2.2秒完成
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / duration, 1);
+        drawRoutes(progress);
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          isWalking = false;
+          drawRoutes(null);
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* 7. 單元四：歷程性評量 (5題) */
+    const quizQuestions = [
+      {
+        id: 1,
+        question: "筱清去買早餐，她想吃蛋餅或是鐵板麵，而且只要點「1 個餐」。菜單上有 4 種蛋餅和 3 種鐵板麵，她共有幾種選擇？",
+        options: ["4 × 3 = 12 種", "4 + 3 = 7 種", "4 - 3 = 1 種", "4 + 4 = 8 種"],
+        correct: 1,
+        explanation: "因為只要點 1 個餐，選了蛋餅就不能選鐵板麵（屬於互斥分類），所以使用加法原理：4 + 3 = 7 種。"
+      },
+      {
+        id: 2,
+        question: "哥哥有 4 頂帽子和 2 副太陽眼鏡，若要選「1 頂帽子搭配 1 副太陽眼鏡」，共有幾種搭配的組合？",
+        options: ["4 + 2 = 6 種", "4 × 2 = 8 種", "4 ÷ 2 = 2 種", "2 × 2 = 4 種"],
+        correct: 1,
+        explanation: "每 1 頂帽子都可以搭配 2 副太陽眼鏡，4 頂帽子就有 4 個 2 種，所以用乘法原理：4 × 2 = 8 種（或 2 × 4 = 8 種）。"
+      },
+      {
+        id: 3,
+        question: "用 2、7、4、1 四張數字卡，選其中 2 張排成一個二位數，數字不能重複、要排列出「奇數」，有幾種選擇方法？",
+        options: ["3 + 3 = 6 種", "4 × 3 = 12 種", "2 + 2 = 4 種", "4 + 4 = 8 種"],
+        correct: 0,
+        explanation: "二位數要為奇數，個位數只能是 7 或 1。當個位數是 7 時有 27、47、17 共 3 種；當個位數是 1 時有 21、71、41 共 3 種。合起來共 3 + 3 = 6 種。"
+      },
+      {
+        id: 4,
+        question: "小畢買披薩，要選 1 種口味（有 5 種）和 1 種餅皮（有 2 種），並加購 1 種副食（有 3 種）。請問共有幾種選擇的組合？",
+        options: ["5 + 2 + 3 = 10 種", "5 × 2 + 3 = 13 種", "5 × 2 × 3 = 30 種", "5 × 3 = 15 種"],
+        correct: 2,
+        explanation: "三階段搭配彼此不干擾，第一步配第二步有 5 × 2 = 10 種，每種再搭配 3 種副食，總共是 5 × 2 × 3 = 30 種。"
+      },
+      {
+        id: 5,
+        question: "皮皮走登山步道，從起點到涼亭有 4 條路，從涼亭到觀景台有 3 條路，從觀景台到終點有 2 條路。從起點一路走到終點，共有幾種走法？",
+        options: ["4 + 3 + 2 = 9 種", "4 × 3 × 2 = 24 種", "4 × 3 = 12 種", "3 × 2 = 6 種"],
+        correct: 1,
+        explanation: "步道分為三段連續過程，每條路徑都可以依序搭配下一階段的路徑，因此使用乘法原理：4 × 3 × 2 = 24 種走法。"
+      }
+    ];
+
+    let userAnswers = {};
+    let isQuizSubmitted = false;
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = quizQuestions.map((q, idx) => `
+        <div class="p-5 sm:p-6 rounded-2xl bg-white/90 border border-slate-200 shadow-sm" id="quiz-card-${q.id}">
+          <div class="flex items-start gap-3">
+            <span class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
+              ${idx + 1}
+            </span>
+            <div class="flex-1">
+              <h4 class="font-bold text-slate-800 text-base sm:text-lg mb-3">${q.question}</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                ${q.options.map((opt, oIdx) => `
+                  <button onclick="selectOption(${q.id}, ${oIdx})" id="q-btn-${q.id}-${oIdx}" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-indigo-50/60 font-medium text-slate-700 text-sm transition flex items-center justify-between">
+                    <span>${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-300"></i>
+                  </button>
+                `).join('')}
+              </div>
+              <!-- 回饋提示區 -->
+              <div id="feedback-${q.id}" class="hidden mt-4 p-4 rounded-xl text-xs sm:text-sm"></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectOption(qId, selectedIdx) {
+      if (isQuizSubmitted) return; // 提交後鎖定作答
+
+      userAnswers[qId] = selectedIdx;
+      const q = quizQuestions.find(item => item.id === qId);
+
+      // 更新選取視覺狀態（尚未批改）
+      for (let i = 0; i < q.options.length; i++) {
+        const btn = document.getElementById(`q-btn-${qId}-${i}`);
+        if (i === selectedIdx) {
+          btn.className = 'w-full text-left p-3 rounded-xl border-2 border-indigo-500 bg-indigo-50 font-bold text-indigo-900 text-sm transition flex items-center justify-between shadow-xs';
+          btn.querySelector('i').className = 'fa-solid fa-circle-dot text-indigo-600';
+        } else {
+          btn.className = 'w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-indigo-50/60 font-medium text-slate-700 text-sm transition flex items-center justify-between';
+          btn.querySelector('i').className = 'fa-regular fa-circle text-slate-300';
+        }
+      }
+    }
+
+    function submitQuiz() {
+      if (isQuizSubmitted) return;
+      isQuizSubmitted = true;
+
+      const submitBtn = document.getElementById('btn-submit-quiz');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
+      }
+
+      quizQuestions.forEach(q => {
+        const selectedIdx = userAnswers[q.id];
+        const feedbackEl = document.getElementById(`feedback-${q.id}`);
+        const isUnanswered = (selectedIdx === undefined);
+        const isCorrect = (!isUnanswered && selectedIdx === q.correct);
+
+        // 鎖定所有選項按鈕
+        for (let i = 0; i < q.options.length; i++) {
+          const btn = document.getElementById(`q-btn-${q.id}-${i}`);
+          btn.disabled = true;
+          btn.classList.add('cursor-not-allowed');
+
+          if (isUnanswered) {
+            // 未作答時不顯示正確答案
+            btn.classList.add('opacity-75');
+          } else {
+            if (i === q.correct) {
+              btn.className = 'w-full text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-100 font-bold text-emerald-900 text-sm flex items-center justify-between cursor-not-allowed';
+              btn.querySelector('i').className = 'fa-solid fa-circle-check text-emerald-600';
+            } else if (i === selectedIdx && !isCorrect) {
+              btn.className = 'w-full text-left p-3 rounded-xl border-2 border-rose-400 bg-rose-100 font-bold text-rose-900 text-sm flex items-center justify-between cursor-not-allowed';
+              btn.querySelector('i').className = 'fa-solid fa-circle-xmark text-rose-500';
+            } else {
+              btn.classList.add('opacity-70');
+            }
+          }
+        }
+
+        // 顯示對應回饋
+        feedbackEl.classList.remove('hidden');
+        if (isUnanswered) {
+          // 空白未作答：僅顯示黃色系「未作答。」
+          feedbackEl.className = 'mt-4 p-4 rounded-xl text-xs sm:text-sm bg-amber-50 border border-amber-300 text-amber-800 font-bold';
+          feedbackEl.innerHTML = '未作答。';
+        } else if (isCorrect) {
+          feedbackEl.className = 'mt-4 p-4 rounded-xl text-xs sm:text-sm bg-emerald-50 border border-emerald-200 text-emerald-900';
+          feedbackEl.innerHTML = `<strong><i class="fa-solid fa-star text-amber-500 mr-1"></i> 答對了！</strong><div class="mt-1">${q.explanation}</div>`;
+        } else {
+          feedbackEl.className = 'mt-4 p-4 rounded-xl text-xs sm:text-sm bg-rose-50 border border-rose-200 text-rose-900';
+          feedbackEl.innerHTML = `<strong><i class="fa-solid fa-circle-exclamation text-rose-500 mr-1"></i> 答錯了，再檢視看看觀念喔！</strong><div class="mt-1">${q.explanation}</div>`;
+        }
+      });
+
+      updateScoreBadge();
+    }
+
+    function updateScoreBadge() {
+      let correctCount = 0;
+      quizQuestions.forEach(q => {
+        if (userAnswers[q.id] === q.correct) correctCount++;
+      });
+      const pointsPerQuestion = 100 / quizQuestions.length;
+      const totalScore = Math.round(correctCount * pointsPerQuestion);
+      document.getElementById('quiz-score-badge').innerText = `${totalScore} / 100`;
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      isQuizSubmitted = false;
+      const submitBtn = document.getElementById('btn-submit-quiz');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+      }
+      renderQuiz();
+      updateScoreBadge();
+    }
+
+    /* 初始化執行 */
+    window.onload = function() {
+      updateFoodSliders();
+      renderDigitTree();
+      renderClothesStage();
+      renderComboSelector();
+      updateRouteSimulation();
+      renderQuiz();
+
+      // 視窗縮放時自適應 Canvas 與連線
+      window.addEventListener('resize', () => {
+        drawSvgConnections();
+        drawRoutes();
+      });
+    };
+  </script>
+</body>
+</html>

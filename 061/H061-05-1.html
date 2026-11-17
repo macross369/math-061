@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學：基準量與比較量探究教室</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 圖標 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+    
+    /* 套用思源黑體，並排除 FontAwesome 圖示元素以免覆蓋圖示字型 */
+    *:not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular):not(.fa-brands) {
+      font-family: 'Noto Sans TC', sans-serif;
+      box-sizing: border-box;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    /* 新海誠動漫天空光影風格配色 */
+    :root {
+      --sky-top: #1e3c72;
+      --sky-mid: #2a5298;
+      --sky-sunset: #f39c12;
+      --cloud-pink: #f7a8b8;
+      --card-bg: rgba(255, 255, 255, 0.92);
+    }
+
+    body {
+      background: linear-gradient(135deg, #1b2845 0%, #274060 40%, #587291 70%, #d8997f 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #2c3e50;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 星光與雲彩微動特效 */
+    .shinkai-stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 160px 120px, #ffd166, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 230px 80px, #ffffff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 300px 300px;
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    /* 國小數學課本標準直式分數樣式 */
+    .math-frac-wrap {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 0.25rem;
+      font-weight: 700;
+    }
+    .math-whole {
+      font-size: 1.15em;
+      margin-right: 0.25rem;
+      line-height: 1;
+    }
+    .math-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1.05;
+      font-size: 0.95em;
+    }
+    .math-num {
+      padding: 0 0.25rem 1px 0.25rem;
+      border-bottom: 2px solid currentColor;
+      display: block;
+    }
+    .math-den {
+      padding: 1px 0.25rem 0 0.25rem;
+      display: block;
+    }
+
+    /* 玻璃擬態卡片 */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+    }
+
+    /* 線段圖樣式 */
+    .tape-bracket {
+      border-left: 2px solid #4a5568;
+      border-right: 2px solid #4a5568;
+      border-top: 2px solid #4a5568;
+      height: 8px;
+    }
+
+    /* 滑桿美化 */
+    input[type=range] {
+      accent-color: #3b82f6;
+    }
+  </style>
+</head>
+
+<body class="p-3 md:p-6 text-slate-800">
+  <div class="shinkai-stars"></div>
+
+  <div class="relative z-10 max-w-5xl mx-auto">
+    <!-- 頂部標題區 -->
+    <header class="glass-panel rounded-3xl p-5 md:p-6 mb-6 text-center shadow-xl border-t-4 border-amber-400">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs md:text-sm font-bold mb-2">
+        <i class="fa-solid fa-graduation-cap"></i> 國小六上數學 5-1 互動學習網頁
+      </div>
+      <h1 class="text-2xl md:text-4xl font-black text-slate-900 tracking-wide flex items-center justify-center gap-3">
+        <i class="fa-solid fa-sun text-amber-500 animate-spin-slow"></i>
+        認識基準量與比較量
+        <i class="fa-solid fa-cloud text-sky-400"></i>
+      </h1>
+      <p class="text-slate-600 mt-2 text-sm md:text-base font-medium">
+        以「誰當作 1 倍」為基準，動態觀察長條、杯子與線段圖，探究數值變化的奧秘！
+      </p>
+
+      <!-- 標籤頁導航按鈕 -->
+      <nav class="flex flex-wrap justify-center gap-2 mt-5">
+        <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 shadow-md flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 scale-105">
+          <i class="fa-solid fa-ruler-vertical"></i> 1. 身高大測量
+        </button>
+        <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 hover:bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-glass-water"></i> 2. 容量與倒數探究
+        </button>
+        <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 hover:bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-sliders"></i> 3. 雙線段動態探究
+        </button>
+        <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 hover:bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-star"></i> 4. 隨堂測驗
+        </button>
+      </nav>
+    </header>
+
+    <!-- 主體內容區塊 -->
+    <main>
+      <!-- ==================== TAB 1: 身高大測量 ==================== -->
+      <section id="tab1" class="tab-content block space-y-6">
+        <!-- 概念提示卡 -->
+        <div class="glass-panel rounded-2xl p-4 md:p-5 border-l-8 border-indigo-500">
+          <h2 class="text-lg md:text-xl font-bold text-indigo-900 flex items-center gap-2">
+            <i class="fa-solid fa-compass"></i> 教學情境：用「小翰身高」來當尺！
+          </h2>
+          <p class="text-slate-700 mt-1 text-sm md:text-base">
+            小翰的身高是 <span class="font-bold text-blue-700">150 公分</span>。做比較時，當作「<span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-bold">1 倍</span>」的量稱為「<strong class="text-blue-700">基準量</strong>」；被測量的對象稱為「<strong class="text-emerald-700">比較量</strong>」。
+          </p>
+          <div class="mt-2 text-xs md:text-sm font-semibold text-slate-600 bg-slate-100 p-2.5 rounded-xl flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-indigo-600"></i>
+            關係式：比較量 ÷ 基準量 = 倍數 ； 基準量 × 倍數 = 比較量
+          </div>
+        </div>
+
+        <!-- 互動操作與長條視覺圖 -->
+        <div class="glass-panel rounded-3xl p-5 md:p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <!-- 左側操作與算式 (5欄) -->
+            <div class="lg:col-span-5 space-y-4">
+              <h3 class="font-black text-slate-800 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-hand-pointer text-amber-500"></i> 請選擇要比較的對象：
+              </h3>
+              
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="setTab1Animal('giraffe')" id="btn-giraffe" class="animal-btn p-3 rounded-2xl border-2 border-amber-400 bg-amber-50 font-bold text-slate-800 flex items-center justify-center gap-2 shadow-sm transition-all">
+                  <span class="text-2xl">🦒</span>
+                  <span>長頸鹿 (450cm)</span>
+                </button>
+                <button onclick="setTab1Animal('penguin')" id="btn-penguin" class="animal-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 flex items-center justify-center gap-2 shadow-sm transition-all hover:bg-slate-50">
+                  <span class="text-2xl">🐧</span>
+                  <span>企鵝 (30cm)</span>
+                </button>
+              </div>
+
+              <!-- 自訂比較量滑桿 -->
+              <div class="bg-sky-50 p-4 rounded-2xl border border-sky-200 space-y-2">
+                <div class="flex justify-between items-center text-sm font-bold text-sky-900">
+                  <span>或自由調整比較量身高：</span>
+                  <span id="tab1-slider-val" class="text-blue-700 font-extrabold text-base">450 cm</span>
+                </div>
+                <input type="range" id="tab1-height-slider" min="15" max="600" step="15" value="450" class="w-full h-2 bg-sky-200 rounded-lg cursor-pointer" oninput="onTab1SliderChange(this.value)">
+                <div class="flex justify-between text-xs text-slate-400 font-mono">
+                  <span>15 cm</span>
+                  <span>150 cm (等高)</span>
+                  <span>600 cm (4倍)</span>
+                </div>
+              </div>
+
+              <!-- 動態解析面板 -->
+              <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 rounded-2xl shadow-lg space-y-2">
+                <div class="text-xs text-indigo-300 font-bold tracking-wider">即時算式與直式分數解析</div>
+                <div class="text-sm">
+                  基準量（小翰）：<strong class="text-amber-300">150 公分</strong>（看成 1 倍）
+                </div>
+                <div class="text-sm">
+                  比較量（所選）：<strong id="tab1-compare-label" class="text-emerald-300">450 公分</strong>
+                </div>
+                <hr class="border-indigo-800">
+                <div class="flex items-center flex-wrap gap-2 text-base md:text-lg font-bold">
+                  <span>倍數 ＝ </span>
+                  <span id="tab1-calc-formula">450 ÷ 150</span>
+                  <span>＝</span>
+                  <span id="tab1-result-fraction" class="text-amber-400 font-black text-xl">3 倍</span>
+                </div>
+                <div id="tab1-explanation" class="text-xs text-slate-300 bg-white/10 p-2 rounded-xl mt-2">
+                  長頸鹿剛好和小翰疊 3 個人一樣高！
+                </div>
+              </div>
+            </div>
+
+            <!-- 右側：可視化垂直柱狀高度模擬器 (7欄) -->
+            <div class="lg:col-span-7 bg-gradient-to-b from-sky-200 via-sky-100 to-amber-50 p-4 rounded-3xl border-2 border-white shadow-inner flex flex-col justify-end min-h-[380px] relative overflow-hidden">
+              <div class="absolute top-3 left-4 text-xs font-bold text-sky-800 bg-white/80 px-2 py-1 rounded-md shadow-sm">
+                <i class="fa-solid fa-arrows-up-down"></i> 比例可視化比較高度 (基準：小翰 = 1倍)
+              </div>
+
+              <!-- 垂直並列長條對照 -->
+              <div class="flex items-end justify-around w-full h-[300px] pt-8 px-2 border-b-4 border-slate-700">
+                <!-- 小翰 (基準量長條) -->
+                <div class="flex flex-col items-center w-28 group">
+                  <span class="text-xs font-bold text-blue-700 bg-white/90 px-2 py-0.5 rounded shadow mb-1">
+                    150 cm (1倍)
+                  </span>
+                  <!-- 柱體 -->
+                  <div class="w-16 bg-gradient-to-t from-blue-600 to-cyan-400 rounded-t-xl shadow-lg border-2 border-white flex flex-col items-center justify-between p-1 transition-all duration-300" style="height: 100px;">
+                    <span class="text-white text-xs font-bold">小翰</span>
+                    <span class="text-lg">👦</span>
+                  </div>
+                  <span class="text-xs font-black text-slate-700 mt-2">基準量 (1倍)</span>
+                </div>
+
+                <!-- 比較量長條 -->
+                <div class="flex flex-col items-center w-28 group">
+                  <span id="tab1-bar-text" class="text-xs font-bold text-amber-700 bg-white/90 px-2 py-0.5 rounded shadow mb-1">
+                    450 cm (3倍)
+                  </span>
+                  <!-- 動態高度柱體 -->
+                  <div id="tab1-compare-bar" class="w-16 bg-gradient-to-t from-amber-500 to-yellow-300 rounded-t-xl shadow-lg border-2 border-white flex flex-col items-center justify-between p-1 transition-all duration-500" style="height: 250px;">
+                    <span id="tab1-bar-name" class="text-slate-900 text-xs font-bold">長頸鹿</span>
+                    <span id="tab1-bar-icon" class="text-2xl animate-bounce">🦒</span>
+                  </div>
+                  <span class="text-xs font-black text-amber-900 mt-2">比較量</span>
+                </div>
+              </div>
+
+              <!-- 刻度尺基準線 -->
+              <div class="flex justify-between text-[11px] text-slate-500 px-2 pt-1 font-mono">
+                <span>0 cm</span>
+                <span>150 cm (小翰基準)</span>
+                <span>300 cm (2倍)</span>
+                <span>450 cm (3倍)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 2: 容量與倒數探究 ==================== -->
+      <section id="tab2" class="tab-content hidden space-y-6">
+        <div class="glass-panel rounded-2xl p-4 md:p-5 border-l-8 border-amber-500">
+          <h2 class="text-lg md:text-xl font-bold text-amber-900 flex items-center gap-2">
+            <i class="fa-solid fa-repeat"></i> 教材核心：察覺基準量與比較量互換時的秘密！
+          </h2>
+          <p class="text-slate-700 mt-1 text-sm md:text-base">
+            大杯 <span class="font-bold text-blue-700">700 mL</span>、中杯 <span class="font-bold text-indigo-700">500 mL</span>、小杯 <span class="font-bold text-teal-700">360 mL</span>。
+            當我們把誰當基準量改變時，算出來的倍數分子與分母會產生甚麼變化呢？
+          </p>
+        </div>
+
+        <div class="glass-panel rounded-3xl p-5 md:p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 互換操作控制器 -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-5 rounded-2xl border border-amber-200 space-y-4">
+              <h3 class="font-bold text-slate-800 text-base md:text-lg flex items-center justify-between">
+                <span><i class="fa-solid fa-shuffle text-amber-600"></i> 選擇一組配對探究：</span>
+                <span class="text-xs bg-amber-200 text-amber-800 px-2 py-1 rounded-full font-bold">點擊切換</span>
+              </h3>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="setTab2Pair('big_mid')" id="pair-btn-1" class="pair-btn p-3 rounded-2xl border-2 border-amber-500 bg-white font-bold text-amber-900 text-sm shadow-sm transition-all text-left">
+                  🥛 大杯 (700mL)<br>與 中杯 (500mL)
+                </button>
+                <button onclick="setTab2Pair('small_mid')" id="pair-btn-2" class="pair-btn p-3 rounded-2xl border-2 border-slate-200 bg-white/70 font-bold text-slate-700 text-sm shadow-sm transition-all text-left hover:bg-white">
+                  ☕ 小杯 (360mL)<br>與 中杯 (500mL)
+                </button>
+              </div>
+
+              <div class="flex items-center justify-center py-2">
+                <button onclick="toggleTab2Direction()" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-arrows-rotate animate-spin-slow"></i>
+                  互換「基準量」與「比較量」
+                </button>
+              </div>
+
+              <!-- 杯子容量視覺動畫模擬 -->
+              <div class="bg-white p-4 rounded-2xl border border-slate-200 flex justify-around items-end h-44 pb-2">
+                <!-- 杯子 A -->
+                <div class="flex flex-col items-center">
+                  <span id="tab2-cupA-role" class="text-xs font-bold text-blue-600 mb-1">【比較量】</span>
+                  <div class="w-16 border-2 border-slate-400 border-t-0 rounded-b-xl bg-slate-100 h-28 relative overflow-hidden flex items-end">
+                    <div id="tab2-water-A" class="w-full bg-blue-400 transition-all duration-500 rounded-b-lg" style="height: 100%;"></div>
+                  </div>
+                  <span id="tab2-cupA-name" class="font-bold text-xs text-slate-700 mt-1">大杯 700mL</span>
+                </div>
+
+                <div class="text-2xl text-slate-400 pb-8 font-black">VS</div>
+
+                <!-- 杯子 B -->
+                <div class="flex flex-col items-center">
+                  <span id="tab2-cupB-role" class="text-xs font-bold text-amber-600 mb-1">【基準量 (1倍)】</span>
+                  <div class="w-16 border-2 border-slate-400 border-t-0 rounded-b-xl bg-slate-100 h-28 relative overflow-hidden flex items-end">
+                    <div id="tab2-water-B" class="w-full bg-indigo-400 transition-all duration-500 rounded-b-lg" style="height: 71%;"></div>
+                  </div>
+                  <span id="tab2-cupB-name" class="font-bold text-xs text-slate-700 mt-1">中杯 500mL</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右側：互換計算對照卡片 -->
+            <div class="flex flex-col justify-between space-y-4">
+              <!-- 當前方向算式 -->
+              <div class="bg-white p-5 rounded-2xl border-2 border-indigo-200 shadow-md">
+                <div class="text-xs font-black text-indigo-500 uppercase tracking-widest">當前計算問句</div>
+                <h4 id="tab2-question-title" class="text-base md:text-lg font-black text-slate-800 mt-1">
+                  大杯容量是中杯容量的幾倍？
+                </h4>
+                <div class="mt-3 bg-indigo-50 p-3 rounded-xl flex items-center flex-wrap gap-2 text-base font-bold text-indigo-900">
+                  <span id="tab2-math-step">700 ÷ 500 ＝</span>
+                  <!-- 直式分數容器 -->
+                  <span id="tab2-frac-view"></span>
+                </div>
+              </div>
+
+              <!-- 互換後的對照結果 -->
+              <div class="bg-gradient-to-r from-teal-50 to-emerald-50 p-5 rounded-2xl border-2 border-teal-200 shadow-md">
+                <div class="text-xs font-black text-teal-600 uppercase tracking-widest">顛倒過來問（互換角色）</div>
+                <h4 id="tab2-inverse-title" class="text-base md:text-lg font-black text-slate-800 mt-1">
+                  中杯容量是大杯容量的幾倍？
+                </h4>
+                <div class="mt-3 bg-teal-100/70 p-3 rounded-xl flex items-center flex-wrap gap-2 text-base font-bold text-teal-900">
+                  <span id="tab2-math-step-inv">500 ÷ 700 ＝</span>
+                  <!-- 直式分數容器 -->
+                  <span id="tab2-frac-view-inv"></span>
+                </div>
+              </div>
+
+              <!-- 探究發現小提示 -->
+              <div class="bg-amber-100/90 border border-amber-300 p-4 rounded-2xl text-xs md:text-sm text-amber-900 flex items-start gap-3 shadow-sm">
+                <i class="fa-solid fa-lightbulb text-amber-600 text-lg mt-0.5"></i>
+                <div>
+                  <strong class="font-bold">你發現了嗎？</strong>
+                  當「基準量」與「比較量」互換時，算出來的答案<span class="text-rose-600 font-extrabold underline decoration-2">分子與分母會正好上下相反（互為倒數）</span>！
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: 雙線段動態探究 ==================== -->
+      <section id="tab3" class="tab-content hidden space-y-6">
+        <div class="glass-panel rounded-2xl p-4 md:p-5 border-l-8 border-teal-500">
+          <h2 class="text-lg md:text-xl font-bold text-teal-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-simple"></i> 給定倍數與基準量求比較量（線段圖 Tape Diagram）
+          </h2>
+          <p class="text-slate-700 mt-1 text-sm md:text-base">
+            如課本情境：「藍繩子長是紅繩子長的 6 倍，紅繩長 36 公分」或「加量 120%」。請透過滑桿任意動態調節，觀察雙線段圖的伸縮對應！
+          </p>
+        </div>
+
+        <div class="glass-panel rounded-3xl p-5 md:p-6 space-y-6">
+          <!-- 雙滑桿控制 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <!-- 基準量滑桿 -->
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-sm font-bold text-slate-700">
+                <span>基準量（紅繩子／原價／原來容量）：</span>
+                <span id="tab3-base-val-text" class="text-blue-700 font-extrabold">36 cm</span>
+              </div>
+              <input type="range" id="tab3-base-slider" min="10" max="200" step="5" value="36" class="w-full h-2 bg-slate-200 rounded cursor-pointer" oninput="updateTab3()">
+              <div class="text-[11px] text-slate-400 flex justify-between">
+                <span>10</span><span>100</span><span>200</span>
+              </div>
+            </div>
+
+            <!-- 倍數滑桿 (含分數/百分比切換概念) -->
+            <div class="space-y-1">
+              <div class="flex justify-between items-center text-sm font-bold text-slate-700">
+                <span>倍數（幾倍／百分率）：</span>
+                <span id="tab3-times-val-text" class="text-amber-600 font-extrabold">6 倍 (600%)</span>
+              </div>
+              <input type="range" id="tab3-times-slider" min="0.2" max="6.0" step="0.1" value="6.0" class="w-full h-2 bg-slate-200 rounded cursor-pointer" oninput="updateTab3()">
+              <div class="text-[11px] text-slate-400 flex justify-between">
+                <span>0.2倍(打2折)</span><span>1倍(一樣)</span><span>6倍(特大)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 課本直式分數與乘法算式 -->
+          <div class="bg-indigo-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center flex-wrap gap-2 text-base md:text-xl font-bold">
+              <span class="text-indigo-200">計算公式：</span>
+              <span>比較量 ＝ 基準量 × 倍數 ＝</span>
+              <span id="tab3-base-eq" class="text-cyan-300">36</span>
+              <span>×</span>
+              <span id="tab3-times-eq" class="text-amber-300">6</span>
+              <span>＝</span>
+              <span id="tab3-result-eq" class="text-amber-400 font-black text-2xl">216 cm</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="applyPresetTab3(400, 1.2, '毫升 (加量120%)')" class="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold transition-all">
+                🥤 課本飲料加量例題
+              </button>
+              <button onclick="applyPresetTab3(1000, 0.25, '元 (哥哥妹妹存錢)')" class="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold transition-all">
+                💰 課本1/4倍例題
+              </button>
+            </div>
+          </div>
+
+          <!-- 動態線段圖展示區 -->
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-inner space-y-6">
+            <!-- 基準量線段 -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs md:text-sm font-bold text-blue-700 flex items-center gap-2">
+                  <i class="fa-solid fa-grip-lines"></i> 基準量 (當作 1 份 / 1倍)
+                </span>
+                <span id="tab3-tape-base-label" class="text-xs font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded">36 cm</span>
+              </div>
+              <div class="w-full bg-slate-100 h-9 rounded-xl p-1 relative flex items-center">
+                <div id="tab3-tape-base" class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow transition-all duration-300 flex items-center justify-center text-white text-xs font-bold" style="width: 25%;">
+                  1 份
+                </div>
+              </div>
+            </div>
+
+            <!-- 比較量線段 -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs md:text-sm font-bold text-amber-700 flex items-center gap-2">
+                  <i class="fa-solid fa-arrows-left-right-to-line"></i> 比較量 (依倍數縮放)
+                </span>
+                <span id="tab3-tape-comp-label" class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded">216 cm</span>
+              </div>
+              <div class="w-full bg-slate-100 h-9 rounded-xl p-1 relative flex items-center overflow-hidden">
+                <div id="tab3-tape-compare" class="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg shadow transition-all duration-300 flex items-center justify-center text-slate-900 text-xs font-black" style="width: 85%;">
+                  6 倍
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 4: 隨堂測驗 ==================== -->
+      <section id="tab4" class="tab-content hidden space-y-6">
+        <div class="glass-panel rounded-2xl p-4 md:p-5 border-l-8 border-rose-500 flex justify-between items-center flex-wrap gap-3">
+          <div>
+            <h2 class="text-lg md:text-xl font-bold text-rose-900 flex items-center gap-2">
+              <i class="fa-solid fa-list-check"></i> 隨堂測驗
+            </h2>
+            <p class="text-slate-700 mt-1 text-sm">
+              請先選擇每題的答案，完成後點擊下方「提交答案」進行批改（每題 20 分，滿分 100 分）。
+            </p>
+          </div>
+          <div class="bg-rose-50 border border-rose-200 px-4 py-2 rounded-2xl font-bold text-rose-800 text-sm">
+            測驗得分：<span id="quiz-score" class="text-xl font-black text-rose-600">0</span> / 100 分
+          </div>
+        </div>
+
+        <!-- 5道題目容器 -->
+        <div class="space-y-4" id="quiz-container">
+          <!-- 題目 1 -->
+          <div class="glass-panel rounded-2xl p-5 border border-slate-200 space-y-3" id="q1-card">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">1</span>
+              <span>長頸鹿身高 450 公分，企鵝身高 30 公分。若以「企鵝身高」為基準量，長頸鹿身高是幾倍？</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-sm font-medium">
+              <button onclick="selectOption(1, 0, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">A. 12 倍</button>
+              <button onclick="selectOption(1, 1, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">B. 15 倍 (450 ÷ 30)</button>
+              <button onclick="selectOption(1, 2, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">C. <span class="math-frac-wrap"><span class="math-fraction"><span class="math-num">1</span><span class="math-den">15</span></span></span> 倍</button>
+              <button onclick="selectOption(1, 3, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">D. 30 倍</button>
+            </div>
+            <div id="q1-feedback" class="hidden p-3 rounded-xl text-xs md:text-sm font-bold"></div>
+          </div>
+
+          <!-- 題目 2 -->
+          <div class="glass-panel rounded-2xl p-5 border border-slate-200 space-y-3" id="q2-card">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">2</span>
+              <span>「水桶容量是水壺容量的 8 倍」，在這句話中，哪一個是「基準量」？</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-sm font-medium">
+              <button onclick="selectOption(2, 0, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">A. 水桶容量</button>
+              <button onclick="selectOption(2, 1, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">B. 水壺容量（以它當作 1 倍）</button>
+              <button onclick="selectOption(2, 2, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">C. 8 倍</button>
+              <button onclick="selectOption(2, 3, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">D. 兩者都是</button>
+            </div>
+            <div id="q2-feedback" class="hidden p-3 rounded-xl text-xs md:text-sm font-bold"></div>
+          </div>
+
+          <!-- 題目 3 -->
+          <div class="glass-panel rounded-2xl p-5 border border-slate-200 space-y-3" id="q3-card">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">3</span>
+              <span>大杯容量 700 mL 是中杯容量 500 mL 的 
+              <span class="math-frac-wrap"><span class="math-fraction"><span class="math-num">7</span><span class="math-den">5</span></span></span> 倍。那麼「中杯容量是大杯容量的幾倍」？</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-sm font-medium">
+              <button onclick="selectOption(3, 0, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">A. <span class="math-frac-wrap"><span class="math-fraction"><span class="math-num">5</span><span class="math-den">7</span></span></span> 倍（分子分母顛倒互為倒數）</button>
+              <button onclick="selectOption(3, 1, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">B. <span class="math-frac-wrap"><span class="math-fraction"><span class="math-num">7</span><span class="math-den">5</span></span></span> 倍</button>
+              <button onclick="selectOption(3, 2, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">C. 2 倍</button>
+              <button onclick="selectOption(3, 3, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">D. 1.4 倍</button>
+            </div>
+            <div id="q3-feedback" class="hidden p-3 rounded-xl text-xs md:text-sm font-bold"></div>
+          </div>
+
+          <!-- 題目 4 -->
+          <div class="glass-panel rounded-2xl p-5 border border-slate-200 space-y-3" id="q4-card">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">4</span>
+              <span>小包裝糖果售價 80 元，大包裝售價是小包裝的 1.5 倍，大包裝售價是多少元？</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-sm font-medium">
+              <button onclick="selectOption(4, 0, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">A. 100 元</button>
+              <button onclick="selectOption(4, 1, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">B. 120 元 (80 × 1.5)</button>
+              <button onclick="selectOption(4, 2, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">C. 160 元</button>
+              <button onclick="selectOption(4, 3, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">D. 240 元</button>
+            </div>
+            <div id="q4-feedback" class="hidden p-3 rounded-xl text-xs md:text-sm font-bold"></div>
+          </div>
+
+          <!-- 題目 5 -->
+          <div class="glass-panel rounded-2xl p-5 border border-slate-200 space-y-3" id="q5-card">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base">
+              <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs shrink-0">5</span>
+              <span>全店商品打八折（80%）。丹丹花 1600 元買了拼圖，這盒拼圖原價是多少元？</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-sm font-medium">
+              <button onclick="selectOption(5, 0, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">A. 1280 元</button>
+              <button onclick="selectOption(5, 1, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">B. 2000 元 (1600 ÷ 0.8)</button>
+              <button onclick="selectOption(5, 2, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">C. 2400 元</button>
+              <button onclick="selectOption(5, 3, this)" class="opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all">D. 3200 元</button>
+            </div>
+            <div id="q5-feedback" class="hidden p-3 rounded-xl text-xs md:text-sm font-bold"></div>
+          </div>
+        </div>
+
+        <div class="flex justify-center items-center gap-4 pt-3">
+          <button onclick="submitQuiz()" id="submit-quiz-btn" class="w-40 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm md:text-base shadow-lg transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-40 py-3 rounded-full bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm md:text-base shadow-lg transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-left"></i> 重新測驗
+          </button>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    /* =========================================================
+       直式分數渲染輔助函式 (分子在上方、橫線、分母在下方，垂直置中)
+       ========================================================= */
+    function createFractionHTML(num, den, whole = null) {
+      let wholeHTML = whole !== null && whole !== 0 ? `<span class="math-whole">${whole}</span>` : '';
+      return `
+        <span class="math-frac-wrap">
+          ${wholeHTML}
+          <span class="math-fraction">
+            <span class="math-num">${num}</span>
+            <span class="math-den">${den}</span>
+          </span>
+        </span>
+      `;
+    }
+
+    // 求最大公因數 GCD
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    /* =========================================================
+       頁籤切換邏輯 (超過兩主題採標籤頁)
+       ========================================================= */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      // 更新按鈕樣式
+      const tabs = ['tab1', 'tab2', 'tab3', 'tab4'];
+      tabs.forEach(id => {
+        const btn = document.getElementById(`btn-${id}`);
+        if (id === tabId) {
+          btn.className = "tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 shadow-md flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 scale-105";
+        } else {
+          btn.className = "tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 hover:bg-white text-slate-700 shadow-sm flex items-center gap-2";
+        }
+      });
+    }
+
+    /* =========================================================
+       TAB 1: 身高大測量邏輯
+       ========================================================= */
+    const BASE_HEIGHT = 150; // 小翰身高基準量
+
+    function setTab1Animal(type) {
+      const slider = document.getElementById('tab1-height-slider');
+      const btnG = document.getElementById('btn-giraffe');
+      const btnP = document.getElementById('btn-penguin');
+
+      if (type === 'giraffe') {
+        slider.value = 450;
+        btnG.className = "animal-btn p-3 rounded-2xl border-2 border-amber-400 bg-amber-50 font-bold text-slate-800 flex items-center justify-center gap-2 shadow-sm transition-all";
+        btnP.className = "animal-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 flex items-center justify-center gap-2 shadow-sm transition-all hover:bg-slate-50";
+      } else {
+        slider.value = 30;
+        btnP.className = "animal-btn p-3 rounded-2xl border-2 border-cyan-400 bg-cyan-50 font-bold text-slate-800 flex items-center justify-center gap-2 shadow-sm transition-all";
+        btnG.className = "animal-btn p-3 rounded-2xl border-2 border-slate-200 bg-white font-bold text-slate-600 flex items-center justify-center gap-2 shadow-sm transition-all hover:bg-slate-50";
+      }
+      onTab1SliderChange(slider.value);
+    }
+
+    function onTab1SliderChange(val) {
+      const h = parseInt(val, 10);
+      document.getElementById('tab1-slider-val').innerText = `${h} cm`;
+      document.getElementById('tab1-compare-label').innerText = `${h} 公分`;
+      document.getElementById('tab1-calc-formula').innerText = `${h} ÷ ${BASE_HEIGHT}`;
+
+      // 算倍數化為最簡分數
+      const g = gcd(h, BASE_HEIGHT);
+      const num = h / g;
+      const den = BASE_HEIGHT / g;
+      const resultSpan = document.getElementById('tab1-result-fraction');
+      const explDiv = document.getElementById('tab1-explanation');
+
+      if (den === 1) {
+        resultSpan.innerHTML = `${num} 倍`;
+      } else {
+        let whole = Math.floor(num / den);
+        let rem = num % den;
+        let fracHTML = createFractionHTML(rem === 0 ? num : rem, den, whole === 0 ? null : whole);
+        let decVal = (h / BASE_HEIGHT).toFixed(2).replace(/\.?0+$/, '');
+        resultSpan.innerHTML = `${fracHTML} 倍 (約 ${decVal} 倍)`;
+      }
+
+      // 動態更新長條柱體
+      const maxH = 600;
+      const pxHeight = Math.min(270, Math.max(20, (h / maxH) * 270));
+      const bar = document.getElementById('tab1-compare-bar');
+      bar.style.height = `${pxHeight}px`;
+
+      const barText = document.getElementById('tab1-bar-text');
+      const barName = document.getElementById('tab1-bar-name');
+      const barIcon = document.getElementById('tab1-bar-icon');
+
+      if (h === 450) {
+        barName.innerText = "長頸鹿";
+        barIcon.innerText = "🦒";
+        barText.innerText = "450 cm (3倍)";
+        explDiv.innerText = "長頸鹿的身高正好是 3 個小翰疊起來高！(450 ÷ 150 = 3)";
+      } else if (h === 30) {
+        barName.innerText = "企鵝";
+        barIcon.innerText = "🐧";
+        barText.innerText = "30 cm (1/5倍)";
+        explDiv.innerHTML = `企鵝身高比小翰矮，倍數小於 1：30 ÷ 150 ＝ ${createFractionHTML(1, 5)} 倍 (或 0.2 倍)`;
+      } else {
+        barName.innerText = "自訂對象";
+        barIcon.innerText = "📏";
+        barText.innerText = `${h} cm`;
+        explDiv.innerHTML = `當被比較的對象是 ${h} cm 時，是小翰基準量 (150cm) 的比較結果。`;
+      }
+    }
+
+    /* =========================================================
+       TAB 2: 容量與倒數探究邏輯
+       ========================================================= */
+    let tab2CurrentPair = 'big_mid'; // 'big_mid' (700 & 500) 或 'small_mid' (360 & 500)
+    let tab2IsReversed = false;
+
+    const CUP_VOLUMES = {
+      big: { name: '大杯', ml: 700 },
+      mid: { name: '中杯', ml: 500 },
+      small: { name: '小杯', ml: 360 }
+    };
+
+    function setTab2Pair(pair) {
+      tab2CurrentPair = pair;
+      tab2IsReversed = false;
+      document.getElementById('pair-btn-1').className = pair === 'big_mid'
+        ? "pair-btn p-3 rounded-2xl border-2 border-amber-500 bg-white font-bold text-amber-900 text-sm shadow-sm transition-all text-left"
+        : "pair-btn p-3 rounded-2xl border-2 border-slate-200 bg-white/70 font-bold text-slate-700 text-sm shadow-sm transition-all text-left hover:bg-white";
+
+      document.getElementById('pair-btn-2').className = pair === 'small_mid'
+        ? "pair-btn p-3 rounded-2xl border-2 border-amber-500 bg-white font-bold text-amber-900 text-sm shadow-sm transition-all text-left"
+        : "pair-btn p-3 rounded-2xl border-2 border-slate-200 bg-white/70 font-bold text-slate-700 text-sm shadow-sm transition-all text-left hover:bg-white";
+
+      updateTab2View();
+    }
+
+    function toggleTab2Direction() {
+      tab2IsReversed = !tab2IsReversed;
+      updateTab2View();
+    }
+
+    function updateTab2View() {
+      let cup1 = tab2CurrentPair === 'big_mid' ? CUP_VOLUMES.big : CUP_VOLUMES.small;
+      let cup2 = CUP_VOLUMES.mid;
+
+      let compareCup = tab2IsReversed ? cup2 : cup1;
+      let baseCup = tab2IsReversed ? cup1 : cup2;
+
+      // 更新杯子視覺文字
+      document.getElementById('tab2-cupA-name').innerText = `${compareCup.name} ${compareCup.ml}mL`;
+      document.getElementById('tab2-cupA-role').innerText = `【比較量】`;
+      document.getElementById('tab2-water-A').style.height = `${(compareCup.ml / 700) * 100}%`;
+
+      document.getElementById('tab2-cupB-name').innerText = `${baseCup.name} ${baseCup.ml}mL`;
+      document.getElementById('tab2-cupB-role').innerText = `【基準量 (1倍)】`;
+      document.getElementById('tab2-water-B').style.height = `${(baseCup.ml / 700) * 100}%`;
+
+      // 主算式
+      document.getElementById('tab2-question-title').innerText = `${compareCup.name}容量是${baseCup.name}容量的幾倍？`;
+      document.getElementById('tab2-math-step').innerText = `${compareCup.ml} ÷ ${baseCup.ml} ＝`;
+      let g1 = gcd(compareCup.ml, baseCup.ml);
+      let n1 = compareCup.ml / g1;
+      let d1 = baseCup.ml / g1;
+      let whole1 = Math.floor(n1 / d1);
+      let rem1 = n1 % d1;
+      let fracHTML1 = createFractionHTML(rem1 === 0 ? n1 : rem1, d1, whole1 === 0 ? null : whole1);
+      document.getElementById('tab2-frac-view').innerHTML = `${fracHTML1} 倍`;
+
+      // 顛倒對照算式
+      document.getElementById('tab2-inverse-title').innerText = `${baseCup.name}容量是${compareCup.name}容量的幾倍？`;
+      document.getElementById('tab2-math-step-inv').innerText = `${baseCup.ml} ÷ ${compareCup.ml} ＝`;
+      let fracHTML2 = createFractionHTML(rem1 === 0 ? d1 : d1, rem1 === 0 ? n1 : (whole1 * d1 + rem1));
+      document.getElementById('tab2-frac-view-inv').innerHTML = `${createFractionHTML(d1, n1)} 倍`;
+    }
+
+    /* =========================================================
+       TAB 3: 雙線段動態探究邏輯
+       ========================================================= */
+    function updateTab3() {
+      const baseVal = parseFloat(document.getElementById('tab3-base-slider').value);
+      const timesVal = parseFloat(document.getElementById('tab3-times-slider').value);
+
+      document.getElementById('tab3-base-val-text').innerText = `${baseVal} cm`;
+      document.getElementById('tab3-times-val-text').innerText = `${timesVal} 倍 (${Math.round(timesVal * 100)}%)`;
+
+      const compareVal = (baseVal * timesVal).toFixed(1).replace(/\.0$/, '');
+
+      // 更新算式
+      document.getElementById('tab3-base-eq').innerText = baseVal;
+      document.getElementById('tab3-times-eq').innerText = timesVal;
+      document.getElementById('tab3-result-eq').innerText = `${compareVal} cm`;
+
+      // 更新線段寬度比例
+      const maxRange = 600;
+      let basePercent = Math.min(60, Math.max(10, (baseVal / 200) * 35));
+      let compPercent = Math.min(95, Math.max(5, basePercent * timesVal));
+
+      const tapeBase = document.getElementById('tab3-tape-base');
+      const tapeComp = document.getElementById('tab3-tape-compare');
+
+      tapeBase.style.width = `${basePercent}%`;
+      tapeComp.style.width = `${compPercent}%`;
+
+      document.getElementById('tab3-tape-base-label').innerText = `${baseVal} cm (1份)`;
+      document.getElementById('tab3-tape-comp-label').innerText = `${compareVal} cm (${timesVal}倍)`;
+      tapeComp.innerText = `${timesVal} 倍`;
+    }
+
+    function applyPresetTab3(base, times, label) {
+      document.getElementById('tab3-base-slider').value = Math.min(200, base);
+      document.getElementById('tab3-times-slider').value = times;
+      updateTab3();
+    }
+
+    /* =========================================================
+       TAB 4: 隨堂測驗邏輯 (5題，滿分100分)
+       ========================================================= */
+    const QUIZ_ANSWERS = [1, 1, 0, 1, 1]; // 正確選項索引
+    const QUIZ_EXPLANATIONS = [
+      "解題說明：問長頸鹿是企鵝的幾倍，是以「企鵝身高 30cm」當基準量，算式為 450 ÷ 30 = 15 倍。",
+      "解題說明：「水桶是水壺的 8 倍」，表示「水壺 × 8 = 水桶」，因此「水壺容量」是當作 1 倍的基準量。",
+      "解題說明：當基準量與比較量互換時，算出來的倍數分子與分母會顛倒（互為倒數），故為 5/7 倍。",
+      "解題說明：以小包裝售價為基準量，大包裝售價 ＝ 基準量 80 × 倍數 1.5 ＝ 120 元。",
+      "解題說明：原價是基準量，售價 1600 元是原價打 8 折（0.8 倍），因此原價 ＝ 1600 ÷ 0.8 ＝ 2000 元。"
+    ];
+
+    let userSelections = [null, null, null, null, null];
+    let isQuizSubmitted = false;
+
+    function selectOption(qNum, optIdx, btnEl) {
+      if (isQuizSubmitted) return; // 已提交後鎖定不可更改
+
+      const card = document.getElementById(`q${qNum}-card`);
+      const buttons = card.querySelectorAll('.opt-btn');
+
+      // 清除該題其他選項的選取樣式
+      buttons.forEach(b => {
+        b.className = "opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all";
+      });
+
+      // 套用當前選取樣式
+      btnEl.className = "opt-btn p-3 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-900 font-bold text-left transition-all shadow-sm";
+      userSelections[qNum - 1] = optIdx;
+    }
+
+    function submitQuiz() {
+      if (isQuizSubmitted) return;
+      isQuizSubmitted = true;
+
+      const submitBtn = document.getElementById('submit-quiz-btn');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      let totalScore = 0;
+
+      for (let i = 1; i <= 5; i++) {
+        const card = document.getElementById(`q${i}-card`);
+        const fb = document.getElementById(`q${i}-feedback`);
+        const buttons = card.querySelectorAll('.opt-btn');
+        const selectedIdx = userSelections[i - 1];
+        const correctIdx = QUIZ_ANSWERS[i - 1];
+
+        // 鎖定所有按鈕
+        buttons.forEach(b => {
+          b.disabled = true;
+        });
+
+        if (selectedIdx === null) {
+          // 未作答：僅顯示黃色系「未作答。」，不顯示其他說明與正確答案
+          fb.className = "p-3 rounded-xl text-xs md:text-sm font-bold bg-amber-100 text-amber-800 border border-amber-300 block";
+          fb.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> 未作答。`;
+        } else if (selectedIdx === correctIdx) {
+          // 答對：每題 20 分
+          totalScore += 20;
+          buttons[selectedIdx].className = "opt-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-bold text-left transition-all";
+          fb.className = "p-3 rounded-xl text-xs md:text-sm font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 block";
+          fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> 答對了！${QUIZ_EXPLANATIONS[i - 1]}`;
+        } else {
+          // 答錯：顯示錯誤與正確選項，解析不帶矛盾肯定字眼
+          buttons[selectedIdx].className = "opt-btn p-3 rounded-xl border-2 border-rose-500 bg-rose-100 text-rose-900 font-bold text-left transition-all";
+          buttons[correctIdx].className = "opt-btn p-3 rounded-xl border-2 border-emerald-400 bg-emerald-50 text-emerald-800 font-bold text-left transition-all";
+          fb.className = "p-3 rounded-xl text-xs md:text-sm font-bold bg-rose-100 text-rose-800 border border-rose-300 block";
+          fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> 答錯了！${QUIZ_EXPLANATIONS[i - 1]}`;
+        }
+      }
+
+      document.getElementById('quiz-score').innerText = totalScore;
+    }
+
+    function resetQuiz() {
+      userSelections = [null, null, null, null, null];
+      isQuizSubmitted = false;
+      document.getElementById('quiz-score').innerText = "0";
+
+      const submitBtn = document.getElementById('submit-quiz-btn');
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+      for (let i = 1; i <= 5; i++) {
+        const card = document.getElementById(`q${i}-card`);
+        const fb = document.getElementById(`q${i}-feedback`);
+        fb.className = "hidden";
+        fb.innerHTML = "";
+
+        const buttons = card.querySelectorAll('.opt-btn');
+        buttons.forEach(b => {
+          b.disabled = false;
+          b.className = "opt-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 bg-white text-left transition-all";
+        });
+      }
+    }
+
+    // 頁面載入初始化
+    window.onload = function() {
+      onTab1SliderChange(450);
+      updateTab2View();
+      updateTab3();
+    };
+  </script>
+</body>
+</html>

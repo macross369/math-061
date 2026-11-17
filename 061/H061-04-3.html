@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>認識比值：互動探究學習樂園</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    /* 確保 Font Awesome 圖示維持專用圖示字體，不被思源黑體覆蓋 */
+    .fa-solid, .fas, .fa-regular, .far, .fa-brands, .fab, .fa {
+      font-family: "Font Awesome 6 Free" !important;
+    }
+    .fa-solid, .fas {
+      font-weight: 900 !important;
+    }
+    .fa-regular, .far {
+      font-weight: 400 !important;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      /* 新海誠動漫天空光影風格：晨昏薄霧、雲彩與藍粉漸層 */
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 35%, #fed6e3 70%, #d5e8ff 100%);
+      background-attachment: fixed;
+      color: #1e293b;
+    }
+
+    /* 玻璃擬態卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 36px rgba(100, 149, 237, 0.16);
+      border-radius: 20px;
+    }
+
+    /* 國小標準直式分數排版：分子在頂、分母在底、橫線分隔、帶分數整數在左、文字與運算符全垂直置中 */
+    .fraction-box {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin: 0 3px;
+      line-height: 1;
+    }
+
+    .fraction-integer {
+      font-size: 1.15em;
+      margin-right: 3px;
+      line-height: 1;
+    }
+
+    .fraction-body {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      padding: 0 2px;
+    }
+
+    .fraction-num {
+      border-bottom: 1.8px solid currentColor;
+      padding: 0 3px 1px 3px;
+      font-size: 0.9em;
+      text-align: center;
+      line-height: 1.05;
+      width: 100%;
+    }
+
+    .fraction-den {
+      padding: 1px 3px 0 3px;
+      font-size: 0.9em;
+      text-align: center;
+      line-height: 1.05;
+      width: 100%;
+    }
+
+    /* 導覽標籤頁切換 */
+    .tab-btn {
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* 圖 1 色系圓角色塊 */
+    .bucket-palette {
+      width: 100%;
+      max-width: 340px;
+      height: 90px;
+      border-radius: 16px;
+      margin: 14px auto;
+      border: 3px solid #ffffff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+      transition: background-color 0.4s ease, transform 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+    }
+
+    /* 測驗選項美化 */
+    .quiz-option-btn {
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .quiz-option-btn:hover:not(:disabled) {
+      background-color: #f1f5f9;
+      border-color: #3b82f6;
+      transform: translateX(4px);
+    }
+
+    /* 自訂滑桿外觀 */
+    input[type=range] {
+      accent-color: #3b82f6;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6">
+  <div class="max-w-6xl mx-auto space-y-6">
+    
+    <!-- 頂部標題區 -->
+    <header class="glass-card p-6 text-center relative overflow-hidden">
+      <div class="absolute -top-12 -left-12 w-36 h-36 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-40"></div>
+      <div class="absolute -bottom-12 -right-12 w-36 h-36 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-40"></div>
+      
+      <div class="relative z-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 text-xs md:text-sm font-semibold rounded-full mb-3">
+          <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 4-3 互動學習網頁
+        </div>
+        <h1 class="text-2xl md:text-4xl font-black text-slate-800 tracking-wide flex items-center justify-center gap-3">
+          <i class="fa-solid fa-scale-balanced text-blue-600"></i>
+          認識比值探索樂園
+        </h1>
+        <p class="mt-2 text-slate-600 text-sm md:text-base font-medium">
+          透過滑動數值、調配油漆、計算任意比與幾何模擬，直觀掌握「前項 ÷ 後項」與「後項化為 1」的數學思維！
+        </p>
+      </div>
+
+      <!-- 導覽標籤切換按鈕組（共 5 頁） -->
+      <nav class="flex flex-wrap items-center justify-center gap-2 md:gap-3 mt-6">
+        <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-store"></i> 1. 從單價認識比值
+        </button>
+        <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-palette"></i> 2. 濃度與調色探究
+        </button>
+        <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-calculator"></i> 3. 任意比求比值實驗室
+        </button>
+        <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-shapes"></i> 4. 比值應用：海報問題
+        </button>
+        <button onclick="switchTab('tab5')" id="btn-tab5" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-white text-slate-700 shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap"></i> 5. 隨堂測驗
+        </button>
+      </nav>
+    </header>
+
+    <!-- 標籤頁 1：從單價認識比值 -->
+    <main id="tab1" class="tab-content block space-y-6">
+      <div class="glass-card p-6 md:p-8">
+        <div class="border-b border-slate-200 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">1</span>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">探究一：哪一家文具店的筆記本最便宜？</h2>
+          </div>
+          <p class="text-slate-600 text-sm mt-2">
+            三家店在促銷同一款筆記本，價錢和本數都不一樣。請先用「價錢 : 數量」記下來，再把後項（本數）變成 1 本，觀察 1 本是多少元！
+          </p>
+        </div>
+
+        <!-- 互動控制卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- A 店 -->
+          <div class="bg-gradient-to-b from-blue-50/80 to-white p-5 rounded-2xl border border-blue-100 shadow-sm space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="font-extrabold text-blue-900 text-lg"><i class="fa-solid fa-shop text-blue-600"></i> A 店</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-bold">預設促銷</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>總價錢 (元)</span>
+                  <span id="priceA-val" class="text-blue-600 text-sm">50 元</span>
+                </div>
+                <input type="range" id="priceA" min="20" max="150" step="5" value="50" oninput="updateStoreA()" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>購買本數 (本)</span>
+                  <span id="qtyA-val" class="text-blue-600 text-sm">3 本</span>
+                </div>
+                <input type="range" id="qtyA" min="1" max="10" step="1" value="3" oninput="updateStoreA()" class="w-full">
+              </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center space-y-2">
+              <div class="text-xs text-slate-500 font-semibold">價錢與數量的比</div>
+              <div class="text-base font-extrabold text-slate-800" id="ratioA-text">50 : 3</div>
+              <div class="text-xs text-blue-600 font-bold flex items-center justify-center gap-1">
+                <i class="fa-solid fa-arrow-down"></i> 前後項同除以 <span id="divA-text">3</span>
+              </div>
+              <div class="text-base font-black text-blue-700" id="unitA-calc"></div>
+              <div class="pt-2 border-t border-slate-100 text-xs text-slate-600">
+                1 本的價錢即為比值：<br>
+                <span id="valA-disp" class="text-sm font-bold text-slate-800"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- B 店 -->
+          <div class="bg-gradient-to-b from-emerald-50/80 to-white p-5 rounded-2xl border border-emerald-100 shadow-sm space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="font-extrabold text-emerald-900 text-lg"><i class="fa-solid fa-shop text-emerald-600"></i> B 店</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">預設促銷</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>總價錢 (元)</span>
+                  <span id="priceB-val" class="text-emerald-600 text-sm">100 元</span>
+                </div>
+                <input type="range" id="priceB" min="20" max="150" step="5" value="100" oninput="updateStoreB()" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>購買本數 (本)</span>
+                  <span id="qtyB-val" class="text-emerald-600 text-sm">7 本</span>
+                </div>
+                <input type="range" id="qtyB" min="1" max="10" step="1" value="7" oninput="updateStoreB()" class="w-full">
+              </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center space-y-2">
+              <div class="text-xs text-slate-500 font-semibold">價錢與數量的比</div>
+              <div class="text-base font-extrabold text-slate-800" id="ratioB-text">100 : 7</div>
+              <div class="text-xs text-emerald-600 font-bold flex items-center justify-center gap-1">
+                <i class="fa-solid fa-arrow-down"></i> 前後項同除以 <span id="divB-text">7</span>
+              </div>
+              <div class="text-base font-black text-emerald-700" id="unitB-calc"></div>
+              <div class="pt-2 border-t border-slate-100 text-xs text-slate-600">
+                1 本的價錢即為比值：<br>
+                <span id="valB-disp" class="text-sm font-bold text-slate-800"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- C 店 -->
+          <div class="bg-gradient-to-b from-purple-50/80 to-white p-5 rounded-2xl border border-purple-100 shadow-sm space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="font-extrabold text-purple-900 text-lg"><i class="fa-solid fa-shop text-purple-600"></i> C 店</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs font-bold">預設促銷</span>
+            </div>
+            <div class="space-y-3">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>總價錢 (元)</span>
+                  <span id="priceC-val" class="text-purple-600 text-sm">80 元</span>
+                </div>
+                <input type="range" id="priceC" min="20" max="150" step="5" value="80" oninput="updateStoreC()" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>購買本數 (本)</span>
+                  <span id="qtyC-val" class="text-purple-600 text-sm">4 本</span>
+                </div>
+                <input type="range" id="qtyC" min="1" max="10" step="1" value="4" oninput="updateStoreC()" class="w-full">
+              </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center space-y-2">
+              <div class="text-xs text-slate-500 font-semibold">價錢與數量的比</div>
+              <div class="text-base font-extrabold text-slate-800" id="ratioC-text">80 : 4</div>
+              <div class="text-xs text-purple-600 font-bold flex items-center justify-center gap-1">
+                <i class="fa-solid fa-arrow-down"></i> 前後項同除以 <span id="divC-text">4</span>
+              </div>
+              <div class="text-base font-black text-purple-700" id="unitC-calc"></div>
+              <div class="pt-2 border-t border-slate-100 text-xs text-slate-600">
+                1 本的價錢即為比值：<br>
+                <span id="valC-disp" class="text-sm font-bold text-slate-800"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 比值總結與比大小看板 -->
+        <div class="mt-6 p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xl shrink-0">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div>
+              <div class="font-black text-amber-900 text-base md:text-lg" id="cheapest-store-title">正在計算最划算的文具店...</div>
+              <div class="text-amber-800 text-xs md:text-sm font-medium mt-0.5" id="cheapest-store-desc"></div>
+            </div>
+          </div>
+          <button onclick="resetStoreDefaults()" class="px-4 py-2 bg-white hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold rounded-xl text-xs shrink-0 transition">
+            <i class="fa-solid fa-rotate-left"></i> 重設為課本預設值
+          </button>
+        </div>
+
+        <div class="mt-6 bg-blue-50/70 border border-blue-200 p-4 rounded-xl text-slate-700 text-xs md:text-sm leading-relaxed space-y-1">
+          <p class="font-extrabold text-blue-900"><i class="fa-solid fa-circle-check text-blue-600"></i> 教師與學生思維重點：</p>
+          <p>1. 當我們要把後項（數量）變成「1」時，後項要除以自己，前項（總價）也要除以相同的數。</p>
+          <p>2. 將一個比的後項變成 1 時，前項的值就是這個比的<strong>「比值」</strong>。因此比值也可以直接用<strong>「前項 ÷ 後項」</strong>計算！</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- 標籤頁 2：濃度與調色探究 -->
+    <main id="tab2" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 md:p-8">
+        <div class="border-b border-slate-200 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-lg bg-pink-600 text-white flex items-center justify-center font-bold">2</span>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">探究二：利用比值判斷油漆顏色深淺</h2>
+          </div>
+          <p class="text-slate-600 text-sm mt-2">
+            多多和美美用「紅漆」與「白漆」調配粉紅色油漆。把白漆想成 1 桶（當後項），觀察 1 桶白漆配幾桶紅漆。比值越大，紅色比例越高，顏色越深！
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- 多多調配區 -->
+          <div class="bg-gradient-to-b from-rose-50/70 to-white p-6 rounded-2xl border border-rose-100 shadow-sm space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 class="font-black text-rose-900 text-lg md:text-xl flex items-center gap-2">
+                <i class="fa-solid fa-paint-roller text-rose-500"></i> 多多調配
+              </h3>
+              <span class="text-xs font-bold px-2.5 py-1 bg-rose-100 text-rose-700 rounded-full">課本：2紅 5白</span>
+            </div>
+
+            <div class="bucket-palette" id="duoPalette">
+              多多調出的粉紅色
+            </div>
+
+            <div class="space-y-4 pt-2">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span><i class="fa-solid fa-droplet text-red-500"></i> 紅色油漆 (桶)</span>
+                  <span id="duoR-val" class="font-bold text-red-600 text-sm">2 桶</span>
+                </div>
+                <input type="range" id="duoR" min="1" max="10" step="1" value="2" oninput="updatePaintExperiment()" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span><i class="fa-regular fa-circle text-slate-400"></i> 白色油漆 (桶)</span>
+                  <span id="duoW-val" class="font-bold text-slate-600 text-sm">5 桶</span>
+                </div>
+                <input type="range" id="duoW" min="1" max="12" step="1" value="5" oninput="updatePaintExperiment()" class="w-full">
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center space-y-2">
+              <div class="text-xs text-slate-500 font-semibold">紅色油漆 : 白色油漆</div>
+              <div class="text-base font-black text-slate-800" id="duoRatioText">2 : 5</div>
+              <div class="text-sm font-extrabold text-rose-600 flex items-center justify-center gap-1" id="duoFracDisplay"></div>
+              <div class="text-xs text-slate-600" id="duoUnitDesc">每 1 桶白漆配約 0.40 桶紅漆</div>
+            </div>
+          </div>
+
+          <!-- 美美調配區 -->
+          <div class="bg-gradient-to-b from-rose-50/70 to-white p-6 rounded-2xl border border-rose-100 shadow-sm space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 class="font-black text-rose-900 text-lg md:text-xl flex items-center gap-2">
+                <i class="fa-solid fa-paint-roller text-rose-500"></i> 美美調配
+              </h3>
+              <span class="text-xs font-bold px-2.5 py-1 bg-rose-100 text-rose-700 rounded-full">課本：3紅 6白</span>
+            </div>
+
+            <div class="bucket-palette" id="meiPalette">
+              美美調出的粉紅色
+            </div>
+
+            <div class="space-y-4 pt-2">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span><i class="fa-solid fa-droplet text-red-500"></i> 紅色油漆 (桶)</span>
+                  <span id="meiR-val" class="font-bold text-red-600 text-sm">3 桶</span>
+                </div>
+                <input type="range" id="meiR" min="1" max="10" step="1" value="3" oninput="updatePaintExperiment()" class="w-full">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span><i class="fa-regular fa-circle text-slate-400"></i> 白色油漆 (桶)</span>
+                  <span id="meiW-val" class="font-bold text-slate-600 text-sm">6 桶</span>
+                </div>
+                <input type="range" id="meiW" min="1" max="12" step="1" value="6" oninput="updatePaintExperiment()" class="w-full">
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-slate-200 text-center space-y-2">
+              <div class="text-xs text-slate-500 font-semibold">紅色油漆 : 白色油漆</div>
+              <div class="text-base font-black text-slate-800" id="meiRatioText">3 : 6</div>
+              <div class="text-sm font-extrabold text-rose-600 flex items-center justify-center gap-1" id="meiFracDisplay"></div>
+              <div class="text-xs text-slate-600" id="meiUnitDesc">每 1 桶白漆配約 0.50 桶紅漆</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 比值總結橫幅 -->
+        <div id="paintSummaryBanner" class="p-5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 font-bold text-center text-sm md:text-lg flex items-center justify-center gap-2 shadow-sm"></div>
+
+        <div class="p-5 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-2xl flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+            <i class="fa-solid fa-hat-wizard"></i>
+          </div>
+          <div class="space-y-1">
+            <h4 class="font-bold text-indigo-900 text-sm md:text-base">思考帽：如果用「白色油漆 : 紅色油漆」表示兩量的關係呢？</h4>
+            <p class="text-slate-600 text-xs md:text-sm">
+              此時基準量變成紅色油漆，比值代表「每 1 桶紅漆要配幾桶白漆」。因此<strong>加越多白漆，顏色反而越淡</strong>，所以這時候<strong>比值越大，顏色越淺</strong>！看清楚題目是哪兩個量的比非常重要喔！
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 標籤頁 3：任意比求比值實驗室（以圖 1 為內容） -->
+    <main id="tab3" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 md:p-8 space-y-6">
+        <!-- 標題 -->
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-base">
+            <i class="fa-solid fa-flask"></i>
+          </span>
+          <h2 class="text-xl md:text-2xl font-black text-slate-800">探究三：分數與小數比值計算機</h2>
+        </div>
+
+        <!-- 課本教學重點提示框（對照圖 1） -->
+        <div class="bg-blue-50/80 border-l-4 border-blue-600 p-4 rounded-r-xl text-slate-700 text-xs md:text-sm space-y-1.5 leading-relaxed">
+          <div class="font-extrabold text-blue-950">課本教學重點：</div>
+          <p>比的前項與後項不只是整數，也可以是小數或分數。求比值時，可以：</p>
+          <p>① 化為最簡整數比後使後項為 1；或 ② 直接利用 <strong>前項 ÷ 後項</strong> 計算。比值可以是整數、小數或分數！</p>
+        </div>
+
+        <!-- 輸入區域（對照圖 1） -->
+        <div class="bg-white/70 p-6 rounded-2xl border border-slate-200 shadow-sm text-center space-y-5">
+          <div class="text-sm md:text-base font-bold text-slate-700">
+            請輸入任意數值（支援小數）：
+          </div>
+          <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 text-slate-800 font-extrabold text-lg">
+            <span class="text-slate-700 text-base md:text-lg">前項：</span>
+            <input type="text" id="customAntecedent" value="2.5" class="w-28 md:w-36 text-center text-lg font-bold text-blue-700 bg-white border-2 border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 shadow-inner">
+            <span class="text-blue-600 text-2xl font-black">:</span>
+            <span class="text-slate-700 text-base md:text-lg">後項：</span>
+            <input type="text" id="customConsequent" value="3" class="w-28 md:w-36 text-center text-lg font-bold text-blue-700 bg-white border-2 border-slate-300 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 shadow-inner">
+            <button onclick="calculateCustomRatio()" class="px-5 py-2.5 bg-white hover:bg-slate-50 border border-slate-300 hover:border-blue-400 text-slate-800 font-bold rounded-xl text-sm md:text-base shadow-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-calculator text-blue-600"></i> 計算比值
+            </button>
+          </div>
+
+          <!-- 推導歷程展示卡片（對照圖 1） -->
+          <div class="max-w-2xl mx-auto bg-slate-50/90 rounded-2xl border border-slate-200 p-5 text-left space-y-2.5 shadow-inner">
+            <div class="font-extrabold text-blue-950 text-sm md:text-base flex items-center gap-2 border-b border-slate-200 pb-2">
+              <i class="fa-solid fa-square-check text-blue-600"></i> 推導歷程展示：
+            </div>
+            <div id="calcDerivationSteps" class="space-y-2 text-xs md:text-sm text-slate-700 leading-relaxed font-medium">
+              <!-- JS 動態填入 1~6 步驟 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 載入課本經典例題按鈕群（對照圖 1） -->
+        <div class="space-y-3 pt-2">
+          <div class="text-xs md:text-sm font-extrabold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-bookmark text-blue-600"></i> 載入課本經典例題：
+          </div>
+          <div class="flex flex-wrap gap-2 md:gap-3">
+            <button onclick="loadExample('0.3', '0.27')" class="px-4 py-2 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-full text-xs md:text-sm font-semibold text-slate-700 transition">
+              例題 1: 0.3 : 0.27
+            </button>
+            <button onclick="loadExample('4', '0.75')" class="px-4 py-2 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-full text-xs md:text-sm font-semibold text-slate-700 transition">
+              例題 2: 4 : 3/4 (0.75)
+            </button>
+            <button onclick="loadExample('1.6', '0.08')" class="px-4 py-2 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-full text-xs md:text-sm font-semibold text-slate-700 transition">
+              例題 3: 1.6 : 0.08
+            </button>
+            <button onclick="loadExample('36', '90')" class="px-4 py-2 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-full text-xs md:text-sm font-semibold text-slate-700 transition">
+              例題 4: 36 : 90
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 標籤頁 4：比值應用：海報問題（依圖 2 樣式編號為 4） -->
+    <main id="tab4" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 md:p-8">
+        <div class="border-b border-slate-200 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <!-- 配合圖 2 樣式：綠底白字圓角方塊編號 -->
+            <span class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold text-base shadow-sm">4</span>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">探究四：比值的幾何應用（海報長方形面積）</h2>
+          </div>
+          <p class="text-slate-600 text-sm mt-2">
+            課本習題：有一張周長 480 公分的長方形海報，長和寬的比值是 <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">7</span><span class="fraction-den">5</span></span></span>。最簡整數比是 7 : 5，這張海報的面積是多少？
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <!-- 控制面板與解題步驟 -->
+          <div class="lg:col-span-7 space-y-5">
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+              <div>
+                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                  <span>長方形海報周長 (公分)</span>
+                  <span id="posterP-val" class="text-teal-700 font-extrabold text-sm">480 cm</span>
+                </div>
+                <input type="range" id="posterP" min="120" max="720" step="24" value="480" oninput="updatePosterCalc()" class="w-full">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                    <span>長的份數</span>
+                    <span id="posterL-val" class="text-teal-700 font-extrabold text-sm">7 份</span>
+                  </div>
+                  <input type="range" id="posterL" min="2" max="10" step="1" value="7" oninput="updatePosterCalc()" class="w-full">
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                    <span>寬的份數</span>
+                    <span id="posterW-val" class="text-teal-700 font-extrabold text-sm">5 份</span>
+                  </div>
+                  <input type="range" id="posterW" min="1" max="9" step="1" value="5" oninput="updatePosterCalc()" class="w-full">
+                </div>
+              </div>
+            </div>
+
+            <!-- 分步解析卡片 -->
+            <div class="bg-white p-5 rounded-2xl border border-teal-100 shadow-sm space-y-3">
+              <h4 class="font-extrabold text-teal-900 text-sm md:text-base flex items-center gap-2">
+                <i class="fa-solid fa-list-ol text-teal-600"></i> 解題推導步驟解析：
+              </h4>
+              <div class="text-xs md:text-sm text-slate-700 space-y-2 leading-relaxed" id="posterStepExplain"></div>
+            </div>
+          </div>
+
+          <!-- 動態縮放 Canvas 長方形繪製 -->
+          <div class="lg:col-span-5 flex flex-col items-center">
+            <div class="w-full max-w-[340px] aspect-square bg-gradient-to-b from-teal-50 to-blue-50/50 rounded-2xl border border-teal-200 p-4 flex flex-col items-center justify-center relative shadow-inner">
+              <canvas id="posterCanvas" width="300" height="300" class="max-w-full h-auto"></canvas>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 text-center">依據「長與寬的比」即時按比例繪製幾何圖形</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 標籤頁 5：隨堂測驗 -->
+    <main id="tab5" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 md:p-8">
+        <div class="border-b border-slate-200 pb-4 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center font-bold text-base shadow-sm">5</span>
+              <h2 class="text-xl md:text-2xl font-black text-slate-800">隨堂測驗</h2>
+            </div>
+            <p class="text-slate-600 text-sm mt-1">請完成以下 5 題測驗（每題 20 分，滿分 100 分），作答完畢後請點擊下方「提交答案」按鈕！</p>
+          </div>
+          <div class="bg-amber-100 text-amber-900 px-4 py-2 rounded-xl text-xs md:text-sm font-extrabold flex items-center gap-2 self-start md:self-auto shadow-sm">
+            <i class="fa-solid fa-trophy text-amber-600"></i> 測驗得分：<span id="scoreBadge" class="text-base text-amber-700">0</span> / 100 分
+          </div>
+        </div>
+
+        <div class="space-y-6" id="quizContainer">
+          <!-- 題目卡片由 JS 動態生成 -->
+        </div>
+
+        <!-- 提交答案與重新測驗按鈕（大小相同並排置中） -->
+        <div class="mt-8 pt-6 border-t border-slate-200 flex items-center justify-center gap-4">
+          <button onclick="submitQuiz()" id="submitQuizBtn" class="w-44 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm md:text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" id="resetQuizBtn" class="w-44 py-3 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold text-sm md:text-base shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    /* ============================================================
+       1. 輔助函式：最大公因數與標準直式分數生成
+       ============================================================ */
+    function getGCD(a, b) {
+      a = Math.round(Math.abs(a));
+      b = Math.round(Math.abs(b));
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    // 產生符合國小標準的直式分數 HTML
+    function createFractionHtml(num, den) {
+      num = Math.round(num);
+      den = Math.round(den);
+      if (den === 0) return '0';
+      if (den === 1) return `<span>${num}</span>`;
+      if (num === 0) return `<span>0</span>`;
+
+      if (num % den === 0) {
+        return `<span>${num / den}</span>`;
+      }
+
+      const gcd = getGCD(num, den);
+      num /= gcd;
+      den /= gcd;
+
+      const integerPart = Math.floor(num / den);
+      const remNum = num % den;
+
+      if (integerPart > 0) {
+        return `
+          <span class="fraction-box">
+            <span class="fraction-integer">${integerPart}</span>
+            <span class="fraction-body">
+              <span class="fraction-num">${remNum}</span>
+              <span class="fraction-den">${den}</span>
+            </span>
+          </span>
+        `;
+      } else {
+        return `
+          <span class="fraction-box">
+            <span class="fraction-body">
+              <span class="fraction-num">${num}</span>
+              <span class="fraction-den">${den}</span>
+            </span>
+          </span>
+        `;
+      }
+    }
+
+    // 假分數與帶分數同時展示
+    function formatRatioValDisplay(num, den) {
+      if (den === 0) return '0';
+      if (num % den === 0) return `<span>${num / den}</span>`;
+      
+      const gcd = getGCD(num, den);
+      const sNum = num / gcd;
+      const sDen = den / gcd;
+      const intPart = Math.floor(sNum / sDen);
+      const rem = sNum % sDen;
+
+      return `
+        <span class="fraction-box">
+          <span class="fraction-body">
+            <span class="fraction-num">${sNum}</span>
+            <span class="fraction-den">${sDen}</span>
+          </span>
+        </span>
+        ${intPart > 0 ? `<span class="text-xs text-slate-500 font-normal">（或 <span class="fraction-box"><span class="fraction-integer">${intPart}</span><span class="fraction-body"><span class="fraction-num">${rem}</span><span class="fraction-den">${sDen}</span></span></span>）</span>` : ''}
+      `;
+    }
+
+    // 解析字串為分數或小數分子分母
+    function parseToRational(valStr) {
+      valStr = String(valStr).trim();
+      if (!valStr) return null;
+      // 支援 "3/4" 格式
+      if (valStr.includes('/')) {
+        const parts = valStr.split('/');
+        const n = parseFloat(parts[0]);
+        const d = parseFloat(parts[1]);
+        if (isNaN(n) || isNaN(d) || d === 0) return null;
+        return { num: n, den: d, isDecimal: false, scale: 1 };
+      }
+      const numVal = parseFloat(valStr);
+      if (isNaN(numVal)) return null;
+
+      // 檢查是否為小數
+      if (valStr.includes('.')) {
+        const decDigits = valStr.split('.')[1].length;
+        const scale = Math.pow(10, decDigits);
+        return { num: Math.round(numVal * scale), den: scale, isDecimal: true, scale: scale, original: numVal };
+      }
+      return { num: numVal, den: 1, isDecimal: false, scale: 1 };
+    }
+
+    /* ============================================================
+       2. 標籤頁切換邏輯
+       ============================================================ */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('block');
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) {
+        activeTab.classList.remove('hidden');
+        activeTab.classList.add('block');
+      }
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      // 切換至海報頁籤時重新繪製長方形
+      if (tabId === 'tab4') {
+        setTimeout(updatePosterCalc, 50);
+      }
+    }
+
+    /* ============================================================
+       3. 探究一：文具店比值計算
+       ============================================================ */
+    function updateStoreA() {
+      const p = parseInt(document.getElementById('priceA').value);
+      const q = parseInt(document.getElementById('qtyA').value);
+      document.getElementById('priceA-val').innerText = `${p} 元`;
+      document.getElementById('qtyA-val').innerText = `${q} 本`;
+      document.getElementById('ratioA-text').innerText = `${p} : ${q}`;
+      document.getElementById('divA-text').innerText = q;
+
+      document.getElementById('unitA-calc').innerHTML = `( ${createFractionHtml(p, q)} ) : 1`;
+      document.getElementById('valA-disp').innerHTML = `${formatRatioValDisplay(p, q)} 元`;
+
+      evaluateCheapest();
+    }
+
+    function updateStoreB() {
+      const p = parseInt(document.getElementById('priceB').value);
+      const q = parseInt(document.getElementById('qtyB').value);
+      document.getElementById('priceB-val').innerText = `${p} 元`;
+      document.getElementById('qtyB-val').innerText = `${q} 本`;
+      document.getElementById('ratioB-text').innerText = `${p} : ${q}`;
+      document.getElementById('divB-text').innerText = q;
+
+      document.getElementById('unitB-calc').innerHTML = `( ${createFractionHtml(p, q)} ) : 1`;
+      document.getElementById('valB-disp').innerHTML = `${formatRatioValDisplay(p, q)} 元`;
+
+      evaluateCheapest();
+    }
+
+    function updateStoreC() {
+      const p = parseInt(document.getElementById('priceC').value);
+      const q = parseInt(document.getElementById('qtyC').value);
+      document.getElementById('priceC-val').innerText = `${p} 元`;
+      document.getElementById('qtyC-val').innerText = `${q} 本`;
+      document.getElementById('ratioC-text').innerText = `${p} : ${q}`;
+      document.getElementById('divC-text').innerText = q;
+
+      document.getElementById('unitC-calc').innerHTML = `( ${createFractionHtml(p, q)} ) : 1`;
+      document.getElementById('valC-disp').innerHTML = `${formatRatioValDisplay(p, q)} 元`;
+
+      evaluateCheapest();
+    }
+
+    function evaluateCheapest() {
+      const pA = parseInt(document.getElementById('priceA').value);
+      const qA = parseInt(document.getElementById('qtyA').value);
+      const pB = parseInt(document.getElementById('priceB').value);
+      const qB = parseInt(document.getElementById('qtyB').value);
+      const pC = parseInt(document.getElementById('priceC').value);
+      const qC = parseInt(document.getElementById('qtyC').value);
+
+      const valA = pA / qA;
+      const valB = pB / qB;
+      const valC = pC / qC;
+
+      const stores = [
+        { name: 'A 店', val: valA, p: pA, q: qA },
+        { name: 'B 店', val: valB, p: pB, q: qB },
+        { name: 'C 店', val: valC, p: pC, q: qC }
+      ];
+
+      stores.sort((a, b) => a.val - b.val);
+      const best = stores[0];
+
+      document.getElementById('cheapest-store-title').innerHTML = `
+        <span class="text-emerald-700 font-black">${best.name}</span> 最便宜！每本約只要 ${best.val.toFixed(2)} 元
+      `;
+      document.getElementById('cheapest-store-desc').innerHTML = `
+        三家店筆記本單價（比值）大小順序為：${stores[0].name} (${stores[0].val.toFixed(1)}元) ＜ ${stores[1].name} (${stores[1].val.toFixed(1)}元) ＜ ${stores[2].name} (${stores[2].val.toFixed(1)}元)。比值越小，代表 1 本越便宜！
+      `;
+    }
+
+    function resetStoreDefaults() {
+      document.getElementById('priceA').value = 50;
+      document.getElementById('qtyA').value = 3;
+      document.getElementById('priceB').value = 100;
+      document.getElementById('qtyB').value = 7;
+      document.getElementById('priceC').value = 80;
+      document.getElementById('qtyC').value = 4;
+      updateStoreA();
+      updateStoreB();
+      updateStoreC();
+    }
+
+    /* ============================================================
+       4. 探究二：油漆調色實驗
+       ============================================================ */
+    function calcVibrantRedColor(red, white) {
+      const ratio = red / (red + white);
+      const factor = Math.min(Math.max((ratio - 0.15) / 0.55, 0), 1);
+      const r = 255;
+      const g = Math.round(155 - factor * 115);
+      const b = Math.round(165 - factor * 95);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function updatePaintExperiment() {
+      const duoR = parseInt(document.getElementById('duoR').value);
+      const duoW = parseInt(document.getElementById('duoW').value);
+      const meiR = parseInt(document.getElementById('meiR').value);
+      const meiW = parseInt(document.getElementById('meiW').value);
+
+      document.getElementById('duoR-val').innerText = `${duoR} 桶`;
+      document.getElementById('duoW-val').innerText = `${duoW} 桶`;
+      document.getElementById('meiR-val').innerText = `${meiR} 桶`;
+      document.getElementById('meiW-val').innerText = `${meiW} 桶`;
+
+      document.getElementById('duoRatioText').innerText = `${duoR} : ${duoW}`;
+      document.getElementById('meiRatioText').innerText = `${meiR} : ${meiW}`;
+
+      const duoRatioVal = duoR / duoW;
+      const meiRatioVal = meiR / meiW;
+
+      document.getElementById('duoFracDisplay').innerHTML = `
+        <span class="text-xs text-slate-500 font-bold">1 桶白漆配：</span> ${createFractionHtml(duoR, duoW)} 桶紅漆
+      `;
+      document.getElementById('meiFracDisplay').innerHTML = `
+        <span class="text-xs text-slate-500 font-bold">1 桶白漆配：</span> ${createFractionHtml(meiR, meiW)} 桶紅漆
+      `;
+
+      document.getElementById('duoUnitDesc').innerText = `每 1 桶白漆配約 ${duoRatioVal.toFixed(2)} 桶紅漆`;
+      document.getElementById('meiUnitDesc').innerText = `每 1 桶白漆配約 ${meiRatioVal.toFixed(2)} 桶紅漆`;
+
+      document.getElementById('duoPalette').style.backgroundColor = calcVibrantRedColor(duoR, duoW);
+      document.getElementById('meiPalette').style.backgroundColor = calcVibrantRedColor(meiR, meiW);
+
+      const duoFrac = createFractionHtml(duoR, duoW);
+      const meiFrac = createFractionHtml(meiR, meiW);
+      const banner = document.getElementById('paintSummaryBanner');
+
+      if (Math.abs(duoRatioVal - meiRatioVal) < 0.0001) {
+        banner.innerHTML = `
+          <i class="fa-solid fa-check text-rose-600 mr-1"></i>
+          多多的比值 ${duoFrac} ＝ 美美的比值 ${meiFrac} ，兩人調出的顏色一樣深！
+        `;
+      } else if (duoRatioVal > meiRatioVal) {
+        banner.innerHTML = `
+          <i class="fa-solid fa-arrow-trend-up text-rose-600 mr-1"></i>
+          多多的比值 ${duoFrac} ＞ 美美的比值 ${meiFrac} ，所以多多調配的顏色比較深！
+        `;
+      } else {
+        banner.innerHTML = `
+          <i class="fa-solid fa-arrow-trend-up text-rose-600 mr-1"></i>
+          美美的比值 ${meiFrac} ＞ 多多的比值 ${duoFrac} ，所以美美調配的顏色比較深！
+        `;
+      }
+    }
+
+    /* ============================================================
+       5. 探究三：任意比求比值推導計算（對齊圖 1 結構與步驟）
+       ============================================================ */
+    function loadExample(ant, con) {
+      document.getElementById('customAntecedent').value = ant;
+      document.getElementById('customConsequent').value = con;
+      calculateCustomRatio();
+    }
+
+    function calculateCustomRatio() {
+      const antStr = document.getElementById('customAntecedent').value.trim();
+      const conStr = document.getElementById('customConsequent').value.trim();
+      const stepsContainer = document.getElementById('calcDerivationSteps');
+
+      const rA = parseToRational(antStr);
+      const rB = parseToRational(conStr);
+
+      if (!rA || !rB || rB.num === 0) {
+        stepsContainer.innerHTML = `<span class="text-rose-600 font-bold">請輸入有效且後項不為 0 的數值！</span>`;
+        return;
+      }
+
+      // 將 rA 與 rB 通分至相同整數
+      // A = rA.num / rA.den, B = rB.num / rB.den
+      // A : B = (rA.num * rB.den) : (rB.num * rA.den)
+      const intAntecedent = Math.round(rA.num * rB.den);
+      const intConsequent = Math.round(rB.num * rA.den);
+
+      const commonGcd = getGCD(intAntecedent, intConsequent);
+      const simpAnt = intAntecedent / commonGcd;
+      const simpCon = intConsequent / commonGcd;
+
+      const decimalVal = (simpAnt / simpCon);
+      const formattedDec = Number.isInteger(decimalVal) ? decimalVal : parseFloat(decimalVal.toFixed(4));
+
+      // 檢查是否需要顯示「同乘以 ... 化為整數比」
+      let step2Text = '';
+      const isBothInteger = (antStr.indexOf('.') === -1 && antStr.indexOf('/') === -1 && conStr.indexOf('.') === -1 && conStr.indexOf('/') === -1);
+      
+      if (!isBothInteger) {
+        // 如果輸入的是小數，例如 2.5 : 3
+        if (antStr.includes('.') || conStr.includes('.')) {
+          const mult = Math.max(rA.scale || 1, rB.scale || 1);
+          step2Text = `2. 同乘以 ${mult} 化為整數比：${intAntecedent} : ${intConsequent}`;
+        } else {
+          step2Text = `2. 通分通化為整數比：${intAntecedent} : ${intConsequent}`;
+        }
+      }
+
+      let html = '';
+      html += `<div>1. 原始比：${antStr} : ${conStr}</div>`;
+      if (step2Text) {
+        html += `<div>${step2Text}</div>`;
+      }
+      html += `<div>${step2Text ? '3' : '2'}. 化為最簡整數比：<strong>${simpAnt} : ${simpCon}</strong></div>`;
+      html += `<div>${step2Text ? '4' : '3'}. 後項化為 1 (同除以 ${simpCon})：(${simpAnt} ÷ ${simpCon}) : 1</div>`;
+      html += `
+        <div class="flex items-center gap-2">
+          <span>${step2Text ? '5' : '4'}. 比值（直式分數）：</span>
+          <span class="text-base">${createFractionHtml(simpAnt, simpCon)}</span>
+        </div>
+      `;
+      html += `<div>${step2Text ? '6' : '5'}. 比值（小數表示）：<strong>${formattedDec}</strong></div>`;
+
+      stepsContainer.innerHTML = html;
+    }
+
+    /* ============================================================
+       6. 探究四：海報幾何應用
+       ============================================================ */
+    function updatePosterCalc() {
+      const p = parseInt(document.getElementById('posterP').value);
+      const lParts = parseInt(document.getElementById('posterL').value);
+      const wParts = parseInt(document.getElementById('posterW').value);
+
+      document.getElementById('posterP-val').innerText = `${p} cm`;
+      document.getElementById('posterL-val').innerText = `${lParts} 份`;
+      document.getElementById('posterW-val').innerText = `${wParts} 份`;
+
+      const halfP = p / 2;
+      const totalParts = lParts + wParts;
+      const unitLength = halfP / totalParts;
+      const actualL = Math.round(unitLength * lParts * 10) / 10;
+      const actualW = Math.round(unitLength * wParts * 10) / 10;
+      const area = Math.round(actualL * actualW);
+
+      const stepHtml = `
+        <div class="flex items-start gap-2">
+          <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-800 text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">1</span>
+          <div>
+            周長 ${p} 公分，一條長邊＋一條寬邊為：<br>
+            <strong>${p} ÷ 2 ＝ ${halfP}</strong> 公分。
+          </div>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-800 text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">2</span>
+          <div>
+            長和寬的比值為 ${createFractionHtml(lParts, wParts)}，即最簡整數比為 <strong>${lParts} : ${wParts}</strong>。<br>
+            長佔 ${lParts} 份，寬佔 ${wParts} 份，合起來共 <strong>${lParts} ＋ ${wParts} ＝ ${totalParts} 份</strong>。
+          </div>
+        </div>
+        <div class="flex items-start gap-2">
+          <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-800 text-xs flex items-center justify-center font-bold shrink-0 mt-0.5">3</span>
+          <div>
+            長邊長度：${halfP} × ${createFractionHtml(lParts, totalParts)} ＝ <strong>${actualL}</strong> 公分。<br>
+            寬邊長度：${halfP} － ${actualL} ＝ <strong>${actualW}</strong> 公分。
+          </div>
+        </div>
+        <div class="flex items-start gap-2 pt-2 border-t border-slate-100">
+          <span class="w-5 h-5 rounded-full bg-teal-600 text-white text-xs flex items-center justify-center font-bold shrink-0 mt-0.5"><i class="fa-solid fa-check"></i></span>
+          <div class="text-teal-900 font-extrabold text-sm md:text-base">
+            海報面積 ＝ 長 × 寬 ＝ ${actualL} × ${actualW} ＝ <span class="text-teal-700 text-lg">${area}</span> 平方公分。
+          </div>
+        </div>
+      `;
+      document.getElementById('posterStepExplain').innerHTML = stepHtml;
+
+      drawPosterCanvas(actualL, actualW);
+    }
+
+    function drawPosterCanvas(actualL, actualW) {
+      const canvas = document.getElementById('posterCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const maxCanvasW = 240;
+      const maxCanvasH = 220;
+      const scale = Math.min(maxCanvasW / actualL, maxCanvasH / actualW, 1.4);
+
+      const drawW = actualL * scale;
+      const drawH = actualW * scale;
+      const startX = (canvas.width - drawW) / 2;
+      const startY = (canvas.height - drawH) / 2;
+
+      ctx.shadowColor = 'rgba(20, 184, 166, 0.25)';
+      ctx.shadowBlur = 12;
+      ctx.fillStyle = '#ccfbf1';
+      ctx.strokeStyle = '#0d9488';
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(startX, startY, drawW, drawH, 10);
+      } else {
+        ctx.rect(startX, startY, drawW, drawH);
+      }
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#0f766e';
+      ctx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(`長：${actualL} cm`, startX + drawW / 2, startY - 8);
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`寬：${actualW} cm`, startX + drawW + 8, startY + drawH / 2);
+
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#115e59';
+      ctx.font = 'bold 14px "Noto Sans TC", sans-serif';
+      ctx.fillText(`${Math.round(actualL * actualW)} cm²`, startX + drawW / 2, startY + drawH / 2);
+    }
+
+    /* ============================================================
+       7. 隨堂測驗（5 題，滿分 100 分）邏輯
+       ============================================================ */
+    const quizQuestions = [
+      {
+        id: 1,
+        title: '第 1 題：認識比值的基本計算（20分）',
+        question: `求「<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">2</span><span class="fraction-den">5</span></span></span> : <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">7</span><span class="fraction-den">4</span></span></span>」的比值是多少？`,
+        options: [
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">8</span><span class="fraction-den">35</span></span></span>`,
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">35</span><span class="fraction-den">8</span></span></span>`,
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">14</span><span class="fraction-den">20</span></span></span>`,
+          `<span class="fraction-box"><span class="fraction-integer">1</span><span class="fraction-body"><span class="fraction-num">2</span><span class="fraction-den">5</span></span></span>`
+        ],
+        answer: 0,
+        explanation: `比值 ＝ 前項 ÷ 後項 ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">2</span><span class="fraction-den">5</span></span></span> ÷ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">7</span><span class="fraction-den">4</span></span></span> ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">2</span><span class="fraction-den">5</span></span></span> × <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">4</span><span class="fraction-den">7</span></span></span> ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">8</span><span class="fraction-den">35</span></span></span>。`
+      },
+      {
+        id: 2,
+        title: '第 2 題：小數比求比值（20分）',
+        question: '求「0.3 : 0.27」的比值是多少？（以分數表示）',
+        options: [
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">9</span><span class="fraction-den">10</span></span></span>`,
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">10</span><span class="fraction-den">9</span></span></span>（或 <span class="fraction-box"><span class="fraction-integer">1</span><span class="fraction-body"><span class="fraction-num">1</span><span class="fraction-den">9</span></span></span>）`,
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">3</span><span class="fraction-den">27</span></span></span>`,
+          `<span class="fraction-box"><span class="fraction-body"><span class="fraction-num">27</span><span class="fraction-den">30</span></span></span>`
+        ],
+        answer: 1,
+        explanation: '前後項同乘以 100 得到 30 : 27，約分後為 10 : 9。比值 ＝ 10 ÷ 9 ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">10</span><span class="fraction-den">9</span></span></span>（或 <span class="fraction-box"><span class="fraction-integer">1</span><span class="fraction-body"><span class="fraction-num">1</span><span class="fraction-den">9</span></span></span>）。'
+      },
+      {
+        id: 3,
+        title: '第 3 題：檸檬水酸度濃度比較（20分）',
+        question: `A 杯檸檬汁用 3 份檸檬配 5 份水；B 杯用 4 份檸檬配 6 份水。哪一杯喝起來比較酸？`,
+        options: [
+          'A 杯比較酸',
+          'B 杯比較酸',
+          '兩杯一樣酸',
+          '無法透過比值判斷'
+        ],
+        answer: 1,
+        explanation: `A 杯比值為 3 ÷ 5 ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">3</span><span class="fraction-den">5</span></span></span> ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">9</span><span class="fraction-den">15</span></span></span>；B 杯比值為 4 ÷ 6 ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">2</span><span class="fraction-den">3</span></span></span> ＝ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">10</span><span class="fraction-den">15</span></span></span>。<br>因為 <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">10</span><span class="fraction-den">15</span></span></span> ＞ <span class="fraction-box"><span class="fraction-body"><span class="fraction-num">9</span><span class="fraction-den">15</span></span></span>，B 杯每 1 份水搭配的檸檬原汁較多，所以 B 杯比較酸。`
+      },
+      {
+        id: 4,
+        title: '第 4 題：正三角形周長比的特性（20分）',
+        question: '甲、乙兩個正三角形的邊長比是 9 : 4，請問它們的周長比會是多少？',
+        options: [
+          '27 : 12',
+          '9 : 4',
+          '3 : 2',
+          '81 : 16'
+        ],
+        answer: 1,
+        explanation: '正三角形周長 ＝ 邊長 × 3。甲周長 : 乙周長 ＝ (9 × 3) : (4 × 3) ＝ 27 : 12，化為最簡整數比為 9 : 4。'
+      },
+      {
+        id: 5,
+        title: '第 5 題：等比例調配應用（20分）',
+        question: '煮飯混合白米和糙米時，白米和糙米重量的比是 3 : 5。如果今天用了 1200 公克的糙米，需要準備多少公克的白米？',
+        options: [
+          '2000 公克',
+          '400 公克',
+          '720 公克',
+          '600 公克'
+        ],
+        answer: 2,
+        explanation: '3 : 5 ＝ ( 所需白米 ) : 1200。糙米 5 份對應 1200 公克，每 1 份是 1200 ÷ 5 ＝ 240 公克；白米佔 3 份，即 240 × 3 ＝ 720 公克。'
+      }
+    ];
+
+    let selectedAnswers = {};
+    let isQuizSubmitted = false;
+
+    function renderQuizSection() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+      selectedAnswers = {};
+      isQuizSubmitted = false;
+      document.getElementById('scoreBadge').innerText = '0';
+
+      const submitBtn = document.getElementById('submitQuizBtn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      quizQuestions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4';
+        card.id = `quiz-card-${idx}`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-slate-800 text-sm md:text-base text-blue-900">${q.title}</h4>
+            <span id="badge-q-${idx}" class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-500">待作答</span>
+          </div>
+          <p class="text-sm md:text-base text-slate-700 font-medium">${q.question}</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="options-q-${idx}">
+            ${q.options.map((opt, optIdx) => `
+              <button onclick="selectQuizOption(${idx}, ${optIdx})" id="opt-btn-${idx}-${optIdx}" class="quiz-option-btn p-3 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold flex items-center gap-2">
+                <span id="opt-label-${idx}-${optIdx}" class="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0">${['A', 'B', 'C', 'D'][optIdx]}</span>
+                <span class="flex-1">${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+          <div id="feedback-q-${idx}" class="hidden p-4 rounded-xl text-xs md:text-sm font-medium"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectQuizOption(qIdx, optIdx) {
+      if (isQuizSubmitted) return;
+      selectedAnswers[qIdx] = optIdx;
+
+      const optionButtons = document.querySelectorAll(`#options-q-${qIdx} button`);
+      optionButtons.forEach((btn, i) => {
+        const labelSpan = document.getElementById(`opt-label-${qIdx}-${i}`);
+        if (i === optIdx) {
+          btn.className = 'quiz-option-btn p-3 rounded-xl border-2 border-blue-600 bg-blue-50/70 text-blue-950 text-xs md:text-sm font-bold flex items-center gap-2';
+          labelSpan.className = 'w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0';
+        } else {
+          btn.className = 'quiz-option-btn p-3 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold flex items-center gap-2';
+          labelSpan.className = 'w-6 h-6 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-bold shrink-0';
+        }
+      });
+
+      const badgeEl = document.getElementById(`badge-q-${qIdx}`);
+      badgeEl.className = 'text-xs px-2.5 py-0.5 rounded-full font-bold bg-blue-100 text-blue-700';
+      badgeEl.innerText = `已選 ${['A', 'B', 'C', 'D'][optIdx]}`;
+    }
+
+    function submitQuiz() {
+      if (isQuizSubmitted) return;
+      isQuizSubmitted = true;
+
+      let totalScore = 0;
+
+      quizQuestions.forEach((q, idx) => {
+        const selected = selectedAnswers[idx];
+        const feedbackEl = document.getElementById(`feedback-q-${idx}`);
+        const badgeEl = document.getElementById(`badge-q-${idx}`);
+        const optionButtons = document.querySelectorAll(`#options-q-${idx} button`);
+
+        optionButtons.forEach(btn => btn.disabled = true);
+        feedbackEl.classList.remove('hidden');
+
+        if (selected === undefined) {
+          // 未作答：僅顯示黃色系「未作答。」，不顯示其他說明且不顯示正確答案
+          badgeEl.className = 'text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800';
+          badgeEl.innerText = '未作答';
+
+          feedbackEl.className = 'p-4 rounded-xl text-xs md:text-sm font-bold bg-amber-50 border border-amber-300 text-amber-800';
+          feedbackEl.innerHTML = `未作答。`;
+        } else if (selected === q.answer) {
+          // 答對（每題 20 分）
+          totalScore += 20;
+          badgeEl.className = 'text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800';
+          badgeEl.innerText = '答對 (+20分)';
+
+          optionButtons[selected].className = 'quiz-option-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 text-xs md:text-sm font-bold flex items-center gap-2';
+          feedbackEl.className = 'p-4 rounded-xl text-xs md:text-sm font-medium bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-1';
+          feedbackEl.innerHTML = `
+            <div class="font-extrabold flex items-center gap-1.5 text-emerald-700">
+              <i class="fa-solid fa-circle-check"></i> 回答正確！
+            </div>
+            <div class="pt-1"><strong>解析：</strong>${q.explanation}</div>
+          `;
+        } else {
+          // 答錯（不出現任何矛盾稱讚詞彙）
+          badgeEl.className = 'text-xs px-2.5 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800';
+          badgeEl.innerText = '答錯 (0分)';
+
+          optionButtons[selected].className = 'quiz-option-btn p-3 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-900 text-xs md:text-sm font-bold flex items-center gap-2';
+          optionButtons[q.answer].className = 'quiz-option-btn p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 text-xs md:text-sm font-bold flex items-center gap-2';
+
+          feedbackEl.className = 'p-4 rounded-xl text-xs md:text-sm font-medium bg-rose-50 border border-rose-200 text-rose-900 space-y-1';
+          feedbackEl.innerHTML = `
+            <div class="font-extrabold flex items-center gap-1.5 text-rose-700">
+              <i class="fa-solid fa-circle-xmark"></i> 答案不正確，正確選項為 ${['A', 'B', 'C', 'D'][q.answer]}。
+            </div>
+            <div class="pt-1"><strong>解析：</strong>${q.explanation}</div>
+          `;
+        }
+      });
+
+      document.getElementById('scoreBadge').innerText = totalScore;
+
+      const submitBtn = document.getElementById('submitQuizBtn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    function resetQuiz() {
+      renderQuizSection();
+    }
+
+    /* ============================================================
+       8. 頁面載入完成後初始化
+       ============================================================ */
+    window.onload = function() {
+      updateStoreA();
+      updateStoreB();
+      updateStoreC();
+      updatePaintExperiment();
+      calculateCustomRatio(); // 初始化任意比計算機（預設 2.5 : 3）
+      updatePosterCalc();
+      renderQuizSection();
+    };
+  </script>
+</body>
+</html>

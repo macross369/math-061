@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小數學 6-3 扇形弧長與周長 互動探索工坊</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+    body, button, input, select, textarea {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    body {
+      /* 新海誠天空風漸層背景：暮光藍、星空紫到晨曦粉霞 */
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #2e1065 65%, #701a75 88%, #f472b6 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* 雲朵光暈與玻璃擬物卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.3), 0 0 25px rgba(244, 114, 182, 0.2);
+    }
+
+    .glass-panel {
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    /* 國小數學標準直式分數 CSS：分子在上、分母在下、中線分隔、垂直置中 */
+    .math-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      line-height: 1.1;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .math-frac .num {
+      border-bottom: 2px solid #334155;
+      padding-bottom: 1px;
+    }
+    .math-frac .den {
+      padding-top: 1px;
+    }
+    .mixed-frac {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 700;
+      gap: 2px;
+    }
+
+    /* 自訂滑桿樣式 */
+    input[type=range] {
+      accent-color: #0284c7;
+    }
+
+    /* 呼吸微光動畫 */
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6)); }
+      50% { filter: drop-shadow(0 0 16px rgba(244, 114, 182, 0.9)); }
+    }
+    .shinkai-glow {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 md:p-8">
+
+  <!-- 主容器 -->
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- 頂端標題區（新海誠晨暮天際感） -->
+    <header class="glass-card rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-pink-400 to-indigo-500 rounded-full blur-3xl opacity-30"></div>
+      <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-gradient-to-tr from-sky-400 to-cyan-200 rounded-full blur-3xl opacity-30"></div>
+      
+      <div class="relative z-10">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 text-sky-800 text-sm font-bold tracking-wider mb-2 border border-sky-300">
+          <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 6-3 互動學習網頁
+        </span>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-indigo-600 to-pink-600">
+          扇形弧長與周長 探究工作坊
+        </h1>
+        <p class="text-slate-600 mt-2 text-base sm:text-lg max-w-2xl mx-auto">
+          透過動態拖曳即時觀測「圓心角、圓周長、弧長與扇形周長」之幾何比例奧秘！
+        </p>
+      </div>
+
+      <!-- 頁籤導覽列 (超過2個主題，符合要求) -->
+      <nav class="flex flex-wrap justify-center gap-2 sm:gap-4 mt-6">
+        <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/30">
+          <i class="fa-solid fa-compass-drafting"></i> 1. 認識弧長與比值
+        </button>
+        <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center gap-2 bg-white/80 hover:bg-sky-50 text-slate-700 border border-slate-200">
+          <i class="fa-solid fa-ruler-combined"></i> 2. 扇形弧長計算
+        </button>
+        <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center gap-2 bg-white/80 hover:bg-sky-50 text-slate-700 border border-slate-200">
+          <i class="fa-solid fa-shapes"></i> 3. 扇形周長密碼
+        </button>
+        <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base transition-all duration-200 flex items-center gap-2 bg-white/80 hover:bg-sky-50 text-slate-700 border border-slate-200">
+          <i class="fa-solid fa-graduation-cap"></i> 4. 隨堂測驗
+        </button>
+      </nav>
+    </header>
+
+    <!-- 主題 1：認識弧長與比值探究 -->
+    <section id="tab1" class="tab-content glass-card rounded-3xl p-6 sm:p-8">
+      <div class="border-b border-slate-200 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-2xl bg-sky-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-sky-400/40">1</span>
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-800">認識扇形的弧長與比值關係</h2>
+            <p class="text-slate-500 text-sm">扇形是圓的一部分，在圓周上的曲線稱為「弧」，長度即為「弧長」。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- 幾何畫布區 -->
+        <div class="lg:col-span-7 flex flex-col items-center justify-center bg-sky-50/60 rounded-3xl p-4 sm:p-6 border border-sky-100">
+          <div class="relative w-full max-w-[360px] aspect-square">
+            <svg id="svgTab1" viewBox="0 0 320 320" class="w-full h-full shinkai-glow">
+              <!-- 底圓虛線 -->
+              <circle cx="160" cy="160" r="120" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,6" opacity="0.6"/>
+              <!-- 扇形本體 -->
+              <path id="tab1SectorPath" d="" fill="rgba(56, 189, 248, 0.35)" stroke="#0284c7" stroke-width="2"/>
+              <!-- 弧長加重色 (新海誠櫻粉高亮) -->
+              <path id="tab1ArcPath" d="" fill="none" stroke="#ec4899" stroke-width="6" stroke-linecap="round"/>
+              <!-- 兩條半徑 -->
+              <line id="tab1Radius1" x1="160" y1="160" x2="280" y2="160" stroke="#f97316" stroke-width="3"/>
+              <line id="tab1Radius2" x1="160" y1="160" x2="160" y2="40" stroke="#f97316" stroke-width="3"/>
+              <!-- 圓心點 -->
+              <circle cx="160" cy="160" r="6" fill="#dc2626"/>
+              <!-- 圓心文字 -->
+              <text x="160" y="185" text-anchor="middle" font-size="13" font-weight="bold" fill="#dc2626">圓心</text>
+              <!-- 半徑文字 -->
+              <text id="tab1RadiusText" x="220" y="152" font-size="13" font-weight="bold" fill="#ea580c">半徑</text>
+              <!-- 弧長文字標示 -->
+              <text id="tab1ArcLabel" x="245" y="85" font-size="14" font-weight="900" fill="#db2777">弧 (弧長)</text>
+              <!-- 圓心角弧度指示 -->
+              <path id="tab1AngleIndicator" d="" fill="none" stroke="#4f46e5" stroke-width="2"/>
+              <text id="tab1AngleText" x="180" y="145" font-size="13" font-weight="bold" fill="#4338ca">90°</text>
+            </svg>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-4 justify-center text-xs sm:text-sm font-semibold">
+            <span class="flex items-center gap-1.5 text-pink-600 bg-pink-50 px-3 py-1 rounded-full border border-pink-200">
+              <span class="w-3 h-1.5 bg-pink-500 rounded-full inline-block"></span> 弧長 (圓周一部分)
+            </span>
+            <span class="flex items-center gap-1.5 text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+              <span class="w-3 h-1.5 bg-orange-500 rounded-full inline-block"></span> 2 條半徑
+            </span>
+            <span class="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+              <span class="w-3 h-1.5 bg-indigo-600 rounded-full inline-block"></span> 圓心角
+            </span>
+          </div>
+        </div>
+
+        <!-- 互動控制與比值表格 -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="glass-panel p-5 rounded-2xl">
+            <label class="block font-bold text-slate-700 mb-2 flex justify-between items-center">
+              <span><i class="fa-solid fa-sliders text-sky-500 mr-1"></i> 調整圓心角大小：</span>
+              <span id="tab1AngleBadge" class="px-3 py-1 bg-sky-600 text-white rounded-full text-base font-extrabold shadow-sm">90°</span>
+            </label>
+            <input type="range" id="tab1Slider" min="30" max="360" step="15" value="90" class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer">
+            <div class="flex justify-between text-xs text-slate-500 mt-2 font-semibold">
+              <span>30°</span>
+              <span>90° (<span class="math-frac"><span class="num">1</span><span class="den">4</span></span> 圓)</span>
+              <span>180° (<span class="math-frac"><span class="num">1</span><span class="den">2</span></span> 圓)</span>
+              <span>270°</span>
+              <span>360° (周角)</span>
+            </div>
+            
+            <!-- 快速常態按鈕 -->
+            <div class="grid grid-cols-4 gap-2 mt-4">
+              <button onclick="setTab1Angle(60)" class="py-1 px-2 text-xs font-bold rounded-lg bg-white hover:bg-sky-100 border border-slate-300 text-slate-700 transition">60°</button>
+              <button onclick="setTab1Angle(90)" class="py-1 px-2 text-xs font-bold rounded-lg bg-white hover:bg-sky-100 border border-slate-300 text-slate-700 transition">90°</button>
+              <button onclick="setTab1Angle(120)" class="py-1 px-2 text-xs font-bold rounded-lg bg-white hover:bg-sky-100 border border-slate-300 text-slate-700 transition">120°</button>
+              <button onclick="setTab1Angle(180)" class="py-1 px-2 text-xs font-bold rounded-lg bg-white hover:bg-sky-100 border border-slate-300 text-slate-700 transition">180°</button>
+            </div>
+          </div>
+
+          <!-- 比值結論卡片 -->
+          <div class="bg-gradient-to-br from-indigo-50 via-sky-50 to-pink-50 border border-indigo-100 p-5 rounded-2xl shadow-sm space-y-4">
+            <h3 class="font-extrabold text-indigo-900 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-amber-500 text-lg"></i> 數學探究核心發現：
+            </h3>
+
+            <div class="space-y-3 bg-white/90 p-4 rounded-xl border border-indigo-50">
+              <div class="flex items-center justify-between py-1 border-b border-slate-100 text-sm sm:text-base">
+                <span class="text-slate-600 font-medium">1. 圓心角與周角(360°)的比值：</span>
+                <span id="tab1AngleRatioBox" class="font-bold text-sky-700"></span>
+              </div>
+              <div class="flex items-center justify-between py-1 text-sm sm:text-base">
+                <span class="text-slate-600 font-medium">2. 扇形弧長與圓周長的比值：</span>
+                <span id="tab1ArcRatioBox" class="font-bold text-pink-600"></span>
+              </div>
+            </div>
+
+            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 font-bold text-sm sm:text-base flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+              <span>黃金結論：「扇形圓心角和周角的比值」＝「扇形弧長和圓周長的比值」！</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主題 2：扇形弧長計算探究 -->
+    <section id="tab2" class="tab-content hidden glass-card rounded-3xl p-6 sm:p-8">
+      <div class="border-b border-slate-200 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-400/40">2</span>
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-800">已知條件求「扇形弧長」</h2>
+            <p class="text-slate-500 text-sm">利用併式計算，先約分再相乘，解題迅速不粗心！(圓周率以 3.14 計算)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- 左側互動控制面板 -->
+        <div class="lg:col-span-5 space-y-5">
+          <!-- 題型切換 -->
+          <div class="glass-panel p-4 rounded-2xl">
+            <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">請選擇已知條件模式：</span>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="setTab2Mode('radius')" id="tab2ModeRadiusBtn" class="py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-indigo-600 text-white shadow-sm transition">
+                已知半徑與角度
+              </button>
+              <button onclick="setTab2Mode('diameter')" id="tab2ModeDiameterBtn" class="py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition">
+                已知直徑與角度
+              </button>
+            </div>
+          </div>
+
+          <!-- 參數調整滑桿 -->
+          <div class="glass-panel p-5 rounded-2xl space-y-4">
+            <div id="tab2RadiusWrap">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-slate-700">半徑長度 (<span class="text-orange-600">r</span>)：</span>
+                <span id="tab2RadiusVal" class="text-base font-black text-orange-600">10 公分</span>
+              </div>
+              <input type="range" id="tab2RadiusSlider" min="2" max="30" step="1" value="10" class="w-full">
+            </div>
+
+            <div id="tab2DiameterWrap" class="hidden">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-slate-700">直徑長度 (<span class="text-purple-600">d</span>)：</span>
+                <span id="tab2DiameterVal" class="text-base font-black text-purple-600">20 公分</span>
+              </div>
+              <input type="range" id="tab2DiameterSlider" min="4" max="60" step="2" value="20" class="w-full">
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-slate-700">圓心角 (<span class="text-indigo-600">θ</span>)：</span>
+                <span id="tab2AngleVal" class="text-base font-black text-indigo-600">120°</span>
+              </div>
+              <input type="range" id="tab2AngleSlider" min="15" max="360" step="15" value="120" class="w-full">
+              <div class="flex justify-between text-xs text-slate-400 mt-1">
+                <span>15°</span>
+                <span>120° (<span class="math-frac"><span class="num">1</span><span class="den">3</span></span> 圓)</span>
+                <span>360°</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 重點提醒 -->
+          <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-2xl text-xs sm:text-sm text-amber-900 space-y-1">
+            <p class="font-bold"><i class="fa-solid fa-graduation-cap text-amber-600 mr-1"></i> 教學小叮嚀：</p>
+            <p>圓周長 ＝ 直徑 × 3.14 ＝ 半徑 × 2 × 3.14</p>
+            <p>弧長 ＝ 圓周長 × 圓心角與周角比值</p>
+          </div>
+        </div>
+
+        <!-- 右側動態視覺與直式分數併式步驟 -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-[#fef9ee] border-2 border-[#f4e6c3] rounded-3xl p-6 text-slate-800 shadow-md flex flex-col md:flex-row items-center gap-6">
+            <div class="w-48 h-48 flex-shrink-0 bg-white/80 rounded-2xl p-2 border border-[#eddab0]/60 shadow-inner">
+              <svg id="svgTab2" viewBox="0 0 200 200" class="w-full h-full">
+                <!-- 虛擬圓 -->
+                <circle cx="100" cy="100" r="80" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4,4"/>
+                <path id="tab2SectorPath" d="" fill="rgba(56, 189, 248, 0.25)" stroke="#0284c7" stroke-width="2"/>
+                <path id="tab2ArcPath" d="" fill="none" stroke="#f43f5e" stroke-width="5" stroke-linecap="round"/>
+                <line id="tab2R1" x1="100" y1="100" x2="180" y2="100" stroke="#f97316" stroke-width="3"/>
+                <line id="tab2R2" x1="100" y1="100" x2="100" y2="20" stroke="#f97316" stroke-width="3"/>
+                <circle cx="100" cy="100" r="4" fill="#334155"/>
+              </svg>
+            </div>
+            <div class="flex-1 w-full space-y-2">
+              <span class="text-xs uppercase tracking-widest text-pink-600 font-bold"><i class="fa-solid fa-sparkles"></i> 即時計算結果</span>
+              <div class="text-3xl sm:text-4xl font-black text-slate-800">
+                弧長 ≈ <span id="tab2ResultArc" class="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-indigo-600 to-pink-600">20.93</span> 公分
+              </div>
+              <p class="text-xs text-slate-600 font-medium" id="tab2FractionDescription">
+                相當於全圓周長的 <span class="math-frac"><span class="num">1</span><span class="den">3</span></span> 圓弧
+              </p>
+            </div>
+          </div>
+
+          <!-- 標準直式分數併式推導展示卡 -->
+          <div class="glass-panel p-6 rounded-3xl border border-indigo-100 shadow-sm space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+              <i class="fa-solid fa-calculator text-indigo-600"></i> 標準直式併式解題歷程
+            </h3>
+
+            <!-- 步驟條列 -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 text-base">
+              <!-- 第1步：幾分之幾圓 -->
+              <div class="flex flex-wrap items-center gap-2 text-slate-700">
+                <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center">1</span>
+                <span>求出它是幾分之幾圓：</span>
+                <div class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
+                  <span id="tab2FracFormula"></span>
+                </div>
+              </div>
+
+              <!-- 第2步：標準併式 -->
+              <div class="flex flex-wrap items-center gap-2 text-slate-700">
+                <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center">2</span>
+                <span>列出單一完整併式：</span>
+                <div class="w-full sm:w-auto overflow-x-auto py-2">
+                  <div id="tab2CombinedFormula" class="text-lg font-bold text-indigo-900 bg-indigo-50/70 p-3 rounded-xl border border-indigo-100 inline-flex items-center gap-2"></div>
+                </div>
+              </div>
+
+              <!-- 第3步：計算答案 -->
+              <div class="p-3 bg-pink-50 rounded-xl border border-pink-200 text-pink-900 font-bold flex items-center justify-between">
+                <span><i class="fa-solid fa-flag-checkered mr-1"></i> 計算答案：</span>
+                <span class="text-lg font-black text-pink-700" id="tab2FinalAnswer">大約 20.93 公分</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主題 3：扇形周長計算探究 -->
+    <section id="tab3" class="tab-content hidden glass-card rounded-3xl p-6 sm:p-8">
+      <div class="border-b border-slate-200 pb-4 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-2xl bg-pink-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-pink-400/40">3</span>
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-800">求「扇形周長」— 千萬別漏掉兩條半徑！</h2>
+            <p class="text-slate-500 text-sm">周長是「整個周界的長」＝ 弧長 ＋ 2 條半徑（或直徑）。動態拆解周界組成！</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- 左側互動操作區 -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="glass-panel p-5 rounded-2xl space-y-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-slate-700">扇形半徑 (r)：</span>
+                <span id="tab3RadiusVal" class="text-base font-black text-orange-600">6 公分</span>
+              </div>
+              <input type="range" id="tab3RadiusSlider" min="3" max="20" step="1" value="6" class="w-full">
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-sm font-bold text-slate-700">圓心角：</span>
+                <span id="tab3AngleVal" class="text-base font-black text-indigo-600">240° (<span class="math-frac"><span class="num">2</span><span class="den">3</span></span> 圓)</span>
+              </div>
+              <input type="range" id="tab3AngleSlider" min="30" max="330" step="30" value="240" class="w-full">
+            </div>
+
+            <!-- 周界拆解檢視切換 -->
+            <div class="pt-2 border-t border-slate-200">
+              <span class="block text-xs font-bold text-slate-500 mb-2">周界零件動態顯色模式：</span>
+              <div class="grid grid-cols-3 gap-2 text-xs font-bold text-center">
+                <button onclick="setTab3Highlight('all')" id="btnHLAll" class="py-2 px-1 rounded-xl bg-slate-800 text-white shadow-sm">全周界 (合起來)</button>
+                <button onclick="setTab3Highlight('arc')" id="btnHLArc" class="py-2 px-1 rounded-xl bg-white text-pink-600 border border-slate-200">只有弧長</button>
+                <button onclick="setTab3Highlight('radii')" id="btnHLRadii" class="py-2 px-1 rounded-xl bg-white text-orange-600 border border-slate-200">只有2條半徑</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 常見迷思警示 -->
+          <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl flex items-start gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500 text-xl mt-0.5"></i>
+            <div class="text-xs sm:text-sm text-rose-900">
+              <span class="font-black text-rose-600">國小最容易錯的陷阱題！</span>
+              <p class="mt-1 leading-relaxed">許多小朋友算完「弧長」就當作答案交卷，忘記把手握的「2 條平直半徑」加回來！記得：<strong>周長 ＝ 弧長 ＋ 半徑 × 2</strong>。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右側動態周界圖解與總和卡 -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="bg-sky-50/70 p-6 rounded-3xl border border-sky-100 flex flex-col items-center">
+            <div class="w-full max-w-[340px] aspect-square">
+              <svg id="svgTab3" viewBox="0 0 300 300" class="w-full h-full">
+                <!-- 虛擬圓輪廓 -->
+                <circle cx="150" cy="150" r="110" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5,5"/>
+                <!-- 扇形填充面 -->
+                <path id="tab3SectorFill" d="" fill="rgba(244, 114, 182, 0.2)"/>
+                <!-- 弧長邊界 (粉紅) -->
+                <path id="tab3ArcStroke" d="" fill="none" stroke="#ec4899" stroke-width="6" stroke-linecap="round"/>
+                <!-- 半徑1 (橘) -->
+                <line id="tab3RLine1" x1="150" y1="150" x2="260" y2="150" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+                <!-- 半徑2 (橘) -->
+                <line id="tab3RLine2" x1="150" y1="150" x2="95" y2="245" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="150" cy="150" r="6" fill="#1e293b"/>
+                <text x="150" y="140" text-anchor="middle" font-size="12" font-weight="bold" fill="#475569">圓心</text>
+              </svg>
+            </div>
+
+            <!-- 周長組成公式卡 -->
+            <div class="w-full mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+              <div class="bg-pink-100/80 p-3 rounded-2xl border border-pink-200">
+                <span class="text-xs font-bold text-pink-700 block">① 弧長</span>
+                <span id="tab3ArcValueDisplay" class="text-lg font-black text-pink-950">25.12 cm</span>
+              </div>
+              <div class="flex items-center justify-center text-slate-400 font-extrabold text-xl sm:hidden">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+              <div class="bg-orange-100/80 p-3 rounded-2xl border border-orange-200">
+                <span class="text-xs font-bold text-orange-700 block">② 兩條半徑 (r × 2)</span>
+                <span id="tab3RadiiValueDisplay" class="text-lg font-black text-orange-950">12 cm</span>
+              </div>
+              <div class="flex items-center justify-center text-slate-400 font-extrabold text-xl sm:hidden">
+                <i class="fa-solid fa-equals"></i>
+              </div>
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-600 p-3 rounded-2xl text-white shadow-md">
+                <span class="text-xs font-bold text-emerald-100 block">③ 扇形總周長</span>
+                <span id="tab3TotalPerimeterDisplay" class="text-lg font-black">37.12 cm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 課本直式併式算式 -->
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">課本推薦一條式子合併記法 (併式)：</span>
+            <div id="tab3CombinedFormulaText" class="text-base sm:text-lg font-black text-slate-800 overflow-x-auto py-1"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主題 4：隨堂測驗 (5 題) -->
+    <section id="tab4" class="tab-content hidden glass-card rounded-3xl p-6 sm:p-8">
+      <div class="border-b border-slate-200 pb-4 mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-amber-400/40">4</span>
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-800">隨堂測驗</h2>
+            <p class="text-slate-500 text-sm">請完成以下 5 題測驗後點擊「提交答案」，系統將提供即時批改與直式算式解析！</p>
+          </div>
+        </div>
+        <div class="bg-indigo-50 px-4 py-2 rounded-2xl border border-indigo-200 text-indigo-900 font-bold text-sm">
+          得分：<span id="quizScore" class="text-xl font-black text-indigo-600">0</span> / 100
+        </div>
+      </div>
+
+      <!-- 題庫清單 -->
+      <div id="quizContainer" class="space-y-6">
+        <!-- 透過 JS 動態生成 5 題題卡 -->
+      </div>
+
+      <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+        <button onclick="submitQuiz()" id="btnSubmitQuiz" class="min-w-[140px] px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-indigo-500/30 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> 提交答案
+        </button>
+        <button onclick="resetQuiz()" class="min-w-[140px] px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm sm:text-base shadow-lg transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-rotate-right"></i> 重新測驗
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- JavaScript 核心程式邏輯 -->
+  <script>
+    /* ----------------------------------------------------
+       分頁切換控制 (Tab Switcher)
+    ---------------------------------------------------- */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-gradient-to-r', 'from-sky-500', 'to-blue-600', 'text-white', 'shadow-lg', 'shadow-sky-500/30');
+        btn.classList.add('bg-white/80', 'text-slate-700');
+      });
+
+      const activeContent = document.getElementById(tabId);
+      if (activeContent) activeContent.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-white/80', 'text-slate-700');
+        activeBtn.classList.add('bg-gradient-to-r', 'from-sky-500', 'to-blue-600', 'text-white', 'shadow-lg', 'shadow-sky-500/30');
+      }
+
+      // 切換時重新計算渲染圖形
+      if (tabId === 'tab1') updateTab1();
+      if (tabId === 'tab2') updateTab2();
+      if (tabId === 'tab3') updateTab3();
+    }
+
+    /* ----------------------------------------------------
+       輔助函式：最大公因數與約分
+    ---------------------------------------------------- */
+    function getGCD(a, b) {
+      return b === 0 ? a : getGCD(b, a % b);
+    }
+
+    // 生成標準直式分數 HTML
+    function makeFracHTML(num, den) {
+      return `<span class="math-frac"><span class="num">${num}</span><span class="den">${den}</span></span>`;
+    }
+
+    /* ----------------------------------------------------
+       主題 1：認識弧長與比值互動邏輯
+    ---------------------------------------------------- */
+    const tab1Slider = document.getElementById('tab1Slider');
+    const tab1AngleBadge = document.getElementById('tab1AngleBadge');
+    const tab1AngleText = document.getElementById('tab1AngleText');
+    const tab1SectorPath = document.getElementById('tab1SectorPath');
+    const tab1ArcPath = document.getElementById('tab1ArcPath');
+    const tab1AngleIndicator = document.getElementById('tab1AngleIndicator');
+    const tab1Radius2 = document.getElementById('tab1Radius2');
+    const tab1ArcLabel = document.getElementById('tab1ArcLabel');
+    const tab1AngleRatioBox = document.getElementById('tab1AngleRatioBox');
+    const tab1ArcRatioBox = document.getElementById('tab1ArcRatioBox');
+
+    function setTab1Angle(deg) {
+      tab1Slider.value = deg;
+      updateTab1();
+    }
+
+    tab1Slider.addEventListener('input', updateTab1);
+
+    function updateTab1() {
+      const angle = parseInt(tab1Slider.value, 10);
+      tab1AngleBadge.textContent = angle + '°';
+      tab1AngleText.textContent = angle + '°';
+
+      const cx = 160, cy = 160, r = 120;
+      // 0 度朝向右側 (x: 280, y: 160)
+      const rad = (angle * Math.PI) / 180;
+      const endX = cx + r * Math.cos(-rad);
+      const endY = cy + r * Math.sin(-rad);
+
+      const largeArc = angle > 180 ? 1 : 0;
+
+      // 繪製扇形
+      if (angle >= 360) {
+        tab1SectorPath.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx} ${cy+r} A ${r} ${r} 0 1 1 ${cx} ${cy-r} Z`);
+        tab1ArcPath.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx} ${cy+r} A ${r} ${r} 0 1 1 ${cx} ${cy-r}`);
+        tab1Radius2.setAttribute('x2', cx + r);
+        tab1Radius2.setAttribute('y2', cy);
+      } else {
+        const sectorD = `M ${cx} ${cy} L ${cx + r} ${cy} A ${r} ${r} 0 ${largeArc} 0 ${endX} ${endY} Z`;
+        tab1SectorPath.setAttribute('d', sectorD);
+
+        const arcD = `M ${cx + r} ${cy} A ${r} ${r} 0 ${largeArc} 0 ${endX} ${endY}`;
+        tab1ArcPath.setAttribute('d', arcD);
+
+        tab1Radius2.setAttribute('x2', endX);
+        tab1Radius2.setAttribute('y2', endY);
+      }
+
+      // 圓心角指示弧
+      const rAngle = 40;
+      const aEndX = cx + rAngle * Math.cos(-rad);
+      const aEndY = cy + rAngle * Math.sin(-rad);
+      if (angle < 360) {
+        tab1AngleIndicator.setAttribute('d', `M ${cx + rAngle} ${cy} A ${rAngle} ${rAngle} 0 ${largeArc} 0 ${aEndX} ${aEndY}`);
+        tab1AngleIndicator.style.display = 'block';
+      } else {
+        tab1AngleIndicator.style.display = 'none';
+      }
+
+      // 動態調整標籤位置
+      const midRad = (-rad) / 2;
+      const labelX = cx + (r + 28) * Math.cos(midRad);
+      const labelY = cy + (r + 28) * Math.sin(midRad);
+      tab1ArcLabel.setAttribute('x', labelX);
+      tab1ArcLabel.setAttribute('y', labelY);
+
+      // 計算比值化簡
+      const gcd = getGCD(angle, 360);
+      const simNum = angle / gcd;
+      const simDen = 360 / gcd;
+
+      const fracOrig = makeFracHTML(angle, 360);
+      const fracSim = makeFracHTML(simNum, simDen);
+
+      tab1AngleRatioBox.innerHTML = `${fracOrig} ＝ ${fracSim}`;
+      tab1ArcRatioBox.innerHTML = `與圓心角相同 ＝ ${fracSim}`;
+    }
+
+    /* ----------------------------------------------------
+       主題 2：扇形弧長計算探究
+    ---------------------------------------------------- */
+    let tab2Mode = 'radius'; // 'radius' | 'diameter'
+    const tab2RadiusSlider = document.getElementById('tab2RadiusSlider');
+    const tab2DiameterSlider = document.getElementById('tab2DiameterSlider');
+    const tab2AngleSlider = document.getElementById('tab2AngleSlider');
+
+    function setTab2Mode(mode) {
+      tab2Mode = mode;
+      const radBtn = document.getElementById('tab2ModeRadiusBtn');
+      const diaBtn = document.getElementById('tab2ModeDiameterBtn');
+      const radWrap = document.getElementById('tab2RadiusWrap');
+      const diaWrap = document.getElementById('tab2DiameterWrap');
+
+      if (mode === 'radius') {
+        radBtn.className = 'py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-indigo-600 text-white shadow-sm transition';
+        diaBtn.className = 'py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition';
+        radWrap.classList.remove('hidden');
+        diaWrap.classList.add('hidden');
+      } else {
+        diaBtn.className = 'py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-indigo-600 text-white shadow-sm transition';
+        radBtn.className = 'py-2 px-3 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 transition';
+        diaWrap.classList.remove('hidden');
+        radWrap.classList.add('hidden');
+      }
+      updateTab2();
+    }
+
+    tab2RadiusSlider.addEventListener('input', updateTab2);
+    tab2DiameterSlider.addEventListener('input', updateTab2);
+    tab2AngleSlider.addEventListener('input', updateTab2);
+
+    function updateTab2() {
+      const r = parseInt(tab2RadiusSlider.value, 10);
+      const d = parseInt(tab2DiameterSlider.value, 10);
+      const angle = parseInt(tab2AngleSlider.value, 10);
+
+      document.getElementById('tab2RadiusVal').textContent = `${r} 公分`;
+      document.getElementById('tab2DiameterVal').textContent = `${d} 公分`;
+      document.getElementById('tab2AngleVal').textContent = `${angle}°`;
+
+      const gcd = getGCD(angle, 360);
+      const num = angle / gcd;
+      const den = 360 / gcd;
+
+      let arcLength = 0;
+      let formulaHTML = '';
+
+      if (tab2Mode === 'radius') {
+        // 弧長 = 半徑 × 2 × 3.14 × (角度/360)
+        arcLength = r * 2 * 3.14 * (angle / 360);
+        formulaHTML = `${r} × 2 × 3.14 × ${makeFracHTML(num, den)}`;
+      } else {
+        // 弧長 = 直徑 × 3.14 × (角度/360)
+        arcLength = d * 3.14 * (angle / 360);
+        formulaHTML = `${d} × 3.14 × ${makeFracHTML(num, den)}`;
+      }
+
+      // 四捨五入至小數第二位
+      const roundedArc = Math.round(arcLength * 100) / 100;
+
+      document.getElementById('tab2ResultArc').textContent = roundedArc;
+      document.getElementById('tab2FractionDescription').innerHTML = `相當於全圓周長的 ${makeFracHTML(num, den)} 圓弧長`;
+      document.getElementById('tab2FracFormula').innerHTML = `${makeFracHTML(angle, 360)} ＝ ${makeFracHTML(num, den)}`;
+      document.getElementById('tab2CombinedFormula').innerHTML = `弧長 ＝ ${formulaHTML} ＝ ${roundedArc}`;
+      document.getElementById('tab2FinalAnswer').textContent = `大約 ${roundedArc} 公分`;
+
+      // 繪製 SVG
+      const cx = 100, cy = 100, svgR = 75;
+      const rad = (angle * Math.PI) / 180;
+      const endX = cx + svgR * Math.cos(-rad);
+      const endY = cy + svgR * Math.sin(-rad);
+      const largeArc = angle > 180 ? 1 : 0;
+
+      if (angle >= 360) {
+        document.getElementById('tab2SectorPath').setAttribute('d', `M ${cx} ${cy-svgR} A ${svgR} ${svgR} 0 1 1 ${cx} ${cy+svgR} A ${svgR} ${svgR} 0 1 1 ${cx} ${cy-svgR} Z`);
+        document.getElementById('tab2ArcPath').setAttribute('d', `M ${cx} ${cy-svgR} A ${svgR} ${svgR} 0 1 1 ${cx} ${cy+svgR} A ${svgR} ${svgR} 0 1 1 ${cx} ${cy-svgR}`);
+      } else {
+        document.getElementById('tab2SectorPath').setAttribute('d', `M ${cx} ${cy} L ${cx + svgR} ${cy} A ${svgR} ${svgR} 0 ${largeArc} 0 ${endX} ${endY} Z`);
+        document.getElementById('tab2ArcPath').setAttribute('d', `M ${cx + svgR} ${cy} A ${svgR} ${svgR} 0 ${largeArc} 0 ${endX} ${endY}`);
+        document.getElementById('tab2R2').setAttribute('x2', endX);
+        document.getElementById('tab2R2').setAttribute('y2', endY);
+      }
+    }
+
+    /* ----------------------------------------------------
+       主題 3：扇形周長計算探究
+    ---------------------------------------------------- */
+    const tab3RadiusSlider = document.getElementById('tab3RadiusSlider');
+    const tab3AngleSlider = document.getElementById('tab3AngleSlider');
+    let tab3HighlightMode = 'all';
+
+    tab3RadiusSlider.addEventListener('input', updateTab3);
+    tab3AngleSlider.addEventListener('input', updateTab3);
+
+    function setTab3Highlight(mode) {
+      tab3HighlightMode = mode;
+      const btnAll = document.getElementById('btnHLAll');
+      const btnArc = document.getElementById('btnHLArc');
+      const btnRadii = document.getElementById('btnHLRadii');
+
+      btnAll.className = mode === 'all' ? 'py-2 px-1 rounded-xl bg-slate-800 text-white shadow-sm' : 'py-2 px-1 rounded-xl bg-white text-slate-700 border border-slate-200';
+      btnArc.className = mode === 'arc' ? 'py-2 px-1 rounded-xl bg-pink-600 text-white shadow-sm' : 'py-2 px-1 rounded-xl bg-white text-pink-600 border border-slate-200';
+      btnRadii.className = mode === 'radii' ? 'py-2 px-1 rounded-xl bg-orange-600 text-white shadow-sm' : 'py-2 px-1 rounded-xl bg-white text-orange-600 border border-slate-200';
+
+      const arcStroke = document.getElementById('tab3ArcStroke');
+      const r1 = document.getElementById('tab3RLine1');
+      const r2 = document.getElementById('tab3RLine2');
+
+      if (mode === 'all') {
+        arcStroke.style.opacity = '1';
+        r1.style.opacity = '1';
+        r2.style.opacity = '1';
+      } else if (mode === 'arc') {
+        arcStroke.style.opacity = '1';
+        r1.style.opacity = '0.2';
+        r2.style.opacity = '0.2';
+      } else if (mode === 'radii') {
+        arcStroke.style.opacity = '0.2';
+        r1.style.opacity = '1';
+        r2.style.opacity = '1';
+      }
+    }
+
+    function updateTab3() {
+      const r = parseInt(tab3RadiusSlider.value, 10);
+      const angle = parseInt(tab3AngleSlider.value, 10);
+
+      const gcd = getGCD(angle, 360);
+      const num = angle / gcd;
+      const den = 360 / gcd;
+
+      document.getElementById('tab3RadiusVal').textContent = `${r} 公分`;
+      document.getElementById('tab3AngleVal').innerHTML = `${angle}° (${makeFracHTML(num, den)} 圓)`;
+
+      // 計算
+      const arc = r * 2 * 3.14 * (angle / 360);
+      const roundedArc = Math.round(arc * 100) / 100;
+      const twoRadii = r * 2;
+      const totalPerimeter = Math.round((roundedArc + twoRadii) * 100) / 100;
+
+      document.getElementById('tab3ArcValueDisplay').textContent = `${roundedArc} cm`;
+      document.getElementById('tab3RadiiValueDisplay').textContent = `${r} × 2 ＝ ${twoRadii} cm`;
+      document.getElementById('tab3TotalPerimeterDisplay').textContent = `${totalPerimeter} cm`;
+
+      // 併式展示
+      document.getElementById('tab3CombinedFormulaText').innerHTML = `
+        <div class="flex flex-wrap items-center gap-2">
+          <span>扇形周長 ＝ 弧長 ＋ 兩條半徑</span>
+        </div>
+        <div class="mt-2 text-indigo-700 flex flex-wrap items-center gap-1.5 font-bold">
+          <span>＝</span>
+          <span>(${r} × 2 × 3.14 × ${makeFracHTML(num, den)})</span>
+          <span>＋</span>
+          <span>(${r} × 2)</span>
+          <span>＝</span>
+          <span>${roundedArc} ＋ ${twoRadii}</span>
+          <span>＝</span>
+          <span class="text-pink-600 font-black text-xl">${totalPerimeter}</span>
+          <span>公分</span>
+        </div>
+      `;
+
+      // SVG 更新
+      const cx = 150, cy = 150, svgR = 105;
+      const rad = (angle * Math.PI) / 180;
+      const endX = cx + svgR * Math.cos(-rad);
+      const endY = cy + svgR * Math.sin(-rad);
+      const largeArc = angle > 180 ? 1 : 0;
+
+      const fillPath = `M ${cx} ${cy} L ${cx + svgR} ${cy} A ${svgR} ${svgR} 0 ${largeArc} 0 ${endX} ${endY} Z`;
+      const arcPath = `M ${cx + svgR} ${cy} A ${svgR} ${svgR} 0 ${largeArc} 0 ${endX} ${endY}`;
+
+      document.getElementById('tab3SectorFill').setAttribute('d', fillPath);
+      document.getElementById('tab3ArcStroke').setAttribute('d', arcPath);
+      document.getElementById('tab3RLine2').setAttribute('x2', endX);
+      document.getElementById('tab3RLine2').setAttribute('y2', endY);
+    }
+
+    /* ----------------------------------------------------
+       主題 4：5 題歷程性評量測驗題庫
+    ---------------------------------------------------- */
+    const quizData = [
+      {
+        id: 1,
+        question: "在同一個圓中，有一個圓心角是 120° 的扇形，請問這個扇形的「弧長和圓周長的比值」是多少？",
+        options: [
+          { text: "1/2", frac: [1, 2], correct: false },
+          { text: "1/3", frac: [1, 3], correct: true },
+          { text: "1/4", frac: [1, 4], correct: false },
+          { text: "1/6", frac: [1, 6], correct: false }
+        ],
+        explanation: `扇形圓心角和周角的比值 ＝ 扇形弧長和圓周長的比值。<br>因此比值為：${makeFracHTML(120, 360)} 約分後等於 ${makeFracHTML(1, 3)}。`
+      },
+      {
+        id: 2,
+        question: `在一個直徑是 40 公分的圓上，有一個 ${makeFracHTML(1, 4)} 圓的扇形，這個扇形的「弧長」大約是多少公分？`,
+        options: [
+          { text: "31.4 公分", correct: true },
+          { text: "62.8 公分", correct: false },
+          { text: "125.6 公分", correct: false },
+          { text: "15.7 公分", correct: false }
+        ],
+        explanation: `弧長 ＝ 直徑 × 3.14 × 幾分之幾圓<br>算式：40 × 3.14 × ${makeFracHTML(1, 4)} ＝ 10 × 3.14 ＝ 31.4 (公分)。`
+      },
+      {
+        id: 3,
+        question: "有一個半徑 10 公分、圓心角 72° 的扇形，它的弧長大約是幾公分？",
+        options: [
+          { text: "6.28 公分", correct: false },
+          { text: "12.56 公分", correct: true },
+          { text: "25.12 公分", correct: false },
+          { text: "32.56 公分", correct: false }
+        ],
+        explanation: `先化簡圓心角比值：${makeFracHTML(72, 360)} ＝ ${makeFracHTML(1, 5)} 圓。<br>弧長 ＝ 10 × 2 × 3.14 × ${makeFracHTML(1, 5)} ＝ 4 × 3.14 ＝ 12.56 (公分)。`
+      },
+      {
+        id: 4,
+        question: `小明做了一個半徑 6 公分的 ${makeFracHTML(2, 3)} 圓扇形紙卡，請問這個扇形的「周長」大約是多少公分？`,
+        options: [
+          { text: "25.12 公分", correct: false },
+          { text: "31.12 公分", correct: false },
+          { text: "37.12 公分", correct: true },
+          { text: "43.12 公分", correct: false }
+        ],
+        explanation: `周長 ＝ 弧長 ＋ 2條半徑！<br>弧長 ＝ 6 × 2 × 3.14 × ${makeFracHTML(2, 3)} ＝ 25.12 (公分)<br>周長 ＝ 25.12 ＋ (6 × 2) ＝ 25.12 ＋ 12 ＝ 37.12 (公分)。`
+      },
+      {
+        id: 5,
+        question: "一個圓心角 90°、直徑 20 公分的扇形，它的周長大約是多少公分？",
+        options: [
+          { text: "15.7 公分", correct: false },
+          { text: "25.7 公分", correct: false },
+          { text: "35.7 公分", correct: true },
+          { text: "45.7 公分", correct: false }
+        ],
+        explanation: `圓心角 90° 為 ${makeFracHTML(90, 360)} ＝ ${makeFracHTML(1, 4)} 圓。<br>兩條半徑合起來就是 1 條直徑 (20 公分)。<br>併式：20 × 3.14 × ${makeFracHTML(1, 4)} ＋ 20 ＝ 15.7 ＋ 20 ＝ 35.7 (公分)。`
+      }
+    ];
+
+    let userAnswers = {};
+    let quizSubmitted = false;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizData.forEach((q) => {
+        const card = document.createElement('div');
+        card.className = 'glass-panel p-6 rounded-2xl border border-slate-200 transition-all';
+        card.id = `qCard-${q.id}`;
+
+        let optionsHTML = '';
+        q.options.forEach((opt, optIdx) => {
+          const displayText = opt.frac ? makeFracHTML(opt.frac[0], opt.frac[1]) : opt.text;
+          optionsHTML += `
+            <button onclick="selectOption(${q.id}, ${optIdx})" id="qBtn-${q.id}-${optIdx}" class="q-opt-btn p-3 rounded-xl border border-slate-300 bg-white hover:bg-sky-50 font-bold text-slate-700 text-left transition flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <span class="opt-badge w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center">${String.fromCharCode(65 + optIdx)}</span>
+                <span>${displayText}</span>
+              </span>
+              <i class="fa-regular fa-circle text-slate-300 check-icon"></i>
+            </button>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-xl bg-indigo-100 text-indigo-700 font-black text-sm flex items-center justify-center flex-shrink-0 mt-0.5">${q.id}</span>
+            <div class="flex-1">
+              <h4 class="font-bold text-slate-800 text-base leading-relaxed mb-4">${q.question}</h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                ${optionsHTML}
+              </div>
+              <div id="feedback-${q.id}" class="hidden p-4 rounded-xl text-sm leading-relaxed"></div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectOption(qId, optIdx) {
+      if (quizSubmitted) return; // 已提交後鎖定選項
+
+      userAnswers[qId] = optIdx;
+      const q = quizData.find(item => item.id === qId);
+
+      // 更新該題選項的選取外觀
+      q.options.forEach((_, i) => {
+        const btn = document.getElementById(`qBtn-${qId}-${i}`);
+        const badge = btn.querySelector('.opt-badge');
+        const icon = btn.querySelector('.check-icon');
+
+        if (i === optIdx) {
+          btn.classList.remove('border-slate-300', 'bg-white', 'hover:bg-sky-50', 'text-slate-700');
+          btn.classList.add('border-sky-500', 'bg-sky-50', 'text-sky-900', 'ring-2', 'ring-sky-300');
+          badge.classList.remove('bg-slate-100', 'text-slate-500');
+          badge.classList.add('bg-sky-600', 'text-white');
+          icon.className = 'fa-solid fa-circle-dot text-sky-600 check-icon';
+        } else {
+          btn.classList.remove('border-sky-500', 'bg-sky-50', 'text-sky-900', 'ring-2', 'ring-sky-300');
+          btn.classList.add('border-slate-300', 'bg-white', 'hover:bg-sky-50', 'text-slate-700');
+          badge.classList.remove('bg-sky-600', 'text-white');
+          badge.classList.add('bg-slate-100', 'text-slate-500');
+          icon.className = 'fa-regular fa-circle text-slate-300 check-icon';
+        }
+      });
+    }
+
+    function submitQuiz() {
+      if (quizSubmitted) return;
+      quizSubmitted = true;
+
+      const submitBtn = document.getElementById('btnSubmitQuiz');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      quizData.forEach(q => {
+        const qId = q.id;
+        const selectedIdx = userAnswers[qId];
+        const fbBox = document.getElementById(`feedback-${qId}`);
+
+        // 禁用該題所有選項按鈕並清除選取外框
+        q.options.forEach((_, i) => {
+          const btn = document.getElementById(`qBtn-${qId}-${i}`);
+          btn.disabled = true;
+          btn.classList.remove('ring-2', 'ring-sky-300', 'hover:bg-sky-50');
+          btn.classList.add('cursor-not-allowed', 'opacity-75');
+        });
+
+        // 情況 1：未作答（空白）
+        if (selectedIdx === undefined) {
+          fbBox.className = 'p-4 rounded-xl text-sm font-bold leading-relaxed bg-amber-50 border border-amber-300 text-amber-800 mt-2 block';
+          fbBox.innerHTML = `<span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-exclamation text-amber-600"></i> 未作答。</span>`;
+          return;
+        }
+
+        const isCorrect = q.options[selectedIdx].correct;
+        const selectedBtn = document.getElementById(`qBtn-${qId}-${selectedIdx}`);
+        selectedBtn.classList.remove('opacity-75', 'border-sky-500', 'bg-sky-50', 'text-sky-900');
+
+        if (isCorrect) {
+          // 情況 2：答對
+          selectedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900');
+          selectedBtn.querySelector('.check-icon').className = 'fa-solid fa-circle-check text-emerald-600 check-icon';
+          fbBox.className = 'p-4 rounded-xl text-sm leading-relaxed bg-emerald-50 border border-emerald-200 text-emerald-900 mt-2 block';
+          fbBox.innerHTML = `<span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-check text-emerald-600"></i> 答對了！</span><div class="mt-2 text-slate-700">${q.explanation}</div>`;
+        } else {
+          // 情況 3：答錯
+          selectedBtn.classList.add('bg-rose-100', 'border-rose-500', 'text-rose-900');
+          selectedBtn.querySelector('.check-icon').className = 'fa-solid fa-circle-xmark text-rose-600 check-icon';
+
+          const correctIdx = q.options.findIndex(o => o.correct);
+          const correctBtn = document.getElementById(`qBtn-${qId}-${correctIdx}`);
+          correctBtn.classList.remove('opacity-75');
+          correctBtn.classList.add('bg-emerald-50', 'border-emerald-400', 'text-emerald-800');
+
+          fbBox.className = 'p-4 rounded-xl text-sm leading-relaxed bg-rose-50 border border-rose-200 text-rose-900 mt-2 block';
+          fbBox.innerHTML = `<span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark text-rose-600"></i> 答錯囉！請參考以下解題說明：</span><div class="mt-2 text-slate-700">${q.explanation}</div>`;
+        }
+      });
+
+      calculateScore();
+    }
+
+    function calculateScore() {
+      let correctCount = 0;
+      quizData.forEach(q => {
+        const ans = userAnswers[q.id];
+        if (ans !== undefined && q.options[ans].correct) {
+          correctCount++;
+        }
+      });
+      const score = correctCount * 20;
+      document.getElementById('quizScore').textContent = score;
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      quizSubmitted = false;
+      const submitBtn = document.getElementById('btnSubmitQuiz');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      renderQuiz();
+      document.getElementById('quizScore').textContent = '0';
+    }
+
+    /* ----------------------------------------------------
+       頁面載入初始化
+    ---------------------------------------------------- */
+    window.onload = function() {
+      updateTab1();
+      updateTab2();
+      updateTab3();
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>六年級數學探究：圓周長與圓周率的秘密</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shinkai: {
+              sky: '#3a7bd5',
+              deepBlue: '#0f2027',
+              duskPink: '#f8a5c2',
+              twilightPurple: '#6a11cb',
+              sunGold: '#fbc531',
+              cloudWhite: 'rgba(255, 255, 255, 0.88)'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 全站統一使用思源黑體 (Noto Sans TC)，同時保留 FontAwesome 圖示字體 */
+    body, button, input, select, textarea, h1, h2, h3, h4, p, span, div, th, td, label {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .fa-solid, .fas, .far, .fab, .fa {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+    }
+
+    /* 新海誠動漫風天空漸層背景 */
+    body {
+      background: linear-gradient(135deg, #13547a 0%, #80d0c7 50%, #e0c3fc 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      font-family: 'Noto Sans TC', sans-serif;
+      color: #1e293b;
+    }
+
+    /* 雲朵光芒動態微光 */
+    .shinkai-backdrop {
+      background: radial-gradient(circle at 80% 20%, rgba(255, 235, 180, 0.45) 0%, rgba(255, 255, 255, 0) 60%),
+                  radial-gradient(circle at 20% 80%, rgba(248, 165, 194, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 磨砂玻璃擬態卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 16px 35px -8px rgba(15, 32, 39, 0.18), 0 0 20px rgba(255, 255, 255, 0.4);
+      border-radius: 1.5rem;
+    }
+
+    /* 標準國小直式分數渲染（分子在上、分母在下、中線分隔、帶分數整數垂直置中） */
+    .math-fraction {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 700;
+      line-height: 1;
+      margin: 0 0.25rem;
+    }
+    .math-fraction .integer-part {
+      font-size: 1.15em;
+      margin-right: 0.2rem;
+      align-self: center;
+    }
+    .math-fraction .frac-body {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    .math-fraction .numerator {
+      border-bottom: 2px solid currentColor;
+      padding: 0 3px 1px 3px;
+      display: block;
+    }
+    .math-fraction .denominator {
+      padding: 1px 3px 0 3px;
+      display: block;
+    }
+
+    /* 自訂平滑滑桿樣式 */
+    input[type=range] {
+      accent-color: #3a7bd5;
+    }
+    
+    /* 標籤頁轉場 */
+    .tab-btn.active {
+      background: linear-gradient(135deg, #3a7bd5 0%, #2575fc 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(37, 117, 252, 0.35);
+    }
+
+    /* Canvas 響應式封裝 */
+    .canvas-container {
+      width: 100%;
+      position: relative;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      border-radius: 1rem;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 relative">
+  <div class="shinkai-backdrop"></div>
+
+  <header class="max-w-6xl mx-auto mb-6 relative z-10 text-center">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-white/80 text-sky-700 text-sm font-bold shadow-sm mb-3">
+      <i class="fa-solid fa-cloud-sun text-amber-500"></i> 國小六上數學 6-1 互動學習網頁
+    </div>
+    <h1 class="text-3xl md:text-5xl font-extrabold text-white drop-shadow-md tracking-tight">
+      圓周長與圓周率的奇幻旅程
+    </h1>
+    <p class="text-white/95 text-base md:text-lg mt-2 font-medium drop-shadow-sm max-w-2xl mx-auto">
+      動手滑一滑、滾動圓形！觀察直徑與周長的奧秘關係，發現神奇的常數 <span class="bg-amber-300 text-slate-800 px-2 py-0.5 rounded font-black">3.14</span>！
+    </p>
+
+    <!-- 標籤頁導航切換 -->
+    <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mt-6">
+      <button onclick="switchTab('tab1')" id="nav-tab1" class="tab-btn active px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 text-slate-700 hover:bg-white flex items-center gap-2">
+        <i class="fa-solid fa-shapes"></i> 1. 直徑越大，周長越大嗎？
+      </button>
+      <button onclick="switchTab('tab2')" id="nav-tab2" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 text-slate-700 hover:bg-white flex items-center gap-2">
+        <i class="fa-solid fa-border-all"></i> 2. 圓周長與直徑4倍比較
+      </button>
+      <button onclick="switchTab('tab-measure')" id="nav-tab-measure" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 text-slate-700 hover:bg-white flex items-center gap-2">
+        <i class="fa-solid fa-ruler-combined"></i> 3. 如何測量圓形？
+      </button>
+      <button onclick="switchTab('tab3')" id="nav-tab3" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 text-slate-700 hover:bg-white flex items-center gap-2">
+        <i class="fa-solid fa-arrows-left-right-to-line"></i> 4. 圓形滾動展開實測 (3倍多)
+      </button>
+      <button onclick="switchTab('tab4')" id="nav-tab4" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 text-slate-700 hover:bg-white flex items-center gap-2">
+        <i class="fa-solid fa-calculator"></i> 5. 圓周率發現實驗室
+      </button>
+      <button onclick="switchTab('tab5')" id="nav-tab5" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-300 bg-white/80 text-slate-700 hover:bg-white flex items-center gap-2">
+        <i class="fa-solid fa-circle-question"></i> 6. 隨堂測驗
+      </button>
+    </nav>
+  </header>
+
+  <!-- 主內容容器 -->
+  <main class="max-w-6xl mx-auto relative z-10">
+
+    <section id="tab1" class="tab-content block">
+      <div class="glass-card p-5 md:p-8">
+        <div class="flex items-center gap-3 border-b border-sky-100 pb-3 mb-6">
+          <span class="w-9 h-9 rounded-xl bg-sky-500 text-white flex items-center justify-center font-black shadow-md">1</span>
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">烘焙墊上的同心圓：認識直徑與圓周長</h2>
+            <p class="text-xs md:text-sm text-slate-500">觀察圓的大小與其「直徑」、「圓周長」的變化規律</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- 互動畫布區 -->
+          <div class="lg:col-span-7 bg-sky-50/80 rounded-2xl p-4 border border-sky-100 flex flex-col items-center">
+            <!-- 嚴格維持 1:1 正方形比例容器，防止圓形受 CSS 寬高拉伸而變成橢圓 -->
+            <div class="canvas-container w-full max-w-[340px] aspect-square flex items-center justify-center">
+              <canvas id="bakingCanvas" width="360" height="360" class="w-full h-full object-contain"></canvas>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 mt-3 text-xs md:text-sm font-bold">
+              <span class="inline-flex items-center gap-1.5 text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span> 小圓 (直徑 12.5 cm)
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span> 中圓 (直徑 17.5 cm)
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">
+                <span class="w-3 h-3 rounded-full bg-sky-500 inline-block"></span> 大圓 (直徑 22.5 cm)
+              </span>
+            </div>
+          </div>
+
+          <!-- 控制與觀察面板 -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="bg-white/90 p-5 rounded-2xl border border-sky-100 shadow-sm">
+              <label for="circleSelect" class="block text-sm font-bold text-slate-700 mb-2">
+                <i class="fa-solid fa-hand-pointer text-sky-500 mr-1"></i> 請點擊選擇烘焙墊上的圓圈：
+              </label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="selectBakingCircle(0)" id="btn-c-0" class="baking-btn py-2 px-3 rounded-xl border font-bold text-sm text-center transition-all bg-rose-500 text-white shadow-sm">小紅圓</button>
+                <button onclick="selectBakingCircle(1)" id="btn-c-1" class="baking-btn py-2 px-3 rounded-xl border border-slate-200 font-bold text-sm text-center transition-all bg-white hover:bg-slate-50 text-slate-700">中綠圓</button>
+                <button onclick="selectBakingCircle(2)" id="btn-c-2" class="baking-btn py-2 px-3 rounded-xl border border-slate-200 font-bold text-sm text-center transition-all bg-white hover:bg-slate-50 text-slate-700">大藍圓</button>
+              </div>
+
+              <!-- 動態滑桿探究自訂尺寸 -->
+              <div class="mt-5 pt-4 border-t border-slate-100">
+                <div class="flex justify-between items-center text-sm font-bold text-slate-700 mb-1">
+                  <span><i class="fa-solid fa-sliders text-sky-500 mr-1"></i> 任意調整圓直徑：</span>
+                  <span id="customDVal" class="text-sky-600 font-extrabold text-base">12.5 cm</span>
+                </div>
+                <input type="range" id="bakingSlider" min="5" max="25" step="0.5" value="12.5" class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer" oninput="onBakingSlider(this.value)">
+              </div>
+            </div>
+
+            <!-- 即時數據顯示框 -->
+            <div class="bg-gradient-to-br from-sky-50 to-indigo-50/70 p-5 rounded-2xl border border-sky-200">
+              <h3 class="font-extrabold text-slate-800 text-base mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass-chart text-sky-600"></i> 觀察重點發現
+              </h3>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                  <span>當圓的直徑是 <b id="dispDia" class="text-sky-700 text-base">12.5</b> 公分時，計算得到的圓周長大約為 <b id="dispCirc" class="text-rose-600 text-base">39.25</b> 公分。</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fa-solid fa-lightbulb text-amber-500 mt-1"></i>
+                  <span><b>歸納結論：</b>圓的直徑越長，圍繞在圓周邊界一圈的長度（圓周長）就<b class="text-rose-600 font-black underline decoration-wavy">越長</b>！</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab2" class="tab-content hidden">
+      <div class="glass-card p-5 md:p-8">
+        <div class="flex items-center gap-3 border-b border-sky-100 pb-3 mb-6">
+          <span class="w-9 h-9 rounded-xl bg-purple-500 text-white flex items-center justify-center font-black shadow-md">2</span>
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">察覺與臆測：圓周長會比直徑的 4 倍長還是短？</h2>
+            <p class="text-xs md:text-sm text-slate-500">藉由方格紙上的「外切正方形」，用幾何圖形直觀推論周長範圍</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <!-- 幾何展示畫布 -->
+          <div class="lg:col-span-7 bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col items-center">
+            <!-- 嚴格維持 1:1 正方形比例容器，確保方格紙與外切正方形為真正的正方形 -->
+            <div class="canvas-container w-full max-w-[340px] aspect-square flex items-center justify-center">
+              <canvas id="gridSquareCanvas" width="360" height="360" class="w-full h-full object-contain"></canvas>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 text-center">
+              藍色方框為正方形（邊長等於圓的直徑），橙黃色為圓形。
+            </p>
+          </div>
+
+          <!-- 說明與互動推論引導 -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="bg-white/90 p-5 rounded-2xl border border-purple-100 shadow-sm space-y-3">
+              <label class="block text-sm font-bold text-slate-700">
+                <i class="fa-solid fa-cube text-purple-500 mr-1"></i> 選擇圓形方格模型：
+              </label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setGridSize(2)" id="btn-grid-2" class="grid-size-btn py-2 px-2 rounded-xl border border-slate-200 font-bold text-xs md:text-sm text-center bg-purple-600 text-white">直徑 2 格</button>
+                <button onclick="setGridSize(4)" id="btn-grid-4" class="grid-size-btn py-2 px-2 rounded-xl border border-slate-200 font-bold text-xs md:text-sm text-center bg-white text-slate-700">直徑 4 格</button>
+                <button onclick="setGridSize(6)" id="btn-grid-6" class="grid-size-btn py-2 px-2 rounded-xl border border-slate-200 font-bold text-xs md:text-sm text-center bg-white text-slate-700">直徑 6 格</button>
+              </div>
+
+              <div class="pt-2 text-sm text-slate-600 space-y-2">
+                <div class="p-2.5 rounded-lg bg-sky-50 border border-sky-100">
+                  <span class="font-bold text-sky-800">1. 正方形邊長 ＝</span> 圓的直徑（<span id="gridDiaText" class="font-bold">2</span> 格）
+                </div>
+                <div class="p-2.5 rounded-lg bg-blue-50 border border-blue-100">
+                  <span class="font-bold text-blue-800">2. 正方形周長 ＝</span> 邊長 × 4 ＝ 直徑的 <span class="font-bold text-rose-600">4 倍</span>（<span id="gridSquarePerim" class="font-bold">8</span> 格長）
+                </div>
+                <div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-medium">
+                  <i class="fa-solid fa-eye text-amber-600"></i> 視覺觀察：整個圓形都完整「包在」正方形內部，圓周的每個彎角都往內縮。
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-purple-100 via-pink-100 to-rose-100 p-5 rounded-2xl border border-purple-200">
+              <h4 class="font-black text-purple-900 mb-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-flag-checkered"></i> 核心思考臆測
+              </h4>
+              <p class="text-sm text-slate-800 leading-relaxed">
+                因為圓形完全被包含在邊長等於直徑的正方形裡面，所以：
+                <br>
+                <strong class="text-rose-600 text-base">「圓周長一定比直徑的 4 倍還要短！」</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 新增：第 3 頁：如何複製與測量圓形？ -->
+    <section id="tab-measure" class="tab-content hidden">
+      <div class="glass-card p-5 md:p-8 space-y-6">
+        <div class="flex items-center gap-3 border-b border-sky-100 pb-3">
+          <span class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shadow-md">3</span>
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">如何複製與測量圓形？</h2>
+            <p class="text-xs md:text-sm text-slate-500">多多用三角板夾直尺、美美用繩子繞一圈拉直，讓我們來動態體驗！</p>
+          </div>
+        </div>
+
+        <!-- 方法一：三角板夾直尺測直徑 -->
+        <div class="bg-white/95 rounded-2xl p-5 border border-amber-200 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-100 pb-3">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base md:text-lg">
+              <i class="fa-solid fa-left-right text-amber-500"></i> 方法一：用兩把三角板和直尺夾住圓（測量直徑）
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-sky-100 text-sky-700 border border-sky-200">
+              三角板間的垂直距離 ＝ 直徑長
+            </span>
+          </div>
+
+          <div class="canvas-container w-full h-64 md:h-72 flex items-center justify-center">
+            <canvas id="triCalipersCanvas" class="w-full h-full"></canvas>
+          </div>
+
+          <p class="text-xs md:text-sm text-slate-600 bg-amber-50/80 p-3 rounded-xl border border-amber-200 text-center">
+            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 兩片三角板的垂直邊剛好夾住圓的最外兩端，讀取直尺上的距離差，即為此杯墊的直徑（10 公分）！
+          </p>
+        </div>
+
+        <!-- 方法二：繩子繞圈展開測圓周長 -->
+        <div class="bg-white/95 rounded-2xl p-5 border border-emerald-200 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3">
+            <div class="flex items-center gap-2 font-black text-slate-800 text-base md:text-lg">
+              <i class="fa-solid fa-circle-notch text-emerald-600"></i> 方法二：用繩子繞一圈後拉直量長度（測量圓周長）
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              繞一圈的繩長 ＝ 圓周長
+            </span>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 px-2">
+            <div class="text-xs md:text-sm font-bold text-slate-700">
+              目前狀態：<span id="stringStateText" class="text-sky-600 font-extrabold">繞在圓上（圓周長）</span>
+            </div>
+            <button onclick="toggleStringMeasure()" id="btnToggleString" class="px-5 py-2 rounded-xl text-xs md:text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md transition-all flex items-center gap-2">
+              <i class="fa-solid fa-play"></i> <span id="stringBtnLabel">解開繩子並拉直</span>
+            </button>
+          </div>
+
+          <div class="canvas-container w-full h-64 md:h-72 flex items-center justify-center">
+            <canvas id="stringMeasureCanvas" class="w-full h-full"></canvas>
+          </div>
+
+          <p class="text-xs md:text-sm text-slate-600 bg-emerald-50/80 p-3 rounded-xl border border-emerald-200 text-center">
+            點擊「解開繩子」，藍色繩子將從圓周上展開到直尺上，清晰測出杯墊的圓周長為 <b>31.4 cm</b>！
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab3" class="tab-content hidden">
+      <div class="glass-card p-5 md:p-8">
+        <div class="flex items-center gap-3 border-b border-sky-100 pb-3 mb-6">
+          <span class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black shadow-md">4</span>
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">滾動展開與直徑排排看：發現「3倍多一些」</h2>
+            <p class="text-xs md:text-sm text-slate-500">拖動滾動進度條，將圓周拉直成一條線，並排入直徑進行比對</p>
+          </div>
+        </div>
+
+        <!-- 物品預設切換 -->
+        <div class="flex flex-wrap gap-2 mb-4 items-center">
+          <span class="text-xs md:text-sm font-bold text-slate-700 mr-2"><i class="fa-solid fa-box-archive text-amber-500"></i> 課本實測範例：</span>
+          <button onclick="setRollItem('coaster')" id="item-coaster" class="roll-item-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-amber-500 text-white shadow-sm">圓形杯墊 (直徑 10cm)</button>
+          <button onclick="setRollItem('cd')" id="item-cd" class="roll-item-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-white text-slate-700 border hover:bg-slate-50">光碟片 (直徑 12cm)</button>
+          <button onclick="setRollItem('lid')" id="item-lid" class="roll-item-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-white text-slate-700 border hover:bg-slate-50">小鍋蓋 (直徑 16cm)</button>
+        </div>
+
+        <!-- 展開動畫畫布 -->
+        <div class="bg-white rounded-2xl p-4 border border-amber-200 shadow-inner">
+          <div class="canvas-container h-72 md:h-80">
+            <canvas id="unrollCanvas" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- 動態滑桿控制旋轉展開 -->
+          <div class="mt-4 px-2">
+            <div class="flex justify-between items-center text-xs md:text-sm font-bold text-slate-700 mb-1">
+              <span><i class="fa-solid fa-arrows-spin text-amber-500 mr-1"></i> 拖動滑桿滾動圓形一整圈（或拉直測量線）：</span>
+              <span id="rollPercentage" class="text-amber-600 font-extrabold text-base">0%</span>
+            </div>
+            <input type="range" id="rollSlider" min="0" max="100" value="0" class="w-full h-3 bg-amber-100 rounded-lg cursor-pointer" oninput="onRollSlider(this.value)">
+          </div>
+        </div>
+
+        <!-- 比對結果分析條 -->
+        <div class="mt-6 bg-gradient-to-r from-amber-50 via-sky-50 to-emerald-50 p-5 rounded-2xl border border-amber-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-500 font-bold mb-1">圓的直徑 (d)</div>
+            <div class="text-lg md:text-xl font-black text-rose-600" id="statDiameter">10.0 cm</div>
+            <div class="text-xs text-slate-400 mt-1">1段直徑長度</div>
+          </div>
+          <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-500 font-bold mb-1">展開的圓周長 (C)</div>
+            <div class="text-lg md:text-xl font-black text-sky-600" id="statCircumference">31.4 cm</div>
+            <div class="text-xs text-slate-400 mt-1">拉直後的總長度</div>
+          </div>
+          <div class="bg-white/80 p-3.5 rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-500 font-bold mb-1">圓周長是直徑的幾倍？</div>
+            <div class="text-lg md:text-xl font-black text-emerald-600 flex items-center gap-1" id="statTimes">
+              <span>3 倍多一些</span>
+              <span class="text-xs text-slate-500 font-normal">
+                (大約 <span class="math-fraction"><span class="integer-part">3</span><span class="frac-body"><span class="numerator">1</span><span class="denominator">7</span></span></span> 倍 或 <span class="math-fraction"><span class="frac-body"><span class="numerator">22</span><span class="denominator">7</span></span></span> 倍)
+              </span>
+            </div>
+            <div class="text-xs text-emerald-700 mt-1 font-semibold">排了3次直徑後，還多出約 0.14 倍！</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab4" class="tab-content hidden">
+      <div class="glass-card p-5 md:p-8">
+        <div class="flex items-center gap-3 border-b border-sky-100 pb-3 mb-6">
+          <span class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black shadow-md">5</span>
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">圓周率（π）發現實驗室：比值大揭密</h2>
+            <p class="text-xs md:text-sm text-slate-500">輸入任意圓形數據，算算看「圓周長 ÷ 直徑」究竟等於多少！</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- 實測數據記錄表 -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="overflow-x-auto bg-white rounded-2xl border border-emerald-100 shadow-sm">
+              <table class="w-full text-left text-xs md:text-sm">
+                <thead class="bg-emerald-500 text-white font-bold">
+                  <tr>
+                    <th class="p-3">物品名稱</th>
+                    <th class="p-3">直徑 (cm)</th>
+                    <th class="p-3">圓周長 (cm)</th>
+                    <th class="p-3">圓周長 ÷ 直徑</th>
+                    <th class="p-3">商（四捨五入）</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700" id="calcTableBody">
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold">杯墊</td>
+                    <td class="p-3">10</td>
+                    <td class="p-3">31.4</td>
+                    <td class="p-3 font-mono">31.4 ÷ 10</td>
+                    <td class="p-3 font-bold text-emerald-600">3.14</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold">光碟片</td>
+                    <td class="p-3">12</td>
+                    <td class="p-3">37.7</td>
+                    <td class="p-3 font-mono">37.7 ÷ 12</td>
+                    <td class="p-3 font-bold text-emerald-600">≈ 3.14</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold">小鍋蓋</td>
+                    <td class="p-3">16</td>
+                    <td class="p-3">50.2</td>
+                    <td class="p-3 font-mono">50.2 ÷ 16</td>
+                    <td class="p-3 font-bold text-emerald-600">≈ 3.14</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 學生自備物品輸入試算 -->
+            <div class="bg-white/95 p-4 rounded-2xl border border-emerald-200">
+              <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-emerald-500"></i> 輸入你在家裡量到的圓形物品：
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="text-xs text-slate-500 font-bold block mb-1">物品名稱</label>
+                  <input type="text" id="customName" placeholder="例如：水壺蓋" class="w-full px-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-400 outline-none">
+                </div>
+                <div>
+                  <label class="text-xs text-slate-500 font-bold block mb-1">直徑 (cm)</label>
+                  <input type="number" id="customDiaInput" step="0.1" placeholder="例如：8" class="w-full px-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-400 outline-none">
+                </div>
+                <div>
+                  <label class="text-xs text-slate-500 font-bold block mb-1">圓周長 (cm)</label>
+                  <input type="number" id="customCircInput" step="0.1" placeholder="例如：25.1" class="w-full px-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-400 outline-none">
+                </div>
+              </div>
+              <button onclick="addCustomRow()" class="mt-3 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
+                <i class="fa-solid fa-calculator"></i> 計算並加入實測表
+              </button>
+            </div>
+          </div>
+
+          <!-- 重要觀念總結卡片 -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+              <div class="absolute -right-4 -bottom-4 text-white/10 text-9xl font-black">π</div>
+              <span class="inline-block bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded text-xs font-black tracking-wider uppercase mb-2">重點結論宣示</span>
+              <h3 class="text-xl font-black mb-3">什麼是「圓周率」？</h3>
+              <p class="text-sm text-emerald-50 leading-relaxed mb-4">
+                不論圓形有多大或多小，它的<b>圓周長</b>除以<b>直徑</b>，所得的商都是一個固定不變的倍數（比值），這個固定的常數就稱為「<span class="underline decoration-amber-300 font-black text-amber-200">圓周率</span>」，國小階段我們通常取概數約為 <span class="bg-amber-300 text-slate-900 px-2 py-0.5 rounded font-black text-base">3.14</span>。
+              </p>
+              
+              <div class="bg-black/20 p-4 rounded-xl border border-white/20 space-y-2">
+                <div class="text-sm font-bold flex items-center gap-2">
+                  <i class="fa-solid fa-star text-amber-300"></i>
+                  <span>圓周長 ÷ 直徑 ＝ 圓周率（約 3.14）</span>
+                </div>
+                <div class="text-sm font-bold flex items-center gap-2">
+                  <i class="fa-solid fa-key text-amber-300"></i>
+                  <span>圓周長 ＝ 直徑 × 3.14</span>
+                </div>
+                <div class="text-xs text-white/80 pt-1 border-t border-white/10 flex items-center gap-1">
+                  <span>比值表示：圓周長 ： 直徑 ＝ 3.14 ： 1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 常見迷思提醒 -->
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-rose-900 text-xs md:text-sm">
+              <div class="font-bold flex items-center gap-2 text-rose-700 mb-1">
+                <i class="fa-solid fa-triangle-exclamation"></i> 易錯迷思快報：
+              </div>
+              大圓的圓周率會比小圓大嗎？<b class="text-rose-600 underline">不會！</b>所有的圓，圓周率都是一樣的（都是約 3.14）！
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab5" class="tab-content hidden">
+      <div class="glass-card p-5 md:p-8">
+        <div class="flex items-center gap-3 border-b border-sky-100 pb-3 mb-6">
+          <span class="w-9 h-9 rounded-xl bg-rose-500 text-white flex items-center justify-center font-black shadow-md">6</span>
+          <div>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800">隨堂測驗</h2>
+            <p class="text-xs md:text-sm text-slate-500">共 5 題（每題 20 分，滿分 100 分），請作答完畢後點擊下方「提交答案」進行批改！</p>
+          </div>
+        </div>
+
+        <!-- 測驗進度與總分 -->
+        <div class="flex flex-wrap justify-between items-center gap-2 bg-white/70 px-4 py-2.5 rounded-xl border border-slate-200 mb-6">
+          <span class="text-sm font-bold text-slate-700">
+            <i class="fa-solid fa-list-check text-sky-500 mr-1"></i> 已選題數：<span id="answeredCount" class="text-sky-600">0</span> / 5 題
+          </span>
+          <span class="text-sm font-bold text-slate-700">
+            測驗得分：<span id="scoreDisplay" class="text-rose-600 text-lg font-black">尚未提交</span> <span class="text-xs text-slate-500 font-normal">（滿分 100 分）</span>
+          </span>
+        </div>
+
+        <!-- 題目列表 -->
+        <div class="space-y-6" id="quizContainer">
+          <!-- 題目卡片由 JS 動態生成 -->
+        </div>
+
+        <!-- 並排置中按鈕區：提交答案 & 重新測驗 -->
+        <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+          <button onclick="submitQuiz()" id="btnSubmitQuiz" class="w-40 py-2.5 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-bold rounded-xl transition-all shadow-md inline-flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-40 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-md inline-flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ========================================================
+       1. 標籤頁切換邏輯 (Tab Switcher)
+       ======================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('block'));
+      
+      const target = document.getElementById(tabId);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('block');
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.remove('bg-white/80');
+      });
+
+      const currentBtn = document.getElementById('nav-' + tabId);
+      if (currentBtn) {
+        currentBtn.classList.add('active');
+      }
+
+      // 觸發特定畫布重繪以避免不可見時尺寸異常
+      if (tabId === 'tab1') drawBakingCanvas();
+      if (tabId === 'tab2') drawGridSquareCanvas();
+      if (tabId === 'tab-measure') {
+        drawTriCalipersCanvas();
+        drawStringMeasureCanvas();
+      }
+      if (tabId === 'tab3') drawUnrollCanvas();
+    }
+
+    /* ========================================================
+       2. 第一分頁：烘焙墊同心圓互動
+       ======================================================== */
+    const bakingCanvas = document.getElementById('bakingCanvas');
+    const bCtx = bakingCanvas ? bakingCanvas.getContext('2d') : null;
+    let currentDiameter = 12.5; // 預設小圓直徑
+
+    const presetCircles = [
+      { d: 12.5, color: '#f43f5e', name: '小紅圓' },
+      { d: 17.5, color: '#10b981', name: '中綠圓' },
+      { d: 22.5, color: '#0ea5e9', name: '大藍圓' }
+    ];
+
+    function selectBakingCircle(index) {
+      const p = presetCircles[index];
+      currentDiameter = p.d;
+      document.getElementById('bakingSlider').value = p.d;
+      updateBakingDisplay();
+      
+      // 更新按鈕樣式
+      document.querySelectorAll('.baking-btn').forEach((b, idx) => {
+        if (idx === index) {
+          b.className = 'baking-btn py-2 px-3 rounded-xl border font-bold text-sm text-center transition-all bg-sky-500 text-white shadow-sm';
+        } else {
+          b.className = 'baking-btn py-2 px-3 rounded-xl border border-slate-200 font-bold text-sm text-center transition-all bg-white hover:bg-slate-50 text-slate-700';
+        }
+      });
+    }
+
+    function onBakingSlider(val) {
+      currentDiameter = parseFloat(val);
+      updateBakingDisplay();
+      document.querySelectorAll('.baking-btn').forEach(b => {
+        b.className = 'baking-btn py-2 px-3 rounded-xl border border-slate-200 font-bold text-sm text-center transition-all bg-white hover:bg-slate-50 text-slate-700';
+      });
+    }
+
+    function updateBakingDisplay() {
+      document.getElementById('customDVal').textContent = currentDiameter.toFixed(1) + ' cm';
+      document.getElementById('dispDia').textContent = currentDiameter.toFixed(1);
+      const circ = currentDiameter * 3.14;
+      document.getElementById('dispCirc').textContent = circ.toFixed(2);
+      drawBakingCanvas();
+    }
+
+    function drawBakingCanvas() {
+      if (!bCtx) return;
+      const w = bakingCanvas.width;
+      const h = bakingCanvas.height;
+      bCtx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2;
+
+      // 畫背景烘焙墊方格紋理（正方形格網）
+      bCtx.strokeStyle = 'rgba(203, 213, 225, 0.35)';
+      bCtx.lineWidth = 1;
+      const gridGap = 20;
+      for (let x = 0; x <= w; x += gridGap) {
+        bCtx.beginPath();
+        bCtx.moveTo(x, 0);
+        bCtx.lineTo(x, h);
+        bCtx.stroke();
+      }
+      for (let y = 0; y <= h; y += gridGap) {
+        bCtx.beginPath();
+        bCtx.moveTo(0, y);
+        bCtx.lineTo(w, y);
+        bCtx.stroke();
+      }
+
+      // 繪製三個基準同心圓（淡色底襯）
+      presetCircles.forEach(c => {
+        const rPix = c.d * 6.5;
+        bCtx.beginPath();
+        bCtx.arc(cx, cy, rPix, 0, Math.PI * 2);
+        bCtx.strokeStyle = c.color + '44';
+        bCtx.lineWidth = 2;
+        bCtx.setLineDash([4, 4]);
+        bCtx.stroke();
+        bCtx.setLineDash([]);
+      });
+
+      // 繪製目前選取的動態圓形（精準正圓）
+      const currentRPix = currentDiameter * 6.5;
+      bCtx.beginPath();
+      bCtx.arc(cx, cy, currentRPix, 0, Math.PI * 2);
+      bCtx.strokeStyle = '#2563eb';
+      bCtx.lineWidth = 4;
+      bCtx.stroke();
+      bCtx.fillStyle = 'rgba(59, 130, 246, 0.08)';
+      bCtx.fill();
+
+      // 畫直徑標示線
+      bCtx.beginPath();
+      bCtx.moveTo(cx - currentRPix, cy);
+      bCtx.lineTo(cx + currentRPix, cy);
+      bCtx.strokeStyle = '#dc2626';
+      bCtx.lineWidth = 2.5;
+      bCtx.stroke();
+
+      // 畫直徑端點圓點
+      bCtx.fillStyle = '#dc2626';
+      bCtx.beginPath();
+      bCtx.arc(cx - currentRPix, cy, 4.5, 0, Math.PI * 2);
+      bCtx.arc(cx + currentRPix, cy, 4.5, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // 標註圓心點
+      bCtx.fillStyle = '#0f172a';
+      bCtx.beginPath();
+      bCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+      bCtx.fill();
+
+      // 文字標籤：圓心、直徑
+      bCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      bCtx.fillStyle = '#0f172a';
+      bCtx.textAlign = 'center';
+      bCtx.fillText('圓心', cx, cy - 9);
+
+      bCtx.fillStyle = '#dc2626';
+      bCtx.fillText(`直徑 = ${currentDiameter.toFixed(1)} cm`, cx, cy + 19);
+    }
+
+    /* ========================================================
+       3. 第二分頁：方格與外切正方形周長比較
+       ======================================================== */
+    const gridSquareCanvas = document.getElementById('gridSquareCanvas');
+    const gCtx = gridSquareCanvas ? gridSquareCanvas.getContext('2d') : null;
+    let gridDiameterUnits = 2; // 方格數
+
+    function setGridSize(units) {
+      gridDiameterUnits = units;
+      document.getElementById('gridDiaText').textContent = units;
+      document.getElementById('gridSquarePerim').textContent = units * 4;
+      
+      document.querySelectorAll('.grid-size-btn').forEach(b => {
+        b.className = 'grid-size-btn py-2 px-2 rounded-xl border border-slate-200 font-bold text-xs md:text-sm text-center bg-white text-slate-700';
+      });
+      document.getElementById('btn-grid-' + units).className = 'grid-size-btn py-2 px-2 rounded-xl border border-slate-200 font-bold text-xs md:text-sm text-center bg-purple-600 text-white';
+
+      drawGridSquareCanvas();
+    }
+
+    function drawGridSquareCanvas() {
+      if (!gCtx) return;
+      const w = gridSquareCanvas.width;
+      const h = gridSquareCanvas.height;
+      gCtx.clearRect(0, 0, w, h);
+
+      // 設定正方形方格網：8 x 8 格，精確正方形格子
+      const cols = 8;
+      const rows = 8;
+      const cellSize = 38; // 38 * 8 = 304px
+      const startX = (w - cols * cellSize) / 2; // 水平置中
+      const startY = (h - rows * cellSize) / 2; // 垂直置中
+
+      // 繪製背景方格紙
+      gCtx.strokeStyle = '#cbd5e1';
+      gCtx.lineWidth = 1;
+      for (let i = 0; i <= cols; i++) {
+        gCtx.beginPath();
+        gCtx.moveTo(startX + i * cellSize, startY);
+        gCtx.lineTo(startX + i * cellSize, startY + rows * cellSize);
+        gCtx.stroke();
+      }
+      for (let j = 0; j <= rows; j++) {
+        gCtx.beginPath();
+        gCtx.moveTo(startX, startY + j * cellSize);
+        gCtx.lineTo(startX + cols * cellSize, startY + j * cellSize);
+        gCtx.stroke();
+      }
+
+      // 計算放置正方形與圓形的位置（嚴格置中於方格）
+      const u = gridDiameterUnits;
+      const offsetX = startX + Math.floor((cols - u) / 2) * cellSize;
+      const offsetY = startY + Math.floor((rows - u) / 2) * cellSize;
+      const sideLength = u * cellSize;
+
+      // 繪製外切藍色正方形（四邊絕對等長）
+      gCtx.strokeStyle = '#2563eb';
+      gCtx.lineWidth = 3.5;
+      gCtx.strokeRect(offsetX, offsetY, sideLength, sideLength);
+      gCtx.fillStyle = 'rgba(37, 99, 235, 0.05)';
+      gCtx.fillRect(offsetX, offsetY, sideLength, sideLength);
+
+      // 繪製橙黃色內切圓（半徑為 sideLength / 2，正圓）
+      const radius = sideLength / 2;
+      const circleCenterX = offsetX + radius;
+      const circleCenterY = offsetY + radius;
+
+      gCtx.beginPath();
+      gCtx.arc(circleCenterX, circleCenterY, radius, 0, Math.PI * 2);
+      gCtx.strokeStyle = '#f59e0b';
+      gCtx.lineWidth = 3.5;
+      gCtx.stroke();
+      gCtx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+      gCtx.fill();
+
+      // 標註外切正方形邊長
+      gCtx.fillStyle = '#1e3a8a';
+      gCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.fillText(`邊長 = ${u} 格 (等於直徑)`, circleCenterX, offsetY - 9);
+
+      // 畫圓內直徑（虛線）
+      gCtx.beginPath();
+      gCtx.moveTo(offsetX, circleCenterY);
+      gCtx.lineTo(offsetX + sideLength, circleCenterY);
+      gCtx.strokeStyle = '#dc2626';
+      gCtx.lineWidth = 2;
+      gCtx.setLineDash([3, 3]);
+      gCtx.stroke();
+      gCtx.setLineDash([]);
+
+      gCtx.fillStyle = '#dc2626';
+      gCtx.fillText(`圓直徑 = ${u} 格`, circleCenterX, circleCenterY + 16);
+    }
+
+    /* ========================================================
+       新增分頁（第3頁）：如何複製與測量圓形？ (Canvas 互動繪製)
+       ======================================================== */
+    // --- 繪製通用木質/塑膠直尺函數 ---
+    function drawRuler(ctx, x, y, width, height, maxVal, unitScale, unitText = 'cm') {
+      ctx.save();
+      // 尺身背景
+      ctx.fillStyle = '#fef3c7';
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      // 刻度線
+      ctx.fillStyle = '#78350f';
+      ctx.strokeStyle = '#b45309';
+      ctx.lineWidth = 1.5;
+      ctx.font = 'bold 11px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+
+      for (let v = 0; v <= maxVal; v++) {
+        const tickX = x + v * unitScale;
+        if (tickX > x + width - 4) break;
+
+        const isMajor = v % 5 === 0;
+        const tickH = isMajor ? 14 : 7;
+        ctx.beginPath();
+        ctx.moveTo(tickX, y);
+        ctx.lineTo(tickX, y + tickH);
+        ctx.stroke();
+
+        if (isMajor) {
+          ctx.fillText(v.toString(), tickX, y + tickH + 13);
+        }
+      }
+      ctx.restore();
+    }
+
+    // --- 方法一：三角板夾直尺測直徑畫布 ---
+    const triCalipersCanvas = document.getElementById('triCalipersCanvas');
+    const tCtx = triCalipersCanvas ? triCalipersCanvas.getContext('2d') : null;
+
+    function drawTriCalipersCanvas() {
+      if (!tCtx) return;
+      const rect = triCalipersCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        triCalipersCanvas.width = Math.round(rect.width);
+        triCalipersCanvas.height = Math.round(rect.height);
+      }
+      const w = triCalipersCanvas.width;
+      const h = triCalipersCanvas.height;
+      tCtx.clearRect(0, 0, w, h);
+
+      // 直尺基準位置：置底並留出直尺高度與下邊距
+      const rulerW = Math.min(w - 40, 560);
+      const rulerH = 44;
+      const rulerX = (w - rulerW) / 2;
+      const rulerY = h - 56;
+
+      // 刻度：每 1 cm 的像素比例（顯示 0 到 35 cm）
+      const maxVal = 35;
+      const cmScale = rulerW / maxVal;
+
+      drawRuler(tCtx, rulerX, rulerY, rulerW, rulerH, maxVal, cmScale);
+
+      // 圓形杯墊放置在直尺刻度 10 到 20 之間 (直徑 10cm)
+      const dCm = 10.0;
+      const posLeftCm = 10.0; // 左端在 10cm
+      const posRightCm = posLeftCm + dCm; // 右端在 20cm
+      const rPx = (dCm * cmScale) / 2;
+      const circleCenterX = rulerX + (posLeftCm + dCm / 2) * cmScale;
+      const circleCenterY = rulerY - rPx;
+
+      // 繪製圓形杯墊
+      tCtx.save();
+      tCtx.beginPath();
+      tCtx.arc(circleCenterX, circleCenterY, rPx, 0, Math.PI * 2);
+      tCtx.fillStyle = '#fed7aa';
+      tCtx.fill();
+      tCtx.lineWidth = 3.5;
+      tCtx.strokeStyle = '#ea580c';
+      tCtx.stroke();
+
+      tCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      tCtx.fillStyle = '#9a3412';
+      tCtx.textAlign = 'center';
+      tCtx.textBaseline = 'middle';
+      tCtx.fillText('圓形杯墊', circleCenterX, circleCenterY);
+      tCtx.restore();
+
+      // 繪製左側三角板（直角靠杯墊左側，直角在右下）
+      const triW = 55;
+      const triH = rPx * 2 + 6;
+      const leftTriRightX = rulerX + posLeftCm * cmScale;
+
+      tCtx.save();
+      tCtx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+      tCtx.strokeStyle = '#0284c7';
+      tCtx.lineWidth = 2.5;
+      tCtx.beginPath();
+      tCtx.moveTo(leftTriRightX, rulerY); // 直角頂點
+      tCtx.lineTo(leftTriRightX - triW, rulerY);
+      tCtx.lineTo(leftTriRightX, rulerY - triH);
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.stroke();
+
+      // 繪製右側三角板（直角靠杯墊右側，直角在左下）
+      const rightTriLeftX = rulerX + posRightCm * cmScale;
+      tCtx.beginPath();
+      tCtx.moveTo(rightTriLeftX, rulerY); // 直角頂點
+      tCtx.lineTo(rightTriLeftX + triW, rulerY);
+      tCtx.lineTo(rightTriLeftX, rulerY - triH);
+      tCtx.closePath();
+      tCtx.fill();
+      tCtx.stroke();
+      tCtx.restore();
+
+      // 夾出的直徑紅色標示雙箭頭（保留距離頂部至少 28px 的足夠垂直空間）
+      const markY = Math.max(30, rulerY - triH - 6);
+      tCtx.save();
+      tCtx.strokeStyle = '#dc2626';
+      tCtx.lineWidth = 2.5;
+
+      // 垂直引出虛線
+      tCtx.setLineDash([3, 3]);
+      tCtx.beginPath();
+      tCtx.moveTo(leftTriRightX, rulerY);
+      tCtx.lineTo(leftTriRightX, markY - 6);
+      tCtx.moveTo(rightTriLeftX, rulerY);
+      tCtx.lineTo(rightTriLeftX, markY - 6);
+      tCtx.stroke();
+      tCtx.setLineDash([]);
+
+      // 水平夾線
+      tCtx.beginPath();
+      tCtx.moveTo(leftTriRightX, markY);
+      tCtx.lineTo(rightTriLeftX, markY);
+      tCtx.stroke();
+
+      // 端點短垂直槓
+      tCtx.beginPath();
+      tCtx.moveTo(leftTriRightX, markY - 5);
+      tCtx.lineTo(leftTriRightX, markY + 5);
+      tCtx.moveTo(rightTriLeftX, markY - 5);
+      tCtx.lineTo(rightTriLeftX, markY + 5);
+      tCtx.stroke();
+
+      // 標註文字（文字置於線條上方，並使用垂直對齊 textBaseline = 'bottom' 確保絕不溢出畫布頂部）
+      tCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      tCtx.fillStyle = '#dc2626';
+      tCtx.textAlign = 'center';
+      tCtx.textBaseline = 'bottom';
+      tCtx.fillText(`夾出的直徑 ＝ 10.0 cm`, (leftTriRightX + rightTriLeftX) / 2, markY - 4);
+      tCtx.restore();
+    }
+
+    // --- 方法二：繩子繞圈展開測量畫布 ---
+    const stringMeasureCanvas = document.getElementById('stringMeasureCanvas');
+    const smCtx = stringMeasureCanvas ? stringMeasureCanvas.getContext('2d') : null;
+    let isStringUnrolled = false; // false = 繞在圓上, true = 展開在直尺上
+
+    function toggleStringMeasure() {
+      isStringUnrolled = !isStringUnrolled;
+      const stateText = document.getElementById('stringStateText');
+      const btnLabel = document.getElementById('stringBtnLabel');
+
+      if (isStringUnrolled) {
+        stateText.textContent = '已拉直於直尺上（31.4 cm）';
+        stateText.className = 'text-emerald-600 font-extrabold';
+        btnLabel.textContent = '重新繞回圓上';
+      } else {
+        stateText.textContent = '繞在圓上（圓周長）';
+        stateText.className = 'text-sky-600 font-extrabold';
+        btnLabel.textContent = '解開繩子並拉直';
+      }
+      drawStringMeasureCanvas();
+    }
+
+    function drawStringMeasureCanvas() {
+      if (!smCtx) return;
+      const rect = stringMeasureCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        stringMeasureCanvas.width = Math.round(rect.width);
+        stringMeasureCanvas.height = Math.round(rect.height);
+      }
+      const w = stringMeasureCanvas.width;
+      const h = stringMeasureCanvas.height;
+      smCtx.clearRect(0, 0, w, h);
+
+      // 直尺基準：置中於畫布底部
+      const rulerW = Math.min(w - 40, 600);
+      const rulerH = 46;
+      const rulerX = (w - rulerW) / 2;
+      const rulerY = h - 68;
+      const maxVal = 40; // 0 ~ 40 cm
+      const cmScale = rulerW / maxVal;
+
+      drawRuler(smCtx, rulerX, rulerY, rulerW, rulerH, maxVal, cmScale);
+
+      // 圓形杯墊 (直徑 10cm, 周長 31.4cm)
+      const dCm = 10.0;
+      const circCm = 31.4;
+      const rPx = (dCm * cmScale) / 2;
+      const circleCenterX = rulerX + 80;
+      const circleCenterY = rulerY - rPx - 38;
+
+      // 畫圓本體
+      smCtx.save();
+      smCtx.beginPath();
+      smCtx.arc(circleCenterX, circleCenterY, rPx, 0, Math.PI * 2);
+      smCtx.fillStyle = '#ffedd5';
+      smCtx.fill();
+      smCtx.lineWidth = 2;
+      smCtx.strokeStyle = '#fdba74';
+      smCtx.stroke();
+
+      smCtx.font = 'bold 12px "Noto Sans TC", sans-serif';
+      smCtx.fillStyle = '#9a3412';
+      smCtx.textAlign = 'center';
+      smCtx.textBaseline = 'middle';
+      smCtx.fillText('直徑 10 cm', circleCenterX, circleCenterY);
+      smCtx.restore();
+
+      // 繩子繪製邏輯
+      smCtx.save();
+      smCtx.lineWidth = 4.5;
+      smCtx.lineCap = 'round';
+
+      if (!isStringUnrolled) {
+        // 繩子緊緊圍繞在圓形杯墊周邊
+        smCtx.beginPath();
+        smCtx.arc(circleCenterX, circleCenterY, rPx + 2, 0, Math.PI * 2);
+        smCtx.strokeStyle = '#2563eb';
+        smCtx.stroke();
+
+        // 打結標記點
+        smCtx.fillStyle = '#1d4ed8';
+        smCtx.beginPath();
+        smCtx.arc(circleCenterX + rPx + 2, circleCenterY, 5.5, 0, Math.PI * 2);
+        smCtx.fill();
+
+        // 尺上原點提示
+        smCtx.fillStyle = '#2563eb';
+        smCtx.beginPath();
+        smCtx.arc(rulerX, rulerY - 14, 4, 0, Math.PI * 2);
+        smCtx.fill();
+      } else {
+        // 繩子已被解開並拉直在直尺上方刻度 0 到 31.4 cm
+        const unrollStartPx = rulerX;
+        const unrollEndPx = rulerX + circCm * cmScale;
+        const lineY = rulerY - 14;
+
+        smCtx.beginPath();
+        smCtx.moveTo(unrollStartPx, lineY);
+        smCtx.lineTo(unrollEndPx, lineY);
+        smCtx.strokeStyle = '#2563eb';
+        smCtx.stroke();
+
+        // 繩子兩端圓點
+        smCtx.fillStyle = '#1d4ed8';
+        smCtx.beginPath();
+        smCtx.arc(unrollStartPx, lineY, 5, 0, Math.PI * 2);
+        smCtx.arc(unrollEndPx, lineY, 5, 0, Math.PI * 2);
+        smCtx.fill();
+
+        // 垂直對齊虛線標記 31.4 cm
+        smCtx.save();
+        smCtx.strokeStyle = '#dc2626';
+        smCtx.lineWidth = 1.5;
+        smCtx.setLineDash([3, 3]);
+        smCtx.beginPath();
+        smCtx.moveTo(unrollEndPx, lineY - 14);
+        smCtx.lineTo(unrollEndPx, rulerY);
+        smCtx.stroke();
+        smCtx.restore();
+
+        // 文字標示
+        smCtx.font = 'bold 12px "Noto Sans TC", sans-serif';
+        smCtx.fillStyle = '#dc2626';
+        smCtx.textAlign = 'center';
+        smCtx.fillText(`拉直圓周長 ＝ 31.4 cm`, (unrollStartPx + unrollEndPx) / 2, lineY - 10);
+      }
+      smCtx.restore();
+    }
+
+    /* ========================================================
+       4. 第四分頁：圓滾動展開與直徑比對動畫
+       ======================================================== */
+    const unrollCanvas = document.getElementById('unrollCanvas');
+    const uCtx = unrollCanvas ? unrollCanvas.getContext('2d') : null;
+    let rollRatio = 0.0; // 0.0 ~ 1.0
+
+    const itemsData = {
+      coaster: { name: '杯墊', d: 10.0, c: 31.4 },
+      cd: { name: '光碟片', d: 12.0, c: 37.7 },
+      lid: { name: '小鍋蓋', d: 16.0, c: 50.2 }
+    };
+    let currentItemKey = 'coaster';
+
+    function setRollItem(key) {
+      currentItemKey = key;
+      const item = itemsData[key];
+      document.getElementById('statDiameter').textContent = item.d.toFixed(1) + ' cm';
+      document.getElementById('statCircumference').textContent = item.c.toFixed(1) + ' cm';
+
+      document.querySelectorAll('.roll-item-btn').forEach(b => {
+        b.className = 'roll-item-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-white text-slate-700 border hover:bg-slate-50';
+      });
+      document.getElementById('item-' + key).className = 'roll-item-btn px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-amber-500 text-white shadow-sm';
+
+      drawUnrollCanvas();
+    }
+
+    function onRollSlider(val) {
+      rollRatio = parseFloat(val) / 100.0;
+      document.getElementById('rollPercentage').textContent = Math.round(rollRatio * 100) + '%';
+      drawUnrollCanvas();
+    }
+
+    function resizeUnrollCanvas() {
+      if (!unrollCanvas) return;
+      // 確保 canvas 內部解析度與 DOM 渲染像素 1:1，避免任何非等比例拉伸產生橢圓
+      const rect = unrollCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        if (unrollCanvas.width !== Math.round(rect.width) || unrollCanvas.height !== Math.round(rect.height)) {
+          unrollCanvas.width = Math.round(rect.width);
+          unrollCanvas.height = Math.round(rect.height);
+        }
+      }
+    }
+
+    function drawUnrollCanvas() {
+      if (!uCtx) return;
+      resizeUnrollCanvas();
+
+      const w = unrollCanvas.width;
+      const h = unrollCanvas.height;
+      uCtx.clearRect(0, 0, w, h);
+
+      const groundY = h - 68;
+      const item = itemsData[currentItemKey];
+
+      // 依畫布寬高動態決定合適的半徑與展開長度，確保圓形縮小並完整容納在畫布內
+      // 圓周長 C = 2 * PI * r => 讓半徑大約在 45px ~ 62px 之間，既清晰又不龐大
+      const maxVisualR = Math.min(62, Math.max(42, (groundY - 30) / 2));
+      const visualR = maxVisualR;
+      const totalUnrollPx = 2 * Math.PI * visualR; // 精準正圓對應的展開總長度
+
+      // 起點保留足夠左側空間（至少留出 1 個半徑 + 25px 邊距），保證圓形最左側絕不被切到
+      const startX = Math.round(visualR + 30);
+
+      // 畫地面刻度尺
+      uCtx.strokeStyle = '#94a3b8';
+      uCtx.lineWidth = 2;
+      uCtx.beginPath();
+      uCtx.moveTo(startX - visualR - 15, groundY);
+      uCtx.lineTo(Math.min(w - 15, startX + totalUnrollPx + 40), groundY);
+      uCtx.stroke();
+
+      // 地面公分標尺小刻度
+      uCtx.fillStyle = '#64748b';
+      uCtx.font = '10px "Noto Sans TC", sans-serif';
+      for (let px = startX; px <= startX + totalUnrollPx + 30; px += 25) {
+        uCtx.beginPath();
+        uCtx.moveTo(px, groundY);
+        uCtx.lineTo(px, groundY + 5);
+        uCtx.stroke();
+      }
+
+      const currentDist = rollRatio * totalUnrollPx;
+      const currentWheelX = startX + currentDist;
+      const currentWheelY = groundY - visualR;
+      const angle = rollRatio * Math.PI * 2;
+
+      // 1. 繪製已經在地面展開拉直的藍色周長線段
+      if (currentDist > 0) {
+        uCtx.strokeStyle = '#0284c7';
+        uCtx.lineWidth = 5;
+        uCtx.lineCap = 'round';
+        uCtx.beginPath();
+        uCtx.moveTo(startX, groundY);
+        uCtx.lineTo(currentWheelX, groundY);
+        uCtx.stroke();
+      }
+
+      // 2. 繪製尚未展開的圓弧與圓輪本體（嚴格正圓，橫縱半徑一致為 visualR）
+      uCtx.save();
+      uCtx.translate(currentWheelX, currentWheelY);
+      uCtx.rotate(angle);
+
+      // 圓底色
+      uCtx.beginPath();
+      uCtx.arc(0, 0, visualR, 0, Math.PI * 2);
+      uCtx.fillStyle = 'rgba(251, 191, 36, 0.2)';
+      uCtx.fill();
+      uCtx.strokeStyle = '#d97706';
+      uCtx.lineWidth = 3.5;
+      uCtx.stroke();
+
+      // 滾動參照標記（起點紅點與半徑指示針）
+      uCtx.beginPath();
+      uCtx.moveTo(0, 0);
+      uCtx.lineTo(0, visualR);
+      uCtx.strokeStyle = '#dc2626';
+      uCtx.lineWidth = 3;
+      uCtx.stroke();
+
+      uCtx.fillStyle = '#dc2626';
+      uCtx.beginPath();
+      uCtx.arc(0, visualR, 5, 0, Math.PI * 2);
+      uCtx.fill();
+
+      // 圓心
+      uCtx.fillStyle = '#1e293b';
+      uCtx.beginPath();
+      uCtx.arc(0, 0, 4, 0, Math.PI * 2);
+      uCtx.fill();
+      uCtx.restore();
+
+      // 3. 在地面線段下方繪製「直徑段數比對線段 (3段 + 多出的一點點)」
+      const dUnitPx = totalUnrollPx / 3.14159; // 一個直徑的長度像素
+      const compareY = groundY + 28;
+
+      uCtx.font = 'bold 11px "Noto Sans TC", sans-serif';
+      uCtx.textAlign = 'center';
+
+      // 繪製第 1、2、3 段直徑
+      for (let i = 0; i < 3; i++) {
+        const segStart = startX + i * dUnitPx;
+        const segEnd = segStart + dUnitPx;
+
+        uCtx.strokeStyle = '#ef4444';
+        uCtx.lineWidth = 3;
+        uCtx.beginPath();
+        uCtx.moveTo(segStart, compareY);
+        uCtx.lineTo(segEnd, compareY);
+        uCtx.stroke();
+
+        // 垂直區隔標記線
+        uCtx.strokeStyle = '#f87171';
+        uCtx.lineWidth = 1.5;
+        uCtx.setLineDash([2, 2]);
+        uCtx.beginPath();
+        uCtx.moveTo(segEnd, groundY - 6);
+        uCtx.lineTo(segEnd, compareY + 8);
+        uCtx.stroke();
+        uCtx.setLineDash([]);
+
+        uCtx.fillStyle = '#dc2626';
+        uCtx.fillText(`第${i + 1}段直徑`, segStart + dUnitPx / 2, compareY + 16);
+      }
+
+      // 繪製多出來的剩餘部分標註
+      const remainderStart = startX + 3 * dUnitPx;
+      const remainderEnd = startX + totalUnrollPx;
+
+      uCtx.strokeStyle = '#10b981';
+      uCtx.lineWidth = 3;
+      uCtx.beginPath();
+      uCtx.moveTo(remainderStart, compareY);
+      uCtx.lineTo(remainderEnd, compareY);
+      uCtx.stroke();
+
+      // 垂直結束標記線
+      uCtx.strokeStyle = '#34d399';
+      uCtx.lineWidth = 1.5;
+      uCtx.setLineDash([2, 2]);
+      uCtx.beginPath();
+      uCtx.moveTo(remainderEnd, groundY - 6);
+      uCtx.lineTo(remainderEnd, compareY + 8);
+      uCtx.stroke();
+      uCtx.setLineDash([]);
+
+      uCtx.fillStyle = '#059669';
+      // 避免與第3段直徑文字重疊
+      const remCenter = remainderStart + (remainderEnd - remainderStart) / 2;
+      uCtx.fillText(`多一些(0.14)`, Math.max(remCenter, remainderStart + 16), compareY + 16);
+
+      // 起點 0 刻度標示
+      uCtx.fillStyle = '#475569';
+      uCtx.fillText('起點 (0)', startX, groundY - 10);
+      if (rollRatio > 0.98) {
+        uCtx.fillStyle = '#0284c7';
+        uCtx.fillText(`圓周長總長度約 ${item.c} cm`, startX + totalUnrollPx / 2, groundY - 10);
+      }
+    }
+
+    /* ========================================================
+       5. 第四分頁：實測數據表格動態新增
+       ======================================================== */
+    function addCustomRow() {
+      const nameInput = document.getElementById('customName');
+      const diaInput = document.getElementById('customDiaInput');
+      const circInput = document.getElementById('customCircInput');
+
+      const name = nameInput.value.trim() || '自備圓形物';
+      const dia = parseFloat(diaInput.value);
+      const circ = parseFloat(circInput.value);
+
+      if (isNaN(dia) || isNaN(circ) || dia <= 0 || circ <= 0) {
+        showCustomNotice('請輸入正確且大於 0 的直徑與圓周長數值！');
+        return;
+      }
+
+      const ratio = circ / dia;
+      const tbody = document.getElementById('calcTableBody');
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-50 bg-emerald-50/50';
+      tr.innerHTML = `
+        <td class="p-3 font-bold">${name}</td>
+        <td class="p-3">${dia}</td>
+        <td class="p-3">${circ}</td>
+        <td class="p-3 font-mono">${circ} ÷ ${dia}</td>
+        <td class="p-3 font-bold text-emerald-600">≈ ${ratio.toFixed(2)}</td>
+      `;
+      tbody.appendChild(tr);
+
+      // 清空輸入
+      nameInput.value = '';
+      diaInput.value = '';
+      circInput.value = '';
+    }
+
+    function showCustomNotice(msg) {
+      const noticeBox = document.createElement('div');
+      noticeBox.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 text-sm font-bold flex items-center gap-2 border border-slate-700 animate-bounce';
+      noticeBox.innerHTML = `<i class="fa-solid fa-bell text-amber-400"></i> <span>${msg}</span>`;
+      document.body.appendChild(noticeBox);
+      setTimeout(() => noticeBox.remove(), 2600);
+    }
+
+    /* ========================================================
+       6. 第六分頁：隨堂測驗 5 題（支援先選後提交、未作答黃色提示、滿分100）
+       ======================================================== */
+    const quizData = [
+      {
+        id: 1,
+        question: "1. 觀察圓與外切正方形的關係，正方形邊長等於圓的直徑。那麼圓的周長和直徑的 4 倍相比，結果為何？",
+        options: ["圓周長比直徑的 4 倍長", "圓周長比直徑的 4 倍短", "圓周長剛好等於直徑的 4 倍", "無法確定"],
+        correctIndex: 1,
+        explanation: "因為圓形完整包在邊長等於直徑的正方形裡面，所以圓周長一定比正方形的周長（直徑的 4 倍）還要短。"
+      },
+      {
+        id: 2,
+        question: "2. 我們用繩子繞圓一圈拉直量測，發現每個圓的「圓周長」大約是「直徑」的幾倍？",
+        options: ["剛好 2 倍", "剛好 3 倍", "3 倍多一些（約 3.14 倍）", "4 倍多一些"],
+        correctIndex: 2,
+        explanation: "實測與計算發現，任何圓的圓周長都是直徑的 3 倍多一些，大約是 3.14 倍（約等於 <span class='math-fraction'><span class='frac-body'><span class='numerator'>22</span><span class='denominator'>7</span></span></span> 倍）。"
+      },
+      {
+        id: 3,
+        question: "3. 甲圓直徑 9 公分，乙圓直徑 18 公分。關於甲圓和乙圓的圓周率，下列哪一個敘述是正確的？",
+        options: [
+          "甲圓直徑較小，所以圓周率比乙圓小",
+          "乙圓直徑是甲圓的 2 倍，所以乙圓圓周率也是甲圓的 2 倍",
+          "甲圓和乙圓的圓周率都是一樣的，大約是 3.14",
+          "乙圓的圓周率是 6.28"
+        ],
+        correctIndex: 2,
+        explanation: "圓周率是圓周長與直徑的比值，不論圓的大小如何變化，所有圓的圓周率都相同，大約是 3.14。"
+      },
+      {
+        id: 4,
+        question: "4. 一個圓形杯墊的直徑是 10 公分，算算看它的圓周長大約是多少公分？",
+        options: ["31.4 公分", "62.8 公分", "15.7 公分", "314 公分"],
+        correctIndex: 0,
+        explanation: "圓周長計算公式 ＝ 直徑 × 3.14，因此 10 × 3.14 ＝ 31.4 (公分)。"
+      },
+      {
+        id: 5,
+        question: "5. 若某個飛盤的直徑是 24 公分，那麼用繩子量出一圈的圓周長，大約可能是多長？",
+        options: ["大約 48 公分 (直徑的 2 倍)", "大約 72 公分 (剛好 3 倍)", "大約 75.36 公分 (直徑的 3.14 倍)", "大約 96 公分 (直徑的 4 倍)"],
+        correctIndex: 2,
+        explanation: "直徑 24 公分 × 3.14 ＝ 75.36 公分，剛好符合直徑的 3 倍多一些。"
+      }
+    ];
+
+    let userAnswers = {};
+    let isQuizSubmitted = false;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizData.forEach((q) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white/90 p-5 rounded-2xl border border-slate-200 shadow-sm transition-all';
+        card.id = `quiz-card-${q.id}`;
+
+        let optsHtml = '';
+        q.options.forEach((opt, optIdx) => {
+          optsHtml += `
+            <button onclick="selectOption(${q.id}, ${optIdx})" id="opt-${q.id}-${optIdx}" 
+              class="w-full text-left p-3 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold hover:bg-sky-50 transition-all flex items-center justify-between text-slate-700">
+              <span>${opt}</span>
+              <span class="icon-indicator"></span>
+            </button>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="text-sm md:text-base font-bold text-slate-800 mb-3">${q.question}</div>
+          <div class="space-y-2 mb-3">${optsHtml}</div>
+          <div id="feedback-${q.id}" class="hidden p-3 rounded-xl text-xs md:text-sm font-medium mt-2 leading-relaxed"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 點選選項（提交前可自由更改選項）
+    function selectOption(qId, selectedIdx) {
+      if (isQuizSubmitted) return; // 提交後鎖定不可再修改
+      userAnswers[qId] = selectedIdx;
+
+      const q = quizData.find(item => item.id === qId);
+      q.options.forEach((_, idx) => {
+        const btn = document.getElementById(`opt-${qId}-${idx}`);
+        if (idx === selectedIdx) {
+          btn.className = 'w-full text-left p-3 rounded-xl border-2 border-sky-500 bg-sky-50 text-xs md:text-sm font-bold text-sky-900 transition-all flex items-center justify-between shadow-sm';
+          btn.querySelector('.icon-indicator').innerHTML = '<i class="fa-solid fa-circle-dot text-sky-600 text-base"></i>';
+        } else {
+          btn.className = 'w-full text-left p-3 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold hover:bg-sky-50 transition-all flex items-center justify-between text-slate-700';
+          btn.querySelector('.icon-indicator').innerHTML = '';
+        }
+      });
+
+      document.getElementById('answeredCount').textContent = Object.keys(userAnswers).length;
+    }
+
+    // 點擊「提交答案」統一批改並計算滿分 100 分
+    function submitQuiz() {
+      if (isQuizSubmitted) {
+        showCustomNotice('您已經提交過答案囉！若要重新練習請點擊「重新測驗」。');
+        return;
+      }
+      isQuizSubmitted = true;
+
+      // 停用提交按鈕視覺狀態
+      const submitBtn = document.getElementById('btnSubmitQuiz');
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      let totalScore = 0;
+
+      quizData.forEach((q) => {
+        const selectedIdx = userAnswers[q.id];
+        const fbBox = document.getElementById(`feedback-${q.id}`);
+        fbBox.classList.remove('hidden');
+
+        // 情況 A：空白未作答 -> 僅顯示黃色系「未作答。」，不顯示其他說明與正確答案
+        if (selectedIdx === undefined) {
+          fbBox.className = 'p-3 rounded-xl text-xs md:text-sm font-bold mt-2 bg-amber-50 text-amber-800 border border-amber-300';
+          fbBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> 未作答。`;
+          return;
+        }
+
+        const selectedBtn = document.getElementById(`opt-${q.id}-${selectedIdx}`);
+        const correctBtn = document.getElementById(`opt-${q.id}-${q.correctIndex}`);
+        const isCorrect = selectedIdx === q.correctIndex;
+
+        if (isCorrect) {
+          totalScore += 20; // 每題 20 分，5 題滿分 100 分
+          selectedBtn.className = 'w-full text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-100 text-xs md:text-sm font-bold text-emerald-900 flex items-center justify-between';
+          selectedBtn.querySelector('.icon-indicator').innerHTML = '<i class="fa-solid fa-check-circle text-emerald-600 text-base"></i>';
+          fbBox.className = 'p-3 rounded-xl text-xs md:text-sm font-medium mt-2 bg-emerald-50 text-emerald-800 border border-emerald-200 leading-relaxed';
+          fbBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <b>答對了！</b> ${q.explanation}`;
+        } else {
+          selectedBtn.className = 'w-full text-left p-3 rounded-xl border-2 border-rose-400 bg-rose-100 text-xs md:text-sm font-bold text-rose-900 flex items-center justify-between';
+          selectedBtn.querySelector('.icon-indicator').innerHTML = '<i class="fa-solid fa-circle-xmark text-rose-500 text-base"></i>';
+          
+          correctBtn.className = 'w-full text-left p-3 rounded-xl border border-emerald-400 bg-emerald-50 text-xs md:text-sm font-bold text-emerald-900 flex items-center justify-between';
+          correctBtn.querySelector('.icon-indicator').innerHTML = '<i class="fa-solid fa-check text-emerald-600 text-sm"></i>';
+
+          fbBox.className = 'p-3 rounded-xl text-xs md:text-sm font-medium mt-2 bg-rose-50 text-rose-800 border border-rose-200 leading-relaxed';
+          fbBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> <b>答錯囉！</b> 正確答案是「${q.options[q.correctIndex]}」。<br><span class="text-slate-700 mt-1 inline-block">觀念解析：${q.explanation}</span>`;
+        }
+      });
+
+      document.getElementById('scoreDisplay').textContent = `${totalScore} 分`;
+      showCustomNotice(`批改完成！本次測驗得分為 ${totalScore} 分（滿分 100 分）。`);
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      isQuizSubmitted = false;
+      document.getElementById('answeredCount').textContent = '0';
+      document.getElementById('scoreDisplay').textContent = '尚未提交';
+      
+      const submitBtn = document.getElementById('btnSubmitQuiz');
+      if (submitBtn) {
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      renderQuiz();
+    }
+
+    /* ========================================================
+       7. 頁面初始化與視窗監聽
+       ======================================================== */
+    window.onload = function() {
+      drawBakingCanvas();
+      drawGridSquareCanvas();
+      drawTriCalipersCanvas();
+      drawStringMeasureCanvas();
+      drawUnrollCanvas();
+      renderQuiz();
+
+      // 監聽螢幕旋轉或尺寸變換以保持畫布清晰
+      window.addEventListener('resize', () => {
+        drawBakingCanvas();
+        drawGridSquareCanvas();
+        drawTriCalipersCanvas();
+        drawStringMeasureCanvas();
+        drawUnrollCanvas();
+      });
+    };
+  </script>
+</body>
+</html>

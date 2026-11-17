@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小六年級數學：6-2 圓周長探究互動教室</title>
+  <!-- Google Fonts 思源黑體 (Noto Sans TC) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS 與 FontAwesome 圖示支援 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ========== 新海誠風格：雲海、蔚藍與夕照配色 ========== */
+    :root {
+      --sky-top: #1b3877;
+      --sky-mid: #3a7bd5;
+      --sky-light: #7ea6eb;
+      --sunset-peach: #ffc3a0;
+      --cloud-white: rgba(255, 255, 255, 0.94);
+      --glass-border: rgba(255, 255, 255, 0.7);
+      --accent-deep: #1a4d8c;
+      --accent-gold: #ff9f1c;
+      --accent-green: #2ec4b6;
+      --accent-red: #e71d36;
+      --text-main: #1f2d3d;
+      --text-muted: #4b6584;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body, button, input, select, textarea {
+      font-family: "Noto Sans TC", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--sky-top) 0%, var(--sky-mid) 38%, var(--sky-light) 70%, var(--sunset-peach) 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--text-main);
+      padding: 16px 10px 48px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 雲海光暈濾鏡 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -15%;
+      left: 15%;
+      width: 70vw;
+      height: 45vh;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .main-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 標頭樣式 */
+    header {
+      text-align: center;
+      padding: 22px 18px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(14px);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(26, 77, 140, 0.2);
+      border: 1px solid var(--glass-border);
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: var(--accent-deep);
+      letter-spacing: 1px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    /* 單元膠囊標籤樣式（配合新海誠蔚藍與晨曦金配色） */
+    .unit-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #1b3877, #274c9c);
+      color: #ffd166;
+      border: 1.5px solid rgba(255, 209, 102, 0.45);
+      padding: 6px 22px;
+      border-radius: 9999px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(27, 56, 119, 0.22);
+    }
+
+    header p {
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-size: 1.02rem;
+      font-weight: 500;
+    }
+
+    /* 導覽按鈕 */
+    .tab-navigation {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      padding: 11px 20px;
+      border-radius: 9999px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-deep);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.98);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(30, 80, 160, 0.18);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #1a4d8c, #3a7bd5);
+      color: #ffffff;
+      border-color: #3a7bd5;
+      box-shadow: 0 8px 20px rgba(26, 77, 140, 0.35);
+    }
+
+    /* 分頁容器切換 */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.35s ease forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-card {
+      background: var(--cloud-white);
+      backdrop-filter: blur(14px);
+      border-radius: 22px;
+      padding: 24px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 14px 35px rgba(20, 50, 100, 0.12);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1.38rem;
+      font-weight: 800;
+      color: var(--accent-deep);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px dashed rgba(58, 123, 213, 0.25);
+      padding-bottom: 10px;
+    }
+
+    /* 控制面板 */
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      background: rgba(235, 245, 255, 0.75);
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(104, 160, 240, 0.3);
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--accent-deep);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 190px;
+      height: 8px;
+      border-radius: 6px;
+      background: #bcd2f7;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ff9f1c;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      border: 2px solid #fff;
+      transition: 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #f38307;
+    }
+
+    .badge-value {
+      background: #ffffff;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      border: 1px solid #99c0f5;
+      font-weight: 800;
+      color: #1a4d8c;
+      font-size: 1.05rem;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, #ff9f1c, #ff6b6b);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 10px rgba(255, 107, 107, 0.28);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(255, 107, 107, 0.4);
+    }
+
+    /* 畫布區塊 */
+    .canvas-container {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #d4e3fb;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* 算式與結論卡片 */
+    .formula-banner {
+      background: linear-gradient(135deg, #eaf2ff 0%, #fff7ed 100%);
+      border-left: 6px solid #3a7bd5;
+      padding: 16px 20px;
+      border-radius: 14px;
+      margin-top: 18px;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .math-highlight {
+      font-weight: 800;
+      color: #b73225;
+      background: #ffe3e0;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin: 0 3px;
+    }
+
+    /* 國小標準直式分數樣式 */
+    .math-fraction-container {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: bold;
+      color: var(--accent-deep);
+      margin: 0 4px;
+    }
+
+    .frac-whole {
+      margin-right: 5px;
+      font-size: 1.15em;
+    }
+
+    .fraction-block {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 2px;
+    }
+
+    .fraction-num {
+      border-bottom: 2px solid currentColor;
+      padding: 0 5px 1px 5px;
+      width: 100%;
+      font-size: 0.92em;
+      line-height: 1.1;
+    }
+
+    .fraction-den {
+      padding: 1px 5px 0 5px;
+      width: 100%;
+      font-size: 0.92em;
+      line-height: 1.1;
+    }
+
+    /* 測驗區塊 */
+    .quiz-card {
+      background: #ffffff;
+      border: 1px solid #dde7f5;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      transition: all 0.2s;
+    }
+
+    .quiz-card:hover {
+      border-color: #a4c4f4;
+      box-shadow: 0 6px 18px rgba(58, 123, 213, 0.08);
+    }
+
+    .quiz-q-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-deep);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.6;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .option-btn {
+      background: #f7faff;
+      border: 2px solid #c8dbf5;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2c3e50;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background: #e8f1fd;
+      border-color: #68a0f0;
+      transform: translateY(-2px);
+    }
+
+    .option-btn.selected {
+      background: #e3f0ff;
+      border-color: #3a7bd5;
+      color: #1a4d8c;
+      box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.25);
+    }
+
+    .option-btn.selected-correct {
+      background: #e3faf2 !important;
+      border-color: #2ec4b6 !important;
+      color: #0f6c64 !important;
+    }
+
+    .option-btn.selected-wrong {
+      background: #ffebe9 !important;
+      border-color: #e71d36 !important;
+      color: #a31023 !important;
+    }
+
+    .feedback-box {
+      margin-top: 14px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      display: none;
+      font-size: 1rem;
+      line-height: 1.6;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.correct {
+      display: block;
+      background: #e3faf2;
+      border-left: 5px solid #2ec4b6;
+      color: #0a5951;
+    }
+
+    .feedback-box.wrong {
+      display: block;
+      background: #fdefee;
+      border-left: 5px solid #e71d36;
+      color: #9c1524;
+    }
+
+    .feedback-box.unanswered {
+      display: block;
+      background: #fffbeb;
+      border-left: 5px solid #f59e0b;
+      color: #92400e;
+      font-weight: 700;
+    }
+
+    /* 測驗控制列與成績單 */
+    .quiz-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn-quiz {
+      width: 175px;
+      height: 48px;
+      border-radius: 9999px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit-quiz {
+      background: linear-gradient(135deg, #1a4d8c, #3a7bd5);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(26, 77, 140, 0.3);
+    }
+
+    .btn-submit-quiz:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(26, 77, 140, 0.42);
+    }
+
+    .btn-reset-quiz {
+      background: #f1f5f9;
+      color: #334155;
+      border: 2px solid #cbd5e1;
+    }
+
+    .btn-reset-quiz:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+
+    .score-banner {
+      display: none;
+      margin-top: 22px;
+      padding: 18px 24px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eaf2ff 0%, #fff7ed 100%);
+      border: 2px solid #99c0f5;
+      text-align: center;
+      animation: fadeIn 0.35s ease;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="main-container">
+
+  <!-- 頁頭 -->
+  <header>
+    <div class="unit-pill">
+      <i class="fa-solid fa-wand-magic-sparkles"></i> 國小六上數學 6-2 互動學習網頁
+    </div>
+    <h1><i class="fa-solid fa-cloud-sun"></i> 圓周長探究互動教室</h1>
+    <p>動態展開・跑輪實測・逆推直徑・精熟挑戰</p>
+  </header>
+
+  <!-- 標籤頁切換列 -->
+  <nav class="tab-navigation">
+    <button class="tab-btn active" onclick="switchTab('tab1', this)">
+      <i class="fa-solid fa-shapes"></i> 1. 圓周展開實驗室
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab2', this)">
+      <i class="fa-solid fa-ring"></i> 2. 直徑與半徑求圓周
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab3', this)">
+      <i class="fa-solid fa-person-running"></i> 3. 測距輪滾動應用
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab4', this)">
+      <i class="fa-solid fa-arrows-left-right-to-line"></i> 4. 圓周逆推直徑
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab5', this)">
+      <i class="fa-solid fa-clipboard-check"></i> 5. 隨堂測驗
+    </button>
+  </nav>
+
+  <!-- ==================== 分頁 1：圓周展開實驗室 ==================== -->
+  <section id="tab1" class="tab-content active">
+    <div class="glass-card">
+      <h2 class="card-title"><i class="fa-solid fa-compass-drafting"></i> 探究核心：為什麼圓周長大約是直徑的 3.14 倍？</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">
+        滑動滑桿改變直徑，點擊「滾動展開一圈」按鈕，直觀觀察圓形滾完一圈後拉出的直線長度，到底包含幾個直徑長！
+      </p>
+
+      <div class="control-row">
+        <div class="control-group">
+          <span>直徑 (d)：</span>
+          <input type="range" id="unroll-diameter" min="20" max="60" value="30" step="5" oninput="updateUnroll()">
+          <span class="badge-value" id="unroll-diam-val">30 cm</span>
+        </div>
+        <button class="btn-action" onclick="startUnrollAnimation()">
+          <i class="fa-solid fa-play"></i> 滾動展開一圈
+        </button>
+        <button class="btn-action" style="background: #68a0f0;" onclick="resetUnroll()">
+          <i class="fa-solid fa-rotate-left"></i> 重置
+        </button>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="unrollCanvas" width="900" height="260"></canvas>
+      </div>
+
+      <div class="formula-banner" id="unroll-calc-banner">
+        <strong><i class="fa-solid fa-lightbulb"></i> 探究發現：</strong><br>
+        目前直徑為 <span class="math-highlight" id="banner-d">30</span> 公分。<br>
+        圓形滾動一整圈拉開的直線長度（圓周長）＝ 直徑 × 3.14 ＝ 
+        <span class="math-highlight" id="banner-formula">30 × 3.14 = 94.2</span> 公分。<br>
+        直觀視覺顯示：圓周長剛好是 <span style="font-weight:bold; color:#1a4d8c;">3 個直徑長，再加上 0.14 倍</span>的小尾巴！
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 分頁 2：直徑與半徑求圓周 ==================== -->
+  <section id="tab2" class="tab-content">
+    <div class="glass-card">
+      <h2 class="card-title"><i class="fa-solid fa-circle-notch"></i> 課堂範例：杯墊與呼拉圈計算</h2>
+      <div class="control-row">
+        <div class="control-group">
+          <label class="cursor-pointer flex items-center gap-1">
+            <input type="radio" name="calc-mode" value="diameter" checked onchange="toggleCalcMode()"> 已知直徑
+          </label>
+          <label class="cursor-pointer flex items-center gap-1" style="margin-left: 12px;">
+            <input type="radio" name="calc-mode" value="radius" onchange="toggleCalcMode()"> 已知半徑
+          </label>
+        </div>
+        <div class="control-group" id="slider-group-diam">
+          <span>直徑：</span>
+          <input type="range" id="slider-direct-d" min="4" max="100" value="8" step="1" oninput="updateDirectCalc()">
+          <span class="badge-value" id="direct-d-val">8 cm</span>
+        </div>
+        <div class="control-group" id="slider-group-rad" style="display: none;">
+          <span>半徑：</span>
+          <input type="range" id="slider-direct-r" min="2" max="50" value="45" step="1" oninput="updateDirectCalc()">
+          <span class="badge-value" id="direct-r-val">45 cm</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: center;">
+        <div class="canvas-container" style="height: 280px;">
+          <canvas id="circlePreviewCanvas" width="360" height="260"></canvas>
+        </div>
+        <div>
+          <div class="formula-banner" style="margin-top: 0;">
+            <h3 style="color: var(--accent-deep); margin-bottom: 8px;">
+              <i class="fa-solid fa-calculator"></i> 課本標準解題歷程：
+            </h3>
+            <div id="step-by-step-calc"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 分頁 3：測距輪滾動應用 ==================== -->
+  <section id="tab3" class="tab-content">
+    <div class="glass-card">
+      <h2 class="card-title"><i class="fa-solid fa-person-running"></i> 多多與黃金鼠：測距輪與滾輪旋轉探究</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">
+        輪子轉動 1 圈走的距離就是「1 個圓周長」。透過累加圈數，觀察旋轉圈數與總距離的換算關係！
+      </p>
+
+      <div class="control-row">
+        <div class="control-group">
+          <span>輪子直徑：</span>
+          <input type="range" id="wheel-diam" min="10" max="60" value="21" step="1" oninput="updateWheelSim()">
+          <span class="badge-value" id="wheel-diam-val">21 cm</span>
+        </div>
+        <div class="control-group">
+          <span>旋轉圈數：</span>
+          <input type="range" id="wheel-turns" min="1" max="200" value="100" step="5" oninput="updateWheelSim()">
+          <span class="badge-value" id="wheel-turns-val">100 圈</span>
+        </div>
+        <button class="btn-action" onclick="rollWheelAnim()">
+          <i class="fa-solid fa-person-walking-arrow-right"></i> 動態向右滾動前進
+        </button>
+        <button class="btn-action" style="background: #68a0f0;" onclick="resetWheelAnim()">
+          <i class="fa-solid fa-rotate-left"></i> 回到起點
+        </button>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="wheelCanvas" width="900" height="230"></canvas>
+      </div>
+
+      <div class="formula-banner">
+        <strong><i class="fa-solid fa-road"></i> 距離換算大揭秘：</strong><br>
+        1. 轉 1 圈的距離（圓周長）＝ 直徑 × 3.14 ＝ <span class="math-highlight" id="wheel-one-turn">21 × 3.14 = 65.94 公分</span><br>
+        2. 轉了 <span id="wheel-show-turns" style="font-weight: bold; color: #1a4d8c;">100</span> 圈的總長度 ＝ 圓周長 × 圈數<br>
+        ＝ <span id="wheel-mult-calc" class="math-highlight">65.94 × 100 = 6594</span> 公分<br>
+        3. 單位換算（100 公分 ＝ 1 公尺）：<br>
+        <span style="font-size: 1.15rem; font-weight: bold; color: var(--accent-deep);">
+          6594 ÷ 100 ＝ <span style="color:#d63031;" id="wheel-meter-result">65.94</span> 公尺
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 分頁 4：圓周逆推直徑 ==================== -->
+  <section id="tab4" class="tab-content">
+    <div class="glass-card">
+      <h2 class="card-title"><i class="fa-solid fa-maximize"></i> 逆向思維：已知圓桌周長，直徑是多少？</h2>
+      <p style="color: var(--text-muted); margin-bottom: 16px;">
+        因為「圓周長 ＝ 直徑 × 3.14」，利用乘除互逆運算：<strong>直徑 ＝ 圓周長 ÷ 3.14</strong>！
+      </p>
+
+      <div class="control-row">
+        <div class="control-group">
+          <span>拉動繩子圓周長：</span>
+          <input type="range" id="reverse-circum" min="31.4" max="314" value="282.6" step="3.14" oninput="updateReverseCalc()">
+          <span class="badge-value" id="reverse-circum-val">282.6 cm</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: center;">
+        <div class="canvas-container" style="height: 280px;">
+          <canvas id="reverseCanvas" width="360" height="260"></canvas>
+        </div>
+        <div>
+          <div class="formula-banner" style="margin-top: 0;">
+            <h3 style="color: var(--accent-deep); margin-bottom: 8px;">
+              <i class="fa-solid fa-compass"></i> 直徑逆推公式解析：
+            </h3>
+            <p>圓周率 ＝ 圓周長 ÷ 直徑</p>
+            <p style="font-size: 1.15rem; margin: 10px 0;">
+              <strong>1. 求直徑：</strong> 直徑 ＝ 圓周長 ÷ 3.14 ＝ 
+              <span class="math-fraction-container">
+                <span class="fraction-block">
+                  <span class="fraction-num">圓周長</span>
+                  <span class="fraction-den">3.14</span>
+                </span>
+              </span>
+              <br>
+              算式：<span class="math-highlight" id="rev-calc-text">282.60 ÷ 3.14 ＝ 90.0</span> 公分
+            </p>
+            <p style="font-size: 1.05rem; color: var(--text-muted);">
+              <strong>2. 延伸求半徑：</strong> 半徑 ＝ 直徑 ÷ 2 ＝ 
+              <span class="math-highlight" id="rev-rad-calc">90.0 ÷ 2 ＝ 45.0</span> 公分
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 分頁 5：隨堂測驗 ==================== -->
+  <section id="tab5" class="tab-content">
+    <div class="glass-card">
+      <h2 class="card-title"><i class="fa-solid fa-list-check"></i> 隨堂測驗</h2>
+      <p style="color: var(--text-muted); margin-bottom: 20px;">
+        請依據單元所學點選各題答案，完成後點擊下方「提交答案」檢視總分（滿分 100 分）與解析！
+      </p>
+
+      <!-- 題 1 -->
+      <div class="quiz-card" id="q-card-1">
+        <div class="quiz-q-text">
+          <i class="fa-solid fa-circle-question" style="color: var(--sky-mid);"></i>
+          <span>1. 皮皮做了一個「直徑 8 公分」的圓形杯墊，這個杯墊的圓周長大約是多少公分？</span>
+        </div>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="selectQuizOption(1, 0)">A. 12.56 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(1, 1)">B. 25.12 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(1, 2)">C. 50.24 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(1, 3)">D. 200.96 公分</button>
+        </div>
+        <div class="feedback-box" id="fb-1"></div>
+      </div>
+
+      <!-- 題 2 -->
+      <div class="quiz-card" id="q-card-2">
+        <div class="quiz-q-text">
+          <i class="fa-solid fa-circle-question" style="color: var(--sky-mid);"></i>
+          <span>2. 一個呼拉圈的「半徑是 45 公分」，算算看它的圓周長大約是多少公分？</span>
+        </div>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="selectQuizOption(2, 0)">A. 141.3 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(2, 1)">B. 90 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(2, 2)">C. 282.6 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(2, 3)">D. 565.2 公分</button>
+        </div>
+        <div class="feedback-box" id="fb-2"></div>
+      </div>
+
+      <!-- 題 3 -->
+      <div class="quiz-card" id="q-card-3">
+        <div class="quiz-q-text">
+          <i class="fa-solid fa-circle-question" style="color: var(--sky-mid);"></i>
+          <span>3. 美莉的黃金鼠在「直徑 25 公分」的滾輪上跑了 200 圈，牠大約跑了多少公尺？</span>
+        </div>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="selectQuizOption(3, 0)">A. 15.7 公尺</button>
+          <button class="option-btn" onclick="selectQuizOption(3, 1)">B. 157 公尺</button>
+          <button class="option-btn" onclick="selectQuizOption(3, 2)">C. 15700 公尺</button>
+          <button class="option-btn" onclick="selectQuizOption(3, 3)">D. 78.5 公尺</button>
+        </div>
+        <div class="feedback-box" id="fb-3"></div>
+      </div>
+
+      <!-- 題 4 -->
+      <div class="quiz-card" id="q-card-4">
+        <div class="quiz-q-text">
+          <i class="fa-solid fa-circle-question" style="color: var(--sky-mid);"></i>
+          <span>4. 姐姐拿布尺量一張圓桌的一圈，周長是 282.6 公分。這張圓桌的直徑大約是多少公分？</span>
+        </div>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="selectQuizOption(4, 0)">A. 90 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(4, 1)">B. 45 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(4, 2)">C. 180 公分</button>
+          <button class="option-btn" onclick="selectQuizOption(4, 3)">D. 887.36 公分</button>
+        </div>
+        <div class="feedback-box" id="fb-4"></div>
+      </div>
+
+      <!-- 題 5 -->
+      <div class="quiz-card" id="q-card-5">
+        <div class="quiz-q-text">
+          <i class="fa-solid fa-circle-question" style="color: var(--sky-mid);"></i>
+          <span>5. 圓周率是圓周長與直徑的比率。在直式分數關係中，直徑可表示為：圓周長 × 
+            <span class="math-fraction-container">
+              <span class="fraction-block">
+                <span class="fraction-num">1</span>
+                <span class="fraction-den">3.14</span>
+              </span>
+            </span>。若繩子長 18.84 公尺圍成一個圓，這個圓的直徑是多少公尺？
+          </span>
+        </div>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="selectQuizOption(5, 0)">A. 3 公尺</button>
+          <button class="option-btn" onclick="selectQuizOption(5, 1)">B. 6 公尺</button>
+          <button class="option-btn" onclick="selectQuizOption(5, 2)">C. 12 公尺</button>
+          <button class="option-btn" onclick="selectQuizOption(5, 3)">D. 59.16 公尺</button>
+        </div>
+        <div class="feedback-box" id="fb-5"></div>
+      </div>
+
+      <!-- 提交與重新測驗按鈕 -->
+      <div class="quiz-controls">
+        <button class="btn-quiz btn-submit-quiz" onclick="submitQuiz()">
+          <i class="fa-solid fa-paper-plane"></i> 提交答案
+        </button>
+        <button class="btn-quiz btn-reset-quiz" onclick="resetQuiz()">
+          <i class="fa-solid fa-rotate-right"></i> 重新測驗
+        </button>
+      </div>
+
+      <!-- 成績結算看板 -->
+      <div class="score-banner" id="quiz-score-banner"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- 互動邏輯與畫布渲染 JavaScript -->
+<script>
+  // 標籤頁切換
+  function switchTab(tabId, el) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    if (el) el.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+
+    if (tabId === 'tab1') drawUnrollScene(unrollProgress);
+    if (tabId === 'tab2') updateDirectCalc();
+    if (tabId === 'tab3') drawWheelScene(wheelProgress);
+    if (tabId === 'tab4') updateReverseCalc();
+  }
+
+  /* ========================================================
+     單元 1：圓周展開實驗室
+  ======================================================== */
+  const unrollCanvas = document.getElementById('unrollCanvas');
+  const uCtx = unrollCanvas.getContext('2d');
+  let unrollD = 30; // 直徑 (cm)
+  let unrollProgress = 0; // 滾動比例 0.0 ~ 1.0
+  let animId = null;
+
+  function updateUnroll() {
+    unrollD = parseInt(document.getElementById('unroll-diameter').value);
+    document.getElementById('unroll-diam-val').textContent = unrollD + ' cm';
+    const circ = (unrollD * 3.14).toFixed(2);
+    document.getElementById('banner-d').textContent = unrollD;
+    document.getElementById('banner-formula').textContent = `${unrollD} × 3.14 = ${circ}`;
+    drawUnrollScene(unrollProgress);
+  }
+
+  function drawUnrollScene(progress) {
+    const w = unrollCanvas.width;
+    const h = unrollCanvas.height;
+    uCtx.clearRect(0, 0, w, h);
+
+    const scale = 2.6;
+    const radiusPx = (unrollD / 2) * scale;
+    const groundY = 195;
+    const startX = 130;
+    const perimeterPx = unrollD * 3.14 * scale;
+    const currentX = startX + perimeterPx * progress;
+
+    // 地面基準線
+    uCtx.beginPath();
+    uCtx.strokeStyle = '#4b6584';
+    uCtx.lineWidth = 3;
+    uCtx.moveTo(40, groundY);
+    uCtx.lineTo(w - 40, groundY);
+    uCtx.stroke();
+
+    // 繪製直徑刻度指示（1個、2個、3個直徑）
+    for (let i = 1; i <= 3; i++) {
+      const markX = startX + (unrollD * i * scale);
+      uCtx.setLineDash([4, 4]);
+      uCtx.strokeStyle = '#a4b0be';
+      uCtx.beginPath();
+      uCtx.moveTo(markX, groundY - 15);
+      uCtx.lineTo(markX, groundY + 15);
+      uCtx.stroke();
+      uCtx.setLineDash([]);
+      
+      uCtx.fillStyle = '#1a4d8c';
+      uCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      uCtx.fillText(`第${i}個直徑長`, markX - 30, groundY + 34);
+    }
+
+    // 展開的彩帶周長線條
+    if (progress > 0) {
+      uCtx.beginPath();
+      uCtx.strokeStyle = '#ff6b6b';
+      uCtx.lineWidth = 6;
+      uCtx.lineCap = 'round';
+      uCtx.moveTo(startX, groundY);
+      uCtx.lineTo(currentX, groundY);
+      uCtx.stroke();
+
+      uCtx.fillStyle = '#d63031';
+      uCtx.font = 'bold 14px "Noto Sans TC", sans-serif';
+      const curLength = (unrollD * 3.14 * progress).toFixed(1);
+      uCtx.fillText(`展開長度: ${curLength} cm`, Math.max(startX + 10, currentX - 100), groundY - 12);
+    }
+
+    // 滾動中的圓形
+    const circleCenterY = groundY - radiusPx;
+    const rotationAngle = progress * 2 * Math.PI;
+
+    uCtx.save();
+    uCtx.translate(currentX, circleCenterY);
+    uCtx.rotate(rotationAngle);
+
+    // 漸層填色
+    const grad = uCtx.createLinearGradient(-radiusPx, -radiusPx, radiusPx, radiusPx);
+    grad.addColorStop(0, '#68a0f0');
+    grad.addColorStop(1, '#ffc3a0');
+    uCtx.beginPath();
+    uCtx.arc(0, 0, radiusPx, 0, Math.PI * 2);
+    uCtx.fillStyle = grad;
+    uCtx.fill();
+    uCtx.lineWidth = 3.5;
+    uCtx.strokeStyle = '#1a4d8c';
+    uCtx.stroke();
+
+    // 半徑指針與基準標記
+    uCtx.beginPath();
+    uCtx.strokeStyle = '#ffffff';
+    uCtx.lineWidth = 3;
+    uCtx.moveTo(0, 0);
+    uCtx.lineTo(0, radiusPx);
+    uCtx.stroke();
+
+    uCtx.beginPath();
+    uCtx.arc(0, radiusPx, 5, 0, Math.PI * 2);
+    uCtx.fillStyle = '#ff4757';
+    uCtx.fill();
+
+    // 圓心
+    uCtx.beginPath();
+    uCtx.arc(0, 0, 4, 0, Math.PI * 2);
+    uCtx.fillStyle = '#1a4d8c';
+    uCtx.fill();
+
+    uCtx.restore();
+
+    // 起點標籤
+    uCtx.fillStyle = '#1e3799';
+    uCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+    uCtx.fillText('起點 0', startX - 20, groundY + 22);
+  }
+
+  function startUnrollAnimation() {
+    if (animId) cancelAnimationFrame(animId);
+    let start = null;
+    const duration = 2200;
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      let progress = (timestamp - start) / duration;
+      if (progress > 1) progress = 1;
+      unrollProgress = progress;
+      drawUnrollScene(progress);
+      if (progress < 1) {
+        animId = requestAnimationFrame(step);
+      }
+    }
+    animId = requestAnimationFrame(step);
+  }
+
+  function resetUnroll() {
+    if (animId) cancelAnimationFrame(animId);
+    unrollProgress = 0;
+    drawUnrollScene(0);
+  }
+
+  /* ========================================================
+     單元 2：已知直徑/半徑求圓周
+  ======================================================== */
+  const previewCanvas = document.getElementById('circlePreviewCanvas');
+  const pCtx = previewCanvas.getContext('2d');
+
+  function toggleCalcMode() {
+    const mode = document.querySelector('input[name="calc-mode"]:checked').value;
+    if (mode === 'diameter') {
+      document.getElementById('slider-group-diam').style.display = 'flex';
+      document.getElementById('slider-group-rad').style.display = 'none';
+    } else {
+      document.getElementById('slider-group-diam').style.display = 'none';
+      document.getElementById('slider-group-rad').style.display = 'flex';
+    }
+    updateDirectCalc();
+  }
+
+  function updateDirectCalc() {
+    const mode = document.querySelector('input[name="calc-mode"]:checked').value;
+    let d = 0;
+    let r = 0;
+    let stepHtml = '';
+
+    if (mode === 'diameter') {
+      d = parseFloat(document.getElementById('slider-direct-d').value);
+      r = d / 2;
+      document.getElementById('direct-d-val').textContent = d + ' cm';
+      const circum = (d * 3.14).toFixed(2);
+      stepHtml = `
+        <p><strong>條件：</strong> 直徑 ＝ ${d} 公分</p>
+        <p><strong>公式：</strong> 圓周長 ＝ 直徑 × 3.14</p>
+        <p style="font-size: 1.25rem; font-weight: bold; color: #d63031; margin-top: 6px;">
+          算式：${d} × 3.14 ＝ ${circum} (公分)
+        </p>
+        <p style="margin-top: 6px; color: var(--text-muted); font-size: 0.95rem;">
+          <i class="fa-solid fa-note-sticky"></i> 因題目問大約是多少，回答 ${circum} 公分即可。
+        </p>
+      `;
+    } else {
+      r = parseFloat(document.getElementById('slider-direct-r').value);
+      d = r * 2;
+      document.getElementById('direct-r-val').textContent = r + ' cm';
+      const circum = (d * 3.14).toFixed(2);
+      stepHtml = `
+        <p><strong>條件：</strong> 半徑 ＝ ${r} 公分</p>
+        <p><strong>步驟 1（先算直徑）：</strong> 直徑 ＝ 半徑 × 2 ＝ ${r} × 2 ＝ <strong>${d}</strong> 公分</p>
+        <p><strong>步驟 2（求圓周長）：</strong> 圓周長 ＝ 直徑 × 3.14 ＝ 
+          <span style="font-size: 1.25rem; font-weight: bold; color: #d63031;">
+            ${d} × 3.14 ＝ ${circum} (公分)
+          </span>
+        </p>
+        <p style="margin-top: 6px; color: var(--text-muted); font-size: 0.95rem;">
+          也可以寫成一個算式：${r} × 2 × 3.14 ＝ ${circum} 公分
+        </p>
+      `;
+    }
+
+    document.getElementById('step-by-step-calc').innerHTML = stepHtml;
+    drawCirclePreview(d, mode);
+  }
+
+  function drawCirclePreview(diameter, mode) {
+    pCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+    const cx = previewCanvas.width / 2;
+    const cy = previewCanvas.height / 2;
+
+    // 依直徑範圍 (4 ~ 100 cm) 線性映射到畫布半徑 (12 ~ 106 px)，確保全程皆有縮放變化且不超出邊框
+    const minDiam = 4;
+    const maxDiam = 100;
+    const minPx = 12;
+    const maxPx = 106;
+    const ratio = Math.max(0, Math.min(1, (diameter - minDiam) / (maxDiam - minDiam)));
+    const radiusPx = minPx + ratio * (maxPx - minPx);
+
+    // 圓形本體
+    pCtx.beginPath();
+    pCtx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+    pCtx.fillStyle = 'rgba(104, 160, 240, 0.18)';
+    pCtx.fill();
+    pCtx.lineWidth = 3;
+    pCtx.strokeStyle = '#3a7bd5';
+    pCtx.stroke();
+
+    // 圓心
+    pCtx.beginPath();
+    pCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+    pCtx.fillStyle = '#ff6b6b';
+    pCtx.fill();
+
+    // 當圓形較小時將標籤移至圓上方，避免壓到圓周框線
+    const labelY = radiusPx < 48 ? (cy - radiusPx - 10) : (cy - 10);
+
+    if (mode === 'diameter') {
+      pCtx.beginPath();
+      pCtx.strokeStyle = '#e71d36';
+      pCtx.lineWidth = 2.5;
+      pCtx.moveTo(cx - radiusPx, cy);
+      pCtx.lineTo(cx + radiusPx, cy);
+      pCtx.stroke();
+
+      pCtx.fillStyle = '#b73225';
+      pCtx.font = 'bold 14px "Noto Sans TC", sans-serif';
+      pCtx.textAlign = 'center';
+      pCtx.fillText(`直徑 = ${diameter} cm`, cx, labelY);
+    } else {
+      pCtx.beginPath();
+      pCtx.strokeStyle = '#2ec4b6';
+      pCtx.lineWidth = 3;
+      pCtx.moveTo(cx, cy);
+      pCtx.lineTo(cx + radiusPx, cy);
+      pCtx.stroke();
+
+      pCtx.fillStyle = '#0f6c64';
+      pCtx.font = 'bold 14px "Noto Sans TC", sans-serif';
+      pCtx.textAlign = 'center';
+      const labelX = radiusPx < 48 ? cx : (cx + radiusPx / 2);
+      pCtx.fillText(`半徑 = ${diameter / 2} cm`, labelX, labelY);
+    }
+  }
+
+  /* ========================================================
+     單元 3：測距輪滾動應用
+  ======================================================== */
+  const wheelCanvas = document.getElementById('wheelCanvas');
+  const wCtx = wheelCanvas.getContext('2d');
+  let wheelProgress = 0; // 0.0 ~ 1.0 移動進度
+  let wheelAnimId = null;
+
+  function updateWheelSim() {
+    const d = parseFloat(document.getElementById('wheel-diam').value);
+    const turns = parseInt(document.getElementById('wheel-turns').value);
+
+    document.getElementById('wheel-diam-val').textContent = d + ' cm';
+    document.getElementById('wheel-turns-val').textContent = turns + ' 圈';
+
+    const oneCirc = (d * 3.14).toFixed(2);
+    const totalCm = (d * 3.14 * turns).toFixed(0);
+    const totalM = (totalCm / 100).toFixed(2);
+
+    document.getElementById('wheel-one-turn').textContent = `${d} × 3.14 = ${oneCirc} 公分`;
+    document.getElementById('wheel-show-turns').textContent = turns;
+    document.getElementById('wheel-mult-calc').textContent = `${oneCirc} × ${turns} ＝ ${totalCm}`;
+    document.getElementById('wheel-meter-result').textContent = totalM;
+
+    drawWheelScene(wheelProgress);
+  }
+
+  function drawWheelScene(progress) {
+    const w = wheelCanvas.width;
+    const h = wheelCanvas.height;
+    wCtx.clearRect(0, 0, w, h);
+
+    const groundY = 175;
+    const radius = 52;
+    const startX = 110;
+    const endX = w - 120;
+    const currentX = startX + (endX - startX) * progress;
+    const cy = groundY - radius;
+
+    // 總旋轉圈數（展示 3 圈滾動效果）
+    const totalSimRotations = 3;
+    const angle = progress * (Math.PI * 2 * totalSimRotations);
+
+    // 地面基準線
+    wCtx.beginPath();
+    wCtx.strokeStyle = '#4b6584';
+    wCtx.lineWidth = 3;
+    wCtx.moveTo(25, groundY);
+    wCtx.lineTo(w - 25, groundY);
+    wCtx.stroke();
+
+    // 草皮裝飾
+    wCtx.fillStyle = '#2ed573';
+    wCtx.fillRect(25, groundY + 2, w - 50, 10);
+
+    // 起點標記
+    wCtx.fillStyle = '#1e3799';
+    wCtx.font = 'bold 13px "Noto Sans TC", sans-serif';
+    wCtx.textAlign = 'center';
+    wCtx.fillText('起點 0m', startX, groundY + 28);
+
+    // 輪子滾過留下的距離痕跡線條
+    if (progress > 0) {
+      wCtx.beginPath();
+      wCtx.strokeStyle = '#ff9f1c';
+      wCtx.lineWidth = 5;
+      wCtx.lineCap = 'round';
+      wCtx.moveTo(startX, groundY);
+      wCtx.lineTo(currentX, groundY);
+      wCtx.stroke();
+
+      // 即時滾動圈數與距離標註
+      const d = parseFloat(document.getElementById('wheel-diam').value);
+      const turns = parseInt(document.getElementById('wheel-turns').value);
+      const totalM = (d * 3.14 * turns / 100).toFixed(2);
+      const currentPassedM = (totalM * progress).toFixed(2);
+      const currentTurns = (turns * progress).toFixed(0);
+
+      wCtx.fillStyle = '#d35400';
+      wCtx.font = 'bold 14px "Noto Sans TC", sans-serif';
+      wCtx.textAlign = 'center';
+      wCtx.fillText(`已滾動: ${currentTurns} 圈 (${currentPassedM} 公尺)`, Math.max(startX + 90, currentX - 10), groundY - radius * 2 - 22);
+    }
+
+    // 握把推桿機構（跟隨圓心向右平移）
+    wCtx.save();
+    wCtx.strokeStyle = '#2f3542';
+    wCtx.lineWidth = 6;
+    wCtx.lineCap = 'round';
+    wCtx.beginPath();
+    wCtx.moveTo(currentX, cy);
+    wCtx.lineTo(currentX - 75, cy - 65);
+    wCtx.stroke();
+
+    // 紅色把手
+    wCtx.strokeStyle = '#ff4757';
+    wCtx.lineWidth = 8;
+    wCtx.beginPath();
+    wCtx.moveTo(currentX - 85, cy - 70);
+    wCtx.lineTo(currentX - 65, cy - 60);
+    wCtx.stroke();
+    wCtx.restore();
+
+    // 測距輪（跟隨移動並自轉）
+    wCtx.save();
+    wCtx.translate(currentX, cy);
+    wCtx.rotate(angle);
+
+    // 外圈輪框
+    wCtx.beginPath();
+    wCtx.arc(0, 0, radius, 0, Math.PI * 2);
+    wCtx.fillStyle = '#ffffff';
+    wCtx.fill();
+    wCtx.lineWidth = 5;
+    wCtx.strokeStyle = '#ff9f1c';
+    wCtx.stroke();
+
+    // 十字輪輻
+    for (let i = 0; i < 4; i++) {
+      wCtx.beginPath();
+      wCtx.strokeStyle = '#3a7bd5';
+      wCtx.lineWidth = 2.5;
+      wCtx.moveTo(0, 0);
+      wCtx.lineTo(radius * Math.cos(i * Math.PI / 2), radius * Math.sin(i * Math.PI / 2));
+      wCtx.stroke();
+    }
+
+    // 圓周計數標記點（紅色圓點）
+    wCtx.beginPath();
+    wCtx.arc(radius - 6, 0, 6, 0, Math.PI * 2);
+    wCtx.fillStyle = '#ff4757';
+    wCtx.fill();
+
+    // 軸心
+    wCtx.beginPath();
+    wCtx.arc(0, 0, 7, 0, Math.PI * 2);
+    wCtx.fillStyle = '#2f3542';
+    wCtx.fill();
+
+    wCtx.restore();
+
+    // 狀態提示標籤
+    wCtx.fillStyle = '#1a4d8c';
+    wCtx.font = 'bold 14px "Noto Sans TC", sans-serif';
+    wCtx.textAlign = 'left';
+    wCtx.fillText('測距輪滾動前進：1圈 ＝ 1個圓周長', 30, 32);
+  }
+
+  function rollWheelAnim() {
+    if (wheelAnimId) cancelAnimationFrame(wheelAnimId);
+    let start = null;
+    const duration = 2400; // 滾動耗時
+    const initialProgress = wheelProgress >= 1 ? 0 : wheelProgress;
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      let p = (timestamp - start) / duration;
+      if (p > 1) p = 1;
+      wheelProgress = initialProgress + (1 - initialProgress) * p;
+      drawWheelScene(wheelProgress);
+      if (p < 1) {
+        wheelAnimId = requestAnimationFrame(step);
+      }
+    }
+    wheelAnimId = requestAnimationFrame(step);
+  }
+
+  function resetWheelAnim() {
+    if (wheelAnimId) cancelAnimationFrame(wheelAnimId);
+    wheelProgress = 0;
+    drawWheelScene(0);
+  }
+
+  /* ========================================================
+     單元 4：圓周逆推直徑
+  ======================================================== */
+  const reverseCanvas = document.getElementById('reverseCanvas');
+  const rCtx = reverseCanvas.getContext('2d');
+
+  function updateReverseCalc() {
+    const c = parseFloat(document.getElementById('reverse-circum').value);
+    document.getElementById('reverse-circum-val').textContent = c.toFixed(2) + ' cm';
+
+    const d = (c / 3.14).toFixed(1);
+    const r = (d / 2).toFixed(1);
+
+    document.getElementById('rev-calc-text').textContent = `${c.toFixed(2)} ÷ 3.14 ＝ ${d}`;
+    document.getElementById('rev-rad-calc').textContent = `${d} ÷ 2 ＝ ${r}`;
+
+    drawReverseCircle(parseFloat(d));
+  }
+
+  function drawReverseCircle(diam) {
+    rCtx.clearRect(0, 0, reverseCanvas.width, reverseCanvas.height);
+    const cx = reverseCanvas.width / 2;
+    const cy = reverseCanvas.height / 2;
+    const radiusPx = 25 + (diam / 100) * 70;
+
+    // 圓桌
+    rCtx.beginPath();
+    rCtx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+    rCtx.fillStyle = '#fceada';
+    rCtx.fill();
+    rCtx.lineWidth = 4;
+    rCtx.strokeStyle = '#e17055';
+    rCtx.stroke();
+
+    // 布尺虛線
+    rCtx.setLineDash([6, 3]);
+    rCtx.beginPath();
+    rCtx.arc(cx, cy, radiusPx + 7, 0, Math.PI * 2);
+    rCtx.strokeStyle = '#0984e3';
+    rCtx.lineWidth = 2;
+    rCtx.stroke();
+    rCtx.setLineDash([]);
+
+    // 圓心與直徑
+    rCtx.beginPath();
+    rCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+    rCtx.fillStyle = '#2d3436';
+    rCtx.fill();
+
+    rCtx.beginPath();
+    rCtx.strokeStyle = '#d63031';
+    rCtx.lineWidth = 2;
+    rCtx.moveTo(cx - radiusPx, cy);
+    rCtx.lineTo(cx + radiusPx, cy);
+    rCtx.stroke();
+
+    rCtx.fillStyle = '#d63031';
+    rCtx.font = 'bold 14px "Noto Sans TC", sans-serif';
+    rCtx.textAlign = 'center';
+    rCtx.fillText(`推算直徑 = ${diam} cm`, cx, cy - 8);
+  }
+
+  /* ========================================================
+     單元 5：隨堂測驗與回饋（滿分 100 分，每題 20 分）
+  ======================================================== */
+  const quizAnswers = {
+    1: 1, // B. 25.12 公分
+    2: 2, // C. 282.6 公分
+    3: 1, // B. 157 公尺
+    4: 0, // A. 90 公分
+    5: 1  // B. 6 公尺
+  };
+
+  let userSelections = {
+    1: null,
+    2: null,
+    3: null,
+    4: null,
+    5: null
+  };
+
+  let isQuizSubmitted = false;
+
+  const quizFeedbackData = {
+    1: {
+      correct: "答對了！直徑是 8 公分，圓周長 ＝ 直徑 × 3.14 ＝ 8 × 3.14 ＝ 25.12 公分。",
+      wrong: "答錯了！計算圓周長的公式是「直徑 × 3.14」。題目已給直徑 8 公分，正確算式為 8 × 3.14 ＝ 25.12 公分。"
+    },
+    2: {
+      correct: "答對了！半徑是 45 公分，直徑是半徑的 2 倍（45 × 2 ＝ 90 公分），再乘以 3.14：90 × 3.14 ＝ 282.6 公分。",
+      wrong: "答錯了！題目給的是「半徑 45 公分」，必須先算出直徑（45 × 2 ＝ 90），再去乘以 3.14，正確算式為 90 × 3.14 ＝ 282.6 公分。"
+    },
+    3: {
+      correct: "答對了！滾輪轉 1 圈 ＝ 25 × 3.14 ＝ 78.5 公分，轉 200 圈 ＝ 15700 公分，換算成公尺：15700 ÷ 100 ＝ 157 公尺。",
+      wrong: "答錯了！滾輪轉 200 圈總長度為 25 × 3.14 × 200 ＝ 15700 公分，題目問的是「公尺」，因為 1 公尺 ＝ 100 公分，所以 15700 ÷ 100 ＝ 157 公尺。"
+    },
+    4: {
+      correct: "答對了！因為「圓周長 ＝ 直徑 × 3.14」，所以「直徑 ＝ 圓周長 ÷ 3.14」，算式為 282.6 ÷ 3.14 ＝ 90 公分。",
+      wrong: "答錯了！已知圓周長求直徑時，要使用除法逆推：直徑 ＝ 圓周長 ÷ 3.14。正確算式為 282.6 ÷ 3.14 ＝ 90 公分（45 公分是半徑長）。"
+    },
+    5: {
+      correct: "答對了！繩長 18.84 公尺就是圓周長，直徑 ＝ 圓周長 ÷ 3.14 ＝ 18.84 ÷ 3.14 ＝ 6 公尺。",
+      wrong: "答錯了！繩子圍成一圈，繩長 18.84 公尺就是圓周長。求直徑要用 圓周長 ÷ 3.14 ＝ 18.84 ÷ 3.14 ＝ 6 公尺。"
+    }
+  };
+
+  // 點選選項（尚未批改）
+  function selectQuizOption(qNum, optIdx) {
+    if (isQuizSubmitted) return; // 已提交後鎖定，需點重新測驗才能重選
+    userSelections[qNum] = optIdx;
+
+    const card = document.getElementById(`q-card-${qNum}`);
+    const btns = card.querySelectorAll('.option-btn');
+    btns.forEach((btn, idx) => {
+      btn.classList.remove('selected');
+      if (idx === optIdx) {
+        btn.classList.add('selected');
+      }
+    });
+  }
+
+  // 提交答案並統一批改（滿分 100 分）
+  function submitQuiz() {
+    isQuizSubmitted = true;
+    let totalScore = 0;
+
+    for (let qNum = 1; qNum <= 5; qNum++) {
+      const selectedIdx = userSelections[qNum];
+      const correctIdx = quizAnswers[qNum];
+      const card = document.getElementById(`q-card-${qNum}`);
+      const fbBox = document.getElementById(`fb-${qNum}`);
+      const btns = card.querySelectorAll('.option-btn');
+
+      btns.forEach(btn => btn.classList.remove('selected', 'selected-correct', 'selected-wrong'));
+
+      if (selectedIdx === null) {
+        // 未作答：僅顯示黃色系「未作答。」，不顯示其他說明與正確答案
+        fbBox.className = "feedback-box unanswered";
+        fbBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> 未作答。`;
+      } else if (selectedIdx === correctIdx) {
+        // 答對：加 20 分
+        totalScore += 20;
+        btns[selectedIdx].classList.add('selected-correct');
+        fbBox.className = "feedback-box correct";
+        fbBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${quizFeedbackData[qNum].correct}`;
+      } else {
+        // 答錯
+        btns[selectedIdx].classList.add('selected-wrong');
+        fbBox.className = "feedback-box wrong";
+        fbBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${quizFeedbackData[qNum].wrong}`;
+      }
+    }
+
+    const scoreBanner = document.getElementById('quiz-score-banner');
+    scoreBanner.style.display = 'block';
+    scoreBanner.innerHTML = `
+      <div style="font-size: 1.35rem; font-weight: 800; color: var(--accent-deep);">
+        <i class="fa-solid fa-award" style="color: #ff9f1c;"></i> 測驗得分：<span style="font-size: 1.8rem; color: #d63031;">${totalScore}</span> / 100 分
+      </div>
+      <div style="margin-top: 6px; color: var(--text-muted); font-size: 0.98rem;">
+        （每題 20 分，共 5 題；若想重新練習，請點擊上方「重新測驗」按鈕）
+      </div>
+    `;
+  }
+
+  // 重新測驗
+  function resetQuiz() {
+    isQuizSubmitted = false;
+    userSelections = { 1: null, 2: null, 3: null, 4: null, 5: null };
+
+    for (let qNum = 1; qNum <= 5; qNum++) {
+      const card = document.getElementById(`q-card-${qNum}`);
+      const fbBox = document.getElementById(`fb-${qNum}`);
+      const btns = card.querySelectorAll('.option-btn');
+
+      btns.forEach(btn => btn.classList.remove('selected', 'selected-correct', 'selected-wrong'));
+      fbBox.className = "feedback-box";
+      fbBox.innerHTML = "";
+    }
+
+    const scoreBanner = document.getElementById('quiz-score-banner');
+    scoreBanner.style.display = 'none';
+    scoreBanner.innerHTML = "";
+  }
+
+  // 畫面初始加載
+  window.addEventListener('load', () => {
+    updateUnroll();
+    updateDirectCalc();
+    updateWheelSim();
+    updateReverseCalc();
+  });
+</script>
+</body>
+</html>

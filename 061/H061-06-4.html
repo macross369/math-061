@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小六上數學 6-4 互動學習網頁</title>
+  <!-- 引入 Google Fonts 思源黑體 (Noto Sans TC)、Tailwind CSS 與 FontAwesome 圖標 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* 新海誠動漫風格自訂背景與思源黑體設定（排除 FontAwesome 圖示標籤以確保圖示正常顯示） */
+    body, button, input, select, textarea, span:not(.fa-solid):not(.fa-regular):not(.fa-brands), div, p, h1, h2, h3, h4 {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #1A2a6c 0%, #275a9e 25%, #4A90E2 50%, #90C4FE 75%, #FAD0C4 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* 雲朵光暈與玻璃擬態卡片 */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 12px 36px 0 rgba(31, 38, 135, 0.18);
+    }
+
+    .glass-card-sub {
+      background: rgba(248, 250, 252, 0.92);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 國小標準直式分數排版規格 (垂直居中、整數於左、橫線分隔) */
+    .math-expr {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin: 0 2px;
+    }
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      line-height: 1.1;
+      font-size: 0.95em;
+    }
+    .frac-top {
+      border-bottom: 1.8px solid #1e293b;
+      padding-bottom: 2px;
+    }
+    .frac-bottom {
+      padding-top: 2px;
+    }
+    .mixed-num {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 2px;
+      font-weight: 700;
+    }
+
+    /* 閃爍動畫導引 */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+      50% { box-shadow: 0 0 25px rgba(147, 197, 253, 0.9); }
+    }
+    .pulse-highlight {
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 md:p-8">
+
+  <!-- 頂部新海誠意象導航與標題 -->
+  <header class="max-w-6xl mx-auto mb-6 glass-panel rounded-3xl p-5 sm:p-8 text-center border-b-4 border-sky-400">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100/80 text-sky-800 text-sm font-semibold mb-3">
+      <i class="fa-solid fa-cloud-sun text-amber-500"></i> 國小六上數學 6-4 互動學習網頁
+    </div>
+    <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-800 tracking-tight flex items-center justify-center gap-3">
+      <i class="fa-solid fa-shapes text-sky-600"></i>
+      圓周長與弧長的應用
+    </h1>
+    <p class="mt-2 text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
+      化身數學偵探，透過圖形拆解、數值滑桿與動畫軌跡，探究圓周長與複合圖形的奧祕！
+    </p>
+  </header>
+
+  <!-- 主分頁選單 -->
+  <main class="max-w-6xl mx-auto">
+    <nav class="flex flex-wrap gap-2 sm:gap-3 mb-6 justify-center" aria-label="Tabs">
+      <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 shadow-sm bg-sky-600 text-white shadow-sky-300">
+        <i class="fa-solid fa-clone"></i> 1. 甲乙周長比一比
+      </button>
+      <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 shadow-sm bg-white/80 hover:bg-white text-slate-700">
+        <i class="fa-solid fa-layer-group"></i> 2. 複合圖形拆解算周長
+      </button>
+      <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 shadow-sm bg-white/80 hover:bg-white text-slate-700">
+        <i class="fa-solid fa-robot"></i> 3. 機器人漫步路徑
+      </button>
+      <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 shadow-sm bg-white/80 hover:bg-white text-slate-700">
+        <i class="fa-solid fa-box-open"></i> 4. 湯盤裝盒生活素養
+      </button>
+      <button onclick="switchTab('tab5')" id="btn-tab5" class="tab-btn px-5 py-3 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center gap-2 shadow-sm bg-white/80 hover:bg-white text-slate-700">
+        <i class="fa-solid fa-clipboard-check"></i> 5. 隨堂測驗
+      </button>
+    </nav>
+
+    <!-- TAB 1: 甲乙周長比一比 (拆解與比較) -->
+    <section id="tab1" class="tab-content glass-panel rounded-3xl p-6 sm:p-8">
+      <div class="border-l-4 border-sky-500 pl-4 mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800">活動一：觀察與拆解—甲和乙哪一個周長長？</h2>
+        <p class="text-slate-600 text-sm mt-1">課本情境：觀察半徑 10 公分所拼成的甲圖與乙圖，周界各是由哪些部分合起來的？</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <!-- 互動控制與展示畫布 -->
+        <div class="glass-card-sub rounded-2xl p-5 text-center">
+          <div class="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mb-4">
+            <button onclick="animateToTab1State(0)" id="btn-t1-merged" class="px-3.5 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm">
+              <i class="fa-solid fa-puzzle-piece mr-1"></i> 原圖形態
+            </button>
+            <button onclick="animateToTab1State(1)" id="btn-t1-split" class="px-3.5 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm">
+              <i class="fa-solid fa-arrows-split-up-and-left mr-1"></i> 動態拆解弧線
+            </button>
+            <button onclick="animateToTab1State(2)" id="btn-t1-combine" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs sm:text-sm font-semibold transition shadow-sm">
+              <i class="fa-solid fa-circle mr-1"></i> 合併為完整圓
+            </button>
+            <button onclick="toggleTab1PlayAnimation()" id="btn-t1-play" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs sm:text-sm font-bold transition shadow-md flex items-center gap-1.5">
+              <i class="fa-solid fa-play" id="icon-tab1-play"></i> <span id="text-tab1-play">動態顯示</span>
+            </button>
+          </div>
+
+          <div class="relative w-full overflow-hidden flex justify-center items-center bg-sky-50/60 rounded-2xl border border-sky-100 p-2">
+            <canvas id="canvasTab1" width="540" height="280" class="max-w-full h-auto"></canvas>
+          </div>
+          <p id="tab1-visual-note" class="text-xs text-sky-800 font-medium mt-3 bg-sky-100/70 p-2 rounded-lg">
+            <i class="fa-solid fa-circle-play text-amber-500"></i> 提示：點擊「動態顯示」觀看圖形分離與平滑合併成圓的連續動畫！
+          </p>
+        </div>
+
+        <!-- 算式思維對比 -->
+        <div class="space-y-4">
+          <!-- 妮妮的做法 -->
+          <div class="glass-card-sub rounded-2xl p-5 border-l-4 border-amber-400">
+            <h3 class="font-bold text-amber-700 flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-calculator"></i> 妮妮的做法：算式計算求和
+            </h3>
+            <div class="text-sm text-slate-700 space-y-2">
+              <div>
+                <span class="inline-block px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-xs font-bold mr-1">甲的周長</span>
+                10 × 2 × 3.14 × <span class="frac"><span class="frac-top">3</span><span class="frac-bottom">4</span></span>
+                + 10 × 2 × 3.14 × <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span>
+                = 10 × 2 × 3.14 × (<span class="frac"><span class="frac-top">3</span><span class="frac-bottom">4</span></span> + <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span>)
+                = <strong>62.8</strong> (公分)
+              </div>
+              <div>
+                <span class="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-xs font-bold mr-1">乙的周長</span>
+                10 × 2 × 3.14 × <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span> × 4 = <strong>62.8</strong> (公分)
+              </div>
+              <div class="font-semibold text-slate-900 pt-1 border-t border-slate-200">
+                結論：62.8 = 62.8，兩者周長一樣長！
+              </div>
+            </div>
+          </div>
+
+          <!-- 美美的做法 -->
+          <div class="glass-card-sub rounded-2xl p-5 border-l-4 border-teal-500">
+            <h3 class="font-bold text-teal-700 flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-eye"></i> 美美的做法：幾何直觀拆解
+            </h3>
+            <p class="text-sm text-slate-700 leading-relaxed">
+              甲圖由 1 個 <span class="frac"><span class="frac-top">3</span><span class="frac-bottom">4</span></span> 圓弧與 1 個 <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span> 圓弧構成，合起來是 <strong>4 個 <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span> 圓弧</strong>。<br>
+              乙圖也是由 <strong>4 個 <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span> 圓弧</strong> 拼成。<br>
+              因為兩者都是半徑 10 公分、4 個 <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">4</span></span> 圓的弧長，所以周長<strong>完全一樣長</strong>！
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: 複合圖形拆解 (直徑5/半徑、直邊與半圓) -->
+    <section id="tab2" class="tab-content hidden glass-panel rounded-3xl p-6 sm:p-8">
+      <div class="border-l-4 border-sky-500 pl-4 mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800">活動二：複合圖形周長（直線 ＋ 圓弧）</h2>
+        <p class="text-slate-600 text-sm mt-1">透過滑桿調整直線邊長與半徑，觀察圖形周界如何由「2條線段」與「2個半圓弧」所組成。</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <!-- 畫布與互動控制器 -->
+        <div class="glass-card-sub rounded-2xl p-5">
+          <div class="flex flex-col sm:flex-row gap-4 mb-4">
+            <div class="flex-1">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                直線段長度 (L)：<span id="label-l" class="text-sky-600 font-extrabold text-base">10</span> 公分
+              </label>
+              <input type="range" id="slider-l" min="5" max="25" step="1" value="10" 
+                     class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                     oninput="updateTab2()">
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-bold text-slate-700 mb-1">
+                半圓直徑 (D)：<span id="label-d" class="text-indigo-600 font-extrabold text-base">5</span> 公分
+              </label>
+              <input type="range" id="slider-d" min="3" max="15" step="1" value="5" 
+                     class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                     oninput="updateTab2()">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center bg-sky-50/60 rounded-2xl border border-sky-100 p-2">
+            <canvas id="canvasTab2" width="460" height="260" class="max-w-full h-auto"></canvas>
+          </div>
+          <div class="flex justify-center gap-4 mt-3 text-xs">
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> 上下兩條直線段</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> 左右兩個半圓弧 (可拼成1整圓)</span>
+          </div>
+        </div>
+
+        <!-- 即時計算剖析板 -->
+        <div class="glass-card-sub rounded-2xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-square-root-variable text-sky-600"></i> 周長動態即時解析
+          </h3>
+
+          <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-200 text-sm">
+            <div class="font-bold text-blue-900 mb-1 flex items-center justify-between">
+              <span>① 左右兩側半圓弧長合起來：</span>
+              <span id="tab2-arc-val" class="text-blue-700 font-extrabold text-base">15.7 公分</span>
+            </div>
+            <div class="text-slate-600 text-xs leading-relaxed">
+              直徑 × 3.14 × <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">2</span></span> × 2 
+              ＝ <span id="tab2-d-exp">5</span> × 3.14 ＝ <span id="tab2-arc-calc" class="font-bold text-blue-800">15.7</span>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-sm">
+            <div class="font-bold text-amber-900 mb-1 flex items-center justify-between">
+              <span>② 上下兩條直線段長：</span>
+              <span id="tab2-line-val" class="text-amber-700 font-extrabold text-base">20 公分</span>
+            </div>
+            <div class="text-slate-600 text-xs">
+              <span id="tab2-l-exp">10</span> ＋ <span id="tab2-l-exp2">10</span> ＝ <span id="tab2-line-calc" class="font-bold text-amber-800">20</span>
+            </div>
+          </div>
+
+          <div class="p-4 bg-emerald-50 rounded-xl border-2 border-emerald-400 text-emerald-950">
+            <div class="text-xs font-semibold text-emerald-800">圖形著色部分總周長：</div>
+            <div class="text-xl sm:text-2xl font-black mt-1 flex items-baseline justify-between">
+              <span id="tab2-formula-sum" class="text-base text-slate-700 font-medium">15.7 ＋ 20 ＝</span>
+              <span id="tab2-total-val" class="text-emerald-600 font-extrabold">35.7 公分</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: 機器人漫步路徑 (分配律與同徑半圓) -->
+    <section id="tab3" class="tab-content hidden glass-panel rounded-3xl p-6 sm:p-8">
+      <div class="border-l-4 border-sky-500 pl-4 mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800">活動三：機器人漫步路徑（紅色弧與藍色弧）</h2>
+        <p class="text-slate-600 text-sm mt-1">起點出發走紅弧到休息處，再沿兩個小藍弧返回起點。點擊按鈕觀看機器人移動動畫！</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <!-- 動畫畫布 -->
+        <div class="glass-card-sub rounded-2xl p-5 text-center">
+          <div class="flex justify-center gap-3 mb-4">
+            <button onclick="startRobotWalk()" class="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-sm font-bold shadow-md transition flex items-center gap-2">
+              <i class="fa-solid fa-play"></i> 機器人出發！
+            </button>
+            <button onclick="resetRobotWalk()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm font-semibold transition">
+              <i class="fa-solid fa-rotate-left"></i> 重置位置
+            </button>
+          </div>
+
+          <div class="bg-sky-50/70 rounded-2xl border border-sky-100 p-2 flex justify-center">
+            <canvas id="canvasRobot" width="480" height="305" class="max-w-full h-auto"></canvas>
+          </div>
+          <div class="flex justify-between items-center text-xs text-slate-600 mt-2 px-4">
+            <span class="text-red-500 font-bold"><i class="fa-solid fa-circle text-[8px]"></i> 紅色大半圓弧 (直徑100m)</span>
+            <span class="text-blue-600 font-bold"><i class="fa-solid fa-circle text-[8px]"></i> 兩個藍色小半圓弧 (直徑各50m)</span>
+          </div>
+        </div>
+
+        <!-- 算式比對 (皮皮 vs 丹丹) -->
+        <div class="space-y-4">
+          <div class="glass-card-sub rounded-2xl p-5 border-l-4 border-rose-400">
+            <h4 class="font-bold text-rose-800 flex items-center gap-2 text-sm sm:text-base">
+              <i class="fa-solid fa-route"></i> 皮皮的做法（分步計算）：
+            </h4>
+            <div class="text-xs sm:text-sm text-slate-700 space-y-1 mt-2">
+              <p>• <strong class="text-rose-600 font-bold">紅色弧線</strong>：(25 × 4) × 3.14 × <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">2</span></span> ＝ 100 × 3.14 × <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">2</span></span> ＝ <strong>157</strong> 公尺</p>
+              <p>• <strong class="text-blue-600 font-bold">藍色弧線</strong>：2 個半圓拼成 1 個圓 ＝ (25 × 2) × 3.14 ＝ 50 × 3.14 ＝ <strong>157</strong> 公尺</p>
+              <p>• 總共走：157 ＋ 157 ＝ <strong class="text-rose-600 text-base">314 公尺</strong></p>
+            </div>
+          </div>
+
+          <div class="glass-card-sub rounded-2xl p-5 border-l-4 border-sky-500 bg-sky-50/50">
+            <h4 class="font-bold text-sky-800 flex items-center gap-2 text-sm sm:text-base">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> 丹丹的做法（巧思併式，提出 3.14）：
+            </h4>
+            <div class="text-xs sm:text-sm text-slate-700 space-y-2 mt-2 leading-relaxed">
+              <p class="font-mono bg-white p-2.5 rounded-lg border border-sky-200">
+                (100 × <span class="frac"><span class="frac-top">1</span><span class="frac-bottom">2</span></span> × 3.14) ＋ (50 × 3.14)<br>
+                ＝ (50 ＋ 50) × 3.14<br>
+                ＝ 100 × 3.14 ＝ <strong class="text-sky-700 text-base">314 公尺</strong>
+              </p>
+              <p class="text-xs text-sky-700">
+                <i class="fa-solid fa-lightbulb"></i> <strong>教學引導：</strong>大半圓半徑正好等於小半圓直徑，因此紅色弧長正好等於兩個藍色小半圓弧長總和！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: 湯盤裝盒生活素養 (逆算直徑與直觀比較) -->
+    <section id="tab4" class="tab-content hidden glass-panel rounded-3xl p-6 sm:p-8">
+      <div class="border-l-4 border-amber-500 pl-4 mb-6">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-800">活動四：生活素養評量—湯盤能裝入禮盒中嗎？</h2>
+        <p class="text-slate-600 text-sm mt-1">媽媽想將「圓周長 90 公分」的瓷器圓盤，放進「底面正方形周長 100 公分」的紙盒。能放得進去嗎？</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <!-- 模擬對比畫布 -->
+        <div class="glass-card-sub rounded-2xl p-5 text-center">
+          <div class="mb-3">
+            <span class="text-xs font-bold text-slate-600">俯視比例尺幾何模擬：</span>
+          </div>
+          <div class="bg-sky-50/70 rounded-2xl border border-sky-100 p-2 flex justify-center">
+            <canvas id="canvasPlate" width="380" height="280" class="max-w-full h-auto"></canvas>
+          </div>
+          <div class="mt-3 text-xs flex justify-center gap-4">
+            <span class="text-rose-600 font-bold"><i class="fa-solid fa-circle text-[9px]"></i> 圓瓷盤 (直徑約 28.7 cm)</span>
+            <span class="text-indigo-600 font-bold"><i class="fa-regular fa-square"></i> 紙盒底面 (邊長 25 cm)</span>
+          </div>
+        </div>
+
+        <!-- 認知衝突澄清 -->
+        <div class="space-y-4">
+          <div class="glass-card-sub rounded-2xl p-5 border-l-4 border-rose-400">
+            <h4 class="font-bold text-rose-700 flex items-center gap-2">
+              <i class="fa-solid fa-circle-xmark text-rose-500"></i> 學生常見直覺迷思（錯誤做法）
+            </h4>
+            <p class="text-xs sm:text-sm text-slate-600 mt-2">
+              「圓盤周長 90 公分小於紙盒周長 100 公分 (90 &lt; 100)，所以裝得下！」<br>
+              <span class="text-rose-600 font-bold">迷思解析：</span>不同幾何形狀不能僅用「周長大小」判斷能否容納，必須比較<strong>「物體的最大寬度（圓直徑）」</strong>與<strong>「盒子的開口邊長」</strong>！
+            </p>
+          </div>
+
+          <div class="glass-card-sub rounded-2xl p-5 border-l-4 border-emerald-500 bg-emerald-50/40">
+            <h4 class="font-bold text-emerald-800 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-emerald-600"></i> 數學家嚴謹思維（正確做法）
+            </h4>
+            <div class="text-xs sm:text-sm text-slate-700 space-y-2 mt-2">
+              <p>1. <strong>算正方形邊長：</strong>100 ÷ 4 ＝ <span class="font-bold text-indigo-700">25</span> (公分)</p>
+              <p>2. <strong>逆算圓盤直徑：</strong>90 ÷ 3.14 ≈ <span class="font-bold text-rose-700">28.66</span> (約 28.7 公分)</p>
+              <p>3. <strong>比大小：</strong>28.7 公分 &gt; 25 公分，圓盤寬度比盒子邊長還大！</p>
+              <div class="p-2.5 bg-emerald-100/80 rounded-lg text-emerald-900 font-bold text-center">
+                答：裝不下！
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: 隨堂測驗 (5 題) -->
+    <section id="tab5" class="tab-content hidden glass-panel rounded-3xl p-6 sm:p-8">
+      <div class="border-l-4 border-sky-500 pl-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-800">隨堂測驗</h2>
+          <p class="text-slate-600 text-sm mt-1">仔細閱讀圖意與題意，選擇最適當的答案，點擊下方「提交答案」檢視學習成果！</p>
+        </div>
+        <div id="quiz-score-badge" class="px-4 py-2 bg-sky-100 text-sky-800 font-bold rounded-2xl self-start sm:self-auto text-sm">
+          目前得分：尚未提交
+        </div>
+      </div>
+
+      <div id="quiz-container" class="space-y-6">
+        <!-- 透過 JS 動態產生 5 道評量題目 -->
+      </div>
+
+      <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+        <button onclick="submitQuiz()" class="w-44 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> 提交答案
+        </button>
+        <button onclick="resetQuiz()" class="w-44 py-3 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-rotate-right"></i> 重新測驗
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 核心 JavaScript 邏輯 -->
+  <script>
+    /* ========================================================
+       1. 分頁切換控制邏輯 (Switch Tab Navigation)
+       ======================================================== */
+    function switchTab(tabId) {
+      // 切換時先暫停可能正在播放的動畫
+      if (typeof stopAutoPlay === 'function') {
+        stopAutoPlay();
+      }
+
+      // 隱藏所有分頁內容，顯示目標分頁
+      document.querySelectorAll('.tab-content').forEach(panel => {
+        panel.classList.add('hidden');
+      });
+      const activeTarget = document.getElementById(tabId);
+      if (activeTarget) {
+        activeTarget.classList.remove('hidden');
+      }
+
+      // 更新按鈕高亮樣式
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sky-300');
+        btn.classList.add('bg-white/80', 'text-slate-700');
+      });
+      const currentActiveBtn = document.getElementById('btn-' + tabId);
+      if (currentActiveBtn) {
+        currentActiveBtn.classList.remove('bg-white/80', 'text-slate-700');
+        currentActiveBtn.classList.add('bg-sky-600', 'text-white', 'shadow-sky-300');
+      }
+
+      // 依切換的分頁重新渲染相應畫布，確保尺寸與顯示正常
+      if (tabId === 'tab1' && typeof renderFrameTab1 === 'function') {
+        renderFrameTab1(currentT);
+      } else if (tabId === 'tab2' && typeof updateTab2 === 'function') {
+        updateTab2();
+      } else if (tabId === 'tab3' && typeof resetRobotWalk === 'function') {
+        resetRobotWalk();
+      } else if (tabId === 'tab4' && typeof drawPlateComparison === 'function') {
+        drawPlateComparison();
+      } else if (tabId === 'tab5' && typeof renderQuiz === 'function') {
+        const container = document.getElementById('quiz-container');
+        if (container && container.children.length === 0) {
+          renderQuiz();
+        }
+      }
+    }
+
+    /* ========================================================
+       2. TAB 1 幾何拆解畫布 (甲乙周長比一比) - 平滑動畫引擎
+       ======================================================== */
+    const cTab1 = document.getElementById('canvasTab1');
+    const ctx1 = cTab1 ? cTab1.getContext('2d') : null;
+
+    // 動畫補間變數：t 從 0.0 (原圖) -> 1.0 (拆解) -> 2.0 (合併為圓)
+    let currentT = 0;       
+    let targetT = 0;
+    let morphAnimId = null;
+    let isAutoPlaying = false;
+    let autoPlayTimer = null;
+
+    // 輔助繪製直角標記符號 ∟
+    function drawRightAngle(ctx, x, y, size, dirX, dirY) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = "#475569";
+      ctx.lineWidth = 1.2;
+      ctx.moveTo(x + dirX * size, y);
+      ctx.lineTo(x + dirX * size, y + dirY * size);
+      ctx.lineTo(x, y + dirY * size);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 輔助繪製標註尺寸文字與雙箭頭引線
+    function drawDimLine(ctx, x1, y1, x2, y2, text, textOffsetX = 0, textOffsetY = 0) {
+      ctx.save();
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = "#64748b";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = "11px 'Noto Sans TC', sans-serif";
+      ctx.fillStyle = "#0284c7";
+      ctx.textAlign = "center";
+      ctx.fillText(text, (x1 + x2) / 2 + textOffsetX, (y1 + y2) / 2 + textOffsetY);
+      ctx.restore();
+    }
+
+    // 平滑數值線性插值
+    function lerp(a, b, factor) {
+      return a + (b - a) * factor;
+    }
+
+    // 緩動函數 easeInOutCubic
+    function easeInOut(k) {
+      return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    }
+
+    // 平滑移動到指定狀態 (0: 原圖, 1: 拆解, 2: 合併)
+    function animateToTab1State(target, onComplete = null) {
+      if (isAutoPlaying && onComplete === null) {
+        stopAutoPlay();
+      }
+      targetT = target;
+      if (morphAnimId) cancelAnimationFrame(morphAnimId);
+
+      function loop() {
+        const diff = targetT - currentT;
+        if (Math.abs(diff) < 0.015) {
+          currentT = targetT;
+          renderFrameTab1(currentT);
+          updateTab1Caption(currentT);
+          if (onComplete) onComplete();
+          return;
+        }
+        currentT += diff * 0.12;
+        renderFrameTab1(currentT);
+        updateTab1Caption(currentT);
+        morphAnimId = requestAnimationFrame(loop);
+      }
+      morphAnimId = requestAnimationFrame(loop);
+    }
+
+    // 播放/停止「動態顯示」連續全景動畫
+    function toggleTab1PlayAnimation() {
+      if (isAutoPlaying) {
+        stopAutoPlay();
+      } else {
+        startContinuousAnimation();
+      }
+    }
+
+    function stopAutoPlay() {
+      isAutoPlaying = false;
+      if (autoPlayTimer) clearTimeout(autoPlayTimer);
+      if (morphAnimId) cancelAnimationFrame(morphAnimId);
+      const icon = document.getElementById('icon-tab1-play');
+      const text = document.getElementById('text-tab1-play');
+      if (icon) icon.className = "fa-solid fa-play";
+      if (text) text.innerText = "動態顯示";
+    }
+
+    function startContinuousAnimation() {
+      isAutoPlaying = true;
+      const icon = document.getElementById('icon-tab1-play');
+      const text = document.getElementById('text-tab1-play');
+      if (icon) icon.className = "fa-solid fa-pause";
+      if (text) text.innerText = "暫停演示";
+
+      // 連續動畫流程：
+      // 1. 若目前非狀態 0，先平滑回原圖
+      animateToTab1State(0, () => {
+        if (!isAutoPlaying) return;
+        autoPlayTimer = setTimeout(() => {
+          if (!isAutoPlaying) return;
+          // 2. 移動到「動態拆解弧線」
+          animateToTab1State(1, () => {
+            if (!isAutoPlaying) return;
+            autoPlayTimer = setTimeout(() => {
+              if (!isAutoPlaying) return;
+              // 3. 移動到「合併為完整圓」
+              animateToTab1State(2, () => {
+                if (!isAutoPlaying) return;
+                autoPlayTimer = setTimeout(() => {
+                  if (!isAutoPlaying) return;
+                  // 4. 重置回到原圖循環
+                  animateToTab1State(0, () => {
+                    stopAutoPlay();
+                  });
+                }, 3000);
+              });
+            }, 2500);
+          });
+        }, 1200);
+      });
+    }
+
+    function updateTab1Caption(t) {
+      const note = document.getElementById('tab1-visual-note');
+      if (!note) return;
+      if (t < 0.4) {
+        note.innerHTML = `<i class="fa-solid fa-puzzle-piece text-sky-500"></i> <strong>原圖形態：</strong>甲圖為 3/4 圓外凸弧＋1/4 圓內凹弧；乙圖為四角頂點畫出的 4 個 1/4 圓弧組成的星形。`;
+      } else if (t >= 0.4 && t < 1.4) {
+        note.innerHTML = `<i class="fa-solid fa-scissors text-indigo-500"></i> <strong>動態拆解弧線：</strong>甲圖拆解出 1個 3/4 弧與 1個 1/4 弧；乙圖拆解出 4個 1/4 弧，半徑皆為 10 cm！`;
+      } else {
+        note.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> <strong>合併為完整圓：</strong>兩圖的所有周界弧線平滑重組後，都剛好圍成半徑 10 cm 的完整圓，周長皆為 62.8 cm！`;
+      }
+    }
+
+    // 核心渲染入口：根據連續參數 t 繪製平滑動畫幀
+    function renderFrameTab1(t) {
+      if (!ctx1) return;
+      ctx1.clearRect(0, 0, cTab1.width, cTab1.height);
+
+      const cxJia = 135, cyJia = 140, r = 55;
+      const cxYi = 395, cyYi = 140;
+
+      drawAnimatedJia(ctx1, cxJia, cyJia, r, t);
+      drawAnimatedYi(ctx1, cxYi, cyYi, r, t);
+    }
+
+    // 甲圖動畫渲染邏輯
+    function drawAnimatedJia(ctx, cx, cy, r, t) {
+      ctx.save();
+
+      // 標題與標籤
+      ctx.font = "bold 15px 'Noto Sans TC', sans-serif";
+      ctx.fillStyle = "#1e293b";
+      ctx.textAlign = "center";
+      ctx.fillText("甲", cx, cy + r + 38);
+
+      // 輔助網格透明度：t 接近 2 時漸漸淡化
+      const gridAlpha = Math.max(0, 1 - Math.max(0, t - 1) * 1.2);
+      if (gridAlpha > 0.05) {
+        ctx.save();
+        ctx.globalAlpha = gridAlpha;
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(cx - r, cy - r, 2 * r, 2 * r);
+        ctx.beginPath();
+        ctx.moveTo(cx - r, cy);
+        ctx.lineTo(cx + r, cy);
+        ctx.moveTo(cx, cy - r);
+        ctx.lineTo(cx, cy + r);
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
+        ctx.arc(cx + r, cy + r, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        drawRightAngle(ctx, cx - r, cy - r, 7, 1, 1);
+        drawRightAngle(ctx, cx + r, cy - r, 7, -1, 1);
+        drawRightAngle(ctx, cx, cy, 7, 1, 1);
+        drawRightAngle(ctx, cx + r, cy + r, 7, -1, -1);
+        drawDimLine(ctx, cx, cy + r + 14, cx + r, cy + r + 14, "10cm", 0, 10);
+        drawDimLine(ctx, cx + r + 14, cy, cx + r + 14, cy + r, "10cm", 15, 0);
+        ctx.restore();
+      }
+
+      // 階段 0 到 1：從原圖形態分離
+      // 階段 1 到 2：平滑移動拼合成完整圓
+      let arc1Cx, arc1Cy;
+      let arc2Cx, arc2Cy, arc2Start, arc2End;
+
+      if (t <= 1) {
+        const factor = easeInOut(t);
+        // 3/4 弧中心微調分離
+        arc1Cx = lerp(cx, cx - 14, factor);
+        arc1Cy = lerp(cy, cy - 14, factor);
+
+        // 1/4 弧原本在右下 (cx+r, cy+r)，拆解時向外偏移
+        arc2Cx = lerp(cx + r, cx + r + 14, factor);
+        arc2Cy = lerp(cy + r, cy + r + 14, factor);
+        arc2Start = Math.PI;
+        arc2End = 1.5 * Math.PI;
+
+        // 原圖著色填充區 (t=0 時完全顯示，隨著拆解逐漸淡出)
+        const fillAlpha = Math.max(0, 1 - factor * 1.5);
+        if (fillAlpha > 0.02) {
+          ctx.save();
+          ctx.globalAlpha = fillAlpha;
+          ctx.beginPath();
+          ctx.arc(cx + r, cy + r, r, Math.PI, 1.5 * Math.PI, false);
+          ctx.arc(cx, cy, r, 0, 0.5 * Math.PI, true);
+          ctx.closePath();
+          ctx.fillStyle = "rgba(180, 198, 252, 0.75)";
+          ctx.fill();
+          ctx.restore();
+        }
+      } else {
+        const factor = easeInOut(t - 1);
+        // 3/4 弧回到標準圓心 (cx, cy)
+        arc1Cx = lerp(cx - 14, cx, factor);
+        arc1Cy = lerp(cy - 14, cy, factor);
+
+        // 1/4 弧平滑滑入圓心 (cx, cy) 並旋轉補全第4象限 (0 ~ 0.5*PI)
+        arc2Cx = lerp(cx + r + 14, cx, factor);
+        arc2Cy = lerp(cy + r + 14, cy, factor);
+        arc2Start = lerp(Math.PI, 0, factor);
+        arc2End = lerp(1.5 * Math.PI, 0.5 * Math.PI, factor);
+
+        // 合成完整圓背景填充淡入
+        ctx.save();
+        ctx.globalAlpha = factor * 0.35;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 繪製 3/4 弧 (主體藍色)
+      ctx.beginPath();
+      ctx.strokeStyle = "#2563eb";
+      ctx.lineWidth = 4;
+      ctx.arc(arc1Cx, arc1Cy, r, 0.5 * Math.PI, 2.0 * Math.PI, false);
+      ctx.stroke();
+
+      // 繪製 1/4 弧 (橙紅色，直觀呈現移動軌跡)
+      ctx.beginPath();
+      ctx.strokeStyle = "#f97316";
+      ctx.lineWidth = 4;
+      ctx.arc(arc2Cx, arc2Cy, r, arc2Start, arc2End, false);
+      ctx.stroke();
+
+      // 階段文字標示
+      if (t > 0.4 && t < 1.6) {
+        ctx.font = "bold 11px 'Noto Sans TC', sans-serif";
+        ctx.fillStyle = "#1d4ed8";
+        ctx.fillText("3/4 圓弧", arc1Cx - 18, arc1Cy - 18);
+        ctx.fillStyle = "#c2410c";
+        ctx.fillText("1/4 圓弧", arc2Cx - 10, arc2Cy - 10);
+      } else if (t >= 1.95) {
+        ctx.font = "bold 12px 'Noto Sans TC', sans-serif";
+        ctx.fillStyle = "#0369a1";
+        ctx.fillText("拼成半徑 10cm 完整圓", cx, cy + 5);
+        ctx.fillText("周長 62.8 cm", cx, cy + 22);
+      }
+
+      ctx.restore();
+    }
+
+    // 乙圖動畫渲染邏輯 (四角星形平滑拼合成圓)
+    function drawAnimatedYi(ctx, cx, cy, r, t) {
+      ctx.save();
+
+      ctx.font = "bold 15px 'Noto Sans TC', sans-serif";
+      ctx.fillStyle = "#1e293b";
+      ctx.textAlign = "center";
+      ctx.fillText("乙", cx, cy + r + 38);
+
+      const gridAlpha = Math.max(0, 1 - Math.max(0, t - 1) * 1.2);
+      if (gridAlpha > 0.05) {
+        ctx.save();
+        ctx.globalAlpha = gridAlpha;
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(cx - r, cy - r, 2 * r, 2 * r);
+        ctx.beginPath();
+        ctx.moveTo(cx - r, cy);
+        ctx.lineTo(cx + r, cy);
+        ctx.moveTo(cx, cy - r);
+        ctx.lineTo(cx, cy + r);
+        ctx.stroke();
+
+        const corners = [
+          { x: cx - r, y: cy - r, dx: 1, dy: 1 },
+          { x: cx + r, y: cy - r, dx: -1, dy: 1 },
+          { x: cx + r, y: cy + r, dx: -1, dy: -1 },
+          { x: cx - r, y: cy + r, dx: 1, dy: -1 }
+        ];
+        ctx.fillStyle = "#0f172a";
+        corners.forEach(c => {
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+          drawRightAngle(ctx, c.x, c.y, 7, c.dx, c.dy);
+        });
+
+        drawDimLine(ctx, cx - r, cy + r + 14, cx, cy + r + 14, "10cm", 0, 10);
+        drawDimLine(ctx, cx, cy + r + 14, cx + r, cy + r + 14, "10cm", 0, 10);
+        drawDimLine(ctx, cx + r + 14, cy - r, cx + r + 14, cy, "10cm", 15, 0);
+        drawDimLine(ctx, cx + r + 14, cy, cx + r + 14, cy + r, "10cm", 15, 0);
+        ctx.restore();
+      }
+
+      // 原圖粉紅星形填充淡出
+      if (t <= 1) {
+        const factor = easeInOut(t);
+        const fillAlpha = Math.max(0, 1 - factor * 1.5);
+        if (fillAlpha > 0.02) {
+          ctx.save();
+          ctx.globalAlpha = fillAlpha;
+          ctx.beginPath();
+          ctx.arc(cx - r, cy - r, r, 0, 0.5 * Math.PI, false);
+          ctx.arc(cx - r, cy + r, r, 1.5 * Math.PI, 2.0 * Math.PI, false);
+          ctx.arc(cx + r, cy + r, r, Math.PI, 1.5 * Math.PI, false);
+          ctx.arc(cx + r, cy - r, r, 0.5 * Math.PI, Math.PI, false);
+          ctx.closePath();
+          ctx.fillStyle = "rgba(254, 205, 211, 0.85)";
+          ctx.fill();
+          ctx.restore();
+        }
+      } else {
+        const factor = easeInOut(t - 1);
+        ctx.save();
+        ctx.globalAlpha = factor * 0.35;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = "#f43f5e";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 4 個 1/4 弧的起始與目標幾何參數
+      const arcs = [
+        // 弧 1: 左上角
+        {
+          c0x: cx - r, c0y: cy - r,
+          c1x: cx - r - 14, c1y: cy - r - 14,
+          c2x: cx, c2y: cy,
+          s0: 0, e0: 0.5 * Math.PI,
+          s1: 0, e1: 0.5 * Math.PI,
+          s2: 1.0 * Math.PI, e2: 1.5 * Math.PI,
+          col: "#2563eb"
+        },
+        // 弧 2: 左下角
+        {
+          c0x: cx - r, c0y: cy + r,
+          c1x: cx - r - 14, c1y: cy + r + 14,
+          c2x: cx, c2y: cy,
+          s0: 1.5 * Math.PI, e0: 2.0 * Math.PI,
+          s1: 1.5 * Math.PI, e1: 2.0 * Math.PI,
+          s2: 0.5 * Math.PI, e2: 1.0 * Math.PI,
+          col: "#0d9488"
+        },
+        // 弧 3: 右下角
+        {
+          c0x: cx + r, c0y: cy + r,
+          c1x: cx + r + 14, c1y: cy + r + 14,
+          c2x: cx, c2y: cy,
+          s0: Math.PI, e0: 1.5 * Math.PI,
+          s1: Math.PI, e1: 1.5 * Math.PI,
+          s2: 0, e2: 0.5 * Math.PI,
+          col: "#f97316"
+        },
+        // 弧 4: 右上角
+        {
+          c0x: cx + r, c0y: cy - r,
+          c1x: cx + r + 14, c1y: cy - r - 14,
+          c2x: cx, c2y: cy,
+          s0: 0.5 * Math.PI, e0: Math.PI,
+          s1: 0.5 * Math.PI, e1: Math.PI,
+          s2: 1.5 * Math.PI, e2: 2.0 * Math.PI,
+          col: "#e11d48"
+        }
+      ];
+
+      arcs.forEach(a => {
+        let curX, curY, startA, endA;
+        if (t <= 1) {
+          const factor = easeInOut(t);
+          curX = lerp(a.c0x, a.c1x, factor);
+          curY = lerp(a.c0y, a.c1y, factor);
+          startA = a.s0;
+          endA = a.e0;
+        } else {
+          const factor = easeInOut(t - 1);
+          curX = lerp(a.c1x, a.c2x, factor);
+          curY = lerp(a.c1y, a.c2y, factor);
+          startA = lerp(a.s1, a.s2, factor);
+          endA = lerp(a.e1, a.e2, factor);
+        }
+
+        ctx.beginPath();
+        ctx.strokeStyle = a.col;
+        ctx.lineWidth = 4;
+        ctx.arc(curX, curY, r, startA, endA, false);
+        ctx.stroke();
+      });
+
+      if (t > 0.4 && t < 1.6) {
+        ctx.font = "bold 12px 'Noto Sans TC', sans-serif";
+        ctx.fillStyle = "#e11d48";
+        ctx.fillText("4 個 1/4 圓弧", cx, cy + 4);
+      } else if (t >= 1.95) {
+        ctx.font = "bold 12px 'Noto Sans TC', sans-serif";
+        ctx.fillStyle = "#be123c";
+        ctx.fillText("拼成半徑 10cm 完整圓", cx, cy + 5);
+        ctx.fillText("周長 62.8 cm", cx, cy + 22);
+      }
+
+      ctx.restore();
+    }
+
+    // 舊版兼容接口
+    function renderTab1(mode = 'merged') {
+      if (mode === 'merged') animateToTab1State(0);
+      else if (mode === 'split') animateToTab1State(1);
+      else if (mode === 'combine') animateToTab1State(2);
+    }
+
+    /* ========================================================
+       3. TAB 2 複合圖形動態計算畫布
+       ======================================================== */
+    const cTab2 = document.getElementById('canvasTab2');
+    const ctx2 = cTab2 ? cTab2.getContext('2d') : null;
+
+    function updateTab2() {
+      const l = parseInt(document.getElementById('slider-l').value, 10);
+      const d = parseInt(document.getElementById('slider-d').value, 10);
+
+      document.getElementById('label-l').innerText = l;
+      document.getElementById('label-d').innerText = d;
+
+      // 即時數學計算 (圓周率使用 3.14)
+      const arcVal = (d * 3.14).toFixed(1);
+      const lineVal = (l * 2).toFixed(1);
+      const totalVal = (parseFloat(arcVal) + parseFloat(lineVal)).toFixed(1);
+
+      document.getElementById('tab2-arc-val').innerText = `${arcVal} 公分`;
+      document.getElementById('tab2-line-val').innerText = `${lineVal} 公分`;
+      document.getElementById('tab2-d-exp').innerText = d;
+      document.getElementById('tab2-arc-calc').innerText = arcVal;
+      document.getElementById('tab2-l-exp').innerText = l;
+      document.getElementById('tab2-l-exp2').innerText = l;
+      document.getElementById('tab2-line-calc').innerText = lineVal;
+      document.getElementById('tab2-formula-sum').innerText = `${arcVal} ＋ ${lineVal} ＝`;
+      document.getElementById('tab2-total-val').innerText = `${totalVal} 公分`;
+
+      // 繪圖
+      if (!ctx2) return;
+      ctx2.clearRect(0, 0, cTab2.width, cTab2.height);
+
+      const cx = cTab2.width / 2;
+      const cy = cTab2.height / 2;
+      const scale = 7;
+      const drawL = Math.min(220, l * scale);
+      const drawR = Math.min(65, (d * scale) / 2);
+
+      const leftX = cx - drawL / 2;
+      const rightX = cx + drawL / 2;
+      const topY = cy - drawR;
+      const botY = cy + drawR;
+
+      // 內部著色區域 (黃色複合面)
+      ctx2.save();
+      ctx2.beginPath();
+      ctx2.moveTo(leftX, topY);
+      ctx2.lineTo(rightX, topY);
+      ctx2.arc(rightX, cy, drawR, -Math.PI / 2, Math.PI / 2, false);
+      ctx2.lineTo(leftX, botY);
+      ctx2.arc(leftX, cy, drawR, Math.PI / 2, -Math.PI / 2, false);
+      ctx2.closePath();
+      ctx2.fillStyle = "rgba(254, 240, 138, 0.65)";
+      ctx2.fill();
+
+      // 上下兩條直線段 (強調琥珀色)
+      ctx2.beginPath();
+      ctx2.strokeStyle = "#f59e0b";
+      ctx2.lineWidth = 5;
+      ctx2.moveTo(leftX, topY);
+      ctx2.lineTo(rightX, topY);
+      ctx2.moveTo(leftX, botY);
+      ctx2.lineTo(rightX, botY);
+      ctx2.stroke();
+
+      // 左右兩個半圓弧 (強調藍色)
+      ctx2.beginPath();
+      ctx2.strokeStyle = "#3b82f6";
+      ctx2.lineWidth = 5;
+      ctx2.arc(rightX, cy, drawR, -Math.PI / 2, Math.PI / 2, false);
+      ctx2.arc(leftX, cy, drawR, Math.PI / 2, -Math.PI / 2, false);
+      ctx2.stroke();
+
+      // 標註直線尺寸
+      ctx2.fillStyle = "#b45309";
+      ctx2.font = "bold 13px 'Noto Sans TC', sans-serif";
+      ctx2.textAlign = "center";
+      ctx2.fillText(`${l} cm`, cx, topY - 10);
+      ctx2.fillText(`${l} cm`, cx, botY + 20);
+
+      // 標註直徑尺寸 (垂直虛線)
+      ctx2.setLineDash([4, 4]);
+      ctx2.strokeStyle = "#64748b";
+      ctx2.lineWidth = 1.5;
+      ctx2.beginPath();
+      ctx2.moveTo(rightX, topY);
+      ctx2.lineTo(rightX, botY);
+      ctx2.stroke();
+      ctx2.fillStyle = "#1e40af";
+      ctx2.fillText(`直徑 ${d} cm`, rightX + 45, cy + 4);
+
+      ctx2.restore();
+    }
+
+    /* ========================================================
+       4. TAB 3 機器人漫步路徑動畫
+       ======================================================== */
+    const cRobot = document.getElementById('canvasRobot');
+    const ctxRobot = cRobot ? cRobot.getContext('2d') : null;
+    let robotProgress = 0;
+    let animId = null;
+    let isMoving = false;
+
+    function resetRobotWalk() {
+      if (animId) cancelAnimationFrame(animId);
+      isMoving = false;
+      robotProgress = 0;
+      drawRobotScene(0);
+    }
+
+    function startRobotWalk() {
+      if (isMoving) return;
+      isMoving = true;
+      robotProgress = 0;
+      function step() {
+        robotProgress += 0.0055;
+        if (robotProgress > 1) {
+          robotProgress = 1;
+          drawRobotScene(1);
+          isMoving = false;
+          return;
+        }
+        drawRobotScene(robotProgress);
+        animId = requestAnimationFrame(step);
+      }
+      animId = requestAnimationFrame(step);
+    }
+
+    function drawRobotScene(progress) {
+      if (!ctxRobot) return;
+      ctxRobot.clearRect(0, 0, cRobot.width, cRobot.height);
+
+      // 重新計算版面幾何尺寸，確保大半圓頂部完整呈現不切邊
+      const startX = 100;
+      const endX = 380;
+      const cy = 168; // 下移水平基準線，預留上方大半圓弧頂空間
+      const R_big = (endX - startX) / 2; // 140px，頂點 y = 168 - 140 = 28px
+      const centerBigX = startX + R_big;
+
+      // 基準水平軸 (地面虛線)
+      ctxRobot.save();
+      ctxRobot.setLineDash([4, 4]);
+      ctxRobot.strokeStyle = "#cbd5e1";
+      ctxRobot.lineWidth = 1.5;
+      ctxRobot.beginPath();
+      ctxRobot.moveTo(startX - 25, cy);
+      ctxRobot.lineTo(endX + 25, cy);
+      ctxRobot.stroke();
+
+      // 標註距離刻度 (每段 25m)
+      const stepDist = (endX - startX) / 4;
+      ctxRobot.fillStyle = "#64748b";
+      ctxRobot.font = "11px 'Noto Sans TC', sans-serif";
+      ctxRobot.textAlign = "center";
+      for (let i = 0; i < 4; i++) {
+        const segX = startX + stepDist * i + stepDist / 2;
+        ctxRobot.fillText("25m", segX, cy + 16);
+      }
+
+      // 起點與休息處標記
+      ctxRobot.fillStyle = "#1e293b";
+      ctxRobot.font = "bold 12px 'Noto Sans TC', sans-serif";
+      ctxRobot.fillText("起點", startX, cy - 12);
+      ctxRobot.fillText("休息處", endX, cy + 28);
+
+      // 紅色大半圓弧 (上方)
+      ctxRobot.beginPath();
+      ctxRobot.strokeStyle = "#f43f5e";
+      ctxRobot.lineWidth = 4;
+      ctxRobot.arc(centerBigX, cy, R_big, Math.PI, 0, false);
+      ctxRobot.stroke();
+
+      // 藍色小半圓弧 1 (休息處到中點，上方)
+      const midX = (startX + endX) / 2;
+      const r_small = R_big / 2; // 70px
+      ctxRobot.beginPath();
+      ctxRobot.strokeStyle = "#3b82f6";
+      ctxRobot.lineWidth = 4;
+      ctxRobot.arc(midX + r_small, cy, r_small, 0, Math.PI, true);
+      ctxRobot.stroke();
+
+      // 藍色小半圓弧 2 (中點回起點，下方)
+      ctxRobot.beginPath();
+      ctxRobot.arc(startX + r_small, cy, r_small, 0, Math.PI, false);
+      ctxRobot.stroke();
+
+      // 計算機器人當前座標：
+      // 1. progress: 0 ~ 0.5 (起點沿紅弧走到休息處)
+      // 2. progress: 0.5 ~ 0.75 (休息處沿上藍弧走到中點/圓心)
+      // 3. progress: 0.75 ~ 1.0 (中點/圓心沿下藍弧順暢走回起點)
+      let rx = startX, ry = cy;
+      if (progress <= 0.5) {
+        // 紅色弧 (Math.PI -> 0)
+        const localT = progress / 0.5;
+        const theta = Math.PI - localT * Math.PI;
+        rx = centerBigX + R_big * Math.cos(theta);
+        ry = cy - R_big * Math.sin(theta);
+      } else if (progress <= 0.75) {
+        // 第一個小藍弧 (休息處 endX -> 圓心中點 midX)
+        const localT = (progress - 0.5) / 0.25;
+        const theta = localT * Math.PI;
+        const smallC1 = midX + r_small;
+        rx = smallC1 + r_small * Math.cos(theta);
+        ry = cy - r_small * Math.sin(theta);
+      } else {
+        // 第二個小藍弧 (由圓心中點 midX 繼續沿下藍弧走回起點 startX)
+        const localT = (progress - 0.75) / 0.25;
+        const phi = localT * Math.PI; // 0 -> Math.PI
+        const smallC2 = startX + r_small;
+        rx = smallC2 + r_small * Math.cos(phi);
+        ry = cy + r_small * Math.sin(phi);
+      }
+
+      // 繪製機器人圖示 (頭像)
+      ctxRobot.beginPath();
+      ctxRobot.arc(rx, ry, 11, 0, Math.PI * 2);
+      ctxRobot.fillStyle = "#0284c7";
+      ctxRobot.fill();
+      ctxRobot.strokeStyle = "#ffffff";
+      ctxRobot.lineWidth = 2.5;
+      ctxRobot.stroke();
+
+      ctxRobot.fillStyle = "#ffffff";
+      ctxRobot.font = "10px FontAwesome";
+      ctxRobot.fillText("🤖", rx - 6, ry + 4);
+
+      ctxRobot.restore();
+    }
+
+    /* ========================================================
+       5. TAB 4 湯盤與盒子俯視比對
+       ======================================================== */
+    const cPlate = document.getElementById('canvasPlate');
+    const ctxPlate = cPlate ? cPlate.getContext('2d') : null;
+
+    function drawPlateComparison() {
+      if (!ctxPlate) return;
+      ctxPlate.clearRect(0, 0, cPlate.width, cPlate.height);
+
+      const cx = cPlate.width / 2;
+      const cy = cPlate.height / 2;
+
+      // 比例尺：1公分約 6.5px
+      const scale = 6.5;
+      const boxSide = 25 * scale;        // 162.5px
+      const plateD = (90 / 3.14) * scale; // 約 186.3px
+      const plateR = plateD / 2;
+
+      // 1. 繪製紙盒底面正方形
+      ctxPlate.save();
+      ctxPlate.fillStyle = "rgba(224, 231, 255, 0.6)";
+      ctxPlate.fillRect(cx - boxSide / 2, cy - boxSide / 2, boxSide, boxSide);
+      ctxPlate.strokeStyle = "#4f46e5";
+      ctxPlate.lineWidth = 3;
+      ctxPlate.strokeRect(cx - boxSide / 2, cy - boxSide / 2, boxSide, boxSide);
+
+      // 正方形尺寸標註
+      ctxPlate.fillStyle = "#4338ca";
+      ctxPlate.font = "bold 12px 'Noto Sans TC', sans-serif";
+      ctxPlate.textAlign = "center";
+      ctxPlate.fillText("正方形邊長 25 cm", cx, cy - boxSide / 2 - 8);
+
+      // 2. 繪製圓形瓷盤 (超出正方形邊界)
+      ctxPlate.beginPath();
+      ctxPlate.arc(cx, cy, plateR, 0, Math.PI * 2);
+      ctxPlate.fillStyle = "rgba(244, 63, 94, 0.25)";
+      ctxPlate.fill();
+      ctxPlate.strokeStyle = "#e11d48";
+      ctxPlate.lineWidth = 3;
+      ctxPlate.stroke();
+
+      // 圓直徑標記
+      ctxPlate.beginPath();
+      ctxPlate.setLineDash([3, 3]);
+      ctxPlate.strokeStyle = "#be123c";
+      ctxPlate.moveTo(cx - plateR, cy);
+      ctxPlate.lineTo(cx + plateR, cy);
+      ctxPlate.stroke();
+
+      ctxPlate.fillStyle = "#9f1239";
+      ctxPlate.font = "bold 12px 'Noto Sans TC', sans-serif";
+      ctxPlate.fillText("圓直徑約 28.7 cm (超出盒子！)", cx, cy + 18);
+
+      ctxPlate.restore();
+    }
+
+    /* ========================================================
+       6. TAB 5 隨堂測驗 (5 題)
+       ======================================================== */
+    const quizData = [
+      {
+        id: 1,
+        question: "1. 兩個圖形：甲圖由 1 個 <span class='frac'><span class='frac-top'>3</span><span class='frac-bottom'>4</span></span> 圓弧與 1 個 <span class='frac'><span class='frac-top'>1</span><span class='frac-bottom'>4</span></span> 圓弧合起來；乙圖由 4 個 <span class='frac'><span class='frac-top'>1</span><span class='frac-bottom'>4</span></span> 圓弧合起來（半徑皆為 10 公分）。兩圖周長關係為何？",
+        options: ["甲圖比較長", "乙圖比較長", "一樣長", "無法比較"],
+        answer: 2,
+        explain: "兩者皆是由半徑 10 公分的 4 個 1/4 圓弧所組成，合起來都是 1 個完整的圓周長（62.8公分），所以一樣長。"
+      },
+      {
+        id: 2,
+        question: "2. 一個扇形的半徑是 7 公分，圓心角是 120°，此扇形大約是幾分之幾圓？其弧長約為多少公分？（圓周率以 3.14 計算）",
+        options: [
+          "<span class='frac'><span class='frac-top'>1</span><span class='frac-bottom'>3</span></span> 圓，弧長約 14.65 公分",
+          "<span class='frac'><span class='frac-top'>1</span><span class='frac-bottom'>4</span></span> 圓，弧長約 10.99 公分",
+          "<span class='frac'><span class='frac-top'>1</span><span class='frac-bottom'>2</span></span> 圓，弧長約 21.98 公分",
+          "<span class='frac'><span class='frac-top'>1</span><span class='frac-bottom'>3</span></span> 圓，弧長約 29.3 公分"
+        ],
+        answer: 0,
+        explain: "120° ÷ 360° ＝ 1/3 圓。弧長 ＝ 7 × 2 × 3.14 × (1/3) ＝ 43.96 ÷ 3 ≈ 14.65 公分。"
+      },
+      {
+        id: 3,
+        question: "3. 複合圖形由「2 條 10 公分的直線段」與「2 個直徑 5 公分的半圓弧」組成，此圖形的周長大約是多少公分？",
+        options: ["25.7 公分", "35.7 公分", "41.4 公分", "51.4 公分"],
+        answer: 1,
+        explain: "2個半圓弧可拼成1整圓：5 × 3.14 ＝ 15.7 公分。兩條直線長：10 ＋ 10 ＝ 20 公分。周長 ＝ 15.7 ＋ 20 ＝ 35.7 公分。"
+      },
+      {
+        id: 4,
+        question: "4. 機器人走過直徑 100 公尺的紅色大半圓弧，再走 2 個直徑 50 公尺的藍色小半圓弧回到起點，總共走了多少公尺？",
+        options: ["157 公尺", "200 公尺", "314 公尺", "628 公尺"],
+        answer: 2,
+        explain: "紅弧 ＝ 100 × 3.14 × (1/2) ＝ 157 公尺；兩藍弧拼成1圓 ＝ 50 × 3.14 ＝ 157 公尺。總長 ＝ 157 ＋ 157 ＝ 314 公尺。"
+      },
+      {
+        id: 5,
+        question: "5. 某瓷盤圓周長為 90 公分，請問能否平放進底面周長為 100 公分的正方形紙盒中？為什麼？",
+        options: [
+          "可以，因為 90 公分 &lt; 100 公分",
+          "不能，因為瓷盤直徑約 28.7 公分大於紙盒邊長 25 公分",
+          "可以，因為圓形面積一定比正方形小",
+          "不能，因為紙盒高 7 公分太高了"
+        ],
+        answer: 1,
+        explain: "紙盒邊長 ＝ 100 ÷ 4 ＝ 25 公分。瓷盤直徑 ＝ 90 ÷ 3.14 ≈ 28.66 公分。直徑大於紙盒邊長，所以放不進去，不能單比周長大小。"
+      }
+    ];
+
+    let userAnswers = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = "glass-card-sub rounded-2xl p-5 border border-slate-200 transition-all";
+        card.id = `q-card-${idx}`;
+
+        let optsHtml = '';
+        q.options.forEach((opt, optIdx) => {
+          optsHtml += `
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-sky-50/80 cursor-pointer transition text-sm text-slate-700">
+              <input type="radio" name="quiz-${idx}" value="${optIdx}" onchange="recordAnswer(${idx}, ${optIdx})" class="accent-sky-600 w-4 h-4">
+              <span>(${['A','B','C','D'][optIdx]}) ${opt}</span>
+            </label>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="font-bold text-slate-800 text-sm sm:text-base mb-3 leading-relaxed">
+            ${q.question}
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+            ${optsHtml}
+          </div>
+          <div id="feedback-${idx}" class="hidden p-3 rounded-xl text-xs sm:text-sm font-medium mt-2"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function recordAnswer(qIdx, selected) {
+      userAnswers[qIdx] = selected;
+    }
+
+    function submitQuiz() {
+      let score = 0;
+
+      quizData.forEach((q, qIdx) => {
+        const selected = userAnswers[qIdx];
+        const feedbackEl = document.getElementById(`feedback-${qIdx}`);
+        if (!feedbackEl) return;
+
+        feedbackEl.classList.remove(
+          'hidden',
+          'bg-emerald-100', 'text-emerald-900', 'border-emerald-300',
+          'bg-rose-100', 'text-rose-900', 'border-rose-300',
+          'bg-amber-100', 'text-amber-800', 'border-amber-300'
+        );
+        feedbackEl.classList.add('border');
+
+        if (selected === undefined) {
+          feedbackEl.classList.add('bg-amber-100', 'text-amber-800', 'border-amber-300');
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-600 mr-1.5"></i> <strong>未作答。</strong>`;
+        } else if (selected === q.answer) {
+          score += 20;
+          feedbackEl.classList.add('bg-emerald-100', 'text-emerald-900', 'border-emerald-300');
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> <strong>答對了！</strong> 解說：${q.explain}`;
+        } else {
+          feedbackEl.classList.add('bg-rose-100', 'text-rose-900', 'border-rose-300');
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1.5"></i> <strong>答錯了，再想想看喔！</strong> 正確答案為 (${['A','B','C','D'][q.answer]})。<br>解說：${q.explain}`;
+        }
+      });
+
+      const badge = document.getElementById('quiz-score-badge');
+      if (badge) {
+        badge.innerText = `目前得分：${score} / 100`;
+        if (score === 100) {
+          badge.className = "px-4 py-2 bg-emerald-500 text-white font-bold rounded-2xl self-start sm:self-auto text-sm pulse-highlight";
+        } else {
+          badge.className = "px-4 py-2 bg-sky-100 text-sky-800 font-bold rounded-2xl self-start sm:self-auto text-sm";
+        }
+      }
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      renderQuiz();
+      const badge = document.getElementById('quiz-score-badge');
+      if (badge) {
+        badge.innerText = `目前得分：尚未提交`;
+        badge.className = "px-4 py-2 bg-sky-100 text-sky-800 font-bold rounded-2xl self-start sm:self-auto text-sm";
+      }
+    }
+
+    /* ========================================================
+       7. 頁面加載完成初始化
+       ======================================================== */
+    window.onload = function () {
+      renderFrameTab1(0);
+      updateTab2();
+      resetRobotWalk();
+      drawPlateComparison();
+      renderQuiz();
+    };
+
+    window.addEventListener('resize', () => {
+      // 保持 Canvas 解析度響應性
+      const currentTab = document.querySelector('.tab-content:not(.hidden)');
+      if (currentTab) {
+        if (currentTab.id === 'tab1') renderFrameTab1(currentT);
+        if (currentTab.id === 'tab2') updateTab2();
+        if (currentTab.id === 'tab3') resetRobotWalk();
+        if (currentTab.id === 'tab4') drawPlateComparison();
+      }
+    });
+  </script>
+</body>
+</html>

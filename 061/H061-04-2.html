@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4-2 最簡整數比互動探索教室</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: linear-gradient(180deg, #1A365D 0%, #2B6CB0 35%, #63B3ED 70%, #FBD38D 100%);
+      min-height: 100vh;
+      color: #2D3748;
+    }
+    
+    .shinkai-cloud {
+      position: fixed;
+      background: radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%);
+      filter: blur(12px);
+      pointer-events: none;
+      z-index: 0;
+      animation: floatClouds 24s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatClouds {
+      0% { transform: translateY(0px) scale(1); }
+      100% { transform: translateY(-30px) scale(1.08); }
+    }
+
+    /* 國小標準直式分數排版 */
+    .frac-box {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 4px;
+      font-weight: 700;
+    }
+    .frac-int {
+      font-size: 1.25em;
+      margin-right: 3px;
+      line-height: 1;
+    }
+    .frac-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      line-height: 1.1;
+      font-size: 0.95em;
+    }
+    .frac-num {
+      padding: 0 4px;
+      border-bottom: 2px solid currentColor;
+      width: 100%;
+    }
+    .frac-den {
+      padding: 0 4px;
+      width: 100%;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 40px -15px rgba(12, 74, 110, 0.25);
+    }
+    
+    .glass-tab {
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 relative overflow-x-hidden">
+
+  <!-- 天空背景雲層光影 -->
+  <div class="shinkai-cloud w-96 h-96 top-10 -left-20"></div>
+  <div class="shinkai-cloud w-[500px] h-80 top-1/3 -right-20"></div>
+
+  <div class="max-w-5xl mx-auto relative z-10">
+    <header class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/30 text-white text-sm font-semibold mb-2 shadow-sm">
+        <i class="fa-solid fa-cloud-sun text-amber-300"></i>
+        <span>國小六上數學 4-2 互動學習網頁</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-black text-white tracking-wide drop-shadow-md">
+        最簡整數比互動探索教室
+      </h1>
+      <p class="text-sky-100 text-sm sm:text-base mt-1">觀察相同口感的美味秘密，探索最簡整數比的魔法！</p>
+    </header>
+
+    <!-- 標籤頁導航按鈕 -->
+    <nav class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6">
+      <button onclick="switchTab(1)" id="tab-btn-1" class="glass-tab px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base text-sky-900 bg-white shadow-lg flex items-center gap-2 border border-white">
+        <i class="fa-solid fa-mug-hot text-amber-600"></i>
+        <span>1. 奶茶調配所 (意涵)</span>
+      </button>
+      <button onclick="switchTab(2)" id="tab-btn-2" class="glass-tab px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base text-white/90 bg-white/20 hover:bg-white/30 flex items-center gap-2 border border-white/30">
+        <i class="fa-solid fa-wand-magic-sparkles text-sky-200"></i>
+        <span>2. 化簡魔法台 (方法)</span>
+      </button>
+      <button onclick="switchTab(3)" id="tab-btn-3" class="glass-tab px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base text-white/90 bg-white/20 hover:bg-white/30 flex items-center gap-2 border border-white/30">
+        <i class="fa-solid fa-cookie-bite text-amber-200"></i>
+        <span>3. 烘焙比例尺 (應用)</span>
+      </button>
+      <button onclick="switchTab(4)" id="tab-btn-4" class="glass-tab px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base text-white/90 bg-white/20 hover:bg-white/30 flex items-center gap-2 border border-white/30">
+        <i class="fa-solid fa-star text-yellow-300"></i>
+        <span>4. 隨堂測驗</span>
+      </button>
+    </nav>
+
+    <!-- ==================== TAB 1: 奶茶調配所 ==================== -->
+    <section id="tab-1" class="tab-content">
+      <div class="glass-card rounded-3xl p-5 sm:p-8">
+        <div class="border-b border-sky-100 pb-4 mb-6">
+          <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase">活動 1：情境概念</span>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-2 flex items-center gap-2">
+            <i class="fa-solid fa-blender text-amber-500"></i>
+            彩虹茶館：招牌奶茶的黃金口感
+          </h2>
+          <p class="text-slate-600 text-sm mt-1">
+            「3：5」代表 <b>3 份鮮奶</b> 配 <b>5 份紅茶</b>。每一份可以是 1 杯、也可以是 0.05 公升或 
+            <span class="frac-box"><span class="frac-fraction"><span class="frac-num">1</span><span class="frac-den">4</span></span></span> 
+            碗！只要比例相同，甜度與風味口感完全一樣！
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <!-- 互動控制區 -->
+          <div class="bg-sky-50/70 p-5 rounded-2xl border border-sky-200/60">
+            <h3 class="font-bold text-slate-700 text-base mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-sky-600"></i>
+              調整「每 1 份」的容量大小：
+            </h3>
+
+            <div class="space-y-4">
+              <!-- 滑桿互動 -->
+              <div>
+                <div class="flex justify-between items-center text-sm font-semibold text-slate-600 mb-1">
+                  <span>拖動調整 1 份的公升數 (L)：</span>
+                  <span id="slider-unit-val" class="text-blue-700 font-black text-lg">1.00 L</span>
+                </div>
+                <input id="unit-slider" type="range" min="0.05" max="3.00" step="0.05" value="1.00" 
+                  class="w-full h-3 bg-sky-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  oninput="updateMilkTea()">
+                <div class="flex justify-between text-xs text-slate-400 mt-1">
+                  <span>0.05 L (小杯)</span>
+                  <span>1.00 L (標準)</span>
+                  <span>3.00 L (家庭桶)</span>
+                </div>
+              </div>
+
+              <!-- 快捷切換預設值 (課本情境) -->
+              <div class="pt-2">
+                <span class="text-xs font-bold text-slate-500 block mb-2">快速體驗課本上的分店配方：</span>
+                <div class="grid grid-cols-3 gap-2">
+                  <button onclick="setTeaUnit(1, '1 L')" class="px-2 py-2 text-xs font-bold rounded-xl bg-white border border-sky-200 hover:border-sky-400 text-sky-800 transition shadow-sm">
+                    總店<br><span class="text-blue-600 font-black">3 : 5</span>
+                  </button>
+                  <button onclick="setTeaUnit(0.05, '0.05 L')" class="px-2 py-2 text-xs font-bold rounded-xl bg-white border border-sky-200 hover:border-sky-400 text-sky-800 transition shadow-sm">
+                    二店 (小數)<br><span class="text-blue-600 font-black">0.15 : 0.25</span>
+                  </button>
+                  <button onclick="setTeaUnit(0.25, '1/4 L')" class="px-2 py-2 text-xs font-bold rounded-xl bg-white border border-sky-200 hover:border-sky-400 text-sky-800 transition shadow-sm">
+                    三店 (分數)<br><span class="text-blue-600 font-black">
+                      <span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">4</span></span></span> : 
+                      <span class="frac-box"><span class="frac-fraction"><span class="frac-num">5</span><span class="frac-den">4</span></span></span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 比值與互質說明盒 -->
+              <div class="p-3 bg-white rounded-xl border border-sky-100 shadow-sm text-sm">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-slate-600 font-medium">實際調配比 (鮮奶 : 紅茶)：</span>
+                  <span id="actual-ratio-text" class="font-bold text-slate-800">3 : 5</span>
+                </div>
+                <div class="flex justify-between items-center text-xs text-slate-500">
+                  <span>比值 (鮮奶 ÷ 紅茶)：</span>
+                  <span id="ratio-value-text" class="font-bold text-emerald-600">0.6 (口感完全相同)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 視覺化調配杯與份數磚 -->
+          <div class="flex flex-col items-center bg-gradient-to-b from-sky-50 to-blue-50/50 p-5 rounded-2xl border border-blue-100">
+            <div class="w-full flex justify-around items-end h-64 relative pb-4 border-b border-sky-200">
+              
+              <!-- 鮮奶量筒 (容量基準滿刻度為 5 份，鮮奶始終填滿 3 份 = 60% 高度) -->
+              <div class="flex flex-col items-center w-32">
+                <span class="text-xs font-black text-slate-600 mb-1 flex items-center gap-1">
+                  <i class="fa-solid fa-bottle-water text-sky-400"></i>鮮奶 3 份
+                </span>
+                <div class="w-24 h-48 bg-white/90 rounded-b-2xl border-4 border-t-0 border-sky-400 relative overflow-hidden flex flex-col justify-end shadow-inner">
+                  <!-- 5 等份基準刻度線 (每格 20%) -->
+                  <div class="absolute inset-0 flex flex-col justify-between pointer-events-none z-20 opacity-30">
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="w-full h-[20%]"></div>
+                  </div>
+                  <!-- 水位高度精確為 3/5 = 60% -->
+                  <div id="milk-fill" class="w-full bg-blue-200/90 border-t-2 border-blue-400 transition-all duration-300 flex flex-col items-center justify-center text-xs font-black text-blue-900 relative z-10" style="height: 60%;">
+                    <span id="milk-amount-display" class="drop-shadow-sm font-black text-sm">3.00 L</span>
+                    <span class="text-[10px] text-blue-700 font-bold bg-white/70 px-1.5 py-0.5 rounded-full mt-0.5">恰好 3 份</span>
+                  </div>
+                </div>
+                <span id="milk-detail-text" class="text-xs text-blue-800 mt-2 font-bold text-center">1L × 3 = 3L</span>
+              </div>
+
+              <!-- 紅茶量筒 (容量基準滿刻度為 5 份，紅茶填滿 5 份 = 100% 高度) -->
+              <div class="flex flex-col items-center w-32">
+                <span class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
+                  <i class="fa-solid fa-mug-saucer text-amber-500"></i>紅茶 5 份
+                </span>
+                <div class="w-24 h-48 bg-white/90 rounded-b-2xl border-4 border-t-0 border-amber-400 relative overflow-hidden flex flex-col justify-end shadow-inner">
+                  <!-- 5 等份基準刻度線 (每格 20%) -->
+                  <div class="absolute inset-0 flex flex-col justify-between pointer-events-none z-20 opacity-30">
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="border-b border-dashed border-slate-600 w-full h-[20%]"></div>
+                    <div class="w-full h-[20%]"></div>
+                  </div>
+                  <!-- 水位高度精確為 5/5 = 100% -->
+                  <div id="tea-fill" class="w-full bg-amber-300/90 border-t-2 border-amber-500 transition-all duration-300 flex flex-col items-center justify-center text-xs font-black text-amber-950 relative z-10" style="height: 100%;">
+                    <span id="tea-amount-display" class="drop-shadow-sm font-black text-sm">5.00 L</span>
+                    <span class="text-[10px] text-amber-800 font-bold bg-white/70 px-1.5 py-0.5 rounded-full mt-0.5">恰好 5 份</span>
+                  </div>
+                </div>
+                <span id="tea-detail-text" class="text-xs text-amber-800 mt-2 font-bold text-center">1L × 5 = 5L</span>
+              </div>
+            </div>
+
+            <!-- 最簡整數比小結論 -->
+            <div class="mt-4 p-3 bg-white w-full rounded-xl text-center border-l-4 border-blue-600 shadow-sm">
+              <p class="text-xs text-slate-500">代表這群相等的比的代號：</p>
+              <p class="text-base font-black text-blue-900">
+                最簡整數比 = <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">3 : 5</span>
+              </p>
+              <p class="text-xs text-slate-600 mt-0.5">3 和 5 都是整數，而且<strong>互質</strong>（最大公因數為 1）！</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: 化簡魔法台 ==================== -->
+    <section id="tab-2" class="tab-content hidden">
+      <div class="glass-card rounded-3xl p-5 sm:p-8">
+        <div class="border-b border-sky-100 pb-4 mb-6">
+          <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase">活動 2：逐步化簡</span>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-2 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-indigo-600"></i>
+            非整數比 & 較大整數比的「化簡操作台」
+          </h2>
+          <p class="text-slate-600 text-sm mt-1">
+            點擊切換不同題型，跟隨動態步驟觀察：如何透過「通分」、「乘以 10/100」或「除以最大公因數」求得最簡整數比！
+          </p>
+        </div>
+
+        <!-- 類型切換標籤 -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button onclick="selectSimplifyType('int')" id="sim-type-int" class="px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm transition">
+            範例 A：較大整數比 (30 : 12)
+          </button>
+          <button onclick="selectSimplifyType('frac')" id="sim-type-frac" class="px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition">
+            範例 B：分數比 
+            (<span class="frac-box"><span class="frac-fraction"><span class="frac-num">7</span><span class="frac-den">2</span></span></span> : 
+            <span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">5</span></span></span>)
+          </button>
+          <button onclick="selectSimplifyType('dec')" id="sim-type-dec" class="px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition">
+            範例 C：小數比 (0.05 : 0.5)
+          </button>
+          <button onclick="selectSimplifyType('mixed')" id="sim-type-mixed" class="px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition">
+            範例 D：帶分數與整數 (3<span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">7</span></span></span> : 8)
+          </button>
+        </div>
+
+        <!-- 動態解題互動卡片 -->
+        <div id="simplify-display-box" class="bg-gradient-to-br from-indigo-50/70 to-sky-50/50 p-6 rounded-2xl border border-indigo-100">
+          <!-- 內容由 JavaScript 動態生成渲染 -->
+        </div>
+
+        <!-- 課本辨別小檢核 (24:27, 4:4.5, 8:9, 16:18) -->
+        <div class="mt-8 bg-white p-5 rounded-2xl border border-sky-100">
+          <h3 class="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
+            <i class="fa-regular fa-circle-question text-sky-600"></i>
+            課本隨堂互動：下列哪一個是「最簡整數比」？點選辨別：
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <button onclick="checkSimplestChoice(this, false, '24 和 27 還可以同除以 3 (公因數 3)')" class="p-3 border-2 border-slate-200 rounded-xl font-bold text-slate-700 hover:border-indigo-400 bg-slate-50 transition">
+              24 : 27
+            </button>
+            <button onclick="checkSimplestChoice(this, false, '4.5 不是整數喔！需先化為整數比')" class="p-3 border-2 border-slate-200 rounded-xl font-bold text-slate-700 hover:border-indigo-400 bg-slate-50 transition">
+              4 : 4.5
+            </button>
+            <button onclick="checkSimplestChoice(this, true, '答對了！8 和 9 都是整數，且公因數只有 1 (互質)')" class="p-3 border-2 border-slate-200 rounded-xl font-bold text-slate-700 hover:border-indigo-400 bg-slate-50 transition">
+              8 : 9
+            </button>
+            <button onclick="checkSimplestChoice(this, false, '16 和 18 都是偶數，還可以同除以 2')" class="p-3 border-2 border-slate-200 rounded-xl font-bold text-slate-700 hover:border-indigo-400 bg-slate-50 transition">
+              16 : 18
+            </button>
+          </div>
+          <div id="choice-feedback" class="mt-3 text-sm font-bold min-h-[24px]"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: 烘焙比例尺 ==================== -->
+    <section id="tab-3" class="tab-content hidden">
+      <div class="glass-card rounded-3xl p-5 sm:p-8">
+        <!-- 頂部標題列 -->
+        <div class="border-b border-sky-100 pb-3 mb-5">
+          <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full uppercase inline-block mb-2">活動 3：生活應用</span>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-800 flex items-center gap-2">
+            <span>🍌</span>
+            <span>妮妮的香蕉蛋糕烘焙廚房</span>
+          </h2>
+        </div>
+
+        <!-- 上方：食譜與互動輸入卡片 (淡黃背景 + 虛線邊框) -->
+        <div class="bg-amber-50/60 rounded-2xl border-2 border-dashed border-amber-300/80 p-5 sm:p-6 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 左側：招牌香蕉蛋糕標準食譜 -->
+            <div>
+              <div class="flex items-center gap-2 text-amber-900 font-bold text-base mb-3">
+                <span>📖</span>
+                <span>招牌香蕉蛋糕標準食譜</span>
+              </div>
+              <ul class="space-y-1.5 text-sm text-slate-700 font-medium pl-1">
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-slate-700 rounded-sm inline-block"></span> 香蕉：300 公克</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-slate-700 rounded-sm inline-block"></span> 低筋麵粉：180 公克</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-slate-700 rounded-sm inline-block"></span> 無鹽奶油：100 公克</li>
+                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-slate-700 rounded-sm inline-block"></span> 雞蛋：4 顆</li>
+              </ul>
+
+              <!-- 香蕉與麵粉基準比方框 -->
+              <div class="mt-4 p-3 bg-white rounded-xl border border-amber-300 text-xs text-slate-700 font-medium leading-relaxed">
+                <div class="font-bold text-slate-800 mb-0.5">香蕉與麵粉基準比：</div>
+                <div>300 : 180 ＝ (300 ÷ 60) : (180 ÷ 60) ＝ <span class="font-bold text-blue-600">5 : 3</span></div>
+              </div>
+            </div>
+
+            <!-- 右側：妮妮今天準備的香蕉量互動控制 -->
+            <div>
+              <div class="flex items-center gap-2 text-indigo-900 font-bold text-base mb-3">
+                <span>🔢</span>
+                <span>妮妮今天準備的香蕉量</span>
+              </div>
+              <div class="text-sm font-bold text-slate-700 mb-2">香蕉重量 (公克)：</div>
+              <div class="flex items-center gap-3">
+                <input id="banana-slider" type="range" min="50" max="600" step="5" value="410" 
+                  class="flex-1 h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  oninput="syncBananaInput(this.value)">
+                <div class="flex items-center gap-1.5">
+                  <input id="banana-num-input" type="number" min="10" max="1000" value="410" 
+                    class="w-20 px-2.5 py-1 text-center font-bold text-slate-800 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    oninput="syncBananaSlider(this.value)">
+                  <span class="text-sm text-slate-700 font-semibold">g</span>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-3">試著拖動滑桿，看看妮妮該配多少麵粉！</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 下方：兩種聰明解法對照觀察 (淡藍背景卡片) -->
+        <div class="bg-sky-50/80 rounded-2xl border border-sky-200/80 p-5 sm:p-6">
+          <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+            <span>💡</span>
+            <span>兩種聰明解法對照觀察：</span>
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 方法一：最簡整數比 (份數概念) -->
+            <div class="bg-white rounded-xl p-4 sm:p-5 border border-sky-100 shadow-sm flex flex-col justify-between">
+              <div>
+                <h4 class="font-bold text-blue-600 text-sm mb-3">方法一：最簡整數比（份數概念）</h4>
+                <div class="space-y-3 text-sm text-slate-700 leading-relaxed font-medium" id="method-1-container">
+                  <!-- 由 JS 動態渲染計算內容 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 方法二：四項比例式 (相等比) -->
+            <div class="bg-white rounded-xl p-4 sm:p-5 border border-sky-100 shadow-sm flex flex-col justify-between">
+              <div>
+                <h4 class="font-bold text-cyan-600 text-sm mb-3">方法二：四項比例式（相等比）</h4>
+                <div class="space-y-3 text-sm text-slate-700 leading-relaxed font-medium" id="method-2-container">
+                  <!-- 由 JS 動態渲染計算內容 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: 歷程性評量 (5 題) ==================== -->
+    <section id="tab-4" class="tab-content hidden">
+      <div class="glass-card rounded-3xl p-5 sm:p-8">
+        <div class="border-b border-sky-100 pb-4 mb-6 flex justify-between items-center flex-wrap gap-2">
+          <div>
+            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full uppercase">活動 4：歷程性評量</span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-2 flex items-center gap-2">
+              <i class="fa-solid fa-graduation-cap text-yellow-500"></i>
+              隨堂測驗
+            </h2>
+          </div>
+          <div class="bg-sky-100 text-sky-800 px-4 py-2 rounded-2xl font-black text-sm" id="score-badge">
+            得分：<span id="quiz-score">0</span> / 100
+          </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-6">
+          <!-- 題目 1 -->
+          <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm" id="q-card-0">
+            <p class="font-bold text-slate-800 mb-3 text-base">
+              1. 請問什麼是「最簡整數比」？下列敘述何者最完整正確？
+            </p>
+            <div class="grid grid-cols-1 gap-2 text-sm">
+              <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q0" value="A">
+                <span>(A) 前項和後項只要都是整數就可以</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q0" value="B">
+                <span>(B) 前項與後項都是整數，且兩者的最大公因數為 1（互質）</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-3 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q0" value="C">
+                <span>(C) 比值一定要是小數或真分數</span>
+              </label>
+            </div>
+            <div class="feedback-msg mt-3 text-sm font-bold hidden"></div>
+          </div>
+
+          <!-- 題目 2 (分數化簡) -->
+          <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm" id="q-card-1">
+            <p class="font-bold text-slate-800 mb-3 text-base flex items-center flex-wrap">
+              <span>2. 求</span>
+              <span class="frac-box"><span class="frac-fraction"><span class="frac-num">7</span><span class="frac-den">2</span></span></span>
+              <span>：</span>
+              <span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">5</span></span></span>
+              <span>的最簡整數比是多少？</span>
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q1" value="A">
+                <span>35 : 6</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q1" value="B">
+                <span>7 : 3</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q1" value="C">
+                <span>6 : 35</span>
+              </label>
+            </div>
+            <div class="feedback-msg mt-3 text-sm font-bold hidden"></div>
+          </div>
+
+          <!-- 題目 3 (小數化簡) -->
+          <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm" id="q-card-2">
+            <p class="font-bold text-slate-800 mb-3 text-base">
+              3. 將小數比「0.05：0.5」化為最簡整數比，前後項應先同時乘以哪一個數最合適？
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q2" value="A">
+                <span>同時乘以 10 (會變成 0.5 : 5)</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q2" value="B">
+                <span>同時乘以 100，變成 5：50 後再約分</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q2" value="C">
+                <span>同時乘以 5</span>
+              </label>
+            </div>
+            <div class="feedback-msg mt-3 text-sm font-bold hidden"></div>
+          </div>
+
+          <!-- 題目 4 (帶分數長方形卡片) -->
+          <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm" id="q-card-3">
+            <p class="font-bold text-slate-800 mb-3 text-base flex items-center flex-wrap">
+              <span>4. 皮皮做了一張長 15 公分、寬</span>
+              <span class="frac-box"><span class="frac-int">11</span><span class="frac-fraction"><span class="frac-num">1</span><span class="frac-den">4</span></span></span>
+              <span>公分的卡片，長和寬的最簡整數比為何？</span>
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q3" value="A">
+                <span>15 : 11</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q3" value="B">
+                <span>4 : 3</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q3" value="C">
+                <span>60 : 45</span>
+              </label>
+            </div>
+            <div class="feedback-msg mt-3 text-sm font-bold hidden"></div>
+          </div>
+
+          <!-- 題目 5 (食譜應用) -->
+          <div class="bg-white p-5 rounded-2xl border border-sky-100 shadow-sm" id="q-card-4">
+            <p class="font-bold text-slate-800 mb-3 text-base">
+              5. 西西里咖啡中「冷萃咖啡：檸檬汁 ＝ 150mL：20mL」。如果爸爸準備了 375mL 冷萃咖啡，需要搭配多少毫升檸檬汁才能調出相同口感？
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q4" value="A">
+                <span>40 毫升</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q4" value="B">
+                <span>50 毫升</span>
+              </label>
+              <label class="p-3 border rounded-xl flex items-center gap-2 cursor-pointer hover:bg-sky-50 transition">
+                <input type="radio" name="q4" value="C">
+                <span>60 毫升</span>
+              </label>
+            </div>
+            <div class="feedback-msg mt-3 text-sm font-bold hidden"></div>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-center items-center gap-4">
+          <button onclick="submitQuiz()" class="w-36 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i>
+            提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-36 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 shadow-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i>
+            重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 自訂彈跳訊息視窗 (替代原生 alert) -->
+  <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+      <h3 id="modal-title" class="text-lg font-black text-slate-800 mb-2"></h3>
+      <div id="modal-content" class="text-sm text-slate-600 leading-relaxed mb-5"></div>
+      <div class="text-right">
+        <button onclick="closeModal()" class="px-5 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition">
+          我知道了
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab 切換管理
+    function switchTab(tabIndex) {
+      for (let i = 1; i <= 4; i++) {
+        const tab = document.getElementById(`tab-${i}`);
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (i === tabIndex) {
+          tab.classList.remove('hidden');
+          btn.className = "glass-tab px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base text-sky-900 bg-white shadow-lg flex items-center gap-2 border border-white";
+        } else {
+          tab.classList.add('hidden');
+          btn.className = "glass-tab px-4 py-2.5 rounded-2xl font-bold text-sm sm:text-base text-white/90 bg-white/20 hover:bg-white/30 flex items-center gap-2 border border-white/30";
+        }
+      }
+    }
+
+    // 模態框
+    function alertModal(title, content) {
+      document.getElementById('modal-title').innerHTML = title;
+      document.getElementById('modal-content').innerHTML = content;
+      document.getElementById('custom-modal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    /* ----------------------------------------------------
+       活動 1：奶茶調配所邏輯
+    ---------------------------------------------------- */
+    function updateMilkTea() {
+      const unit = parseFloat(document.getElementById('unit-slider').value);
+      const milk = unit * 3;
+      const tea = unit * 5;
+
+      // 判斷是否為常用分數 (如 0.25 L = 1/4 L)
+      const isQuarter = Math.abs(unit - 0.25) < 0.001;
+      
+      if (isQuarter) {
+        document.getElementById('slider-unit-val').innerHTML = `
+          0.25 L 
+          <span class="text-xs font-normal text-slate-500">(即 <span class="frac-box"><span class="frac-fraction"><span class="frac-num">1</span><span class="frac-den">4</span></span></span> L)</span>
+        `;
+        document.getElementById('milk-amount-display').innerHTML = `
+          0.75 L 
+          <span class="text-[11px] block text-blue-900 font-bold">(<span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">4</span></span></span> L)</span>
+        `;
+        document.getElementById('tea-amount-display').innerHTML = `
+          1.25 L 
+          <span class="text-[11px] block text-amber-950 font-bold">(<span class="frac-box"><span class="frac-fraction"><span class="frac-num">5</span><span class="frac-den">4</span></span></span> L)</span>
+        `;
+        document.getElementById('milk-detail-text').innerHTML = `<span class="frac-box"><span class="frac-fraction"><span class="frac-num">1</span><span class="frac-den">4</span></span></span>L × 3 = <span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">4</span></span></span>L`;
+        document.getElementById('tea-detail-text').innerHTML = `<span class="frac-box"><span class="frac-fraction"><span class="frac-num">1</span><span class="frac-den">4</span></span></span>L × 5 = <span class="frac-box"><span class="frac-fraction"><span class="frac-num">5</span><span class="frac-den">4</span></span></span>L`;
+        document.getElementById('actual-ratio-text').innerHTML = `<span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">4</span></span></span> : <span class="frac-box"><span class="frac-fraction"><span class="frac-num">5</span><span class="frac-den">4</span></span></span> (0.75 : 1.25)`;
+      } else {
+        document.getElementById('slider-unit-val').textContent = `${unit.toFixed(2)} L`;
+        document.getElementById('milk-amount-display').textContent = `${milk.toFixed(2)} L`;
+        document.getElementById('tea-amount-display').textContent = `${tea.toFixed(2)} L`;
+        document.getElementById('milk-detail-text').textContent = `${unit.toFixed(2)}L × 3 = ${milk.toFixed(2)}L`;
+        document.getElementById('tea-detail-text').textContent = `${unit.toFixed(2)}L × 5 = ${tea.toFixed(2)}L`;
+        document.getElementById('actual-ratio-text').textContent = `${milk.toFixed(2)} : ${tea.toFixed(2)}`;
+      }
+
+      // 兩個量杯在視覺上永遠精準保持鮮奶 3 格（60%）: 紅茶 5 格（100%）的嚴格比值
+      document.getElementById('milk-fill').style.height = `60%`;
+      document.getElementById('tea-fill').style.height = `100%`;
+    }
+
+    function setTeaUnit(val, label) {
+      const slider = document.getElementById('unit-slider');
+      slider.value = val;
+      updateMilkTea();
+    }
+
+    /* ----------------------------------------------------
+       活動 2：化簡操作台展示邏輯
+    ---------------------------------------------------- */
+    const simplifyData = {
+      int: {
+        title: "求「30 : 12」的最簡整數比（兩種常見解法）",
+        methods: [
+          {
+            methodName: "方法一：除以最大公因數 (一步到位)",
+            badge: "妮妮的做法",
+            badgeColor: "bg-indigo-100 text-indigo-700",
+            steps: [
+              { label: "步驟 1：找出最大公因數", desc: "30 與 12 的最大公因數 (GCD) 是 <b>6</b>。" },
+              { label: "步驟 2：前後項同時除以 6", desc: "前項：30 ÷ 6 ＝ <b>5</b><br>後項：12 ÷ 6 ＝ <b>2</b>" },
+              { label: "步驟 3：檢查互質", desc: "5 和 2 只有公因數 1（兩數互質）！最簡整數比為 <span class='text-indigo-600 font-black text-lg'>5 : 2</span>" }
+            ]
+          },
+          {
+            methodName: "方法二：逐步除以公因數 (連續約分)",
+            badge: "美美的做法",
+            badgeColor: "bg-amber-100 text-amber-800",
+            steps: [
+              { label: "步驟 1：先同除以公因數 2", desc: "30 和 12 都是偶數，前後項先同除以 2：<br>30 ÷ 2 ＝ <b>15</b>，12 ÷ 2 ＝ <b>6</b><br>得到比：<b>15 : 6</b>" },
+              { label: "步驟 2：再同除以公因數 3", desc: "觀察 15 和 6 還有公因數 3，前後項再同除以 3：<br>15 ÷ 3 ＝ <b>5</b>，6 ÷ 3 ＝ <b>2</b>" },
+              { label: "步驟 3：檢查互質", desc: "5 和 2 只有公因數 1，無法再除！最簡整數比同樣是 <span class='text-indigo-600 font-black text-lg'>5 : 2</span>" }
+            ]
+          }
+        ]
+      },
+      frac: {
+        title: "求前後項為分數的最簡整數比 (7/2 : 3/5)",
+        methods: [
+          {
+            methodName: "通分後同乘以公分母",
+            badge: "皮皮的做法",
+            badgeColor: "bg-sky-100 text-sky-700",
+            steps: [
+              { label: "步驟 1：分母通分", desc: "分母 2 和 5 的最小公倍數是 <b>10</b>。<br>通分後變成：<span class='frac-box'><span class='frac-fraction'><span class='frac-num'>35</span><span class='frac-den'>10</span></span></span> ： <span class='frac-box'><span class='frac-fraction'><span class='frac-num'>6</span><span class='frac-den'>10</span></span></span>" },
+              { label: "步驟 2：同時乘以分母 10", desc: "兩邊同乘以 10 去除分母：<br>35/10 × 10 ＝ <b>35</b><br>6/10 × 10 ＝ <b>6</b>" },
+              { label: "步驟 3：檢查互質", desc: "35 和 6 的公因數只有 1 (互質)！最簡整數比為 <span class='text-indigo-600 font-black text-lg'>35 : 6</span>" }
+            ]
+          }
+        ]
+      },
+      dec: {
+        title: "求前後項為小數的最簡整數比 (0.05 : 0.5)",
+        methods: [
+          {
+            methodName: "同乘以 100 轉為整數比",
+            badge: "丹丹的做法",
+            badgeColor: "bg-emerald-100 text-emerald-800",
+            steps: [
+              { label: "步驟 1：判斷小數位數", desc: "0.05 是二位小數，0.5 是一位小數。為了讓兩者都變成整數，必須同時乘以 <b>100</b>（若只乘 10，0.05 會變成 0.5 仍是小數）。" },
+              { label: "步驟 2：同乘以 100 化為整數", desc: "0.05 × 100 ＝ <b>5</b><br>0.5 × 100 ＝ <b>50</b><br>變成整數比：5 : 50" },
+              { label: "步驟 3：除以公因數約分", desc: "5 和 50 同除以 5：<br>最簡整數比為 <span class='text-indigo-600 font-black text-lg'>1 : 10</span>" }
+            ]
+          }
+        ]
+      },
+      mixed: {
+        title: "帶分數與整數比化簡 (<span class='frac-box'><span class='frac-int'>3</span><span class='frac-fraction'><span class='frac-num'>3</span><span class='frac-den'>7</span></span></span> : 8)",
+        methods: [
+          {
+            methodName: "化為假分數後同乘分母",
+            badge: "標準解法",
+            badgeColor: "bg-purple-100 text-purple-800",
+            steps: [
+              { label: "步驟 1：帶分數化為假分數", desc: "<span class='frac-box'><span class='frac-int'>3</span><span class='frac-fraction'><span class='frac-num'>3</span><span class='frac-den'>7</span></span></span> ＝ <span class='frac-box'><span class='frac-fraction'><span class='frac-num'>24</span><span class='frac-den'>7</span></span></span><br>原式變成 <span class='frac-box'><span class='frac-fraction'><span class='frac-num'>24</span><span class='frac-den'>7</span></span></span> ： 8" },
+              { label: "步驟 2：同乘以分母 7", desc: "兩邊同乘以 7：<br>前項：<span class='frac-box'><span class='frac-fraction'><span class='frac-num'>24</span><span class='frac-den'>7</span></span></span> × 7 ＝ <b>24</b><br>後項：8 × 7 ＝ <b>56</b><br>整數比為 24 : 56" },
+              { label: "步驟 3：除以最大公因數 8", desc: "24 ÷ 8 ＝ <b>3</b>，56 ÷ 8 ＝ <b>7</b><br>最簡整數比為 <span class='text-indigo-600 font-black text-lg'>3 : 7</span>" }
+            ]
+          }
+        ]
+      }
+    };
+
+    function selectSimplifyType(type) {
+      ['int', 'frac', 'dec', 'mixed'].forEach(t => {
+        const btn = document.getElementById(`sim-type-${t}`);
+        if(t === type) {
+          btn.className = "px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white shadow-sm transition";
+        } else {
+          btn.className = "px-4 py-2 rounded-xl text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition";
+        }
+      });
+
+      const data = simplifyData[type];
+      const container = document.getElementById('simplify-display-box');
+      
+      let html = `<div class="flex items-center justify-between flex-wrap gap-2 mb-4">
+                    <h4 class="font-black text-indigo-900 text-base flex items-center gap-2">
+                      <i class="fa-solid fa-arrow-trend-up"></i> ${data.title}
+                    </h4>
+                    <span class="text-xs text-slate-500 font-medium">前項與後項互質即為最簡整數比</span>
+                  </div>`;
+
+      // 判斷是否有多種解題方法（如範例 A 提供雙解法）
+      if (data.methods.length > 1) {
+        html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+        data.methods.forEach(method => {
+          html += `
+            <div class="bg-white/95 rounded-2xl p-4 border border-indigo-100 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-indigo-50">
+                  <h5 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-check text-indigo-500"></i> ${method.methodName}
+                  </h5>
+                  <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${method.badgeColor}">${method.badge}</span>
+                </div>
+                <div class="space-y-2.5">
+          `;
+          method.steps.forEach(step => {
+            html += `
+              <div class="p-2.5 bg-slate-50/80 rounded-xl border border-slate-100">
+                <span class="text-[11px] font-bold text-indigo-600 block mb-0.5">${step.label}</span>
+                <div class="text-xs sm:text-sm text-slate-700 leading-relaxed">${step.desc}</div>
+              </div>
+            `;
+          });
+          html += `</div></div></div>`;
+        });
+        html += `</div>`;
+      } else {
+        // 單一解法版面
+        const method = data.methods[0];
+        html += `
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${method.badgeColor}">${method.badge}</span>
+            <span class="text-sm font-bold text-slate-700">${method.methodName}</span>
+          </div>
+          <div class="space-y-3">
+        `;
+        method.steps.forEach(step => {
+          html += `
+            <div class="p-3.5 bg-white rounded-xl border border-indigo-100/80 shadow-sm">
+              <span class="text-xs font-bold text-indigo-500 uppercase tracking-wider block mb-1">${step.label}</span>
+              <div class="text-sm text-slate-700 leading-relaxed">${step.desc}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // 隨堂判別按鈕回饋
+    function checkSimplestChoice(btn, isCorrect, reason) {
+      const fb = document.getElementById('choice-feedback');
+      if (isCorrect) {
+        fb.innerHTML = `<span class="text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ${reason}</span>`;
+        btn.classList.add('border-emerald-500', 'bg-emerald-50');
+      } else {
+        fb.innerHTML = `<span class="text-rose-500 flex items-center gap-1"><i class="fa-solid fa-circle-xmark"></i> ${reason}</span>`;
+        btn.classList.add('border-rose-400', 'bg-rose-50');
+      }
+    }
+
+    /* ----------------------------------------------------
+       活動 3：烘焙食譜換算邏輯
+    ---------------------------------------------------- */
+    // 最大公因數工具函式 (約分用)
+    function getGCD(a, b) {
+      a = Math.round(Math.abs(a));
+      b = Math.round(Math.abs(b));
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    function syncBananaInput(val) {
+      const v = Math.max(1, parseInt(val) || 0);
+      document.getElementById('banana-num-input').value = v;
+      renderCakeCalculations(v);
+    }
+
+    function syncBananaSlider(val) {
+      const v = Math.max(1, parseInt(val) || 0);
+      const slider = document.getElementById('banana-slider');
+      if (v <= parseInt(slider.max)) {
+        slider.value = v;
+      }
+      renderCakeCalculations(v);
+    }
+
+    function renderCakeCalculations(banana) {
+      // 基準最簡整數比 5 : 3
+      // 方法一：每 1 份 = banana / 5
+      const unitVal = (banana / 5);
+      const unitValStr = Number.isInteger(unitVal) ? unitVal.toString() : unitVal.toFixed(1);
+      const flourVal = (unitVal * 3);
+      const flourValStr = Number.isInteger(flourVal) ? flourVal.toString() : flourVal.toFixed(1);
+
+      // 方法一 HTML
+      const m1Html = `
+        <div>
+          1. 最簡比是 <b>5 : 3</b>，代表香蕉佔 5 份、麵粉佔 3 份。
+        </div>
+        <div>
+          2. 香蕉有 <span class="text-amber-600 font-bold">${banana}</span>g，<br>
+          每 1 份是：${banana} ÷ 5 ＝ <span class="text-emerald-600 font-black">${unitValStr}</span> 公克
+        </div>
+        <div>
+          3. 麵粉需要 3 份：<br>
+          ${unitValStr} × 3 ＝ <span class="text-rose-500 font-black text-base">${flourValStr}</span> 公克
+        </div>
+      `;
+      document.getElementById('method-1-container').innerHTML = m1Html;
+
+      // 方法二：四項比例式
+      // 香蕉變成原來的 banana / 300 倍
+      const gcd = getGCD(banana, 300);
+      const simNum = banana / gcd;
+      const simDen = 300 / gcd;
+
+      let fracDisplay = '';
+      if (gcd > 1 && simDen !== 300) {
+        fracDisplay = `＝ <span class="frac-box"><span class="frac-fraction"><span class="frac-num">${simNum}</span><span class="frac-den">${simDen}</span></span></span>`;
+      }
+
+      const m2Html = `
+        <div>
+          列出比例式：<br>
+          香蕉：麵粉 ＝ 300 : 180 ＝ ${banana} : <span class="inline-block w-5 h-5 border-2 border-rose-400 rounded align-middle ml-0.5"></span>
+        </div>
+        <div>
+          香蕉變為原來的：<br>
+          ${banana} ÷ 300 ＝ 
+          <span class="frac-box"><span class="frac-fraction"><span class="frac-num">${banana}</span><span class="frac-den">300</span></span></span>
+          ${fracDisplay} 倍
+        </div>
+        <div>
+          麵粉也同乘相同倍數：<br>
+          180 × <span class="frac-box"><span class="frac-fraction"><span class="frac-num">${simNum}</span><span class="frac-den">${simDen}</span></span></span>
+          ＝ <span class="text-rose-500 font-black text-base">${flourValStr}</span> 公克
+        </div>
+      `;
+      document.getElementById('method-2-container').innerHTML = m2Html;
+    }
+
+    // 相容舊函式
+    function updateRecipeCalc() {
+      const v = parseInt(document.getElementById('banana-num-input')?.value || 410);
+      renderCakeCalculations(v);
+    }
+
+    /* ----------------------------------------------------
+       活動 4：歷程評量與計分系統 (5 題)
+    ---------------------------------------------------- */
+    const quizAnswers = {
+      0: { ans: 'B', exp: '最簡整數比的條件為：前後項皆為「整數」，且彼此「互質」（最大公因數為 1）。' },
+      1: { ans: 'A', exp: '通分同乘 10：<span class="frac-box"><span class="frac-fraction"><span class="frac-num">7</span><span class="frac-den">2</span></span></span> × 10 ＝ 35，<span class="frac-box"><span class="frac-fraction"><span class="frac-num">3</span><span class="frac-den">5</span></span></span> × 10 ＝ 6，故為 35：6。' },
+      2: { ans: 'B', exp: '0.05 需乘 100 才能化為整數 5；同乘以 100 後得 5：50 ＝ 1：10。' },
+      3: { ans: 'B', exp: '15：<span class="frac-box"><span class="frac-int">11</span><span class="frac-fraction"><span class="frac-num">1</span><span class="frac-den">4</span></span></span> ＝ 15：<span class="frac-box"><span class="frac-fraction"><span class="frac-num">45</span><span class="frac-den">4</span></span></span> ＝ 60：45，同除以 15 得 4：3。' },
+      4: { ans: 'B', exp: '150：20 ＝ 15：2。375 ÷ 15 ＝ 25（每份 25mL），檸檬汁 25 × 2 ＝ 50 毫升。' }
+    };
+
+    function submitQuiz() {
+      let total = 0;
+      for (let i = 0; i < 5; i++) {
+        const q = quizAnswers[i];
+        const card = document.getElementById(`q-card-${i}`);
+        const fb = card.querySelector('.feedback-msg');
+        const selectedInput = card.querySelector(`input[name="q${i}"]:checked`);
+        fb.classList.remove('hidden');
+
+        if (!selectedInput) {
+          fb.className = "feedback-msg mt-3 text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl flex items-center gap-1.5";
+          fb.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> <span>未作答。</span>`;
+        } else if (selectedInput.value === q.ans) {
+          total += 20;
+          fb.className = "feedback-msg mt-3 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-xl flex items-start gap-1.5";
+          fb.innerHTML = `<i class="fa-solid fa-circle-check mt-1"></i> <div>答對了！${q.exp}</div>`;
+        } else {
+          fb.className = "feedback-msg mt-3 text-sm font-bold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-2 rounded-xl flex items-start gap-1.5";
+          fb.innerHTML = `<i class="fa-solid fa-circle-xmark mt-1"></i> <div>答錯了！${q.exp}</div>`;
+        }
+      }
+      document.getElementById('quiz-score').textContent = total;
+    }
+
+    function resetQuiz() {
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById(`q-card-${i}`);
+        const radios = card.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => r.checked = false);
+        const fb = card.querySelector('.feedback-msg');
+        fb.classList.add('hidden');
+        fb.innerHTML = '';
+      }
+      document.getElementById('quiz-score').textContent = 0;
+    }
+
+    // 初始化頁面
+    window.onload = function() {
+      updateMilkTea();
+      selectSimplifyType('int');
+      updateRecipeCalc();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2-1 最簡分數 - 代表數與約分探究</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN for symbols and icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #4A709C 0%, #6E94BD 25%, #9BBCE0 50%, #E3D1E4 75%, #F7C5A8 100%);
+      background-attachment: fixed;
+      color: #2D3748;
+      overflow-x: hidden;
+    }
+
+    /* Shinkai luminous glass effect */
+    .shinkai-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 10px 30px -5px rgba(50, 70, 110, 0.2), 0 0 20px rgba(255, 255, 255, 0.4) inset;
+    }
+
+    .shinkai-badge {
+      background: linear-gradient(135deg, #4f8cfb 0%, #7e57c2 100%);
+      color: white;
+    }
+
+    /* Standard Vertical Fraction Display (垂直置中與標準直式分數) */
+    .math-expr {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-weight: 700;
+      line-height: 1;
+      padding: 0 4px;
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 3px;
+      margin: 0 2px;
+      font-size: 1.05em;
+    }
+
+    .fraction-whole {
+      margin-right: 4px;
+      font-size: 1.25em;
+      align-self: center;
+    }
+
+    .numerator {
+      border-bottom: 2px solid currentColor;
+      padding: 1px 4px;
+      font-size: 0.95em;
+    }
+
+    .denominator {
+      padding: 1px 4px;
+      font-size: 0.95em;
+    }
+
+    /* Custom Range Slider */
+    input[type=range] {
+      accent-color: #3b82f6;
+    }
+
+    /* Star twinkling & clouds animation */
+    @keyframes cloudDrift {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(25px); }
+      100% { transform: translateX(0); }
+    }
+    .cloud-soft {
+      animation: cloudDrift 18s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 md:p-8">
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <header class="shinkai-card rounded-3xl p-6 sm:p-8 mb-6 text-center relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-blue-300 rounded-full opacity-30 blur-2xl pointer-events-none cloud-soft"></div>
+      <div class="absolute -left-10 -top-10 w-44 h-44 bg-pink-300 rounded-full opacity-30 blur-2xl pointer-events-none cloud-soft"></div>
+      
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100/80 text-blue-700 text-sm font-semibold mb-3 border border-blue-200">
+        <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 2-1 互動學習網頁
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-wide drop-shadow-sm">
+        最簡分數：代表數與約分奇幻探索
+      </h1>
+      <p class="text-slate-600 mt-2 text-sm sm:text-base max-w-2xl mx-auto">
+        藉由動態切割等分條與因數約分百寶箱，感受「數字變簡單、大小更好懂」的數學之美！
+      </p>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex flex-wrap justify-center gap-2 sm:gap-4 mt-6">
+        <button onclick="switchTab('tab-concept')" id="btn-tab-concept" class="tab-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 shadow-md flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white scale-105">
+          <i class="fa-solid fa-shapes"></i> 代表數探究
+        </button>
+        <button onclick="switchTab('tab-reduction')" id="btn-tab-reduction" class="tab-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 shadow-sm flex items-center gap-2 bg-white/90 text-slate-700 hover:bg-blue-50">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> 約分百寶箱
+        </button>
+        <button onclick="switchTab('tab-mixed-improper')" id="btn-tab-mixed-improper" class="tab-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 shadow-sm flex items-center gap-2 bg-white/90 text-slate-700 hover:bg-blue-50">
+          <i class="fa-solid fa-layer-group"></i> 帶分數與假分數
+        </button>
+        <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="tab-btn px-5 py-2.5 rounded-2xl font-bold transition-all duration-300 shadow-sm flex items-center gap-2 bg-white/90 text-slate-700 hover:bg-blue-50">
+          <i class="fa-solid fa-trophy"></i> 隨堂測驗
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- TAB 1: 代表數探究 -->
+      <section id="tab-concept" class="tab-content block space-y-6">
+        <!-- Story / Context Box -->
+        <div class="shinkai-card rounded-3xl p-6 sm:p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-9 h-9 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-lg shadow">1</span>
+            <h2 class="text-2xl font-bold text-slate-800">生活情境：做甜點用了多少黑糖？</h2>
+          </div>
+          <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 text-slate-700 leading-relaxed">
+            <i class="fa-solid fa-cookie-bite text-amber-600 text-xl mr-2"></i>
+            一包黑糖重 <strong>600 公克</strong>，妮妮做甜點用去 <strong>240 公克</strong>。用去的黑糖佔了一整包的多少呢？
+            也就是 
+            <span class="math-expr text-amber-800 text-lg">
+              <span class="fraction"><span class="numerator">240</span><span class="denominator">600</span></span>
+            </span> 
+            包。
+          </div>
+
+          <!-- Dynamic Equivalent Fraction Slider & Visuals -->
+          <div class="mt-6 bg-white/80 rounded-2xl p-5 border border-slate-200">
+            <h3 class="font-bold text-slate-700 mb-2 flex items-center justify-between">
+              <span><i class="fa-solid fa-sliders text-blue-500 mr-2"></i>切換不同的等分分割觀察：</span>
+              <span id="currentEquivalentBadge" class="text-sm font-semibold px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
+                目前顯示：240/600 包
+              </span>
+            </h3>
+
+            <!-- Range slider choosing common equivalent divisions of 240/600 -->
+            <input type="range" id="fractionStepSlider" min="0" max="6" value="0" step="1" 
+                   class="w-full h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer my-3"
+                   oninput="updateConceptView(this.value)">
+
+            <div class="flex justify-between text-xs sm:text-sm font-bold text-slate-500 px-1">
+              <span class="text-center">600等分<br><span class="math-expr"><span class="fraction"><span class="numerator">240</span><span class="denominator">600</span></span></span></span>
+              <span class="text-center">300等分<br><span class="math-expr"><span class="fraction"><span class="numerator">120</span><span class="denominator">300</span></span></span></span>
+              <span class="text-center">150等分<br><span class="math-expr"><span class="fraction"><span class="numerator">60</span><span class="denominator">150</span></span></span></span>
+              <span class="text-center">50等分<br><span class="math-expr"><span class="fraction"><span class="numerator">20</span><span class="denominator">50</span></span></span></span>
+              <span class="text-center">25等分<br><span class="math-expr"><span class="fraction"><span class="numerator">10</span><span class="denominator">25</span></span></span></span>
+              <span class="text-center">10等分<br><span class="math-expr"><span class="fraction"><span class="numerator">4</span><span class="denominator">10</span></span></span></span>
+              <span class="text-center text-blue-600 font-extrabold">5等分(最簡)<br><span class="math-expr text-blue-700 text-base"><span class="fraction"><span class="numerator">2</span><span class="denominator">5</span></span></span></span>
+            </div>
+
+            <!-- Visual Bar Diagram -->
+            <div class="mt-6">
+              <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-1">
+                <span>0 包 (0g)</span>
+                <span class="text-blue-600 font-bold" id="barFractionText">240/600</span>
+                <span>1 整包 (600g)</span>
+              </div>
+              <div class="relative w-full h-12 bg-slate-100 rounded-xl border-2 border-slate-300 overflow-hidden shadow-inner flex" id="barVisualContainer">
+                <!-- SVG dynamically injected for grid lines -->
+              </div>
+            </div>
+
+            <!-- Insight comparison box -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <h4 class="font-bold text-slate-700 text-sm mb-1 flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-question text-slate-400"></i> 原分數：
+                  <span class="math-expr"><span class="fraction"><span class="numerator">240</span><span class="denominator">600</span></span></span>
+                </h4>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                  想像把一包黑糖切成 <strong>600 小份</strong>，要算其中的 <strong>240 份</strong>。數字太大，腦海中很難一眼看出它到底佔了整包的多少。
+                </p>
+              </div>
+              <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <h4 class="font-bold text-blue-900 text-sm mb-1 flex items-center gap-1.5">
+                  <i class="fa-solid fa-star text-amber-500"></i> 最簡分數代表數：
+                  <span class="math-expr text-blue-700 font-extrabold"><span class="fraction"><span class="numerator">2</span><span class="denominator">5</span></span></span>
+                </h4>
+                <p class="text-xs text-blue-950 leading-relaxed">
+                  把整包分成 <strong>5 份</strong>中的 <strong>2 份</strong>！一眼就清楚看出來「快要達到一半（半包是 2.5 份）」，這就是用<strong>最簡分數</strong>作為等值分數集合代表數的好處！
+                </p>
+              </div>
+            </div>
+
+            <!-- Conclusion Definition -->
+            <div class="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-300 flex items-start gap-3">
+              <i class="fa-solid fa-lightbulb text-emerald-600 text-xl mt-0.5"></i>
+              <div class="text-sm text-emerald-950">
+                <span class="font-bold">什麼是最簡分數？</span>
+                分子和分母<strong>無法再約分</strong>（除了 1 以外沒有其他大於 1 的公因數，即分子與分母<strong>互質</strong>）。分子分母最小、看起來最簡單，最適合用來代表所有跟它一樣大的等值分數。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: 約分百寶箱 -->
+      <section id="tab-reduction" class="tab-content hidden space-y-6">
+        <div class="shinkai-card rounded-3xl p-6 sm:p-8">
+          <!-- Section Title (Retained from Image 2) -->
+          <div class="flex items-center gap-3 mb-6">
+            <span class="w-9 h-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-lg shadow">2</span>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-wide">約分百寶箱：真分數、帶分數與假分數</h2>
+          </div>
+
+          <!-- Quick Switcher Tabs (New 5 Examples from Image 1) -->
+          <div class="flex items-center flex-wrap gap-2.5 mb-6 text-xs sm:text-sm">
+            <span class="font-bold text-slate-600 shrink-0">選擇例題：</span>
+            <button onclick="selectProblem('ex1')" id="prob-btn-ex1" class="prob-btn px-4 py-2 rounded-2xl font-bold transition-all shadow-sm bg-indigo-600 text-white flex items-center gap-1.5 border border-indigo-600">
+              <span>例題 1 :</span>
+              <span class="math-expr"><span class="fraction"><span class="numerator">150</span><span class="denominator">400</span></span></span>
+            </button>
+            <button onclick="selectProblem('ex2')" id="prob-btn-ex2" class="prob-btn px-4 py-2 rounded-2xl font-bold transition-all border border-blue-200 bg-blue-50/70 text-indigo-900 hover:bg-blue-100 flex items-center gap-1.5">
+              <span>例題 2 :</span>
+              <span class="math-expr"><span class="fraction"><span class="numerator">105</span><span class="denominator">63</span></span></span>
+            </button>
+            <button onclick="selectProblem('ex3')" id="prob-btn-ex3" class="prob-btn px-4 py-2 rounded-2xl font-bold transition-all border border-blue-200 bg-blue-50/70 text-indigo-900 hover:bg-blue-100 flex items-center gap-1.5">
+              <span>例題 3 :</span>
+              <span class="math-expr"><span class="fraction"><span class="numerator">60</span><span class="denominator">90</span></span></span>
+            </button>
+            <button onclick="selectProblem('ex4')" id="prob-btn-ex4" class="prob-btn px-4 py-2 rounded-2xl font-bold transition-all border border-blue-200 bg-blue-50/70 text-indigo-900 hover:bg-blue-100 flex items-center gap-1.5">
+              <span>例題 4 :</span>
+              <span class="math-expr"><span class="fraction"><span class="numerator">63</span><span class="denominator">49</span></span></span>
+            </button>
+            <button onclick="selectProblem('ex5')" id="prob-btn-ex5" class="prob-btn px-4 py-2 rounded-2xl font-bold transition-all border border-blue-200 bg-blue-50/70 text-indigo-900 hover:bg-blue-100 flex items-center gap-1.5">
+              <span>例題 5 :</span>
+              <span class="math-expr"><span class="fraction"><span class="numerator">700</span><span class="denominator">1000</span></span></span>
+            </button>
+          </div>
+
+          <!-- Comparative Columns Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left: Dandan's Method (Amber/Yellow Card) -->
+            <div class="border-2 border-amber-300 bg-white rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="font-extrabold text-amber-900 text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-person-walking text-amber-600"></i> 丹丹的做法：一步步慢慢約
+                  </span>
+                  <span class="text-xs px-3 py-1 bg-amber-100 text-amber-800 rounded-full font-bold">
+                    找常見因數
+                  </span>
+                </div>
+
+                <!-- Dandan Steps Container -->
+                <div class="space-y-3 my-4" id="dandanCardContent">
+                  <!-- Injected dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- Dandan Strategy Note -->
+              <div class="mt-4 p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 leading-relaxed flex items-start gap-2">
+                <i class="fa-solid fa-circle-info text-amber-600 mt-0.5 shrink-0"></i>
+                <div>
+                  <span class="font-bold">策略優點：</span>心算容易，每次挑容易辨識的公因數（如2、5、10），直到分子分母無法再約為止。
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Meimei's Method (Blue Card) -->
+            <div class="border-2 border-blue-400 bg-white rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="font-extrabold text-blue-900 text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-blue-600"></i> 美美的做法：一步到位 (GCD)
+                  </span>
+                  <span class="text-xs px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-bold">
+                    最大公因數
+                  </span>
+                </div>
+
+                <!-- Meimei GCD and Equation Display -->
+                <div class="space-y-4 my-4" id="meimeiCardContent">
+                  <!-- Injected dynamically via JS -->
+                </div>
+              </div>
+
+              <!-- Meimei Core Concept Note -->
+              <div class="mt-4 p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200 text-xs text-blue-950 leading-relaxed flex items-start gap-2">
+                <i class="fa-solid fa-circle-check text-blue-600 mt-0.5 shrink-0"></i>
+                <div>
+                  <span class="font-bold">核心概念：</span>分子和分母同時除以它們的<strong>最大公因數</strong>，就能直接得到最簡分數！
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Teacher Rabbit's Key Secret (Coprime) -->
+          <div class="mt-6 p-5 rounded-3xl bg-purple-50/90 border border-purple-200 flex items-start sm:items-center gap-4 shadow-sm">
+            <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shrink-0 text-xl shadow-md">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div class="text-xs sm:text-sm text-purple-950 leading-relaxed">
+              <div class="font-extrabold text-purple-900 text-base mb-1">
+                兔子老師的關鍵密碼：什麼是「互質」？
+              </div>
+              最簡分數的分子和分母<strong>無法再約分</strong>，也就是說它們<strong>沒有大於 1 的公因數</strong>（公因數只有 1）。當兩個整數的最大公因數是 1 時，我們就稱這兩個數<strong>「互質」</strong>！
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: 帶分數與假分數 -->
+      <section id="tab-mixed-improper" class="tab-content hidden space-y-6">
+        <div class="shinkai-card rounded-3xl p-6 sm:p-8">
+          <!-- Header with Purple Circle 3 -->
+          <div class="flex items-start sm:items-center gap-3.5 mb-6">
+            <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-xl shadow shrink-0">
+              3
+            </span>
+            <div>
+              <h2 class="text-2xl font-extrabold text-slate-800 tracking-wide">
+                帶分數與假分數的最簡約分
+              </h2>
+              <p class="text-sm text-slate-500 font-medium mt-0.5">
+                整數不變約真分數；假分數互質化最簡，亦可換成帶分數！
+              </p>
+            </div>
+          </div>
+
+          <!-- Top Two Cards Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left Card: 帶分數的約分秘訣 -->
+            <div class="rounded-3xl border border-purple-200/80 bg-white/95 p-6 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-bold">
+                    課本情境題
+                  </span>
+                  <span class="text-xs text-slate-400 font-medium">
+                    麵粉 2 包又 150g
+                  </span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">
+                  帶分數的約分秘訣
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
+                  整數部分代表完整的包數，<strong class="text-slate-800">整數保持不變</strong>，只需要將真分數部分進行約分！
+                </p>
+
+                <!-- Equation Display Box -->
+                <div class="rounded-2xl border border-purple-100 bg-purple-50/50 p-5 text-center">
+                  <div class="text-2xl sm:text-3xl font-extrabold text-indigo-950 flex items-center justify-center gap-3 flex-wrap">
+                    <span class="math-expr">
+                      <span class="fraction-whole">2</span>
+                      <span class="fraction">
+                        <span class="numerator">150</span>
+                        <span class="denominator">400</span>
+                      </span>
+                    </span>
+                    <span class="text-purple-400 text-xl font-normal">=</span>
+                    <span class="math-expr">
+                      <span class="fraction-whole">2</span>
+                      <span class="fraction">
+                        <span class="numerator">15</span>
+                        <span class="denominator">40</span>
+                      </span>
+                    </span>
+                    <span class="text-purple-400 text-xl font-normal">=</span>
+                    <span class="math-expr text-emerald-600">
+                      <span class="fraction-whole">2</span>
+                      <span class="fraction">
+                        <span class="numerator">3</span>
+                        <span class="denominator">8</span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="mt-4 text-xs font-bold text-purple-700">
+                    分子與分母 (150 與 400) 的最大公因數為 50，直接約分得到 
+                    <span class="math-expr font-extrabold text-emerald-700 text-sm">
+                      <span class="fraction-whole">2</span>
+                      <span class="fraction"><span class="numerator">3</span><span class="denominator">8</span></span>
+                    </span> 包！
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Card: 假分數的化簡與互質 -->
+            <div class="rounded-3xl border border-blue-200/80 bg-white/95 p-6 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold">
+                    兔子老師小教室
+                  </span>
+                  <span class="text-xs text-slate-400 font-medium">
+                    假分數最簡分數
+                  </span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">
+                  假分數的化簡與互質
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
+                  假分數約分到分子和分母<strong class="text-slate-800">互質</strong>為止，可以寫成最簡假分數，也可以換為帶分數！
+                </p>
+
+                <!-- Equation Display Box -->
+                <div class="rounded-2xl border border-blue-100 bg-blue-50/50 p-5 text-center">
+                  <div class="text-2xl sm:text-3xl font-extrabold text-indigo-950 flex items-center justify-center gap-3 flex-wrap">
+                    <span class="math-expr">
+                      <span class="fraction">
+                        <span class="numerator">105</span>
+                        <span class="denominator">63</span>
+                      </span>
+                    </span>
+                    <span class="text-blue-400 text-xl font-normal">=</span>
+                    <span class="math-expr">
+                      <span class="fraction">
+                        <span class="numerator">15</span>
+                        <span class="denominator">9</span>
+                      </span>
+                    </span>
+                    <span class="text-blue-400 text-xl font-normal">=</span>
+                    <span class="math-expr text-emerald-600">
+                      <span class="fraction">
+                        <span class="numerator">5</span>
+                        <span class="denominator">3</span>
+                      </span>
+                    </span>
+                    <span class="text-xs text-slate-500 font-normal">或</span>
+                    <span class="math-expr text-emerald-700">
+                      <span class="fraction-whole">1</span>
+                      <span class="fraction">
+                        <span class="numerator">2</span>
+                        <span class="denominator">3</span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="mt-4 text-xs font-bold text-blue-800">
+                    105 與 63 的最大公因數是 21；5 與 3 互質，所以 
+                    <span class="math-expr font-extrabold text-emerald-700 text-sm">
+                      <span class="fraction"><span class="numerator">5</span><span class="denominator">3</span></span>
+                    </span> 是最簡分數！
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Classroom Challenge: Interactive Fraction Check Cards -->
+          <div class="mt-8 rounded-3xl border border-slate-200/90 bg-white/95 p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-rose-500 text-lg"><i class="fa-regular fa-circle-dot"></i></span>
+                <h3 class="text-lg font-bold text-slate-800">
+                  課堂挑戰：請點擊選出所有的「最簡分數」
+                </h3>
+              </div>
+              <button onclick="resetChallengeCards()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-arrows-rotate"></i> 重新作答
+              </button>
+            </div>
+            <p class="text-xs text-slate-500 mb-5">
+              點擊卡片進行判定，看看分子與分母是不是互質！
+            </p>
+
+            <!-- Cards Grid: 6 cards from Image 1 -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5" id="challengeCardsContainer">
+              <!-- Dynamically generated via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: 隨堂測驗 -->
+      <section id="tab-quiz" class="tab-content hidden space-y-6">
+        <div class="shinkai-card rounded-3xl p-6 sm:p-8">
+          <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-bold text-lg shadow">4</span>
+              <h2 class="text-2xl font-bold text-slate-800">隨堂測驗</h2>
+            </div>
+            <div class="text-sm font-bold bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full" id="quizScoreBadge">
+              得分：0 / 100
+            </div>
+          </div>
+          <p class="text-slate-600 text-sm mb-6">
+            請完成以下 5 道與課本重點緊密結合的精選測驗題（每題 20 分，滿分 100 分）。作答完畢後請點擊下方「提交答案」按鈕觀看解析！
+          </p>
+
+          <div id="quizList" class="space-y-6">
+            <!-- Questions rendered via JS -->
+          </div>
+
+          <div class="mt-8 flex justify-center items-center gap-4 flex-wrap">
+            <button onclick="submitQuiz()" id="submitQuizBtn" class="w-44 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold shadow-md transition flex items-center justify-center">
+              <i class="fa-solid fa-paper-plane mr-2"></i> 提交答案
+            </button>
+            <button onclick="resetQuiz()" class="w-44 py-2.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold shadow-md transition flex items-center justify-center">
+              <i class="fa-solid fa-arrows-rotate mr-2"></i> 重新測驗
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Note (Removed text as requested) -->
+    <div class="pb-6"></div>
+  </div>
+
+  <script>
+    // Tab Navigation Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white', 'scale-105');
+        btn.classList.add('bg-white/90', 'text-slate-700');
+      });
+
+      const activeContent = document.getElementById(tabId);
+      if (activeContent) activeContent.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-white/90', 'text-slate-700');
+        activeBtn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white', 'scale-105');
+      }
+    }
+
+    const equivalentStages = [
+      { totalPieces: 600, takenPieces: 240, label: "240 / 600 包", num: 240, den: 600, desc: "600份中取240份，數字龐大很難有直觀比例感。" },
+      { totalPieces: 300, takenPieces: 120, label: "120 / 300 包", num: 120, den: 300, desc: "分子分母同除以 2。" },
+      { totalPieces: 150, takenPieces: 60,  label: "60 / 150 包",  num: 60,  den: 150, desc: "同除以 4。" },
+      { totalPieces: 50,  takenPieces: 20,  label: "20 / 50 包",   num: 20,  den: 50,  desc: "同除以 12。" },
+      { totalPieces: 25,  takenPieces: 10,  label: "10 / 25 包",   num: 10,  den: 25,  desc: "同除以 24。" },
+      { totalPieces: 10,  takenPieces: 4,   label: "4 / 10 包",    num: 4,   den: 10,  desc: "同除以 60。" },
+      { totalPieces: 5,   takenPieces: 2,   label: "2 / 5 包 (最簡代表數)", num: 2, den: 5, desc: "同除以 120 (最大公因數)！無法再約分，一眼看出一半少一點！" }
+    ];
+
+    function updateConceptView(index) {
+      const stage = equivalentStages[index];
+      document.getElementById('currentEquivalentBadge').innerHTML = `目前顯示：${stage.label}`;
+      document.getElementById('barFractionText').innerHTML = `
+        <span class="math-expr">
+          <span class="fraction"><span class="numerator">${stage.num}</span><span class="denominator">${stage.den}</span></span>
+        </span> 包
+      `;
+
+      // Render the visual bar
+      const container = document.getElementById('barVisualContainer');
+      const percentage = (stage.takenPieces / stage.totalPieces) * 100;
+
+      // Draw responsive segment markings based on denominator
+      let tickMarks = '';
+      const displayPieces = Math.min(stage.totalPieces, 60); // limit max lines for clean render
+      const stepWidth = 100 / displayPieces;
+
+      for (let i = 1; i < displayPieces; i++) {
+        tickMarks += `<div class="absolute top-0 bottom-0 w-[1px] bg-slate-400/40 pointer-events-none" style="left: ${i * stepWidth}%;"></div>`;
+      }
+
+      container.innerHTML = `
+        <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500 relative flex items-center justify-center text-amber-950 font-black text-sm shadow" style="width: ${percentage}%;">
+          ${stage.num}/${stage.den}
+        </div>
+        <div class="h-full bg-slate-200/50 flex-1 relative"></div>
+        ${tickMarks}
+      `;
+    }
+
+    const problems = {
+      ex1: {
+        key: 'ex1',
+        whole: '',
+        num: 150,
+        den: 400,
+        finalNum: 3,
+        finalDen: 8,
+        gcd: 50,
+        dandanSteps: [
+          { stepNum: 1, whole: '', cNum: 150, cDen: 400, divisor: 10, nNum: 15, nDen: 40 },
+          { stepNum: 2, whole: '', cNum: 15, cDen: 40, divisor: 5, nNum: 3, nDen: 8 }
+        ],
+        mixedAlt: ''
+      },
+      ex2: {
+        key: 'ex2',
+        whole: '',
+        num: 105,
+        den: 63,
+        finalNum: 5,
+        finalDen: 3,
+        gcd: 21,
+        dandanSteps: [
+          { stepNum: 1, whole: '', cNum: 105, cDen: 63, divisor: 3, nNum: 35, nDen: 21 },
+          { stepNum: 2, whole: '', cNum: 35, cDen: 21, divisor: 7, nNum: 5, nDen: 3 }
+        ],
+        mixedAlt: '（或 1又2/3）'
+      },
+      ex3: {
+        key: 'ex3',
+        whole: '',
+        num: 60,
+        den: 90,
+        finalNum: 2,
+        finalDen: 3,
+        gcd: 30,
+        dandanSteps: [
+          { stepNum: 1, whole: '', cNum: 60, cDen: 90, divisor: 10, nNum: 6, nDen: 9 },
+          { stepNum: 2, whole: '', cNum: 6, cDen: 9, divisor: 3, nNum: 2, nDen: 3 }
+        ],
+        mixedAlt: ''
+      },
+      ex4: {
+        key: 'ex4',
+        whole: '',
+        num: 63,
+        den: 49,
+        finalNum: 9,
+        finalDen: 7,
+        gcd: 7,
+        dandanSteps: [
+          { stepNum: 1, whole: '', cNum: 63, cDen: 49, divisor: 7, nNum: 9, nDen: 7 }
+        ],
+        mixedAlt: '（或 1又2/7）'
+      },
+      ex5: {
+        key: 'ex5',
+        whole: '',
+        num: 700,
+        den: 1000,
+        finalNum: 7,
+        finalDen: 10,
+        gcd: 100,
+        dandanSteps: [
+          { stepNum: 1, whole: '', cNum: 700, cDen: 1000, divisor: 10, nNum: 70, nDen: 100 },
+          { stepNum: 2, whole: '', cNum: 70, cDen: 100, divisor: 10, nNum: 7, nDen: 10 }
+        ],
+        mixedAlt: ''
+      }
+    };
+
+    let currentProbKey = 'ex1';
+
+    function renderVerticalFractionHtml(whole, num, den) {
+      return `
+        <span class="math-expr">
+          ${whole ? `<span class="fraction-whole">${whole}</span>` : ''}
+          <span class="fraction">
+            <span class="numerator">${num}</span>
+            <span class="denominator">${den}</span>
+          </span>
+        </span>
+      `;
+    }
+
+    const challengeData = [
+      { id: 0, num: 2,  den: 5,  isSimplest: true,  reason: "2 與 5 互質 (公因數只有 1)，是最簡分數！" },
+      { id: 1, num: 8,  den: 9,  isSimplest: true,  reason: "8 與 9 互質 (公因數只有 1)，是最簡分數！" },
+      { id: 2, num: 7,  den: 12, isSimplest: true,  reason: "7 與 12 互質 (公因數只有 1)，是最簡分數！" },
+      { id: 3, num: 3,  den: 27, isSimplest: false, reason: "分子與分母還有大於 1 的公因數 3，可以約成 1/9！" },
+      { id: 4, num: 15, den: 17, isSimplest: true,  reason: "15 與 17 互質 (公因數只有 1)，是最簡分數！" },
+      { id: 5, num: 11, den: 51, isSimplest: true,  reason: "11 與 51 互質 (公因數只有 1)，是最簡分數！" }
+    ];
+
+    let challengeChecked = {};
+
+    function renderChallengeCards() {
+      const container = document.getElementById('challengeCardsContainer');
+      if (!container) return;
+      container.innerHTML = challengeData.map((item, idx) => {
+        return `
+          <div id="card-wrap-${idx}" class="flex flex-col items-center justify-between p-3.5 rounded-2xl border-2 border-slate-200 bg-white transition-all duration-300 min-h-[140px] shadow-sm">
+            <div class="py-2 text-xl font-bold text-slate-800">
+              ${renderVerticalFractionHtml('', item.num, item.den)}
+            </div>
+            <button onclick="checkChallengeItem(${idx})" id="card-btn-${idx}"
+                    class="w-full py-1.5 px-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 text-xs font-bold transition flex items-center justify-center gap-1">
+              點擊檢驗
+            </button>
+            <div id="card-status-${idx}" class="text-[11px] font-bold text-center mt-1 hidden leading-tight"></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function checkChallengeItem(idx) {
+      if (challengeChecked[idx]) return;
+      challengeChecked[idx] = true;
+      const item = challengeData[idx];
+      const wrap = document.getElementById(`card-wrap-${idx}`);
+      const btn = document.getElementById(`card-btn-${idx}`);
+      const status = document.getElementById(`card-status-${idx}`);
+
+      status.classList.remove('hidden');
+
+      if (item.isSimplest) {
+        wrap.className = "flex flex-col items-center justify-between p-3.5 rounded-2xl border-2 border-emerald-400 bg-emerald-50/70 transition-all duration-300 min-h-[140px] shadow-sm";
+        btn.className = "w-full py-1 px-2 rounded-xl bg-emerald-600 text-white text-xs font-bold transition";
+        btn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> 最簡分數`;
+        status.className = "text-[11px] font-bold text-emerald-800 text-center mt-1 leading-tight";
+        status.innerText = item.reason;
+      } else {
+        wrap.className = "flex flex-col items-center justify-between p-3.5 rounded-2xl border-2 border-rose-300 bg-rose-50/70 transition-all duration-300 min-h-[140px] shadow-sm";
+        btn.className = "w-full py-1 px-2 rounded-xl bg-rose-500 text-white text-xs font-bold transition";
+        btn.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> 非最簡`;
+        status.className = "text-[11px] font-bold text-rose-800 text-center mt-1 leading-tight";
+        status.innerText = item.reason;
+      }
+    }
+
+    function resetChallengeCards() {
+      challengeChecked = {};
+      renderChallengeCards();
+    }
+
+    function selectProblem(key) {
+      currentProbKey = key;
+      const prob = problems[key];
+
+      // Update button styling for the 5 examples
+      ['ex1', 'ex2', 'ex3', 'ex4', 'ex5'].forEach(k => {
+        const btn = document.getElementById('prob-btn-' + k);
+        if (k === key) {
+          btn.className = "prob-btn px-4 py-2 rounded-2xl font-bold transition-all shadow-sm bg-indigo-600 text-white flex items-center gap-1.5 border border-indigo-600";
+        } else {
+          btn.className = "prob-btn px-4 py-2 rounded-2xl font-bold transition-all border border-blue-200 bg-blue-50/70 text-indigo-900 hover:bg-blue-100 flex items-center gap-1.5";
+        }
+      });
+
+      // Render Dandan's Card
+      const dandanContainer = document.getElementById('dandanCardContent');
+      let dandanHtml = prob.dandanSteps.map(step => `
+        <div class="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-3 flex items-center justify-center gap-3 text-slate-800 text-base font-bold shadow-sm">
+          <span class="text-amber-800 text-sm font-semibold">第${step.stepNum}步:</span>
+          ${renderVerticalFractionHtml(step.whole, step.cNum, step.cDen)}
+          <span class="text-rose-500 font-bold text-xs bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 flex items-center gap-1">
+            ÷${step.divisor} <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </span>
+          <span class="text-indigo-900">${renderVerticalFractionHtml(step.whole, step.nNum, step.nDen)}</span>
+        </div>
+      `).join('');
+
+      dandanHtml += `
+        <div class="mt-4 flex items-center justify-center">
+          <div class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-4 py-2 rounded-2xl text-sm font-extrabold flex items-center gap-2 shadow-sm">
+            <i class="fa-solid fa-check text-emerald-600"></i>
+            <span>最簡分數結果：</span>
+            <span class="text-emerald-950 text-base">${renderVerticalFractionHtml(prob.whole, prob.finalNum, prob.finalDen)} ${prob.mixedAlt}</span>
+          </div>
+        </div>
+      `;
+      dandanContainer.innerHTML = dandanHtml;
+
+      // Render Meimei's Card
+      const meimeiContainer = document.getElementById('meimeiCardContent');
+      meimeiContainer.innerHTML = `
+        <!-- GCD Badge -->
+        <div class="flex justify-center">
+          <div class="bg-blue-50 border border-blue-200 px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold text-slate-700 flex items-center gap-2">
+            <span>分子分母最大公因數：</span>
+            <span class="bg-blue-100 text-blue-800 px-3 py-0.5 rounded-xl font-black">
+              (${prob.num}, ${prob.den}) = ${prob.gcd}
+            </span>
+          </div>
+        </div>
+
+        <!-- Single Step Equation -->
+        <div class="py-4 flex items-center justify-center gap-3 text-slate-800 text-lg sm:text-xl font-bold flex-wrap">
+          ${renderVerticalFractionHtml(prob.whole, prob.num, prob.den)}
+          <span class="px-3 py-1 bg-blue-600 text-white text-xs sm:text-sm font-extrabold rounded-full shadow-sm">
+            同除以 ${prob.gcd}
+          </span>
+          <span class="text-slate-400">=</span>
+          <span class="text-emerald-700 font-black text-xl">
+            ${renderVerticalFractionHtml(prob.whole, prob.finalNum, prob.finalDen)}
+          </span>
+          ${prob.mixedAlt ? `<span class="text-xs text-slate-500 font-normal self-center">${prob.mixedAlt}</span>` : ''}
+        </div>
+
+        <!-- Explanation text -->
+        <p class="text-center text-xs text-blue-700 font-semibold">
+          ${prob.num} 與 ${prob.den} 的最大公因數是 ${prob.gcd}，直接同除以 ${prob.gcd}！
+        </p>
+      `;
+    }
+
+    const quizData = [
+      {
+        id: 1,
+        question: "為什麼我們常用「最簡分數」來代表一整群等值分數呢？",
+        options: [
+          "因為它的分子和分母數字最小、最簡單，最容易感覺出佔全體的大小",
+          "因為它的分母一定必須是 10 或 100",
+          "因為它的數值比其他等值分數都還要大",
+          "因為只有電腦才能計算最簡分數"
+        ],
+        answerIndex: 0,
+        explanation: "最簡分數的分子與分母最小且無法再約分，讓人一眼就能掌握比例（例如 2/5 容易看出快接近一半，而 240/600 數字太大很難直觀感受）。"
+      },
+      {
+        id: 2,
+        question: "下列哪一個分數已經是「最簡分數」了？",
+        options: [
+          `<span class="math-expr"><span class="fraction"><span class="numerator">14</span><span class="denominator">20</span></span></span>`,
+          `<span class="math-expr"><span class="fraction"><span class="numerator">7</span><span class="denominator">10</span></span></span>`,
+          `<span class="math-expr"><span class="fraction"><span class="numerator">35</span><span class="denominator">50</span></span></span>`,
+          `<span class="math-expr"><span class="fraction"><span class="numerator">70</span><span class="denominator">100</span></span></span>`
+        ],
+        answerIndex: 1,
+        explanation: "7 和 10 只有公因數 1（互質），無法再約分，因此 7/10 是最簡分數；其餘各選項都還可以用 2 或 5 繼續約分。"
+      },
+      {
+        id: 3,
+        question: "將帶分數 <span class=\"math-expr\"><span class=\"fraction-whole\">2</span><span class=\"fraction\"><span class=\"numerator\">150</span><span class=\"denominator\">400</span></span></span> 約成最簡分數，下列敘述何者正確？",
+        options: [
+          "整數 2 和分子 150 也要一起約分",
+          "約分後的整數部分會消失",
+          "整數 2 維持不變，只將分數部分約成最簡分數得 <span class=\"math-expr\"><span class=\"fraction-whole\">2</span><span class=\"fraction\"><span class=\"numerator\">3</span><span class=\"denominator\">8</span></span></span>",
+          "直接把 150 和 400 的 0 劃掉即可，答案為 <span class=\"math-expr\"><span class=\"fraction-whole\">2</span><span class=\"fraction\"><span class=\"numerator\">15</span><span class=\"denominator\">40</span></span></span>"
+        ],
+        answerIndex: 2,
+        explanation: "帶分數約分時，整數部分保持不變！150 與 400 的最大公因數是 50，同除以 50 後為 3/8，故為 2又3/8。"
+      },
+      {
+        id: 4,
+        question: "將假分數 <span class=\"math-expr\"><span class=\"fraction\"><span class=\"numerator\">63</span><span class=\"denominator\">49</span></span></span> 約成最簡分數，結果是多少？",
+        options: [
+          `<span class="math-expr"><span class="fraction"><span class="numerator">9</span><span class="denominator">7</span></span></span> (或 <span class="math-expr"><span class="fraction-whole\">1</span><span class="fraction"><span class="numerator">2</span><span class="denominator">7</span></span></span>)`,
+          `<span class="math-expr"><span class="fraction"><span class="numerator">7</span><span class="denominator">9</span></span></span>`,
+          `<span class="math-expr"><span class="fraction"><span class="numerator">21</span><span class="denominator">7</span></span></span>`,
+          `<span class="math-expr"><span class="fraction"><span class="numerator">3</span><span class="denominator">2</span></span></span>`
+        ],
+        answerIndex: 0,
+        explanation: "63 與 49 的最大公因數是 7。63÷7=9，49÷7=7，約分成最簡假分數為 9/7（換成最簡帶分數為 1又2/7）。"
+      },
+      {
+        id: 5,
+        question: "當一個分數的分子和分母「沒有大於 1 的公因數」時，代表什麼意思？",
+        options: [
+          "分子和分母互質，這個分數是最簡分數",
+          "這個分數不能用圖形畫出來",
+          "這個分數一定大於 1",
+          "計算錯誤，一定還能找到公倍數約分"
+        ],
+        answerIndex: 0,
+        explanation: "沒有大於 1 的公因數即代表「分子與分母互質」，此時分數無法再約分，稱為最簡分數。"
+      }
+    ];
+
+    let userAnswers = {};
+    let isQuizSubmitted = false;
+
+    function renderQuiz() {
+      const container = document.getElementById('quizList');
+      container.innerHTML = quizData.map((q, idx) => {
+        return `
+          <div class="p-5 rounded-2xl bg-white/90 border border-slate-200 shadow-sm" id="quiz-card-${idx}">
+            <div class="font-bold text-slate-800 text-base mb-3 flex items-start gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-sm font-black shrink-0">第 ${idx + 1} 題</span>
+              <span>${q.question}</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${q.options.map((opt, optIdx) => `
+                <button onclick="handleSelectQuiz(${idx}, ${optIdx})" 
+                        id="opt-btn-${idx}-${optIdx}"
+                        class="quiz-option-btn text-left p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-blue-50/80 hover:border-blue-300 text-slate-700 text-sm font-medium transition flex items-center gap-2">
+                  <span id="opt-badge-${idx}-${optIdx}" class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">${['A', 'B', 'C', 'D'][optIdx]}</span>
+                  <span class="flex-1">${opt}</span>
+                </button>
+              `).join('')}
+            </div>
+            <!-- Feedback section -->
+            <div id="quiz-feedback-${idx}" class="mt-3 p-3 rounded-xl hidden text-xs leading-relaxed"></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleSelectQuiz(qIdx, selectedOptIdx) {
+      if (isQuizSubmitted) return;
+      const q = quizData[qIdx];
+      userAnswers[qIdx] = selectedOptIdx;
+
+      // Highlight selected option before submission
+      for (let i = 0; i < q.options.length; i++) {
+        const btn = document.getElementById(`opt-btn-${qIdx}-${i}`);
+        const badge = document.getElementById(`opt-badge-${qIdx}-${i}`);
+        if (i === selectedOptIdx) {
+          btn.className = "quiz-option-btn text-left p-3 rounded-xl border-2 border-blue-500 bg-blue-50 text-blue-900 text-sm font-bold transition flex items-center gap-2";
+          badge.className = "w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0";
+        } else {
+          btn.className = "quiz-option-btn text-left p-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-blue-50/80 hover:border-blue-300 text-slate-700 text-sm font-medium transition flex items-center gap-2";
+          badge.className = "w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0";
+        }
+      }
+    }
+
+    function submitQuiz() {
+      if (isQuizSubmitted) return;
+      isQuizSubmitted = true;
+
+      let correctCount = 0;
+
+      quizData.forEach((q, qIdx) => {
+        const selectedOptIdx = userAnswers[qIdx];
+        const feedbackBox = document.getElementById(`quiz-feedback-${qIdx}`);
+        feedbackBox.className = "mt-3 p-3 rounded-xl text-xs leading-relaxed block";
+
+        // Lock all option buttons
+        for (let i = 0; i < q.options.length; i++) {
+          const btn = document.getElementById(`opt-btn-${qIdx}-${i}`);
+          btn.disabled = true;
+          btn.classList.remove('hover:bg-blue-50/80', 'hover:border-blue-300');
+        }
+
+        // Case 1: Unanswered (blank)
+        if (selectedOptIdx === undefined) {
+          feedbackBox.classList.add('bg-amber-50', 'border', 'border-amber-300', 'text-amber-800', 'font-bold');
+          feedbackBox.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-500 mr-1 text-sm"></i> 未作答。`;
+        } 
+        // Case 2: Answered Correctly
+        else if (selectedOptIdx === q.answerIndex) {
+          correctCount++;
+          const correctBtn = document.getElementById(`opt-btn-${qIdx}-${selectedOptIdx}`);
+          const correctBadge = document.getElementById(`opt-badge-${qIdx}-${selectedOptIdx}`);
+          correctBtn.className = "quiz-option-btn text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-100 text-emerald-900 text-sm font-bold transition flex items-center gap-2";
+          correctBadge.className = "w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0";
+
+          feedbackBox.classList.add('bg-emerald-50', 'border', 'border-emerald-300', 'text-emerald-900');
+          feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1 text-sm"></i> <strong>答對了！</strong> 解析：${q.explanation}`;
+        } 
+        // Case 3: Answered Incorrectly
+        else {
+          const wrongBtn = document.getElementById(`opt-btn-${qIdx}-${selectedOptIdx}`);
+          const wrongBadge = document.getElementById(`opt-badge-${qIdx}-${selectedOptIdx}`);
+          wrongBtn.className = "quiz-option-btn text-left p-3 rounded-xl border-2 border-rose-400 bg-rose-100 text-rose-900 text-sm font-bold transition flex items-center gap-2";
+          wrongBadge.className = "w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xs shrink-0";
+
+          const correctBtn = document.getElementById(`opt-btn-${qIdx}-${q.answerIndex}`);
+          const correctBadge = document.getElementById(`opt-badge-${qIdx}-${q.answerIndex}`);
+          correctBtn.className = "quiz-option-btn text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-900 text-sm font-bold transition flex items-center gap-2";
+          correctBadge.className = "w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0";
+
+          feedbackBox.classList.add('bg-rose-50', 'border', 'border-rose-300', 'text-rose-900');
+          feedbackBox.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-500 mr-1 text-sm"></i> <strong>答錯了！正確答案為 (${['A', 'B', 'C', 'D'][q.answerIndex]})。</strong> 解析：${q.explanation}`;
+        }
+      });
+
+      const totalScore = correctCount * 20;
+      document.getElementById('quizScoreBadge').innerText = `得分：${totalScore} / 100`;
+
+      const submitBtn = document.getElementById('submitQuizBtn');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      isQuizSubmitted = false;
+      renderQuiz();
+      document.getElementById('quizScoreBadge').innerText = `得分：0 / 100`;
+      const submitBtn = document.getElementById('submitQuizBtn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    window.onload = function() {
+      // Initialize Concept View
+      updateConceptView(0);
+      // Initialize Reduction Problem with Example 1
+      selectProblem('ex1');
+      // Initialize Tab 3 Challenge Cards
+      renderChallengeCards();
+      // Initialize Quiz
+      renderQuiz();
+    };
+  </script>
+</body>
+</html>

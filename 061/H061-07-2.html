@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>繪製放大圖與縮小圖探究學習網</title>
+  <!-- Google Fonts: 思源黑體 Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 圖示 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 新海誠風格動態背景：碧藍天際、柔白光暈與微風漸層 */
+    body {
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #1d4e89 0%, #3a7bd5 35%, #68d8d6 75%, #e1f5fe 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    /* 雲霧光影透光卡片 */
+    .shinkai-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px rgba(15, 76, 129, 0.15);
+    }
+
+    /* 標準國小數學直式分數樣式：分子上、分母下、中間橫線、垂直置中 */
+    .math-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 3px;
+      line-height: 1.1;
+      font-weight: bold;
+    }
+    .math-fraction .numerator {
+      border-bottom: 1.5px solid currentColor;
+      padding-bottom: 1px;
+    }
+    .math-fraction .denominator {
+      padding-top: 1px;
+    }
+    .fraction-container {
+      display: inline-flex;
+      align-items: center;
+      line-height: normal;
+    }
+
+    /* 方格畫布樣式 */
+    canvas {
+      display: block;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* 導覽標籤頁切換 */
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 text-slate-800">
+
+  <!-- 頂部導航與標題 -->
+  <header class="max-w-6xl mx-auto mb-6">
+    <div class="shinkai-card rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center text-center gap-5 border-b-4 border-sky-400">
+      <!-- 頂部膠囊標籤徽章 (對應圖3) -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-sky-900 via-indigo-900 to-sky-900 border border-sky-300/60 shadow-sm">
+        <i class="fa-solid fa-wand-magic-sparkles text-amber-300 text-xs md:text-sm"></i>
+        <span class="text-xs md:text-sm font-bold tracking-wider text-amber-300">國小六上數學 7-2 互動學習網頁</span>
+      </div>
+
+      <!-- 標題區塊 (圖1，置中顯示) -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-md shrink-0">
+          <i class="fa-solid fa-shapes"></i>
+        </div>
+        <div class="text-center sm:text-left">
+          <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-wide">
+            繪製放大圖與縮小圖探究學習網
+          </h1>
+          <p class="text-xs md:text-sm text-sky-800 font-medium mt-0.5">
+            探索幾何縮放規律：對應邊長成比例，對應角永遠不變！
+          </p>
+        </div>
+      </div>
+
+      <!-- 功能標籤頁按鈕 (圖2，置中顯示於標題下方) -->
+      <nav class="flex flex-wrap items-center justify-center gap-2 w-full">
+        <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 bg-white/70 hover:bg-sky-100 text-sky-900">
+          <i class="fa-solid fa-vector-square"></i> 1.長方形與直角三角形
+        </button>
+        <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 bg-white/70 hover:bg-sky-100 text-sky-900">
+          <i class="fa-solid fa-draw-polygon"></i> 2.任意三角形的高與縮放
+        </button>
+        <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-btn px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 bg-white/70 hover:bg-sky-100 text-sky-900">
+          <i class="fa-solid fa-chart-pie"></i> 3.圓形與扇形放大
+        </button>
+        <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-btn px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 bg-white/70 hover:bg-sky-100 text-sky-900">
+          <i class="fa-solid fa-clipboard-check"></i> 4.隨堂測驗
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主內容容器 -->
+  <main class="max-w-6xl mx-auto space-y-6">
+
+    <!-- ==================== 標籤頁 1: 長方形與直角三角形 ==================== -->
+    <section id="tab1" class="tab-content block">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- 控制與探究引導面板 -->
+        <div class="lg:col-span-4 space-y-4">
+          <div class="shinkai-card rounded-2xl p-5 border-l-4 border-sky-500">
+            <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-sky-600"></i> 動態縮放控制器
+            </h2>
+            
+            <!-- 圖形切換 -->
+            <div class="mb-4">
+              <label class="block text-xs font-bold text-slate-600 mb-1">選擇觀察圖形：</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="setTab1Shape('rect')" id="tab1-btn-rect" class="py-2 px-3 rounded-lg text-sm font-semibold border-2 border-sky-500 bg-sky-50 text-sky-700 flex items-center justify-center gap-1">
+                  <i class="fa-regular fa-square"></i> 長方形
+                </button>
+                <button onclick="setTab1Shape('triangle')" id="tab1-btn-tri" class="py-2 px-3 rounded-lg text-sm font-semibold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-play -rotate-90"></i> 直角三角形
+                </button>
+              </div>
+            </div>
+
+            <!-- 倍數滑桿 -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <label class="text-sm font-bold text-slate-700">目標圖形倍數：</label>
+                <span id="tab1-scale-badge" class="px-2.5 py-1 bg-sky-100 text-sky-800 rounded-lg text-sm font-black">
+                  3 倍放大圖
+                </span>
+              </div>
+              <input type="range" id="tab1-scale-slider" min="1" max="4" step="1" value="3" class="w-full accent-sky-600 cursor-pointer h-2 bg-sky-200 rounded-lg">
+              <div class="flex justify-between text-xs text-slate-500 font-medium">
+                <span>1倍(原圖)</span>
+                <span>2倍</span>
+                <span>3倍</span>
+                <span>4倍</span>
+              </div>
+            </div>
+
+            <!-- 互為放大縮小切換觀察 -->
+            <div class="mt-4 pt-4 border-t border-slate-200 space-y-2">
+              <div class="text-xs font-bold text-slate-600">觀察互為關係：</div>
+              <div class="p-3 bg-sky-50 rounded-xl text-sm leading-relaxed text-slate-700">
+                <div id="tab1-relation-desc">
+                  長方形 EFGH 是 ABCD 的 <b>3</b> 倍放大圖；<br>
+                  反過來說，長方形 ABCD 是 EFGH 的
+                  <span class="fraction-container text-sky-700 font-bold">
+                    <span class="math-fraction"><span class="numerator">1</span><span class="denominator">3</span></span>
+                  </span>
+                  倍縮小圖。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 教學關鍵小叮嚀卡片 -->
+          <div class="shinkai-card rounded-2xl p-5 border-l-4 border-amber-400">
+            <h3 class="font-bold text-amber-800 flex items-center gap-2 mb-2 text-sm">
+              <i class="fa-solid fa-lightbulb"></i> 課本核心關鍵發現
+            </h3>
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4 leading-normal">
+              <li><b>對應角：</b>無論放大或縮小多少倍，對應角皆<b>保持不變</b>（如直角恆為 90°）。</li>
+              <li><b>對應邊長：</b>每個對應邊長均擴大為相同的倍數。直角三角形的斜邊也會自動縮放相同倍數！</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 畫布與動態數據顯示 -->
+        <div class="lg:col-span-8 space-y-4">
+          <div class="shinkai-card rounded-2xl p-4">
+            <div class="flex flex-wrap justify-between items-center mb-3 pb-2 border-b border-slate-200 gap-2">
+              <span class="text-sm font-black text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-border-all text-sky-600"></i> 方格紙比對（1小格代表 1cm × 1cm）
+              </span>
+              <div class="flex items-center gap-4 text-xs">
+                <span class="flex items-center gap-1.5 font-bold text-emerald-700">
+                  <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-500"></span> 原圖 (ABCD)
+                </span>
+                <span class="flex items-center gap-1.5 font-bold text-rose-700">
+                  <span class="inline-block w-3.5 h-3.5 rounded bg-rose-500"></span> 放大/縮小圖 (EFGH)
+                </span>
+              </div>
+            </div>
+
+            <!-- 方格畫布 (Canvas) -->
+            <div class="w-full overflow-x-auto bg-white rounded-xl shadow-inner p-1 border border-slate-200">
+              <canvas id="canvas-tab1" width="680" height="340" class="w-full max-w-full rounded"></canvas>
+            </div>
+
+            <!-- 即時數據對照卡 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4" id="tab1-metrics">
+              <!-- 動態由 JS 渲染數據 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 標籤頁 2: 任意三角形的高與縮放 ==================== -->
+    <section id="tab2" class="tab-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-4 space-y-4">
+          <div class="shinkai-card rounded-2xl p-5 border-l-4 border-indigo-500">
+            <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-compass-drafting text-indigo-600"></i> 三角形縮放與「高」
+            </h2>
+            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+              當遇到<b>非直角三角形</b>時，可沿著「高」將其分割成左、右兩個直角三角形，再分別繪製縮小或放大圖！
+            </p>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">縮放倍數選擇：</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button onclick="setTab2Scale(0.5)" id="tab2-scale-half" class="py-2 px-2 text-xs font-bold rounded-lg border-2 border-indigo-500 bg-indigo-50 text-indigo-700 flex items-center justify-center">
+                    <span class="fraction-container"><span class="math-fraction"><span class="numerator">1</span><span class="denominator">2</span></span>倍縮小</span>
+                  </button>
+                  <button onclick="setTab2Scale(1)" id="tab2-scale-1" class="py-2 px-2 text-xs font-bold rounded-lg border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center">
+                    1 倍 (原圖)
+                  </button>
+                  <button onclick="setTab2Scale(1.5)" id="tab2-scale-1half" class="py-2 px-2 text-xs font-bold rounded-lg border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center">
+                    1.5 倍放大
+                  </button>
+                </div>
+              </div>
+
+              <!-- 顯示高分割線開關 -->
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-amber-900">
+                  <input type="checkbox" id="tab2-show-height" checked onchange="drawTab2()" class="w-4 h-4 accent-amber-600">
+                  <span>顯示垂直高線（AM 與 DN）與輔助直角分割</span>
+                </label>
+              </div>
+
+              <!-- 幾何數據推論 -->
+              <div class="p-4 bg-sky-50 rounded-xl text-xs space-y-2 border border-sky-100">
+                <div class="font-bold text-sky-900">課本重點提問驗證：</div>
+                <div class="text-slate-700">
+                  原圖高 AM = 4 公分，底邊 BC = 8 公分。<br>
+                  當繪製 
+                  <span class="fraction-container text-sky-800 font-bold">
+                    <span class="math-fraction"><span class="numerator">1</span><span class="denominator">2</span></span>
+                  </span>
+                  縮小圖時：
+                  <ul class="list-disc pl-4 mt-1 space-y-1">
+                    <li>縮小圖的高 DN 是不是 AM 的 
+                      <span class="fraction-container font-bold">
+                        <span class="math-fraction"><span class="numerator">1</span><span class="denominator">2</span></span>
+                      </span> 
+                      倍？ <span class="font-black text-emerald-600"><i class="fa-solid fa-circle-check"></i> 是（2公分）</span>
+                    </li>
+                    <li>底邊 EF = 4 公分（8 × 
+                      <span class="fraction-container font-bold">
+                        <span class="math-fraction"><span class="numerator">1</span><span class="denominator">2</span></span>
+                      </span>）
+                    </li>
+                    <li>形狀完全相似，內部所有對應線段均成等倍縮放！</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8 space-y-4">
+          <div class="shinkai-card rounded-2xl p-4">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-200">
+              <span class="text-sm font-black text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-draw-polygon text-indigo-600"></i> 任意三角形的高與底邊切割探索
+              </span>
+              <!-- 增加原圖與放大/縮小圖的顏色標示 -->
+              <div class="flex items-center gap-4 text-xs">
+                <span class="flex items-center gap-1.5 font-bold text-sky-700">
+                  <span class="inline-block w-3.5 h-3.5 rounded bg-sky-500"></span> 原圖 (ABC)
+                </span>
+                <span class="flex items-center gap-1.5 font-bold text-rose-700">
+                  <span class="inline-block w-3.5 h-3.5 rounded bg-rose-500"></span> 縮放圖 (DEF)
+                </span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto bg-white rounded-xl shadow-inner p-1 border border-slate-200">
+              <canvas id="canvas-tab2" width="680" height="340" class="w-full max-w-full rounded"></canvas>
+            </div>
+            <div class="mt-4 p-3 bg-slate-50 rounded-xl flex flex-wrap justify-around text-center text-xs text-slate-600 gap-2">
+              <div>原三角形底邊 BC：<b class="text-sky-700 text-sm">8 cm</b></div>
+              <div>原三角形高 AM：<b class="text-amber-600 text-sm">4 cm</b></div>
+              <div>目標三角形底邊 EF：<b id="tab2-stat-base" class="text-rose-600 text-sm">4 cm</b></div>
+              <div>目標三角形高 DN：<b id="tab2-stat-height" class="text-rose-600 text-sm">2 cm</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 標籤頁 3: 圓形與扇形放大 ==================== -->
+    <section id="tab3" class="tab-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-4 space-y-4">
+          <div class="shinkai-card rounded-2xl p-5 border-l-4 border-teal-500">
+            <h2 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-pizza-slice text-teal-600"></i> 圓形與扇形放大探究
+            </h2>
+            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+              影印機將邊長 1 公分的方格紙影印放大時，圓形與扇形會產生什麼驚人變化？
+            </p>
+
+            <div class="space-y-4">
+              <!-- 增加 45度扇形與自訂角度扇形按鈕 -->
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">選擇形狀：</label>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="setTab3Shape('circle')" id="tab3-btn-cir" class="py-2 px-2 rounded-lg text-xs font-bold border-2 border-emerald-500 bg-emerald-50 text-emerald-800 flex items-center justify-center gap-1">
+                    <i class="fa-regular fa-circle"></i> 圓形 (半徑1cm)
+                  </button>
+                  <button onclick="setTab3Shape('sector90')" id="tab3-btn-sec90" class="py-2 px-2 rounded-lg text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-chart-pie"></i> 90° 扇形
+                  </button>
+                  <button onclick="setTab3Shape('sector45')" id="tab3-btn-sec45" class="py-2 px-2 rounded-lg text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-pie-chart"></i> 45° 扇形(思考帽)
+                  </button>
+                  <button onclick="setTab3Shape('custom')" id="tab3-btn-custom" class="py-2 px-2 rounded-lg text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-sliders"></i> 自訂角度扇形
+                  </button>
+                </div>
+              </div>
+
+              <!-- 自訂角度滑桿 (預設隱藏，選擇自訂時顯示) -->
+              <div id="tab3-custom-angle-box" class="hidden p-3 bg-indigo-50 rounded-xl border border-indigo-200 space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <label class="font-bold text-indigo-900">自訂圓心角：</label>
+                  <span id="tab3-custom-angle-val" class="font-black text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-200">60°</span>
+                </div>
+                <input type="range" id="tab3-custom-angle-slider" min="15" max="300" step="5" value="60" class="w-full accent-indigo-600 cursor-pointer h-2 bg-indigo-200 rounded-lg">
+                <div class="flex justify-between text-[10px] text-slate-500">
+                  <span>15°</span>
+                  <span>90°</span>
+                  <span>180°</span>
+                  <span>300°</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="text-xs font-bold text-slate-700">影印放大倍數：</label>
+                  <span id="tab3-scale-label" class="px-2 py-0.5 bg-rose-100 text-rose-800 rounded font-black text-xs">3 倍放大</span>
+                </div>
+                <input type="range" id="tab3-scale-slider" min="1" max="4" step="1" value="3" class="w-full accent-rose-600 cursor-pointer h-2 bg-rose-100 rounded-lg">
+                <div class="flex justify-between text-xs text-slate-500">
+                  <span>1倍(原圖)</span>
+                  <span>2倍</span>
+                  <span>3倍</span>
+                  <span>4倍</span>
+                </div>
+              </div>
+
+              <!-- 思考帽問題提示 -->
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs space-y-2">
+                <div class="font-bold text-amber-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-hat-cowboy text-amber-600"></i> 課本思考帽大哉問：
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                  將一個圓心角 <b>45°</b>、半徑 <b>2cm</b> 的扇形畫出 <b>2 倍放大圖</b>：<br>
+                  1. 放大後<b>圓心角</b>是幾度？ <b>依然是 45°</b>（角度不變！）<br>
+                  2. 放大後<b>半徑</b>是幾公分？ <b>2 × 2 = 4 公分</b>。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8 space-y-4">
+          <div class="shinkai-card rounded-2xl p-4">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-200">
+              <span class="text-sm font-black text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-maximize text-teal-600"></i> 原圖與放大圖即時視覺對照
+              </span>
+              <!-- 鮮明對比的顏色標示 -->
+              <div class="flex gap-4 text-xs font-bold">
+                <span class="flex items-center gap-1.5 text-emerald-700">
+                  <span class="inline-block w-3.5 h-3.5 rounded-full bg-emerald-500"></span> 原圖 (綠色)
+                </span>
+                <span class="flex items-center gap-1.5 text-rose-700">
+                  <span class="inline-block w-3.5 h-3.5 rounded-full bg-rose-500"></span> 放大圖 (粉紅色)
+                </span>
+              </div>
+            </div>
+            <div class="w-full overflow-x-auto bg-white rounded-xl shadow-inner p-1 border border-slate-200">
+              <canvas id="canvas-tab3" width="680" height="340" class="w-full max-w-full rounded"></canvas>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mt-4 text-center">
+              <div class="p-3 bg-rose-50 rounded-xl border border-rose-100">
+                <div class="text-xs text-slate-500 font-semibold">放大後半徑</div>
+                <div id="tab3-stat-r" class="text-lg font-black text-rose-700 mt-0.5">3 cm</div>
+              </div>
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-100">
+                <div class="text-xs text-slate-500 font-semibold">放大後圓心角</div>
+                <div id="tab3-stat-deg" class="text-lg font-black text-amber-700 mt-0.5">90° (不變)</div>
+              </div>
+              <div class="p-3 bg-sky-50 rounded-xl border border-sky-100">
+                <div class="text-xs text-slate-500 font-semibold">半徑放大倍數</div>
+                <div id="tab3-stat-times" class="text-lg font-black text-sky-700 mt-0.5">3 倍</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 標籤頁 4: 隨堂測驗 ==================== -->
+    <section id="tab4" class="tab-content hidden">
+      <div class="shinkai-card rounded-2xl p-6 max-w-4xl mx-auto border-t-4 border-sky-500">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-slate-200 gap-3">
+          <div>
+            <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-sky-600"></i> 隨堂測驗
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">請完成作答後點擊「提交答案」，系統將立即進行批改與解析！</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-600">測驗進度：</span>
+            <span id="quiz-score-badge" class="px-3 py-1 bg-sky-100 text-sky-800 font-black rounded-full text-sm">
+              尚未提交
+            </span>
+          </div>
+        </div>
+
+        <!-- 5 題測驗題目容器 -->
+        <div class="space-y-6" id="quiz-container">
+          <!-- 測驗內容由 JS 自動產生 -->
+        </div>
+
+        <!-- 提交答案與重新測驗按鈕 (大小相同並排置中) -->
+        <div class="mt-8 pt-5 border-t border-slate-200 flex flex-wrap items-center justify-center gap-4">
+          <button onclick="submitQuiz()" class="w-40 py-2.5 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-40 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-300 transition text-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate-right"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 互動腳本邏輯 -->
+  <script>
+    /* ========================================================================
+       1. 分頁切換與共用網格繪製工具
+       ======================================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('block');
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      const activeTab = document.getElementById(tabId);
+      if (activeTab) {
+        activeTab.classList.remove('hidden');
+        activeTab.classList.add('block');
+      }
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      if (tabId === 'tab1') drawTab1();
+      if (tabId === 'tab2') drawTab2();
+      if (tabId === 'tab3') drawTab3();
+    }
+
+    function drawGrid(ctx, width, height, gridSize) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+
+      for (let x = 0; x <= width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      // 左上角 1cm 比例尺標示
+      ctx.save();
+      ctx.strokeStyle = '#64748b';
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(gridSize, 4);
+      ctx.lineTo(gridSize * 2, 4);
+      ctx.moveTo(4, gridSize);
+      ctx.lineTo(4, gridSize * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#475569';
+      ctx.font = 'bold 11px "Noto Sans TC", sans-serif';
+      ctx.fillText('1cm', gridSize + 3, 14);
+      ctx.restore();
+    }
+
+    /* ========================================================================
+       2. 標籤頁 1：長方形與直角三角形動態縮放
+       ======================================================================== */
+    let tab1Shape = 'rect';
+    let tab1Scale = 3;
+
+    function setTab1Shape(shape) {
+      tab1Shape = shape;
+      const btnRect = document.getElementById('tab1-btn-rect');
+      const btnTri = document.getElementById('tab1-btn-tri');
+      if (shape === 'rect') {
+        btnRect.className = "py-2 px-3 rounded-lg text-sm font-semibold border-2 border-sky-500 bg-sky-50 text-sky-700 flex items-center justify-center gap-1";
+        btnTri.className = "py-2 px-3 rounded-lg text-sm font-semibold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1";
+      } else {
+        btnTri.className = "py-2 px-3 rounded-lg text-sm font-semibold border-2 border-sky-500 bg-sky-50 text-sky-700 flex items-center justify-center gap-1";
+        btnRect.className = "py-2 px-3 rounded-lg text-sm font-semibold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1";
+      }
+      updateTab1();
+    }
+
+    document.getElementById('tab1-scale-slider').addEventListener('input', function(e) {
+      tab1Scale = parseInt(e.target.value, 10);
+      updateTab1();
+    });
+
+    function updateTab1() {
+      const badge = document.getElementById('tab1-scale-badge');
+      const desc = document.getElementById('tab1-relation-desc');
+      const metrics = document.getElementById('tab1-metrics');
+
+      badge.innerText = tab1Scale === 1 ? '1 倍 (與原圖全等)' : `${tab1Scale} 倍放大圖`;
+
+      const shapeName = tab1Shape === 'rect' ? '長方形' : '直角三角形';
+      const origLabel = tab1Shape === 'rect' ? 'ABCD' : 'ABC';
+      const targetLabel = tab1Shape === 'rect' ? 'EFGH' : 'DEF';
+
+      if (tab1Scale === 1) {
+        desc.innerHTML = `${shapeName} ${targetLabel} 與 ${origLabel} 大小完全相同（<b>1</b> 倍全等圖）。`;
+      } else {
+        desc.innerHTML = `
+          ${shapeName} ${targetLabel} 是 ${origLabel} 的 <b>${tab1Scale}</b> 倍放大圖；<br>
+          反過來說，${shapeName} ${origLabel} 是 ${targetLabel} 的
+          <span class="fraction-container text-sky-700 font-bold">
+            <span class="math-fraction"><span class="numerator">1</span><span class="denominator">${tab1Scale}</span></span>
+          </span>
+          倍縮小圖。
+        `;
+      }
+
+      if (tab1Shape === 'rect') {
+        const w1 = 3, h1 = 2;
+        const w2 = w1 * tab1Scale, h2 = h1 * tab1Scale;
+        metrics.innerHTML = `
+          <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">原圖長 (AD)</div>
+            <div class="text-base font-black text-emerald-700">${w1} cm</div>
+          </div>
+          <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">原圖寬 (AB)</div>
+            <div class="text-base font-black text-emerald-700">${h1} cm</div>
+          </div>
+          <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">目標長 (EH)</div>
+            <div class="text-base font-black text-rose-700">${w2} cm</div>
+          </div>
+          <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">目標寬 (EF)</div>
+            <div class="text-base font-black text-rose-700">${h2} cm</div>
+          </div>
+        `;
+      } else {
+        const b1 = 3, h1 = 2;
+        const b2 = b1 * tab1Scale, h2 = h1 * tab1Scale;
+        metrics.innerHTML = `
+          <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">原圖底邊 (BC)</div>
+            <div class="text-base font-black text-emerald-700">${b1} cm</div>
+          </div>
+          <div class="p-2.5 bg-emerald-50 rounded-xl border border-emerald-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">原圖高邊 (AB)</div>
+            <div class="text-base font-black text-emerald-700">${h1} cm</div>
+          </div>
+          <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">目標底邊 (EF)</div>
+            <div class="text-base font-black text-rose-700">${b2} cm</div>
+          </div>
+          <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200 text-center">
+            <div class="text-[11px] text-slate-500 font-bold">目標高邊 (DE)</div>
+            <div class="text-base font-black text-rose-700">${h2} cm</div>
+          </div>
+        `;
+      }
+
+      drawTab1();
+    }
+
+    function drawTab1() {
+      const canvas = document.getElementById('canvas-tab1');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const g = 34; // 1格 = 34px (寬20格 x 高10格)
+      drawGrid(ctx, canvas.width, canvas.height, g);
+
+      ctx.font = 'bold 14px "Noto Sans TC", sans-serif';
+
+      if (tab1Shape === 'rect') {
+        // 原圖 ABCD (3x2)
+        const ox = 2 * g, oy = 2 * g, ow = 3 * g, oh = 2 * g;
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+        ctx.strokeStyle = '#059669';
+        ctx.lineWidth = 3;
+        ctx.fillRect(ox, oy, ow, oh);
+        ctx.strokeRect(ox, oy, ow, oh);
+
+        ctx.fillStyle = '#065f46';
+        ctx.fillText('A', ox - 14, oy - 4);
+        ctx.fillText('B', ox - 14, oy + oh + 14);
+        ctx.fillText('C', ox + ow + 4, oy + oh + 14);
+        ctx.fillText('D', ox + ow + 4, oy - 4);
+
+        // 放大圖 EFGH
+        const tx = 7 * g, ty = 1 * g, tw = 3 * tab1Scale * g, th = 2 * tab1Scale * g;
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+        ctx.strokeStyle = '#e11d48';
+        ctx.lineWidth = 3;
+        ctx.fillRect(tx, ty, tw, th);
+        ctx.strokeRect(tx, ty, tw, th);
+
+        ctx.fillStyle = '#9f1239';
+        ctx.fillText('E', tx - 14, ty - 4);
+        ctx.fillText('F', tx - 14, ty + th + 14);
+        ctx.fillText('G', tx + tw + 4, ty + th + 14);
+        ctx.fillText('H', tx + tw + 4, ty - 4);
+      } else {
+        // 原圖直角三角形 ABC (底3, 高2)
+        const ox = 2 * g, oy = 2 * g, ow = 3 * g, oh = 2 * g;
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+        ctx.strokeStyle = '#059669';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(ox, oy + oh);
+        ctx.lineTo(ox + ow, oy + oh);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 直角記號
+        ctx.strokeRect(ox, oy + oh - 10, 10, 10);
+
+        ctx.fillStyle = '#065f46';
+        ctx.fillText('A', ox - 14, oy - 4);
+        ctx.fillText('B', ox - 14, oy + oh + 14);
+        ctx.fillText('C', ox + ow + 5, oy + oh + 14);
+
+        // 目標直角三角形 DEF
+        const tx = 7 * g, ty = 1 * g, tw = 3 * tab1Scale * g, th = 2 * tab1Scale * g;
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+        ctx.strokeStyle = '#e11d48';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(tx, ty + th);
+        ctx.lineTo(tx + tw, ty + th);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 直角記號
+        ctx.strokeRect(tx, ty + th - 10, 10, 10);
+
+        ctx.fillStyle = '#9f1239';
+        ctx.fillText('D', tx - 14, ty - 4);
+        ctx.fillText('E', tx - 14, ty + th + 14);
+        ctx.fillText('F', tx + tw + 5, ty + th + 14);
+      }
+    }
+
+    /* ========================================================================
+       3. 標籤頁 2：任意三角形的高與底邊切割探索
+       ======================================================================== */
+    let tab2Scale = 0.5;
+
+    function setTab2Scale(scale) {
+      tab2Scale = scale;
+      const btnHalf = document.getElementById('tab2-scale-half');
+      const btn1 = document.getElementById('tab2-scale-1');
+      const btn1Half = document.getElementById('tab2-scale-1half');
+
+      const inactiveClass = "py-2 px-2 text-xs font-bold rounded-lg border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center";
+      const activeClass = "py-2 px-2 text-xs font-bold rounded-lg border-2 border-indigo-500 bg-indigo-50 text-indigo-700 flex items-center justify-center";
+
+      btnHalf.className = scale === 0.5 ? activeClass : inactiveClass;
+      btn1.className = scale === 1 ? activeClass : inactiveClass;
+      btn1Half.className = scale === 1.5 ? activeClass : inactiveClass;
+
+      document.getElementById('tab2-stat-base').innerText = `${8 * scale} cm`;
+      document.getElementById('tab2-stat-height').innerText = `${4 * scale} cm`;
+
+      drawTab2();
+    }
+
+    function drawTab2() {
+      const canvas = document.getElementById('canvas-tab2');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const g = 30;
+      drawGrid(ctx, canvas.width, canvas.height, g);
+
+      const showHeight = document.getElementById('tab2-show-height').checked;
+      ctx.font = 'bold 14px "Noto Sans TC", sans-serif';
+
+      // 原三角形 ABC: A(6, 2), B(1, 6), C(9, 6), 垂足 M(6, 6) -> 底8格, 高4格
+      const ax = 6 * g, ay = 2 * g;
+      const bx = 1 * g, by = 6 * g;
+      const cx = 9 * g, cy = 6 * g;
+      const mx = 6 * g, my = 6 * g;
+
+      ctx.fillStyle = 'rgba(14, 165, 233, 0.18)';
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.lineTo(cx, cy);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      if (showHeight) {
+        ctx.save();
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(mx, my);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeRect(mx - 8, my - 8, 8, 8);
+        ctx.fillStyle = '#b45309';
+        ctx.fillText('M', mx - 6, my + 16);
+        ctx.restore();
+      }
+
+      ctx.fillStyle = '#0369a1';
+      ctx.fillText('A', ax - 5, ay - 6);
+      ctx.fillText('B', bx - 14, by + 5);
+      ctx.fillText('C', cx + 5, cy + 5);
+
+      // 縮放三角形 DEF (起始左側 E 固定在 x = 10 格)
+      const leftOffset = 5 * tab2Scale * g;
+      const rightOffset = 3 * tab2Scale * g;
+      const hOffset = 4 * tab2Scale * g;
+
+      const ex = 10 * g;
+      const dx = ex + leftOffset;
+      const fx = dx + rightOffset;
+      const dy = 2 * g;
+      const ey = dy + hOffset;
+      const fy = ey;
+      const nx = dx, ny = ey;
+
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+      ctx.strokeStyle = '#e11d48';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(dx, dy);
+      ctx.lineTo(ex, ey);
+      ctx.lineTo(fx, fy);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      if (showHeight) {
+        ctx.save();
+        ctx.strokeStyle = '#be123c';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(dx, dy);
+        ctx.lineTo(nx, ny);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeRect(nx - 8, ny - 8, 8, 8);
+        ctx.fillStyle = '#9f1239';
+        ctx.fillText('N', nx - 6, ny + 16);
+        ctx.restore();
+      }
+
+      ctx.fillStyle = '#9f1239';
+      ctx.fillText('D', dx - 5, dy - 6);
+      ctx.fillText('E', ex - 14, ey + 5);
+      ctx.fillText('F', fx + 5, fy + 5);
+    }
+
+    /* ========================================================================
+       4. 標籤頁 3：圓形與扇形放大探究
+       ======================================================================== */
+    let tab3Shape = 'circle';
+    let tab3Scale = 3;
+    let tab3CustomDeg = 60;
+
+    function setTab3Shape(shape) {
+      tab3Shape = shape;
+      const btns = {
+        circle: document.getElementById('tab3-btn-cir'),
+        sector90: document.getElementById('tab3-btn-sec90'),
+        sector45: document.getElementById('tab3-btn-sec45'),
+        custom: document.getElementById('tab3-btn-custom')
+      };
+
+      Object.keys(btns).forEach(key => {
+        if (key === shape) {
+          btns[key].className = "py-2 px-2 rounded-lg text-xs font-bold border-2 border-emerald-500 bg-emerald-50 text-emerald-800 flex items-center justify-center gap-1";
+        } else {
+          btns[key].className = "py-2 px-2 rounded-lg text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 flex items-center justify-center gap-1";
+        }
+      });
+
+      const customBox = document.getElementById('tab3-custom-angle-box');
+      if (shape === 'custom') {
+        customBox.classList.remove('hidden');
+      } else {
+        customBox.classList.add('hidden');
+      }
+
+      updateTab3();
+    }
+
+    document.getElementById('tab3-scale-slider').addEventListener('input', function(e) {
+      tab3Scale = parseInt(e.target.value, 10);
+      updateTab3();
+    });
+
+    document.getElementById('tab3-custom-angle-slider').addEventListener('input', function(e) {
+      tab3CustomDeg = parseInt(e.target.value, 10);
+      document.getElementById('tab3-custom-angle-val').innerText = `${tab3CustomDeg}°`;
+      updateTab3();
+    });
+
+    function updateTab3() {
+      document.getElementById('tab3-scale-label').innerText = tab3Scale === 1 ? '1 倍 (原圖)' : `${tab3Scale} 倍放大`;
+      document.getElementById('tab3-stat-r').innerText = `${1 * tab3Scale} cm`;
+      document.getElementById('tab3-stat-times').innerText = `${tab3Scale} 倍`;
+
+      let degText = '360° (整圓不變)';
+      if (tab3Shape === 'sector90') degText = '90° (不變)';
+      if (tab3Shape === 'sector45') degText = '45° (不變)';
+      if (tab3Shape === 'custom') degText = `${tab3CustomDeg}° (不變)`;
+      document.getElementById('tab3-stat-deg').innerText = degText;
+
+      drawTab3();
+    }
+
+    function drawTab3() {
+      const canvas = document.getElementById('canvas-tab3');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const g = 34;
+      drawGrid(ctx, canvas.width, canvas.height, g);
+
+      ctx.font = 'bold 13px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+
+      if (tab3Shape === 'circle') {
+        // 原圖圓心與半徑
+        const ox = 3 * g, oy = 5 * g, or = 1 * g;
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+        ctx.strokeStyle = '#059669';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(ox, oy, or, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 原圖十字直徑虛線（精確切齊圓周，不突出圓形範圍）
+        ctx.save();
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(ox - or, oy);
+        ctx.lineTo(ox + or, oy);
+        ctx.moveTo(ox, oy - or);
+        ctx.lineTo(ox, oy + or);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#065f46';
+        ctx.fillText('原圖 (半徑1cm)', ox, oy + or + 22);
+
+        // 放大圖圓心與半徑
+        const tx = 13 * g, ty = 5 * g, tr = tab3Scale * g;
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+        ctx.strokeStyle = '#e11d48';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(tx, ty, tr, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 放大圖十字直徑虛線（精確切齊圓周，不突出圓形範圍）
+        ctx.save();
+        ctx.strokeStyle = '#fb7185';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(tx - tr, ty);
+        ctx.lineTo(tx + tr, ty);
+        ctx.moveTo(tx, ty - tr);
+        ctx.lineTo(tx, ty + tr);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#9f1239';
+        ctx.fillText(`${tab3Scale}倍放大圖 (半徑${tab3Scale}cm)`, tx, ty + tr + 22);
+      } else {
+        let deg = 90;
+        if (tab3Shape === 'sector45') deg = 45;
+        if (tab3Shape === 'custom') deg = tab3CustomDeg;
+        const rad = (deg * Math.PI) / 180;
+
+        // 原圖扇形
+        const ox = 3 * g, oy = 6 * g, or = 1.5 * g;
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
+        ctx.strokeStyle = '#059669';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(ox, oy);
+        ctx.arc(ox, oy, or, -rad, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#065f46';
+        ctx.fillText(`原圖 (${deg}°, 半徑1cm)`, ox + 10, oy + 24);
+
+        // 放大圖扇形
+        const tx = 11 * g, ty = 6 * g, tr = 1.5 * tab3Scale * g;
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.22)';
+        ctx.strokeStyle = '#e11d48';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.arc(tx, ty, tr, -rad, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#9f1239';
+        ctx.fillText(`${tab3Scale}倍放大圖 (${deg}°, 半徑${tab3Scale}cm)`, tx + 30, ty + 24);
+      }
+      ctx.textAlign = 'left';
+    }
+
+    /* ========================================================================
+       5. 標籤頁 4：隨堂測驗 (5 題嚴密對應教材，含直式分數與提交邏輯)
+       ======================================================================== */
+    const quizQuestions = [
+      {
+        id: 1,
+        question: "長方形 EFGH 是長方形 ABCD 的 3 倍放大圖，那麼長方形 ABCD 是長方形 EFGH 的幾倍縮小圖？",
+        options: [
+          { text: "3 倍", frac: false, val: "A" },
+          { text: "分數", frac: true, num: "1", den: "3", suffix: "倍", val: "B" },
+          { text: "6 倍", frac: false, val: "C" },
+          { text: "分數", frac: true, num: "1", den: "9", suffix: "倍", val: "D" }
+        ],
+        answer: "B",
+        explain: `若圖形 EFGH 是圖形 ABCD 的 3 倍放大圖，則反過來說，圖形 ABCD 即為圖形 EFGH 的 <span class="fraction-container font-bold"><span class="math-fraction"><span class="numerator">1</span><span class="denominator">3</span></span></span> 倍縮小圖。`
+      },
+      {
+        id: 2,
+        question: "一個原本直角三角形的直角為 90 度，當把它畫成 4 倍放大圖時，放大後的對應直角會是多少度？",
+        options: [
+          { text: "90 度（角度保持不變）", frac: false, val: "A" },
+          { text: "360 度（90 × 4）", frac: false, val: "B" },
+          { text: "180 度", frac: false, val: "C" },
+          { text: "45 度", frac: false, val: "D" }
+        ],
+        answer: "A",
+        explain: "放大圖與縮小圖的關鍵性質是「形狀相同」：所有對應邊會放大或縮小相同倍數，但所有「對應角」的大小皆維持不變。"
+      },
+      {
+        id: 3,
+        question: "若三角形 ABC 的底邊為 8 公分、高為 4 公分，繪製其縮小圖時，縮小圖的高也是原圖高的多少倍？",
+        options: [
+          { text: "高不會跟著縮小", frac: false, val: "A" },
+          { text: "高會變成 2 倍", frac: false, val: "B" },
+          { text: "縮小倍數", frac: true, num: "1", den: "2", suffix: "倍（與邊長相同倍數）", val: "C" },
+          { text: "縮小倍數", frac: true, num: "1", den: "4", suffix: "倍", val: "D" }
+        ],
+        answer: "C",
+        explain: `縮小圖內部的所有對應線段（包含垂直高）都會與底邊成等比例縮放，因此縮小圖的高也是原圖高的 <span class="fraction-container font-bold"><span class="math-fraction"><span class="numerator">1</span><span class="denominator">2</span></span></span> 倍。`
+      },
+      {
+        id: 4,
+        question: "將邊長 1 公分的方格紙影印成 3 倍放大圖，方格紙上原本「半徑 1 公分」的圓，放大後的半徑會是多少公分？",
+        options: [
+          { text: "1 公分", frac: false, val: "A" },
+          { text: "2 公分", frac: false, val: "B" },
+          { text: "3 公分", frac: false, val: "C" },
+          { text: "9 公分", frac: false, val: "D" }
+        ],
+        answer: "C",
+        explain: "圓形經過 3 倍放大後，其半徑長度也會擴大為原本的 3 倍，即 1 × 3 = 3 公分。"
+      },
+      {
+        id: 5,
+        question: "【課本思考帽】甲圖是一個圓心角 45 度、半徑 2 公分的扇形。若畫出甲圖的 2 倍放大圖，其「圓心角」與「半徑」分別是多少？",
+        options: [
+          { text: "圓心角 90 度，半徑 4 公分", frac: false, val: "A" },
+          { text: "圓心角 45 度，半徑 4 公分", frac: false, val: "B" },
+          { text: "圓心角 45 度，半徑 2 公分", frac: false, val: "C" },
+          { text: "圓心角 90 度，半徑 2 公分", frac: false, val: "D" }
+        ],
+        answer: "B",
+        explain: "扇形放大時，圓心角屬於角度，會維持 45 度不變；而半徑屬於長度線段，須擴大 2 倍變為 2 × 2 = 4 公分。"
+      }
+    ];
+
+    let userAnswers = {};
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      container.innerHTML = '';
+
+      quizQuestions.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = "p-4 md:p-5 rounded-xl border border-slate-200 bg-white shadow-sm space-y-3";
+        card.id = `q-card-${q.id}`;
+
+        let optsHtml = q.options.map(opt => {
+          let labelText = "";
+          if (opt.frac) {
+            labelText = `
+              <span class="fraction-container">
+                <span class="math-fraction"><span class="numerator">${opt.num}</span><span class="denominator">${opt.den}</span></span>
+              </span> ${opt.suffix || ''}
+            `;
+          } else {
+            labelText = opt.text;
+          }
+
+          return `
+            <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 hover:bg-sky-50 cursor-pointer transition text-sm">
+              <input type="radio" name="question-${q.id}" value="${opt.val}" onchange="selectOption(${q.id}, '${opt.val}')" class="w-4 h-4 accent-sky-600">
+              <span class="font-medium text-slate-700">${labelText}</span>
+            </label>
+          `;
+        }).join('');
+
+        card.innerHTML = `
+          <div class="flex items-start gap-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-sky-100 text-sky-800 text-xs font-bold shrink-0">
+              ${index + 1}
+            </span>
+            <div class="font-bold text-slate-800 text-sm md:text-base leading-snug">
+              ${q.question}
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+            ${optsHtml}
+          </div>
+          <div id="feedback-${q.id}" class="hidden p-3 rounded-lg text-xs leading-relaxed mt-2"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectOption(qId, val) {
+      userAnswers[qId] = val;
+    }
+
+    function submitQuiz() {
+      let correct = 0;
+
+      quizQuestions.forEach(q => {
+        const selectedVal = userAnswers[q.id];
+        const fb = document.getElementById(`feedback-${q.id}`);
+        fb.classList.remove('hidden');
+
+        if (!selectedVal) {
+          // 空白未作答：僅顯示黃色系「未作答。」，不顯示其他說明與正確答案
+          fb.className = "p-3 rounded-lg text-xs font-bold leading-relaxed mt-2 bg-amber-50 text-amber-800 border border-amber-300";
+          fb.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-600 mr-1"></i> 未作答。`;
+        } else if (selectedVal === q.answer) {
+          correct++;
+          fb.className = "p-3 rounded-lg text-xs leading-relaxed mt-2 bg-emerald-50 text-emerald-800 border border-emerald-200";
+          fb.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> <b>答對了！</b> ${q.explain}`;
+        } else {
+          fb.className = "p-3 rounded-lg text-xs leading-relaxed mt-2 bg-rose-50 text-rose-800 border border-rose-200";
+          fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> <b>答錯了！</b> ${q.explain}`;
+        }
+      });
+
+      const score = Math.round((correct / quizQuestions.length) * 100);
+      const badge = document.getElementById('quiz-score-badge');
+      badge.innerText = `得分：${score} / 100`;
+      if (score === 100) {
+        badge.className = "px-3 py-1 bg-emerald-100 text-emerald-800 font-black rounded-full text-sm";
+      } else {
+        badge.className = "px-3 py-1 bg-sky-100 text-sky-800 font-black rounded-full text-sm";
+      }
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      renderQuiz();
+      const badge = document.getElementById('quiz-score-badge');
+      badge.innerText = "尚未提交";
+      badge.className = "px-3 py-1 bg-sky-100 text-sky-800 font-black rounded-full text-sm";
+    }
+
+    /* ========================================================================
+       6. 初始化與視窗響應
+       ======================================================================== */
+    window.onload = function() {
+      updateTab1();
+      setTab2Scale(0.5);
+      updateTab3();
+      renderQuiz();
+    };
+
+    window.addEventListener('resize', () => {
+      drawTab1();
+      drawTab2();
+      drawTab3();
+    });
+  </script>
+</body>
+</html>

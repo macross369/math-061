@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五、六年級數學：基準量與比較量探索館 (兩量差與逆求問題)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            shinkai: {
+              dawn: '#0F172A',
+              twilight: '#1E293B',
+              azure: '#38BDF8',
+              sunset: '#F97316',
+              cloud: '#F8FAFC',
+              pink: '#F472B6',
+              glow: '#38bdf8'
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+            math: ['"Noto Sans TC"', 'sans-serif'],
+            mono: ['"Noto Sans TC"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 全站統一使用思源黑體（排除 FontAwesome 圖示元素以避免圖示變方框） */
+    *:not(i):not(.fa):not(.fas):not(.far):not(.fab):not(.fa-solid):not(.fa-regular) {
+      font-family: 'Noto Sans TC', sans-serif !important;
+    }
+
+    .fa-solid, .fas {
+      font-family: "Font Awesome 6 Free" !important;
+      font-weight: 900 !important;
+    }
+
+    .fa-regular, .far {
+      font-family: "Font Awesome 6 Free" !important;
+      font-weight: 400 !important;
+    }
+
+    /* 新海誠風格：雲海、晨曦與暮光漸層背景 */
+    body {
+      background: linear-gradient(135deg, #091326 0%, #152642 35%, #2a3363 70%, #58335e 100%);
+      min-height: 100vh;
+      color: #F8FAFC;
+      font-family: 'Noto Sans TC', sans-serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 雲彩與微星光氛圍層 */
+    .sky-glow {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.18) 0%, transparent 40%),
+                  radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 玻璃擬態卡片容器 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.25), 0 0 20px rgba(56, 189, 248, 0.15);
+      color: #1E293B;
+    }
+
+    .glass-panel-dark {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* 國小數學標準直式分數排版 (純 HTML/CSS，非 LaTeX) */
+    .math-fraction {
+      display: inline-flex;
+      vertical-align: middle;
+      align-items: center;
+      margin: 0 3px;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-weight: 700;
+    }
+    .math-fraction .integer-part {
+      font-size: 1.15em;
+      margin-right: 3px;
+      line-height: 1;
+    }
+    .math-fraction .fraction-block {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      line-height: 1.1;
+      font-size: 0.9em;
+    }
+    .math-fraction .numerator {
+      border-bottom: 2px solid currentColor;
+      padding: 0 3px 1px 3px;
+      font-weight: 700;
+    }
+    .math-fraction .denominator {
+      padding: 1px 3px 0 3px;
+      font-weight: 700;
+    }
+
+    /* 刻度軌道與動態長條 */
+    .bar-transition {
+      transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s;
+    }
+
+    /* 自訂滑桿外觀 */
+    input[type=range] {
+      accent-color: #0284c7;
+    }
+
+    /* 微動態波紋 */
+    @keyframes pulse-soft {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.03); opacity: 1; }
+    }
+    .pulse-highlight {
+      animation: pulse-soft 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="p-3 md:p-6 text-slate-800 antialiased selection:bg-sky-400 selection:text-white">
+  <div class="sky-glow"></div>
+
+  <main class="max-w-6xl mx-auto relative z-10 pb-8">
+    <!-- 頂端標題區 -->
+    <header class="text-center mb-6 pt-2">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-sky-200 text-sm font-semibold tracking-wide border border-white/30 mb-3 shadow-sm">
+        <i class="fa-solid fa-compass-drafting text-sky-300"></i> 國小六上數學 5-3 互動學習網頁
+      </div>
+      <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-pink-100 to-amber-200 drop-shadow-md tracking-tight">
+        基準量與比較量探索實驗室
+      </h1>
+      <p class="text-sky-200/90 text-sm md:text-base mt-2 font-medium">
+        動態線段可視化 ‧ 份數分割探究 ‧ 實境打折與服務費試算
+      </p>
+
+      <!-- 標籤頁導航按鈕 -->
+      <nav class="flex flex-wrap justify-center gap-2 md:gap-3 mt-6">
+        <button onclick="switchTab('tab1')" id="tab1-btn" class="tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all shadow-md bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sky-500/30 scale-105">
+          <i class="fa-solid fa-arrows-split-up-and-left mr-1.5"></i> 主題一：給基準量求兩量差
+        </button>
+        <button onclick="switchTab('tab2')" id="tab2-btn" class="tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all bg-white/80 text-slate-700 hover:bg-white hover:shadow-lg">
+          <i class="fa-solid fa-scale-balanced mr-1.5"></i> 主題二：給差求基準量 (逆求)
+        </button>
+        <button onclick="switchTab('tab3')" id="tab3-btn" class="tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all bg-white/80 text-slate-700 hover:bg-white hover:shadow-lg">
+          <i class="fa-solid fa-tags mr-1.5"></i> 主題三：生活打折與比率
+        </button>
+        <button onclick="switchTab('tab4')" id="tab4-btn" class="tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all bg-amber-400/90 text-slate-900 hover:bg-amber-300 hover:shadow-lg">
+          <i class="fa-solid fa-clipboard-check mr-1.5"></i> 隨堂測驗
+        </button>
+      </nav>
+    </header>
+
+    <!-- 主題一：給定基準量求兩量差 (整數、小數、分數倍) -->
+    <section id="tab1-content" class="tab-pane block">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-4 border-b border-slate-200 gap-3">
+          <div>
+            <h2 class="text-xl md:text-2xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center text-sm shadow">1</span>
+              動態線段圖探究：基準量與比較量的相差
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-1">
+              改變基準量與幾倍，觀察「差就是基準量的幾倍差」。算式：<span class="font-bold text-sky-700">基準量 &times; (倍數差) = 兩量差</span>
+            </p>
+          </div>
+          <!-- 預設情境快捷鍵 -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button onclick="applyPresetTab1('pipi')" class="px-2.5 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 font-semibold border border-sky-200">
+              課本例1: 皮皮與妮妮(3倍)
+            </button>
+            <button onclick="applyPresetTab1('city')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-semibold border border-emerald-200">
+              課本例2: 城市綠地(0.8倍)
+            </button>
+            <button onclick="applyPresetTab1('ribbon')" class="px-2.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold border border-purple-200">
+              課本例3: 緞帶長度(2<span class="math-fraction"><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span>倍)
+            </button>
+          </div>
+        </div>
+
+        <!-- 操控滑桿面板 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 my-6 bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-flag text-blue-500"></i> 基準量 (當作 1 倍):
+              </label>
+              <span id="tab1-base-val-text" class="text-lg font-black text-blue-600 font-math">100</span>
+            </div>
+            <input type="range" id="tab1-base-slider" min="10" max="300" step="10" value="100" class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer">
+            <div class="relative w-full h-5 text-xs text-slate-400 mt-1">
+              <span class="absolute left-0">10</span>
+              <span class="absolute -translate-x-1/2" style="left: 48.28%;">150</span>
+              <span class="absolute right-0">300</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-magnifying-glass-chart text-amber-500"></i> 比較量的倍數:
+              </label>
+              <span id="tab1-mult-val-text" class="text-lg font-black text-amber-600 font-math">3.0 倍</span>
+            </div>
+            <input type="range" id="tab1-mult-slider" min="0.2" max="4.0" step="0.1" value="3.0" class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer">
+            <div class="relative w-full h-5 text-xs text-slate-400 mt-1">
+              <span class="absolute left-0">0.2倍 (小於1)</span>
+              <!-- (1.0 - 0.2) / (4.0 - 0.2) = 0.8 / 3.8 ≈ 21.05% -->
+              <span class="absolute -translate-x-1/2 whitespace-nowrap" style="left: 21.05%;">1.0倍 (相等)</span>
+              <span class="absolute right-0">4.0倍 (放大)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 視覺化線段圖展示區 -->
+        <div class="bg-white p-4 md:p-6 rounded-2xl shadow-inner border border-slate-200 space-y-6">
+          <!-- 基準量線段 -->
+          <div>
+            <div class="flex justify-between items-center text-sm font-bold text-slate-700 mb-1.5">
+              <span class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs">基準量 [1]</span>
+                <span id="tab1-base-name">基準量</span>
+              </span>
+              <span class="font-math font-bold text-blue-700" id="tab1-base-display">100 元</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-xl h-10 p-1 flex items-center border border-slate-200 relative overflow-hidden">
+              <div id="tab1-base-bar" class="h-full bg-gradient-to-r from-blue-500 to-sky-400 rounded-lg flex items-center justify-center text-white text-xs font-bold bar-transition shadow-sm" style="width: 25%;">
+                1 倍
+              </div>
+            </div>
+          </div>
+
+          <!-- 比較量線段 -->
+          <div>
+            <div class="flex justify-between items-center text-sm font-bold text-slate-700 mb-1.5">
+              <span class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 text-xs">比較量</span>
+                <span id="tab1-compare-name">比較量</span>
+              </span>
+              <span class="font-math font-bold text-amber-700" id="tab1-compare-display">300 元</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-xl h-10 p-1 flex items-center border border-slate-200 relative overflow-hidden">
+              <div id="tab1-compare-bar" class="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg flex items-center justify-center text-white text-xs font-bold bar-transition shadow-sm" style="width: 75%;">
+                3 倍
+              </div>
+            </div>
+          </div>
+
+          <!-- 相差量高亮線段 -->
+          <div class="pt-2 border-t border-dashed border-slate-300">
+            <div class="flex justify-between items-center text-sm font-bold text-rose-600 mb-1.5">
+              <span class="flex items-center gap-2">
+                <i class="fa-solid fa-arrows-left-right text-rose-500"></i>
+                <span>兩量相差：</span>
+                <span id="tab1-diff-multiplier" class="text-xs bg-rose-100 px-2 py-0.5 rounded-full text-rose-700 font-math">相差 (3 - 1) = 2 倍</span>
+              </span>
+              <span class="font-math font-bold text-xl text-rose-600" id="tab1-diff-value">200 元</span>
+            </div>
+            <div class="w-full bg-rose-50 rounded-xl h-9 p-1 flex items-center border border-rose-200 relative overflow-visible">
+              <div id="tab1-diff-bar" class="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-lg flex items-center justify-center text-white text-xs font-bold bar-transition shadow-sm" style="width: 50%; margin-left: 25%;">
+                差 2.0 倍
+              </div>
+              <span id="tab1-diff-outer-label" class="absolute text-xs font-bold text-rose-600 hidden whitespace-nowrap">差 0.0 倍</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 算式引導思維盒 -->
+        <div class="mt-6 bg-gradient-to-r from-sky-50 to-indigo-50 p-4 md:p-5 rounded-2xl border border-sky-100">
+          <h4 class="font-bold text-slate-800 text-sm md:text-base flex items-center gap-2 mb-3">
+            <i class="fa-solid fa-lightbulb text-amber-500"></i> 結構化列式思維 (先求倍數差，再求數量)：
+          </h4>
+          <div id="tab1-equation-box" class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+            <!-- 算式卡片動態注入 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主題二：給定倍數與兩量差，求基準量 (逆求思維、份數法與比) -->
+    <section id="tab2-content" class="tab-pane hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="pb-4 border-b border-slate-200">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <div>
+              <h2 class="text-xl md:text-2xl font-bold text-slate-800 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-sm shadow">2</span>
+                逆向推理：知道兩量差，倒推「基準量」是多少？
+              </h2>
+              <p class="text-xs md:text-sm text-slate-500 mt-1">
+                布丁與蛋糕的甜點店問題：掌握「1 份基準量」對應多少數值。
+              </p>
+            </div>
+            <!-- 情境按鈕 -->
+            <div class="flex gap-2 text-xs">
+              <button onclick="setTab2Scenario('pudding')" class="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 font-bold border border-indigo-200 hover:bg-indigo-100">
+                例題：蛋糕是布丁的 <span class="math-fraction"><span class="fraction-block"><span class="numerator">3</span><span class="denominator">5</span></span></span> 倍，差 20 個
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 my-6">
+          <!-- 左側：題目與幾何份數模型 (7 cols) -->
+          <div class="lg:col-span-7 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-sm text-amber-900 leading-relaxed">
+              <i class="fa-solid fa-cake-candles text-amber-600 mr-1"></i>
+              <strong>題目情境：</strong>甜點店本週蛋糕賣出數量是布丁的
+              <span class="math-fraction"><span class="fraction-block"><span class="numerator">3</span><span class="denominator">5</span></span></span> 倍。
+              布丁比蛋糕多賣出 <span class="font-bold text-rose-600" id="tab2-diff-input-text">20</span> 個，請問布丁賣出多少個？
+            </div>
+
+            <!-- 可互動調整相差個數 -->
+            <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <label class="text-xs font-bold text-slate-600">調整相差個數：</label>
+              <input type="range" id="tab2-diff-slider" min="10" max="60" step="10" value="20" class="flex-1 h-2 bg-slate-300 rounded cursor-pointer">
+              <span id="tab2-slider-val" class="font-math font-bold text-rose-600 text-sm">20 個</span>
+            </div>
+
+            <!-- 份數切割示意圖 -->
+            <div class="mt-4">
+              <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
+                <span>份數方格模型 (基準量布丁切成 5 等份)：</span>
+                <span class="text-indigo-600 font-bold text-xs"><i class="fa-regular fa-hand-pointer mr-1"></i>點選格子觀察</span>
+              </h4>
+              
+              <!-- 布丁份數 (5格) -->
+              <div class="mb-3">
+                <div class="flex justify-between text-xs font-semibold mb-1 text-slate-700">
+                  <span>布丁 (基準量 = 1 = 5份)</span>
+                  <span id="tab2-pudding-total" class="text-indigo-700 font-bold">50 個</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5 h-12">
+                  <div class="bg-indigo-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm">1份<span class="text-[10px] font-normal" id="grid-val-1">10</span></div>
+                  <div class="bg-indigo-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm">1份<span class="text-[10px] font-normal" id="grid-val-2">10</span></div>
+                  <div class="bg-indigo-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm">1份<span class="text-[10px] font-normal" id="grid-val-3">10</span></div>
+                  <div class="bg-rose-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm animate-pulse">多出<span class="text-[10px] font-normal" id="grid-val-4">10</span></div>
+                  <div class="bg-rose-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm animate-pulse">多出<span class="text-[10px] font-normal" id="grid-val-5">10</span></div>
+                </div>
+              </div>
+
+              <!-- 蛋糕份數 (3格) -->
+              <div>
+                <div class="flex justify-between text-xs font-semibold mb-1 text-slate-700">
+                  <span>蛋糕 (比較量 = <span class="math-fraction"><span class="fraction-block"><span class="numerator">3</span><span class="denominator">5</span></span></span> = 3份)</span>
+                  <span id="tab2-cake-total" class="text-amber-700 font-bold">30 個</span>
+                </div>
+                <div class="grid grid-cols-5 gap-1.5 h-12">
+                  <div class="bg-amber-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm">1份<span class="text-[10px] font-normal">10</span></div>
+                  <div class="bg-amber-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm">1份<span class="text-[10px] font-normal">10</span></div>
+                  <div class="bg-amber-400 text-white rounded-lg flex flex-col items-center justify-center text-xs font-bold shadow-sm">1份<span class="text-[10px] font-normal">10</span></div>
+                  <div class="border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-300 text-xs">無</div>
+                  <div class="border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-300 text-xs">無</div>
+                </div>
+              </div>
+
+              <!-- 差的意義 -->
+              <div class="mt-3 p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center justify-between">
+                <span><i class="fa-solid fa-arrow-up-right-dots mr-1"></i> 多出的 2 份即為相差量：</span>
+                <span class="font-bold text-sm" id="tab2-diff-desc">2 份 = 20 個 &rarr; 1 份 = 10 個</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右側：雙重解法對照思維 (5 cols) -->
+          <div class="lg:col-span-5 flex flex-col gap-4">
+            <!-- 解法 A：乘除法列式 -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm flex-1">
+              <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-xs font-bold">解法一：乘除法算式</span>
+              <h5 class="text-sm font-bold text-slate-700 mt-2">基準量用 ( ) 代表：</h5>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-2 font-mono text-slate-800 mt-2">
+                <div class="flex items-center">
+                  ( ) &times; ( 1 &minus; <span class="math-fraction"><span class="fraction-block"><span class="numerator">3</span><span class="denominator">5</span></span></span> ) = <span class="text-rose-600 font-bold ml-1" id="tab2-eq1-diff">20</span>
+                </div>
+                <div class="flex items-center">
+                  ( ) &times; <span class="math-fraction"><span class="fraction-block"><span class="numerator">2</span><span class="denominator">5</span></span></span> = <span class="text-rose-600 font-bold ml-1" id="tab2-eq1-diff2">20</span>
+                </div>
+                <div class="p-2 bg-blue-50 rounded text-blue-900 border border-blue-200">
+                  基準量 = <span id="tab2-step-diff">20</span> &divide; <span class="math-fraction"><span class="fraction-block"><span class="numerator">2</span><span class="denominator">5</span></span></span><br>
+                  = <span id="tab2-step-diff-mult">20</span> &times; <span class="math-fraction"><span class="fraction-block"><span class="numerator">5</span><span class="denominator">2</span></span></span><br>
+                  = <span class="font-bold text-sm text-blue-700" id="tab2-ans-1">50 (個)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 解法 B：比與份數 -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm flex-1">
+              <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">解法二：比與份數觀念</span>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-2 font-mono text-slate-800 mt-2">
+                <div>蛋糕與布丁的比是 <strong>3 : 5</strong></div>
+                <div>相差份數 = 5 &minus; 3 = <strong>2 份</strong></div>
+                <div>2 份是 <span id="tab2-b-diff" class="text-rose-600 font-bold">20</span> 個 &rarr; 1 份是 <span id="tab2-b-unit" class="text-emerald-600 font-bold">10</span> 個</div>
+                <div class="p-1.5 bg-emerald-50 text-emerald-800 rounded font-bold">
+                  布丁 (5 份) = <span id="tab2-b-calc">10 &times; 5 = 50</span> 個
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主題三：生活折扣、成數與服務費實戰 -->
+    <section id="tab3-content" class="tab-pane hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="pb-4 border-b border-slate-200">
+          <h2 class="text-xl md:text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-sm shadow">3</span>
+            生活實戰：百貨打折「少付多少」與 餐廳服務費「多付多少」
+          </h2>
+          <p class="text-xs md:text-sm text-slate-500 mt-1">
+            打四折是付原價的 40%，少付原價的 (1 - 40%) = 60%；加收一成服務費是原價的 (1 + 10%)。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <!-- 互動模組 A: 打折省錢試算 (求差) -->
+          <div class="bg-gradient-to-br from-white to-amber-50/50 p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-bold text-slate-800 text-base flex items-center gap-1.5">
+                  <i class="fa-solid fa-bag-shopping text-amber-500"></i> 情境 A：大拍賣折扣 (少付多少？)
+                </span>
+                <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold" id="tab3-discount-badge">打四折 (0.4倍)</span>
+              </div>
+
+              <!-- 原價滑桿 -->
+              <div class="mb-4">
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>商品原價 (基準量 1):</span>
+                  <span id="tab3-price-text" class="text-amber-700 font-bold font-math">800 元</span>
+                </div>
+                <input type="range" id="tab3-price-slider" min="100" max="2000" step="50" value="800" class="w-full h-2 bg-slate-200 rounded cursor-pointer">
+              </div>
+
+              <!-- 折扣選擇按鈕 -->
+              <div class="mb-4">
+                <label class="text-xs font-bold text-slate-600 block mb-1.5">選擇折數：</label>
+                <div class="grid grid-cols-4 gap-1.5 text-xs">
+                  <button onclick="setDiscount(0.4, '四折')" class="disc-btn py-1.5 rounded-lg border bg-amber-500 text-white font-bold border-amber-600">四折 (40%)</button>
+                  <button onclick="setDiscount(0.7, '七折')" class="disc-btn py-1.5 rounded-lg border bg-white text-slate-700 font-semibold border-slate-300">七折 (70%)</button>
+                  <button onclick="setDiscount(0.75, '七五折')" class="disc-btn py-1.5 rounded-lg border bg-white text-slate-700 font-semibold border-slate-300">七五折 (75%)</button>
+                  <button onclick="setDiscount(0.85, '八五折')" class="disc-btn py-1.5 rounded-lg border bg-white text-slate-700 font-semibold border-slate-300">八五折 (85%)</button>
+                </div>
+              </div>
+
+              <!-- 長條圖百分比視覺化 -->
+              <div class="space-y-2 bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-slate-600">實際售價 (支付):</span>
+                    <span id="tab3-pay-text" class="font-bold text-slate-800">320 元</span>
+                  </div>
+                  <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden flex">
+                    <div id="tab3-pay-bar" class="bg-amber-400 h-full text-[10px] text-white flex items-center justify-center font-bold" style="width: 40%;">40%</div>
+                    <div id="tab3-save-bar" class="bg-emerald-400 h-full text-[10px] text-white flex items-center justify-center font-bold" style="width: 60%;">省 60%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 少付結論卡 -->
+            <div class="mt-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-emerald-800">可少付 (相差金額)：</span>
+                <span id="tab3-save-amount" class="text-xl font-black text-emerald-700 font-math">480 元</span>
+              </div>
+              <p class="text-[11px] text-emerald-600 mt-1 font-mono" id="tab3-save-equation">
+                算式：800 &times; (1 &minus; 0.4) = 800 &times; 0.6 = 480 元
+              </p>
+            </div>
+          </div>
+
+          <!-- 互動模組 B: 疫苗施打率/兩比較量之差 -->
+          <div class="bg-gradient-to-br from-white to-sky-50/50 p-5 rounded-2xl border border-sky-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-bold text-slate-800 text-base flex items-center gap-1.5">
+                  <i class="fa-solid fa-syringe text-sky-500"></i> 情境 B：疫苗施打率 (兩比較量相差)
+                </span>
+                <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-xs font-bold">課本第80頁</span>
+              </div>
+
+              <div class="mb-4">
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>全班人數 (基準量 1):</span>
+                  <span id="tab3-class-text" class="text-sky-700 font-bold font-math">30 人</span>
+                </div>
+                <input type="range" id="tab3-class-slider" min="20" max="50" step="5" value="30" class="w-full h-2 bg-slate-200 rounded cursor-pointer">
+              </div>
+
+              <div class="mb-4">
+                <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                  <span>施打率 (%):</span>
+                  <span id="tab3-rate-text" class="text-indigo-700 font-bold font-math">70% (0.7倍)</span>
+                </div>
+                <input type="range" id="tab3-rate-slider" min="50" max="90" step="5" value="70" class="w-full h-2 bg-slate-200 rounded cursor-pointer">
+              </div>
+
+              <!-- 比例分割視覺化 -->
+              <div class="space-y-2 bg-white p-3 rounded-xl border border-slate-200 text-xs">
+                <div class="flex justify-between text-[11px] font-semibold text-slate-600 mb-1">
+                  <span>打疫苗：<span id="tab3-vax-count" class="text-sky-700 font-bold">21 人</span></span>
+                  <span>沒打疫苗：<span id="tab3-unvax-count" class="text-rose-600 font-bold">9 人</span></span>
+                </div>
+                <div class="w-full bg-slate-100 h-5 rounded-lg overflow-hidden flex">
+                  <div id="tab3-vax-bar" class="bg-sky-500 h-full text-white flex items-center justify-center font-bold text-[11px]" style="width: 70%;">有打 70%</div>
+                  <div id="tab3-unvax-bar" class="bg-rose-400 h-full text-white flex items-center justify-center font-bold text-[11px]" style="width: 30%;">沒打 30%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 兩比較量相差卡片 -->
+            <div class="mt-4 p-3 rounded-xl bg-sky-50 border border-sky-200">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-sky-900">有打比沒打多幾人：</span>
+                <span id="tab3-diff-student-amount" class="text-xl font-black text-sky-800 font-math">12 人</span>
+              </div>
+              <p class="text-[11px] text-sky-700 mt-1 font-mono" id="tab3-student-equation">
+                算式：30 &times; (0.7 &minus; 0.3) = 30 &times; 0.4 = 12 人
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主題四：隨堂測驗 (5道精選題與診斷回饋) -->
+    <section id="tab4-content" class="tab-pane hidden">
+      <div class="glass-card rounded-3xl p-5 md:p-8">
+        <div class="pb-4 border-b border-slate-200 flex justify-between items-center">
+          <div>
+            <h2 class="text-xl md:text-2xl font-bold text-slate-800 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-amber-500 text-slate-900 flex items-center justify-center text-sm font-black shadow">★</span>
+              隨堂測驗
+            </h2>
+            <p class="text-xs md:text-sm text-slate-500 mt-1">
+              請先點選各題答案，完成後按下「提交答案」查看分數與完整步驟解析（滿分 100 分）。
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs font-semibold text-slate-500">測驗得分</span>
+            <div id="quiz-score-badge" class="text-2xl font-black text-sky-600 font-math">-- / 100 分</div>
+          </div>
+        </div>
+
+        <!-- 測驗題列表 -->
+        <div class="mt-6 space-y-6" id="quiz-container">
+          <!-- 題目 1 (整數倍差) -->
+          <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm quiz-item" data-id="1">
+            <div class="flex items-start gap-2.5">
+              <span class="w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+              <div class="flex-1">
+                <p class="text-sm md:text-base font-bold text-slate-800 leading-snug">
+                  弟弟今天跑步跑了 500 公尺，妹妹跑的距離是弟弟的 5 倍，兩人跑的距離相差多少公尺？
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                  <button onclick="selectOption(1, 0, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">A. 500 &times; 5 = 2500 公尺</button>
+                  <button onclick="selectOption(1, 1, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">B. 500 &times; (5 &minus; 1) = 2000 公尺</button>
+                  <button onclick="selectOption(1, 2, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">C. 500 &divide; 5 = 100 公尺</button>
+                  <button onclick="selectOption(1, 3, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">D. 500 &times; (5 + 1) = 3000 公尺</button>
+                </div>
+                <div class="feedback-box hidden mt-3 p-3 rounded-xl text-xs"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題目 2 (小數差) -->
+          <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm quiz-item" data-id="2">
+            <div class="flex items-start gap-2.5">
+              <span class="w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+              <div class="flex-1">
+                <p class="text-sm md:text-base font-bold text-slate-800 leading-snug">
+                  六年甲班男生人數是女生人數的 0.6 倍，女生人數有 15 人，男、女生人數相差幾人？
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                  <button onclick="selectOption(2, 0, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">A. 15 &times; (1 &minus; 0.6) = 6 人</button>
+                  <button onclick="selectOption(2, 1, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">B. 15 &times; 0.6 = 9 人</button>
+                  <button onclick="selectOption(2, 2, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">C. 15 &divide; 0.6 = 25 人</button>
+                  <button onclick="selectOption(2, 3, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">D. 15 &times; (1 + 0.6) = 24 人</button>
+                </div>
+                <div class="feedback-box hidden mt-3 p-3 rounded-xl text-xs"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題目 3 (打折少付) -->
+          <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm quiz-item" data-id="3">
+            <div class="flex items-start gap-2.5">
+              <span class="w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+              <div class="flex-1">
+                <p class="text-sm md:text-base font-bold text-slate-800 leading-snug">
+                  麵包店惜福食品以原價「打七五折」出售。舅舅買了一盒原價 300 元的桂圓糕，他可以少付多少元？
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                  <button onclick="selectOption(3, 0, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">A. 300 &times; 0.75 = 225 元</button>
+                  <button onclick="selectOption(3, 1, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">B. 300 &times; (1 &minus; 0.75) = 75 元</button>
+                  <button onclick="selectOption(3, 2, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">C. 300 &minus; 75 = 225 元</button>
+                  <button onclick="selectOption(3, 3, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">D. 300 &divide; 0.75 = 400 元</button>
+                </div>
+                <div class="feedback-box hidden mt-3 p-3 rounded-xl text-xs"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題目 4 (帶分數長度差) -->
+          <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm quiz-item" data-id="4">
+            <div class="flex items-start gap-2.5">
+              <span class="w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+              <div class="flex-1">
+                <p class="text-sm md:text-base font-bold text-slate-800 leading-snug flex items-center flex-wrap">
+                  紅緞帶長 120 公分，黃緞帶的長是紅緞帶的 
+                  <span class="math-fraction"><span class="integer-part">2</span><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> 倍，
+                  兩條緞帶的長度相差多少公分？
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                  <button onclick="selectOption(4, 0, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium flex items-center transition-colors">
+                    A. 120 &times; <span class="math-fraction ml-1"><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> = 20 公分
+                  </button>
+                  <button onclick="selectOption(4, 1, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium flex items-center transition-colors">
+                    B. 120 &times; ( <span class="math-fraction mx-1"><span class="integer-part">2</span><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> &minus; 1 ) = 140 公分
+                  </button>
+                  <button onclick="selectOption(4, 2, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium flex items-center transition-colors">
+                    C. 120 &times; <span class="math-fraction ml-1"><span class="integer-part">2</span><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> = 260 公分
+                  </button>
+                  <button onclick="selectOption(4, 3, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium flex items-center transition-colors">
+                    D. 120 &times; ( <span class="math-fraction mx-1"><span class="integer-part">2</span><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> + 1 ) = 380 公分
+                  </button>
+                </div>
+                <div class="feedback-box hidden mt-3 p-3 rounded-xl text-xs"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 題目 5 (逆求基準量) -->
+          <div class="p-4 md:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm quiz-item" data-id="5">
+            <div class="flex items-start gap-2.5">
+              <span class="w-6 h-6 rounded-full bg-slate-800 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">5</span>
+              <div class="flex-1">
+                <p class="text-sm md:text-base font-bold text-slate-800 leading-snug">
+                  服飾店商品均以原價「打七折」出售，小明買了一件褲子，售價比原價便宜 180 元。這件褲子的「原價」是多少元？
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
+                  <button onclick="selectOption(5, 0, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">A. 180 &times; 0.7 = 126 元</button>
+                  <button onclick="selectOption(5, 1, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">B. 180 &divide; 0.7 &asymp; 257 元</button>
+                  <button onclick="selectOption(5, 2, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">C. 180 &divide; (1 &minus; 0.7) = 600 元</button>
+                  <button onclick="selectOption(5, 3, this)" class="opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors">D. 180 &times; (1 &minus; 0.7) = 54 元</button>
+                </div>
+                <div class="feedback-box hidden mt-3 p-3 rounded-xl text-xs"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-center items-center gap-4">
+          <button onclick="submitQuiz()" id="submit-quiz-btn" class="w-36 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm transition shadow-sm flex items-center justify-center">
+            <i class="fa-solid fa-paper-plane mr-1.5"></i> 提交答案
+          </button>
+          <button onclick="resetQuiz()" class="w-36 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-sm transition shadow-sm flex items-center justify-center">
+            <i class="fa-solid fa-arrow-rotate-left mr-1.5"></i> 重新測驗
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* ========================================================
+       標籤頁切換控制 (Tab Navigation)
+       ======================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.add('hidden');
+        pane.classList.remove('block');
+      });
+
+      const targetPane = document.getElementById(`${tabId}-content`);
+      if (targetPane) {
+        targetPane.classList.remove('hidden');
+        targetPane.classList.add('block');
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.id === 'tab4-btn') {
+          btn.className = 'tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all bg-amber-400/90 text-slate-900 hover:bg-amber-300 hover:shadow-lg';
+        } else {
+          btn.className = 'tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all bg-white/80 text-slate-700 hover:bg-white hover:shadow-lg';
+        }
+      });
+
+      const activeBtn = document.getElementById(`${tabId}-btn`);
+      if (activeBtn) {
+        if (tabId === 'tab4') {
+          activeBtn.className = 'tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all shadow-md bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/30 scale-105';
+        } else {
+          activeBtn.className = 'tab-btn px-5 py-2.5 rounded-xl text-sm md:text-base font-bold transition-all shadow-md bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sky-500/30 scale-105';
+        }
+      }
+    }
+
+    /* ========================================================
+       隨堂測驗機制 (Quiz Engine with batch submission)
+       ======================================================== */
+    const quizData = [
+      {
+        id: 1,
+        ans: 1, // B
+        explanation: '弟弟跑的距離是基準量 [1]，妹妹是弟弟的 5 倍。兩人相差 (5 &minus; 1) = 4 倍。因此列式為：500 &times; (5 &minus; 1) = 500 &times; 4 = 2000 公尺。'
+      },
+      {
+        id: 2,
+        ans: 0, // A
+        explanation: '女生有 15 人是基準量 [1]，男生是女生的 0.6 倍。兩人相差 (1 &minus; 0.6) = 0.4 倍。因此列式為：15 &times; (1 &minus; 0.6) = 15 &times; 0.4 = 6 人。'
+      },
+      {
+        id: 3,
+        ans: 1, // B
+        explanation: '打七五折表示售價是原價的 75% (0.75倍)，少付的錢是原價的 (1 &minus; 0.75) = 0.25 倍。因此列式為：300 &times; (1 &minus; 0.75) = 300 &times; 0.25 = 75 元。'
+      },
+      {
+        id: 4,
+        ans: 1, // B
+        explanation: '紅緞帶是基準量 [1]，黃緞帶是 2<span class="math-fraction"><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> 倍。相差 (2<span class="math-fraction"><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> &minus; 1) = 1<span class="math-fraction"><span class="fraction-block"><span class="numerator">1</span><span class="denominator">6</span></span></span> = <span class="math-fraction"><span class="fraction-block"><span class="numerator">7</span><span class="denominator">6</span></span></span> 倍。相差長度 = 120 &times; <span class="math-fraction"><span class="fraction-block"><span class="numerator">7</span><span class="denominator">6</span></span></span> = 140 公分。'
+      },
+      {
+        id: 5,
+        ans: 2, // C
+        explanation: '打七折表示售價為原價的 0.7 倍，便宜 180 元相當於原價的 (1 &minus; 0.7) = 0.3 倍。設原價為 ( )，算式為：( ) &times; 0.3 = 180，因此原價 = 180 &divide; 0.3 = 600 元。'
+      }
+    ];
+
+    const selectedAnswers = {};
+    let isQuizSubmitted = false;
+
+    function selectOption(qId, selectedIdx, btnElement) {
+      if (isQuizSubmitted) return; // 提交後鎖定不可更改
+
+      selectedAnswers[qId] = selectedIdx;
+      const parent = btnElement.closest('.quiz-item');
+      const allBtns = parent.querySelectorAll('.opt-btn');
+
+      allBtns.forEach((b, idx) => {
+        if (idx === selectedIdx) {
+          b.classList.remove('border-slate-200', 'hover:bg-slate-50');
+          b.classList.add('bg-sky-100', 'border-sky-500', 'text-sky-900', 'font-bold');
+        } else {
+          b.classList.remove('bg-sky-100', 'border-sky-500', 'text-sky-900', 'font-bold');
+          b.classList.add('border-slate-200', 'hover:bg-slate-50');
+        }
+      });
+    }
+
+    function submitQuiz() {
+      if (isQuizSubmitted) return;
+      isQuizSubmitted = true;
+
+      const submitBtn = document.getElementById('submit-quiz-btn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      let score = 0;
+
+      quizData.forEach(q => {
+        const parent = document.querySelector(`.quiz-item[data-id="${q.id}"]`);
+        const allBtns = parent.querySelectorAll('.opt-btn');
+        const feedback = parent.querySelector('.feedback-box');
+        const userChoice = selectedAnswers[q.id];
+
+        allBtns.forEach(b => {
+          b.disabled = true;
+          b.classList.remove('hover:bg-slate-50');
+        });
+
+        feedback.classList.remove('hidden');
+
+        // 空白未作答：僅顯示黃色系「未作答。」，不顯示其他說明且不顯示正確答案
+        if (userChoice === undefined) {
+          allBtns.forEach(b => {
+            b.classList.remove('bg-sky-100', 'border-sky-500', 'text-sky-900', 'font-bold');
+            b.classList.add('border-slate-200');
+          });
+          feedback.className = 'feedback-box mt-3 p-3 rounded-xl text-xs bg-amber-50 border border-amber-300 text-amber-800 font-bold';
+          feedback.innerHTML = `<div class="flex items-center gap-1.5"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> 未作答。</div>`;
+          return;
+        }
+
+        // 有作答時標示正確答案與錯選項目
+        allBtns.forEach((b, idx) => {
+          b.classList.remove('bg-sky-100', 'border-sky-500', 'text-sky-900');
+          if (idx === q.ans) {
+            b.classList.remove('border-slate-200');
+            b.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-900', 'font-bold');
+          } else if (idx === userChoice) {
+            b.classList.remove('border-slate-200');
+            b.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-800');
+          }
+        });
+
+        if (userChoice === q.ans) {
+          score += 20;
+          feedback.className = 'feedback-box mt-3 p-3 rounded-xl text-xs bg-emerald-50 border border-emerald-300 text-emerald-800 leading-relaxed';
+          feedback.innerHTML = `<div class="font-bold mb-1 flex items-center gap-1"><i class="fa-solid fa-circle-check text-emerald-600"></i> 回答正確（+20 分）！</div><div>${q.explanation}</div>`;
+        } else {
+          feedback.className = 'feedback-box mt-3 p-3 rounded-xl text-xs bg-rose-50 border border-rose-300 text-rose-800 leading-relaxed';
+          feedback.innerHTML = `<div class="font-bold mb-1 flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 回答錯誤，請參考下方解題說明：</div><div>${q.explanation}</div>`;
+        }
+      });
+
+      document.getElementById('quiz-score-badge').textContent = `${score} / 100 分`;
+    }
+
+    function resetQuiz() {
+      isQuizSubmitted = false;
+      Object.keys(selectedAnswers).forEach(k => delete selectedAnswers[k]);
+
+      const submitBtn = document.getElementById('submit-quiz-btn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+
+      document.querySelectorAll('.quiz-item').forEach(parent => {
+        const allBtns = parent.querySelectorAll('.opt-btn');
+        const feedback = parent.querySelector('.feedback-box');
+        allBtns.forEach(b => {
+          b.disabled = false;
+          b.className = 'opt-btn p-2.5 rounded-xl text-xs md:text-sm text-left border border-slate-200 hover:bg-slate-50 font-medium transition-colors';
+          if (parent.dataset.id === '4') {
+            b.classList.add('flex', 'items-center');
+          }
+        });
+        feedback.classList.add('hidden');
+      });
+      document.getElementById('quiz-score-badge').textContent = `-- / 100 分`;
+    }
+
+    /* ========================================================
+       主題一：給基準量求兩量差互動控制與可視化
+       ======================================================== */
+    const t1BaseSlider = document.getElementById('tab1-base-slider');
+    const t1MultSlider = document.getElementById('tab1-mult-slider');
+    const t1BaseValText = document.getElementById('tab1-base-val-text');
+    const t1MultValText = document.getElementById('tab1-mult-val-text');
+    const t1BaseDisplay = document.getElementById('tab1-base-display');
+    const t1CompareDisplay = document.getElementById('tab1-compare-display');
+    const t1BaseBar = document.getElementById('tab1-base-bar');
+    const t1CompareBar = document.getElementById('tab1-compare-bar');
+    const t1DiffBar = document.getElementById('tab1-diff-bar');
+    const t1DiffVal = document.getElementById('tab1-diff-value');
+    const t1DiffMult = document.getElementById('tab1-diff-multiplier');
+    const t1DiffOuterLabel = document.getElementById('tab1-diff-outer-label');
+    const t1EqBox = document.getElementById('tab1-equation-box');
+
+    let currentModeUnit = '元';
+
+    function updateTab1() {
+      const base = parseFloat(t1BaseSlider.value);
+      const mult = parseFloat(t1MultSlider.value);
+      const comp = base * mult;
+      const diff = Math.abs(comp - base);
+      const diffMult = Math.abs(mult - 1);
+
+      t1BaseValText.textContent = `${base}`;
+      t1MultValText.textContent = `${mult.toFixed(1)} 倍`;
+
+      t1BaseDisplay.textContent = `${base} ${currentModeUnit}`;
+      t1CompareDisplay.textContent = `${Math.round(comp * 10) / 10} ${currentModeUnit}`;
+      t1DiffVal.textContent = `${Math.round(diff * 10) / 10} ${currentModeUnit}`;
+
+      // 寬度比例縮放 (以基準量固定佔 24% 為基準單位長度)
+      const unitBarPct = 24; 
+      const baseWidthPct = unitBarPct; 
+      const compWidthPct = Math.min(unitBarPct * mult, 98);
+      const diffWidthPct = unitBarPct * diffMult;
+
+      t1BaseBar.style.width = `${baseWidthPct}%`;
+      t1CompareBar.style.width = `${compWidthPct}%`;
+      t1CompareBar.textContent = `${mult.toFixed(1)} 倍`;
+
+      // 差額位置對齊：
+      // 當比較量 >= 基準量時，起點在基準量右側 (baseWidthPct)，長度為 diffWidthPct，右側對齊最大值(比較量)
+      // 當比較量 < 基準量時，起點在比較量右側 (compWidthPct)，長度為 diffWidthPct，右側對齊最大值(基準量)
+      let diffLeftPct = 0;
+      if (mult >= 1) {
+        diffLeftPct = baseWidthPct;
+      } else {
+        diffLeftPct = compWidthPct;
+      }
+
+      t1DiffBar.style.marginLeft = `${diffLeftPct}%`;
+      
+      const diffLabelText = `差 ${diffMult.toFixed(1)} 倍`;
+
+      // 真實差距呈現：當相差過小或為 0 時，真實長度縮小，文字移至相差條右外側
+      if (diffWidthPct < 12) {
+        t1DiffBar.style.width = `${diffWidthPct}%`;
+        t1DiffBar.textContent = '';
+        if (diffMult === 0) {
+          t1DiffBar.classList.add('opacity-0');
+        } else {
+          t1DiffBar.classList.remove('opacity-0');
+        }
+        t1DiffOuterLabel.textContent = diffLabelText;
+        t1DiffOuterLabel.style.left = `calc(${diffLeftPct + diffWidthPct}% + 6px)`;
+        t1DiffOuterLabel.classList.remove('hidden');
+      } else {
+        t1DiffBar.classList.remove('opacity-0');
+        t1DiffBar.style.width = `${Math.min(diffWidthPct, 98 - diffLeftPct)}%`;
+        t1DiffBar.textContent = diffLabelText;
+        t1DiffOuterLabel.classList.add('hidden');
+      }
+
+      const isGreater = mult >= 1;
+      const step1Expr = isGreater ? `(${mult.toFixed(1)} - 1)` : `(1 - ${mult.toFixed(1)})`;
+      const diffMultFormatted = diffMult.toFixed(1);
+      const diffValFormatted = Math.round(diff * 10) / 10;
+
+      if (isGreater) {
+        t1DiffMult.textContent = `相差 (${mult.toFixed(1)} - 1) = ${diffMultFormatted} 倍`;
+      } else {
+        t1DiffMult.textContent = `相差 (1 - ${mult.toFixed(1)}) = ${diffMultFormatted} 倍`;
+      }
+
+      t1EqBox.innerHTML = `
+        <!-- 卡片 1：步驟 1 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 flex flex-col justify-between">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-bold tracking-wide">步驟 1</span>
+            <p class="text-xs sm:text-sm font-bold text-slate-700 mt-2">先求出倍數的差：</p>
+          </div>
+          <div class="mt-3 py-2.5 px-3 bg-blue-50/70 rounded-xl text-center">
+            <span class="text-base sm:text-lg font-black text-indigo-700 font-math tracking-wide">
+              ${step1Expr} = ${diffMultFormatted} 倍
+            </span>
+          </div>
+        </div>
+
+        <!-- 卡片 2：步驟 2 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 flex flex-col justify-between">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-bold tracking-wide">步驟 2</span>
+            <p class="text-xs sm:text-sm font-bold text-slate-700 mt-2">再與基準量相乘：</p>
+          </div>
+          <div class="mt-3 py-2.5 px-3 bg-blue-50/70 rounded-xl text-center">
+            <span class="text-base sm:text-lg font-black text-indigo-700 font-math tracking-wide">
+              ${base} &times; ${diffMultFormatted} = ${diffValFormatted}
+            </span>
+          </div>
+        </div>
+
+        <!-- 卡片 3：綜合列式 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 flex flex-col justify-between">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-xs font-bold tracking-wide">綜合列式</span>
+            <p class="text-xs sm:text-sm font-bold text-slate-700 mt-2 truncate">兩量差 = 基準量 &times; 倍數差：</p>
+          </div>
+          <div class="mt-3 py-2.5 px-3 bg-rose-50/80 rounded-xl text-center">
+            <span class="text-base sm:text-lg font-black text-rose-600 font-math tracking-wide">
+              ${base} &times; ${step1Expr} = ${diffValFormatted}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    t1BaseSlider.addEventListener('input', updateTab1);
+    t1MultSlider.addEventListener('input', updateTab1);
+
+    function applyPresetTab1(type) {
+      if (type === 'pipi') {
+        currentModeUnit = '元';
+        document.getElementById('tab1-base-name').textContent = '皮皮的錢 (基準量)';
+        document.getElementById('tab1-compare-name').textContent = '妮妮的錢';
+        t1BaseSlider.value = 100;
+        t1MultSlider.value = 3.0;
+      } else if (type === 'city') {
+        currentModeUnit = '公頃';
+        document.getElementById('tab1-base-name').textContent = 'B城市綠地 (基準量)';
+        document.getElementById('tab1-compare-name').textContent = 'A城市綠地';
+        t1BaseSlider.value = 210;
+        t1MultSlider.value = 0.8;
+      } else if (type === 'ribbon') {
+        currentModeUnit = '公分';
+        document.getElementById('tab1-base-name').textContent = '紅緞帶長度 (基準量)';
+        document.getElementById('tab1-compare-name').textContent = '黃緞帶長度';
+        t1BaseSlider.value = 120;
+        t1MultSlider.value = 2.2; // 近似 2又1/6
+      }
+      updateTab1();
+    }
+
+    /* ========================================================
+       主題二：逆求基準量 (布丁與蛋糕份數法)
+       ======================================================== */
+    const t2DiffSlider = document.getElementById('tab2-diff-slider');
+    const t2DiffInputText = document.getElementById('tab2-diff-input-text');
+    const t2SliderVal = document.getElementById('tab2-slider-val');
+    const t2PuddingTotal = document.getElementById('tab2-pudding-total');
+    const t2CakeTotal = document.getElementById('tab2-cake-total');
+    const t2DiffDesc = document.getElementById('tab2-diff-desc');
+
+    function updateTab2() {
+      const diffVal = parseInt(t2DiffSlider.value, 10);
+      t2DiffInputText.textContent = diffVal;
+      t2SliderVal.textContent = `${diffVal} 個`;
+
+      // 差是 (5 - 3) = 2 份
+      const unitVal = diffVal / 2;
+      const baseVal = unitVal * 5; // 布丁 5 份
+      const compVal = unitVal * 3; // 蛋糕 3 份
+
+      t2PuddingTotal.textContent = `${baseVal} 個`;
+      t2CakeTotal.textContent = `${compVal} 個`;
+
+      document.getElementById('grid-val-1').textContent = unitVal;
+      document.getElementById('grid-val-2').textContent = unitVal;
+      document.getElementById('grid-val-3').textContent = unitVal;
+      document.getElementById('grid-val-4').textContent = unitVal;
+      document.getElementById('grid-val-5').textContent = unitVal;
+
+      t2DiffDesc.textContent = `2 份 = ${diffVal} 個 → 1 份 = ${unitVal} 個`;
+
+      // 更新右側算式數值
+      document.getElementById('tab2-eq1-diff').textContent = diffVal;
+      document.getElementById('tab2-eq1-diff2').textContent = diffVal;
+      document.getElementById('tab2-step-diff').textContent = diffVal;
+      document.getElementById('tab2-step-diff-mult').textContent = diffVal;
+      document.getElementById('tab2-ans-1').textContent = `${baseVal} (個)`;
+
+      document.getElementById('tab2-b-diff').textContent = diffVal;
+      document.getElementById('tab2-b-unit').textContent = unitVal;
+      document.getElementById('tab2-b-calc').textContent = `${unitVal} × 5 = ${baseVal}`;
+    }
+
+    t2DiffSlider.addEventListener('input', updateTab2);
+
+    function setTab2Scenario(type) {
+      t2DiffSlider.value = 20;
+      updateTab2();
+    }
+
+    /* ========================================================
+       主題三：生活折扣與服務費試算
+       ======================================================== */
+    let currentDiscount = 0.4;
+    const t3PriceSlider = document.getElementById('tab3-price-slider');
+    const t3PriceText = document.getElementById('tab3-price-text');
+    const t3PayText = document.getElementById('tab3-pay-text');
+    const t3PayBar = document.getElementById('tab3-pay-bar');
+    const t3SaveBar = document.getElementById('tab3-save-bar');
+    const t3SaveAmount = document.getElementById('tab3-save-amount');
+    const t3SaveEquation = document.getElementById('tab3-save-equation');
+    const t3DiscountBadge = document.getElementById('tab3-discount-badge');
+
+    function updateTab3Discount() {
+      const price = parseFloat(t3PriceSlider.value);
+      const pay = Math.round(price * currentDiscount);
+      const save = price - pay;
+      const saveRate = Math.round((1 - currentDiscount) * 100);
+      const payRate = Math.round(currentDiscount * 100);
+
+      t3PriceText.textContent = `${price} 元`;
+      t3PayText.textContent = `${pay} 元`;
+      t3SaveAmount.textContent = `${save} 元`;
+
+      t3PayBar.style.width = `${payRate}%`;
+      t3PayBar.textContent = `${payRate}%`;
+      t3SaveBar.style.width = `${saveRate}%`;
+      t3SaveBar.textContent = `省 ${saveRate}%`;
+
+      t3SaveEquation.textContent = `算式：${price} × (1 - ${currentDiscount}) = ${price} × ${(1 - currentDiscount).toFixed(2)} = ${save} 元`;
+    }
+
+    function setDiscount(disc, label) {
+      currentDiscount = disc;
+      t3DiscountBadge.textContent = `打${label} (${disc}倍)`;
+      document.querySelectorAll('.disc-btn').forEach(b => {
+        b.classList.remove('bg-amber-500', 'text-white', 'border-amber-600');
+        b.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
+      });
+      event.target.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
+      event.target.classList.add('bg-amber-500', 'text-white', 'border-amber-600');
+      updateTab3Discount();
+    }
+
+    t3PriceSlider.addEventListener('input', updateTab3Discount);
+
+    // 疫苗互動算式
+    const t3ClassSlider = document.getElementById('tab3-class-slider');
+    const t3RateSlider = document.getElementById('tab3-rate-slider');
+    const t3ClassText = document.getElementById('tab3-class-text');
+    const t3RateText = document.getElementById('tab3-rate-text');
+    const t3VaxCount = document.getElementById('tab3-vax-count');
+    const t3UnvaxCount = document.getElementById('tab3-unvax-count');
+    const t3VaxBar = document.getElementById('tab3-vax-bar');
+    const t3UnvaxBar = document.getElementById('tab3-unvax-bar');
+    const t3DiffStudentAmount = document.getElementById('tab3-diff-student-amount');
+    const t3StudentEquation = document.getElementById('tab3-student-equation');
+
+    function updateTab3Vaccine() {
+      const total = parseInt(t3ClassSlider.value, 10);
+      const ratePct = parseInt(t3RateSlider.value, 10);
+      const unvaxPct = 100 - ratePct;
+
+      const rateDec = ratePct / 100;
+      const unvaxDec = unvaxPct / 100;
+
+      const vaxCount = Math.round(total * rateDec);
+      const unvaxCount = total - vaxCount;
+      const diffCount = vaxCount - unvaxCount;
+      const diffRate = (rateDec - unvaxDec).toFixed(1);
+
+      t3ClassText.textContent = `${total} 人`;
+      t3RateText.textContent = `${ratePct}% (${rateDec}倍)`;
+      t3VaxCount.textContent = `${vaxCount} 人`;
+      t3UnvaxCount.textContent = `${unvaxCount} 人`;
+
+      t3VaxBar.style.width = `${ratePct}%`;
+      t3VaxBar.textContent = `有打 ${ratePct}%`;
+      t3UnvaxBar.style.width = `${unvaxPct}%`;
+      t3UnvaxBar.textContent = `沒打 ${unvaxPct}%`;
+
+      t3DiffStudentAmount.textContent = `${diffCount} 人`;
+      t3StudentEquation.textContent = `算式：${total} × (${rateDec} - ${unvaxDec.toFixed(1)}) = ${total} × ${diffRate} = ${diffCount} 人`;
+    }
+
+    t3ClassSlider.addEventListener('input', updateTab3Vaccine);
+    t3RateSlider.addEventListener('input', updateTab3Vaccine);
+
+    // 初始化啟動
+    window.onload = function() {
+      updateTab1();
+      updateTab2();
+      updateTab3Discount();
+      updateTab3Vaccine();
+    };
+  </script>
+</body>
+</html>
