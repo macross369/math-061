@@ -23,6 +23,7 @@
       background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 35%, #415a77 70%, #778da9 100%);
       min-height: 100vh;
       color: #1e293b;
+      overflow-x: hidden;
     }
     
     /* 新海誠動漫風天空濾鏡背景 */
@@ -35,17 +36,11 @@
 
     /* 雲霧與微光感毛玻璃面板 */
     .glass-card {
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.90);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: 0 10px 30px -5px rgba(22, 38, 70, 0.2), 0 0 15px rgba(186, 230, 253, 0.35);
-    }
-    
-    .glass-card-subtle {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 10px 30px -5px rgba(22, 38, 70, 0.22), 0 0 15px rgba(186, 230, 253, 0.35);
     }
 
     /* 標準直式國小數學分數顯示 (分子在上、分母在下，垂直置中) */
@@ -68,13 +63,6 @@
       padding-top: 2px;
       display: block;
     }
-    .mixed-fraction {
-      display: inline-flex;
-      align-items: center;
-      vertical-align: middle;
-      gap: 0.15rem;
-      font-feature-settings: "tnum";
-    }
 
     /* 短除法排版專用樣式 */
     .short-div-table {
@@ -82,18 +70,19 @@
       font-weight: bold;
     }
     .short-div-cell {
-      padding: 4px 10px;
+      padding: 6px 14px;
       text-align: center;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
     }
     .short-div-border-l {
-      border-left: 2px solid #2563eb;
-      border-bottom: 2px solid #2563eb;
+      border-left: 2.5px solid #2563eb;
+      border-bottom: 2.5px solid #2563eb;
     }
 
     /* 動態光芒滑桿樣式 */
     input[type=range] {
       accent-color: #3b82f6;
+      height: 6px;
     }
 
     /* 自訂平滑過渡 */
@@ -107,7 +96,12 @@
   <!-- 頁首與導覽區 -->
   <header class="w-full pt-8 pb-6 px-4 text-center text-white relative overflow-hidden">
     <div class="max-w-5xl mx-auto relative z-10">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-amber-200 text-sm font-semibold mb-3 border border-white/30 shadow-sm">
+      <!-- 修改：使用轉換後的 Google Drive 直接連結 -->
+      <div class="w-full max-w-4xl flex items-center justify-start mb-4 px-2 fade-in">
+          <img src="https://lh3.googleusercontent.com/d/1qUdM3yxfDP9U8S1PAlYScLXLG9riPxMt" alt="閒雲數學小棧Logo" class="h-8 w-auto mr-3 object-contain drop-shadow-md rounded-full bg-white/30 p-1" onerror="this.src='https://placehold.co/40x40/ffffff/333333?text=Logo'">
+          <span class="text-xl md:text-2xl font-bold text-white drop-shadow-lg tracking-wider" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">閒雲數學小棧</span>
+      </div>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-amber-200 text-xs md:text-sm font-semibold mb-3 border border-white/30 shadow-sm">
         <i class="fa-solid fa-cloud-sun"></i> 國小六上數學 1-5 互動學習網頁
       </div>
       <h1 class="text-3xl md:text-5xl font-black tracking-wide drop-shadow-md text-sky-50 mb-2">
@@ -118,20 +112,20 @@
       </p>
 
       <!-- 標籤導覽列 (分頁導航) -->
-      <nav class="flex flex-wrap items-center justify-center gap-2 mt-6 max-w-4xl mx-auto px-2">
-        <button onclick="switchTab('tab-grouping')" id="btn-tab-grouping" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white text-blue-900 border-2 border-amber-300">
+      <nav class="flex flex-wrap items-center justify-center gap-2 mt-6 max-w-4xl mx-auto px-1">
+        <button onclick="switchTab('tab-grouping')" id="btn-tab-grouping" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white text-blue-900 border-2 border-amber-300">
           <i class="fa-solid fa-users-viewfinder text-blue-600"></i> 分組與裝袋 (GCD)
         </button>
-        <button onclick="switchTab('tab-geometry')" id="btn-tab-geometry" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/70 hover:bg-white/90 text-slate-800 border border-white/50">
+        <button onclick="switchTab('tab-geometry')" id="btn-tab-geometry" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/75 hover:bg-white/95 text-slate-800 border border-white/50">
           <i class="fa-solid fa-shapes text-emerald-600"></i> 裁切與拼排 (幾何)
         </button>
-        <button onclick="switchTab('tab-timeline')" id="btn-tab-timeline" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/70 hover:bg-white/90 text-slate-800 border border-white/50">
+        <button onclick="switchTab('tab-timeline')" id="btn-tab-timeline" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/75 hover:bg-white/95 text-slate-800 border border-white/50">
           <i class="fa-solid fa-bus-simple text-purple-600"></i> 發車與出爐 (LCM)
         </button>
-        <button onclick="switchTab('tab-shortdiv')" id="btn-tab-shortdiv" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/70 hover:bg-white/90 text-slate-800 border border-white/50">
+        <button onclick="switchTab('tab-shortdiv')" id="btn-tab-shortdiv" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/75 hover:bg-white/95 text-slate-800 border border-white/50">
           <i class="fa-solid fa-calculator text-amber-600"></i> 短除法探索機
         </button>
-        <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/70 hover:bg-white/90 text-slate-800 border border-white/50">
+        <button onclick="switchTab('tab-quiz')" id="btn-tab-quiz" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/75 hover:bg-white/95 text-slate-800 border border-white/50">
           <i class="fa-solid fa-star text-rose-500"></i> 隨堂測驗
         </button>
       </nav>
@@ -143,56 +137,56 @@
 
     <!-- 標籤頁 1: 分組與裝袋探究 (最大公因數) -->
     <section id="tab-grouping" class="tab-content block">
-      <div class="glass-card rounded-2xl p-6 md:p-8">
+      <div class="glass-card rounded-2xl p-5 md:p-8">
         <!-- 核心教學提要 -->
         <div class="border-b border-slate-200/80 pb-4 mb-6">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
               <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">生活情境 1</span>
-              <h2 class="text-2xl font-black text-slate-800 mt-1">小小主播營：混合分組 vs 分開住宿</h2>
+              <h2 class="text-xl md:text-2xl font-black text-slate-800 mt-1">小小主播營：混合分組 vs 分開住宿</h2>
             </div>
             <div class="text-xs bg-sky-50 text-sky-700 px-3 py-1.5 rounded-lg border border-sky-200 font-medium">
-              <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 關鍵概念：均分剛好、求最多組數/每組人數
+              <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> 關鍵概念：均分剛好、求最多組數/每間人數
             </div>
           </div>
-          <p class="text-slate-600 text-sm mt-2">
-            主辦單位有 <strong class="text-blue-600 font-bold" id="group-boy-label">24</strong> 位男生、<strong class="text-pink-600 font-bold" id="group-girl-label">18</strong> 位女生。讓我們透過拖曳滑桿來觀察：究竟分成幾組時，大家才能「剛好分完」且「每組人數一模一樣」？
+          <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+            主辦單位有 <strong class="text-blue-600 font-bold" id="group-boy-label">24</strong> 位男生、<strong class="text-pink-600 font-bold" id="group-girl-label">18</strong> 位女生。透過拖曳滑桿觀察：在兩種不同情境下，如何才能「剛好分完」且找到最佳答案？
           </p>
         </div>
 
         <!-- 互動控制盤 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-50/80 p-4 rounded-xl border border-slate-200">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">
+            <label class="block text-xs font-bold text-slate-600 mb-1.5">
               <i class="fa-solid fa-person text-blue-500"></i> 男生人數：<span id="txt-boys" class="text-blue-600 font-black text-base">24</span> 人
             </label>
             <input type="range" id="slider-boys" min="6" max="48" step="6" value="24" class="w-full cursor-pointer" oninput="updateGroupingLab()">
-            <div class="flex justify-between text-[11px] text-slate-400 mt-0.5"><span>6</span><span>24</span><span>48</span></div>
+            <div class="flex justify-between text-[11px] text-slate-400 mt-1"><span>6</span><span>24</span><span>48</span></div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">
+            <label class="block text-xs font-bold text-slate-600 mb-1.5">
               <i class="fa-solid fa-person-dress text-pink-500"></i> 女生人數：<span id="txt-girls" class="text-pink-600 font-black text-base">18</span> 人
             </label>
             <input type="range" id="slider-girls" min="6" max="48" step="6" value="18" class="w-full cursor-pointer" oninput="updateGroupingLab()">
-            <div class="flex justify-between text-[11px] text-slate-400 mt-0.5"><span>6</span><span>18</span><span>48</span></div>
+            <div class="flex justify-between text-[11px] text-slate-400 mt-1"><span>6</span><span>18</span><span>48</span></div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">
-              <i class="fa-solid fa-hand-pointer text-indigo-500"></i> 嘗試分配組數 (探索因數)：<span id="txt-groups" class="text-indigo-600 font-black text-base">6</span> 組
+            <label class="block text-xs font-bold text-slate-600 mb-1.5" id="lbl-group-slider">
+              <i class="fa-solid fa-hand-pointer text-indigo-500"></i> 嘗試分配組數：<span id="txt-groups" class="text-indigo-600 font-black text-base">6</span> 組
             </label>
             <input type="range" id="slider-groups" min="1" max="12" step="1" value="6" class="w-full cursor-pointer" oninput="updateGroupingLab()">
-            <div class="flex justify-between text-[11px] text-slate-400 mt-0.5"><span>1組</span><span>6組</span><span>12組</span></div>
+            <div class="flex justify-between text-[11px] text-slate-400 mt-1" id="ticks-group-slider"><span>1組</span><span>6組</span><span>12組</span></div>
           </div>
         </div>
 
         <!-- 模式切換：白天混合分組 vs 晚上分開住宿 -->
-        <div class="flex gap-2 mt-5 mb-4">
-          <button id="btn-mode-mixed" onclick="setGroupingMode('mixed')" class="px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-blue-600 text-white shadow-sm">
+        <div class="flex flex-wrap gap-2 mt-5 mb-4">
+          <button id="btn-mode-mixed" onclick="setGroupingMode('mixed')" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-blue-600 text-white shadow-sm transition">
             情境 A：白天混合編組活動 (求最多幾組)
           </button>
-          <button id="btn-mode-separate" onclick="setGroupingMode('separate')" class="px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300">
+          <button id="btn-mode-separate" onclick="setGroupingMode('separate')" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
             情境 B：晚上分開分配房間 (求每間最多幾人)
           </button>
         </div>
@@ -203,10 +197,10 @@
         </div>
 
         <!-- 視覺化組別動態畫布 -->
-        <div class="bg-white/90 p-5 rounded-2xl border border-slate-200 shadow-inner">
+        <div class="bg-white/95 p-5 rounded-2xl border border-slate-200 shadow-inner">
           <div class="flex items-center justify-between mb-3 text-xs text-slate-500">
             <span class="font-bold text-slate-700"><i class="fa-solid fa-cubes-stacked text-blue-500 mr-1"></i> 即時分裝狀態示意圖</span>
-            <span id="grouping-status-pill" class="px-2 py-0.5 rounded-full font-bold"></span>
+            <span id="grouping-status-pill" class="px-2.5 py-0.5 rounded-full font-bold"></span>
           </div>
 
           <!-- 動態分組卡片容納區 -->
@@ -221,11 +215,11 @@
             <i class="fa-solid fa-graduation-cap text-amber-600"></i> 教師思維對話引導：
           </h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm text-amber-950">
-            <div class="bg-white/70 p-3 rounded-lg border border-amber-100">
+            <div class="bg-white/80 p-3.5 rounded-xl border border-amber-100">
               <span class="font-bold text-blue-700">① 白天混合編組：</span><br>
-              組數必須同時整除男生與女生人數，即為公因數。若要分「最多組」，即是找 <span class="bg-amber-200 px-1 py-0.5 rounded font-mono font-bold">最大公因數</span>。短除法最下方的商，就是每組的男生與女生人數！
+              組數必須同時整除男生與女生人數，即為公因數。若要分「最多組」，即是找 <span class="bg-amber-200 px-1.5 py-0.5 rounded font-mono font-bold">最大公因數</span>。短除法最下方的商，就是每組的男生與女生人數！
             </div>
-            <div class="bg-white/70 p-3 rounded-lg border border-amber-100">
+            <div class="bg-white/80 p-3.5 rounded-xl border border-amber-100">
               <span class="font-bold text-emerald-700">② 晚上分開住宿：</span><br>
               每間房間人數必須相同且分開住，代表「每間人數」是兩數的公因數。每間要住「最多人」，一間就是最大公因數人；所需的總房間數即為男、女各自除以公因數後的商數相加。
             </div>
@@ -236,10 +230,10 @@
 
     <!-- 標籤頁 2: 裁切與拼排 (幾何切割 vs 拼排) -->
     <section id="tab-geometry" class="tab-content hidden">
-      <div class="glass-card rounded-2xl p-6 md:p-8">
+      <div class="glass-card rounded-2xl p-5 md:p-8">
         <div class="border-b border-slate-200/80 pb-4 mb-6">
           <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 uppercase tracking-wider">生活情境 2</span>
-          <h2 class="text-2xl font-black text-slate-800 mt-1">正方形海報幾何實驗室</h2>
+          <h2 class="text-xl md:text-2xl font-black text-slate-800 mt-1">正方形海報幾何實驗室</h2>
           <p class="text-slate-600 text-sm mt-1">
             大長方形切成小正方形（找因數） vs 小長方形拼成大正方形（找倍數）！直觀觀察網格幾何變化。
           </p>
@@ -247,19 +241,19 @@
 
         <!-- 幾何雙模式選擇 -->
         <div class="flex flex-wrap gap-2 mb-6">
-          <button id="btn-geo-cut" onclick="switchGeoMode('cut')" class="px-5 py-2 rounded-xl text-sm font-bold bg-emerald-600 text-white shadow-md transition-all">
+          <button id="btn-geo-cut" onclick="switchGeoMode('cut')" class="px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-emerald-600 text-white shadow-md transition-all">
             <i class="fa-solid fa-scissors mr-1"></i> 切割模式 (求最大正方形紙卡 · GCD)
           </button>
-          <button id="btn-geo-tile" onclick="switchGeoMode('tile')" class="px-5 py-2 rounded-xl text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all">
+          <button id="btn-geo-tile" onclick="switchGeoMode('tile')" class="px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all">
             <i class="fa-solid fa-border-all mr-1"></i> 拼排模式 (拼成最小正方形海報 · LCM)
           </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <!-- 左側參數控制器 -->
-          <div class="lg:col-span-4 bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-4">
+          <div class="lg:col-span-4 bg-slate-50/85 p-5 rounded-2xl border border-slate-200 space-y-4">
             <h3 class="font-bold text-slate-700 text-sm flex items-center gap-1.5" id="geo-control-title">
-              <i class="fa-solid fa-sliders text-emerald-600"></i> 長方形卡片尺寸設定
+              <i class="fa-solid fa-sliders text-emerald-600"></i> 大海報紙尺寸設定 (切割為正方形)
             </h3>
 
             <div>
@@ -267,7 +261,7 @@
                 <span>長度 (長邊)：</span>
                 <span id="geo-val-length" class="text-emerald-700 font-mono text-sm font-black">108</span> cm
               </div>
-              <input type="range" id="geo-slider-len" min="20" max="120" step="4" value="108" class="w-full cursor-pointer" oninput="renderGeometryLab()">
+              <input type="range" id="geo-slider-len" min="16" max="120" step="4" value="108" class="w-full cursor-pointer" oninput="renderGeometryLab()">
             </div>
 
             <div>
@@ -275,19 +269,19 @@
                 <span>寬度 (寬邊)：</span>
                 <span id="geo-val-width" class="text-emerald-700 font-mono text-sm font-black">60</span> cm
               </div>
-              <input type="range" id="geo-slider-wid" min="16" max="96" step="4" value="60" class="w-full cursor-pointer" oninput="renderGeometryLab()">
+              <input type="range" id="geo-slider-wid" min="12" max="96" step="4" value="60" class="w-full cursor-pointer" oninput="renderGeometryLab()">
             </div>
 
             <div class="pt-3 border-t border-slate-200">
               <div class="flex justify-between text-xs font-bold text-indigo-700 mb-1">
-                <span id="geo-param-label">正方形邊長測試：</span>
+                <span id="geo-param-label">欲裁切正方形邊長：</span>
                 <span id="geo-val-side" class="font-mono text-sm font-black">12</span> cm
               </div>
               <input type="range" id="geo-slider-side" min="1" max="40" step="1" value="12" class="w-full cursor-pointer" oninput="renderGeometryLab()">
-              <p class="text-[11px] text-slate-500 mt-1" id="geo-param-hint">滑動觀察是否能剛好切割無剩餘</p>
+              <p class="text-[11px] text-slate-500 mt-1" id="geo-param-hint">尋找長與寬的「最大公因數」，才能裁出最大且無浪費的正方形！</p>
             </div>
 
-            <button onclick="autoFitGeometry()" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold border border-indigo-200 transition-colors flex items-center justify-center gap-1">
+            <button onclick="autoFitGeometry()" class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold border border-indigo-200 transition-colors flex items-center justify-center gap-1.5 shadow-xs">
               <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> 一鍵帶入數學最佳解答
             </button>
           </div>
@@ -301,12 +295,12 @@
                 <span id="geo-math-badge" class="px-2.5 py-0.5 rounded-full font-bold text-xs bg-emerald-100 text-emerald-800">完美整除</span>
               </div>
               
-              <div class="w-full h-64 sm:h-72 bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden p-2 relative">
-                <canvas id="geoCanvas" class="max-w-full max-h-full block shadow-md rounded"></canvas>
+              <div id="geoCanvasContainer" class="w-full h-64 sm:h-72 bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden p-2 relative">
+                <canvas id="geoCanvas" class="w-full h-full block"></canvas>
               </div>
 
               <!-- 動態解析計算框 -->
-              <div id="geo-calc-board" class="w-full mt-4 bg-emerald-50/60 border border-emerald-200 rounded-xl p-3 text-xs md:text-sm text-slate-800 leading-relaxed font-mono">
+              <div id="geo-calc-board" class="w-full mt-4 bg-emerald-50/60 border border-emerald-200 rounded-xl p-3.5 text-xs md:text-sm text-slate-800 leading-relaxed font-mono">
                 <!-- JS 即時輸出長列張數、寬列張數、總共張數 -->
               </div>
             </div>
@@ -317,46 +311,46 @@
 
     <!-- 標籤頁 3: 週期發車與出爐 (最小公倍數) -->
     <section id="tab-timeline" class="tab-content hidden">
-      <div class="glass-card rounded-2xl p-6 md:p-8">
+      <div class="glass-card rounded-2xl p-5 md:p-8">
         <div class="border-b border-slate-200/80 pb-4 mb-6">
           <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-purple-100 text-purple-800 uppercase tracking-wider">生活情境 3</span>
-          <h2 class="text-2xl font-black text-slate-800 mt-1">週期規律：專車同時發車與蛋塔出爐</h2>
+          <h2 class="text-xl md:text-2xl font-black text-slate-800 mt-1">週期規律：專車同時發車與蛋塔出爐</h2>
           <p class="text-slate-600 text-sm mt-1">
             甲專車每隔幾分鐘發車？乙專車每隔幾分鐘發車？利用動態「時間線軌跡」觀察兩者何時再次相遇！
           </p>
         </div>
 
         <!-- 情境切換 -->
-        <div class="flex gap-2 mb-5">
-          <button id="btn-period-bus" onclick="setPeriodScenario('bus')" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-purple-600 text-white shadow-sm">
+        <div class="flex flex-wrap gap-2 mb-5">
+          <button id="btn-period-bus" onclick="setPeriodScenario('bus')" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-purple-600 text-white shadow-sm transition">
             <i class="fa-solid fa-van-shuttle mr-1"></i> 情境 1：賞花專車 (20分) vs 爬山專車 (50分)
           </button>
-          <button id="btn-period-tart" onclick="setPeriodScenario('tart')" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300">
+          <button id="btn-period-tart" onclick="setPeriodScenario('tart')" class="px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
             <i class="fa-solid fa-cake-candles mr-1"></i> 情境 2：起司蛋塔 (8天) vs 蘋果蛋塔 (6天)
           </button>
         </div>
 
         <!-- 週期互動控制條 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-50/80 p-4 rounded-xl border border-slate-200 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-50/85 p-4 rounded-xl border border-slate-200 mb-6">
           <div>
             <label class="block text-xs font-bold text-purple-700 mb-1" id="lbl-period-a">
-              專車 A 發車週期：<span id="txt-period-a" class="text-base font-black">20</span> 分鐘
+              賞花專車發車週期：<span id="txt-period-a" class="text-base font-black">20</span> 分鐘
             </label>
-            <input type="range" id="slider-period-a" min="10" max="60" step="5" value="20" class="w-full cursor-pointer" oninput="updatePeriodicLab()">
+            <input type="range" id="slider-period-a" min="5" max="60" step="1" value="20" class="w-full cursor-pointer" oninput="updatePeriodicLab()">
           </div>
 
           <div>
             <label class="block text-xs font-bold text-amber-700 mb-1" id="lbl-period-b">
-              專車 B 發車週期：<span id="txt-period-b" class="text-base font-black">50</span> 分鐘
+              爬山專車發車週期：<span id="txt-period-b" class="text-base font-black">50</span> 分鐘
             </label>
-            <input type="range" id="slider-period-b" min="10" max="60" step="5" value="50" class="w-full cursor-pointer" oninput="updatePeriodicLab()">
+            <input type="range" id="slider-period-b" min="5" max="60" step="1" value="50" class="w-full cursor-pointer" oninput="updatePeriodicLab()">
           </div>
 
           <div class="sm:col-span-2 lg:col-span-1">
             <label class="block text-xs font-bold text-slate-600 mb-1">
               起始時間：<span class="text-blue-600 font-mono font-bold" id="txt-start-time">上午 05:30</span>
             </label>
-            <div class="text-xs text-slate-500 py-1.5 px-3 bg-white rounded-lg border border-slate-200">
+            <div class="text-xs text-slate-600 py-1.5 px-3 bg-white rounded-lg border border-slate-200">
               最小公倍數：<strong class="text-purple-600 font-mono text-sm" id="txt-lcm-val">100</strong> <span id="txt-unit">分鐘</span>
             </div>
           </div>
@@ -364,14 +358,14 @@
 
         <!-- 動態時間軸視覺化容器 -->
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex items-center justify-between text-xs text-slate-500">
-            <span class="font-bold text-slate-700"><i class="fa-solid fa-timeline text-purple-500 mr-1"></i> 時間軸同時遇合模擬器 (標示前 3 次交會點)</span>
+          <div class="flex items-center justify-between flex-wrap gap-2 text-xs text-slate-500">
+            <span class="font-bold text-slate-700"><i class="fa-solid fa-timeline text-purple-500 mr-1"></i> 時間軸同時遇合模擬器</span>
             <span class="text-purple-600 font-bold" id="next-sync-label">下次同時：上午 07:10</span>
           </div>
 
           <!-- 視覺化時間軸軌道 -->
           <div class="overflow-x-auto pb-2">
-            <div id="timeline-track" class="min-w-[620px] p-4 bg-slate-50 rounded-xl border border-slate-200 relative">
+            <div id="timeline-track" class="min-w-[600px] p-4 bg-slate-50 rounded-xl border border-slate-200 relative">
               <!-- JS 動態生成專車A的站點、專車B的站點、交會光柱 -->
             </div>
           </div>
@@ -396,33 +390,33 @@
 
     <!-- 標籤頁 4: 短除法探索機 -->
     <section id="tab-shortdiv" class="tab-content hidden">
-      <div class="glass-card rounded-2xl p-6 md:p-8">
+      <div class="glass-card rounded-2xl p-5 md:p-8">
         <div class="border-b border-slate-200/80 pb-4 mb-6">
           <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-amber-100 text-amber-800 uppercase tracking-wider">運算神器</span>
-          <h2 class="text-2xl font-black text-slate-800 mt-1">互動式短除法動態解密機</h2>
+          <h2 class="text-xl md:text-2xl font-black text-slate-800 mt-1">互動式短除法動態解密機</h2>
           <p class="text-slate-600 text-sm mt-1">
             輸入任意兩數，觀察短除法如何一步步提取質因數，直觀理解「左邊直式相乘＝最大公因數」與「L型相乘＝最小公倍數」！
           </p>
         </div>
 
         <!-- 數字輸入欄 -->
-        <div class="flex flex-wrap items-center gap-4 bg-slate-50/80 p-4 rounded-xl border border-slate-200 mb-6">
+        <div class="flex flex-wrap items-center gap-3 md:gap-4 bg-slate-50/85 p-4 rounded-xl border border-slate-200 mb-6">
           <div class="flex items-center gap-2">
-            <label class="text-xs font-bold text-slate-600">數值 A：</label>
-            <input type="number" id="num-a" value="24" min="2" max="300" class="w-24 px-3 py-1.5 rounded-lg border border-slate-300 font-mono font-bold text-blue-700 text-center focus:ring-2 focus:ring-blue-400 outline-none">
+            <label for="num-a" class="text-xs font-bold text-slate-600">數值 A：</label>
+            <input type="number" id="num-a" value="24" min="2" max="500" onkeydown="if(event.key==='Enter') calculateShortDivision()" class="w-20 md:w-24 px-3 py-1.5 rounded-lg border border-slate-300 font-mono font-bold text-blue-700 text-center focus:ring-2 focus:ring-blue-400 outline-none">
           </div>
           <div class="flex items-center gap-2">
-            <label class="text-xs font-bold text-slate-600">數值 B：</label>
-            <input type="number" id="num-b" value="18" min="2" max="300" class="w-24 px-3 py-1.5 rounded-lg border border-slate-300 font-mono font-bold text-pink-700 text-center focus:ring-2 focus:ring-pink-400 outline-none">
+            <label for="num-b" class="text-xs font-bold text-slate-600">數值 B：</label>
+            <input type="number" id="num-b" value="18" min="2" max="500" onkeydown="if(event.key==='Enter') calculateShortDivision()" class="w-20 md:w-24 px-3 py-1.5 rounded-lg border border-slate-300 font-mono font-bold text-pink-700 text-center focus:ring-2 focus:ring-pink-400 outline-none">
           </div>
           <button onclick="calculateShortDivision()" class="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs md:text-sm font-bold shadow-md transition-all">
             <i class="fa-solid fa-play mr-1"></i> 開始分解探究
           </button>
-          <div class="flex gap-1.5 ml-auto">
-            <button onclick="quickSetNumbers(24, 18)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200">24, 18</button>
-            <button onclick="quickSetNumbers(108, 60)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200">108, 60</button>
-            <button onclick="quickSetNumbers(20, 50)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200">20, 50</button>
-            <button onclick="quickSetNumbers(34, 51)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200">34, 51 (互質題)</button>
+          <div class="flex flex-wrap gap-1.5 lg:ml-auto">
+            <button onclick="quickSetNumbers(24, 18)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200 font-mono">24, 18</button>
+            <button onclick="quickSetNumbers(108, 60)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200 font-mono">108, 60</button>
+            <button onclick="quickSetNumbers(20, 50)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200 font-mono">20, 50</button>
+            <button onclick="quickSetNumbers(15, 28)" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg text-xs border border-slate-200">15, 28 (互質題)</button>
           </div>
         </div>
 
@@ -489,11 +483,11 @@
 
     <!-- 標籤頁 5: 隨堂測驗 -->
     <section id="tab-quiz" class="tab-content hidden">
-      <div class="glass-card rounded-2xl p-6 md:p-8">
+      <div class="glass-card rounded-2xl p-5 md:p-8">
         <div class="border-b border-slate-200/80 pb-4 mb-6 flex justify-between items-center flex-wrap gap-2">
           <div>
             <span class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-rose-100 text-rose-800 uppercase tracking-wider">即時驗收</span>
-            <h2 class="text-2xl font-black text-slate-800 mt-1">隨堂測驗</h2>
+            <h2 class="text-xl md:text-2xl font-black text-slate-800 mt-1">隨堂測驗</h2>
             <p class="text-slate-600 text-sm mt-1">請完成作答後點擊下方「提交答案」，系統將為您批改並提供題目解析！</p>
           </div>
           <div class="text-right">
@@ -525,7 +519,7 @@
 
   <!-- 提示模態框 (取代 alert) -->
   <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-white text-center transform scale-95 transition-all">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-white text-center transform transition-all">
       <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mx-auto mb-3 text-xl">
         <i class="fa-solid fa-circle-info"></i>
       </div>
@@ -578,16 +572,16 @@
         if (id === tabId) {
           el.classList.remove('hidden');
           el.classList.add('block');
-          btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white text-blue-900 border-2 border-amber-300';
+          btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white text-blue-900 border-2 border-amber-300';
         } else {
           el.classList.add('hidden');
           el.classList.remove('block');
-          btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/70 hover:bg-white/90 text-slate-800 border border-white/50';
+          btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm md:text-base transition-all duration-200 shadow-md flex items-center gap-2 bg-white/75 hover:bg-white/95 text-slate-800 border border-white/50';
         }
       });
 
       if (tabId === 'tab-geometry') {
-        setTimeout(renderGeometryLab, 50);
+        requestAnimationFrame(() => renderGeometryLab());
       }
     }
 
@@ -601,18 +595,29 @@
       document.getElementById('custom-modal').classList.add('hidden');
     }
 
+    /* =========================================
+       標籤頁 1：分組與裝袋 (GCD)
+       ========================================= */
     let currentGroupingMode = 'mixed'; // 'mixed' or 'separate'
 
     function setGroupingMode(mode) {
       currentGroupingMode = mode;
       const btnMixed = document.getElementById('btn-mode-mixed');
       const btnSep = document.getElementById('btn-mode-separate');
+      const lblSlider = document.getElementById('lbl-group-slider');
+      const ticksSlider = document.getElementById('ticks-group-slider');
+      const currentVal = document.getElementById('slider-groups').value;
+
       if (mode === 'mixed') {
-        btnMixed.className = "px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-blue-600 text-white shadow-sm";
-        btnSep.className = "px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300";
+        btnMixed.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-blue-600 text-white shadow-sm transition";
+        btnSep.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+        lblSlider.innerHTML = `<i class="fa-solid fa-hand-pointer text-indigo-500"></i> 嘗試分配組數：<span id="txt-groups" class="text-indigo-600 font-black text-base">${currentVal}</span> 組`;
+        ticksSlider.innerHTML = `<span>1組</span><span>6組</span><span>12組</span>`;
       } else {
-        btnSep.className = "px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-blue-600 text-white shadow-sm";
-        btnMixed.className = "px-4 py-1.5 rounded-lg text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300";
+        btnSep.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-blue-600 text-white shadow-sm transition";
+        btnMixed.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
+        lblSlider.innerHTML = `<i class="fa-solid fa-bed text-indigo-500"></i> 每間房間人數：<span id="txt-groups" class="text-indigo-600 font-black text-base">${currentVal}</span> 人`;
+        ticksSlider.innerHTML = `<span>1人</span><span>6人</span><span>12人</span>`;
       }
       updateGroupingLab();
     }
@@ -657,12 +662,12 @@
               </div>
             </div>
             <div class="text-right">
-              <span class="text-xs font-mono bg-white px-2 py-1 rounded border font-bold text-slate-700">
+              <span class="text-xs font-mono bg-white px-2.5 py-1 rounded-lg border font-bold text-slate-700">
                 ${boys}÷${groups}=${boyPerGroup}，${girls}÷${groups}=${girlPerGroup}
               </span>
             </div>
           `;
-          statusPill.className = "px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 text-xs";
+          statusPill.className = "px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 text-xs";
           statusPill.innerText = `完全整除 (${groups} 組)`;
         } else {
           diagBox.className = "p-4 rounded-xl mb-6 transition-all border border-rose-200 bg-rose-50 flex items-center justify-between flex-wrap gap-3";
@@ -678,7 +683,7 @@
             </div>
             <div class="text-xs text-rose-700 font-bold">請嘗試公因數組數</div>
           `;
-          statusPill.className = "px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800 text-xs";
+          statusPill.className = "px-2.5 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800 text-xs";
           statusPill.innerText = `無法整除 (有剩餘)`;
         }
 
@@ -713,7 +718,7 @@
 
       } else {
         // 晚上分開住宿模式：每間房間 groups 人
-        const peoplePerRoom = groups; // 這裡滑桿代表每間房間人數
+        const peoplePerRoom = groups;
         const boyRoomValid = (boys % peoplePerRoom === 0);
         const girlRoomValid = (girls % peoplePerRoom === 0);
         const isIdeal = (boyRoomValid && girlRoomValid);
@@ -735,15 +740,14 @@
                 男生需要 <strong class="text-blue-600">${boyRooms}</strong> 間房、女生需要 <strong class="text-pink-600">${girlRooms}</strong> 間房，總共需要 <strong class="text-indigo-700">${totalRooms}</strong> 間房間。
               </div>
             </div>
-            <div class="text-xs font-mono bg-white px-2 py-1 rounded border font-bold text-slate-700">
+            <div class="text-xs font-mono bg-white px-2.5 py-1 rounded-lg border font-bold text-slate-700">
               ${boys}÷${peoplePerRoom} + ${girls}÷${peoplePerRoom} = ${totalRooms} 間
             </div>
           `;
-          statusPill.className = "px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 text-xs";
+          statusPill.className = "px-2.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 text-xs";
           statusPill.innerText = `分配成功 (共 ${totalRooms} 間)`;
 
           // 視覺化展示房間卡片
-          let renderedRooms = 0;
           for (let b = 1; b <= Math.min(boyRooms, 8); b++) {
             const card = document.createElement('div');
             card.className = "p-3 rounded-xl border border-blue-200 bg-blue-50/70 text-xs";
@@ -751,10 +755,9 @@
               <div class="font-bold text-blue-900 border-b border-blue-200 pb-1 mb-1.5 flex justify-between">
                 <span>男宿 #${b}</span> <i class="fa-solid fa-bed text-blue-400"></i>
               </div>
-              <div class="text-blue-700">住 ${peoplePerRoom} 人</div>
+              <div class="text-blue-700 font-medium">住 ${peoplePerRoom} 人</div>
             `;
             container.appendChild(card);
-            renderedRooms++;
           }
           for (let g = 1; g <= Math.min(girlRooms, 8); g++) {
             const card = document.createElement('div');
@@ -763,10 +766,9 @@
               <div class="font-bold text-pink-900 border-b border-pink-200 pb-1 mb-1.5 flex justify-between">
                 <span>女宿 #${g}</span> <i class="fa-solid fa-bed text-pink-400"></i>
               </div>
-              <div class="text-pink-700">住 ${peoplePerRoom} 人</div>
+              <div class="text-pink-700 font-medium">住 ${peoplePerRoom} 人</div>
             `;
             container.appendChild(card);
-            renderedRooms++;
           }
           if (totalRooms > 16) {
             const extraCard = document.createElement('div');
@@ -788,12 +790,15 @@
               </div>
             </div>
           `;
-          statusPill.className = "px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800 text-xs";
+          statusPill.className = "px-2.5 py-0.5 rounded-full font-bold bg-rose-100 text-rose-800 text-xs";
           statusPill.innerText = `無法平分`;
         }
       }
     }
 
+    /* =========================================
+       標籤頁 2：裁切與拼排 (幾何實驗室)
+       ========================================= */
     let currentGeoMode = 'cut'; // 'cut' (GCD) or 'tile' (LCM)
 
     function switchGeoMode(mode) {
@@ -805,23 +810,21 @@
       const paramHint = document.getElementById('geo-param-hint');
 
       if (mode === 'cut') {
-        btnCut.className = "px-5 py-2 rounded-xl text-sm font-bold bg-emerald-600 text-white shadow-md transition-all";
-        btnTile.className = "px-5 py-2 rounded-xl text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
+        btnCut.className = "px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-emerald-600 text-white shadow-md transition-all";
+        btnTile.className = "px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
         controlTitle.innerHTML = `<i class="fa-solid fa-scissors text-emerald-600"></i> 大海報紙尺寸設定 (切割為正方形)`;
         paramLabel.innerText = "欲裁切正方形邊長：";
         paramHint.innerText = "尋找長與寬的「最大公因數」，才能裁出最大且無浪費的正方形！";
-        // 預設為課本第 4 頁數值 108 x 60
         document.getElementById('geo-slider-len').value = 108;
         document.getElementById('geo-slider-wid').value = 60;
         document.getElementById('geo-slider-side').max = 40;
         document.getElementById('geo-slider-side').value = 12;
       } else {
-        btnTile.className = "px-5 py-2 rounded-xl text-sm font-bold bg-emerald-600 text-white shadow-md transition-all";
-        btnCut.className = "px-5 py-2 rounded-xl text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
+        btnTile.className = "px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-emerald-600 text-white shadow-md transition-all";
+        btnCut.className = "px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition-all";
         controlTitle.innerHTML = `<i class="fa-solid fa-border-all text-emerald-600"></i> 小卡片尺寸設定 (拼排成正方形海報)`;
         paramLabel.innerText = "大正方形海報邊長：";
         paramHint.innerText = "尋找長與寬的「最小公倍數」，才能用最少張卡片拼出正方形！";
-        // 預設為課本第 4 頁數值 20 x 16
         document.getElementById('geo-slider-len').value = 20;
         document.getElementById('geo-slider-wid').value = 16;
         document.getElementById('geo-slider-side').max = 160;
@@ -835,6 +838,7 @@
       const wid = parseInt(document.getElementById('geo-slider-wid').value);
       if (currentGeoMode === 'cut') {
         const gcd = calcGCD(len, wid);
+        document.getElementById('geo-slider-side').max = Math.max(gcd + 12, 40);
         document.getElementById('geo-slider-side').value = gcd;
       } else {
         const lcm = calcLCM(len, wid);
@@ -853,18 +857,26 @@
       document.getElementById('geo-val-width').innerText = wid;
       document.getElementById('geo-val-side').innerText = side;
 
+      const container = document.getElementById('geoCanvasContainer');
       const canvas = document.getElementById('geoCanvas');
+      if (!container || !canvas) return;
+
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const cw = Math.max(rect.width - 16, 280);
+      const ch = Math.max(rect.height - 16, 220);
+
+      canvas.width = cw * dpr;
+      canvas.height = ch * dpr;
+
       const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, cw, ch);
+
       const badge = document.getElementById('geo-math-badge');
       const calcBoard = document.getElementById('geo-calc-board');
 
-      // 設定 Canvas 解析度
-      canvas.width = 600;
-      canvas.height = 360;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       if (currentGeoMode === 'cut') {
-        // 切割模式：長方形尺寸 len x wid，被切割成 side x side 的小正方形
         const gcd = calcGCD(len, wid);
         const colFit = len % side === 0;
         const rowFit = wid % side === 0;
@@ -873,28 +885,27 @@
         const cols = len / side;
         const rows = wid / side;
 
-        // 計算繪圖比例縮放
-        const pad = 40;
-        const scale = Math.min((canvas.width - pad * 2) / len, (canvas.height - pad * 2) / wid);
+        const pad = 38;
+        const scale = Math.min((cw - pad * 2) / len, (ch - pad * 2) / wid);
         const drawW = len * scale;
         const drawH = wid * scale;
-        const startX = (canvas.width - drawW) / 2;
-        const startY = (canvas.height - drawH) / 2;
+        const startX = (cw - drawW) / 2;
+        const startY = (ch - drawH) / 2;
 
-        // 繪製底板長方形 (新海誠天空漸層)
+        // 繪製底板長方形
         const grad = ctx.createLinearGradient(startX, startY, startX + drawW, startY + drawH);
         grad.addColorStop(0, '#bae6fd');
         grad.addColorStop(1, '#fed7aa');
         ctx.fillStyle = grad;
         ctx.fillRect(startX, startY, drawW, drawH);
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2.5;
         ctx.strokeStyle = '#0284c7';
         ctx.strokeRect(startX, startY, drawW, drawH);
 
         // 繪製網格
         const step = side * scale;
         ctx.lineWidth = 1;
-        ctx.strokeStyle = isPerfect ? 'rgba(30, 64, 175, 0.45)' : 'rgba(239, 68, 68, 0.5)';
+        ctx.strokeStyle = isPerfect ? 'rgba(30, 64, 175, 0.5)' : 'rgba(239, 68, 68, 0.55)';
 
         for (let x = startX + step; x < startX + drawW - 0.1; x += step) {
           ctx.beginPath();
@@ -911,16 +922,15 @@
 
         // 標註尺寸文字
         ctx.fillStyle = '#1e293b';
-        ctx.font = 'bold 13px sans-serif';
+        ctx.font = 'bold 12px "Noto Sans TC", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`長邊 ${len} cm (分 ${cols.toFixed(1)} 份)`, startX + drawW / 2, startY - 12);
+        ctx.fillText(`長邊 ${len} cm (分 ${Number.isInteger(cols) ? cols : cols.toFixed(1)} 份)`, startX + drawW / 2, startY - 12);
         ctx.save();
         ctx.translate(startX - 14, startY + drawH / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.fillText(`寬邊 ${wid} cm (分 ${rows.toFixed(1)} 份)`, 0, 0);
+        ctx.fillText(`寬邊 ${wid} cm (分 ${Number.isInteger(rows) ? rows : rows.toFixed(1)} 份)`, 0, 0);
         ctx.restore();
 
-        // 狀態與解說
         if (isPerfect) {
           const totalCards = Math.round(cols * rows);
           const isMax = (side === gcd);
@@ -929,20 +939,20 @@
 
           calcBoard.innerHTML = `
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <div class="p-2 bg-white rounded-lg border border-emerald-200">
+              <div class="p-2.5 bg-white rounded-lg border border-emerald-200">
                 <span class="text-slate-500 text-xs block">長邊可切：</span>
                 <span class="font-bold text-emerald-700 text-base">${len} ÷ ${side} = ${cols}</span> 張
               </div>
-              <div class="p-2 bg-white rounded-lg border border-emerald-200">
+              <div class="p-2.5 bg-white rounded-lg border border-emerald-200">
                 <span class="text-slate-500 text-xs block">寬邊可切：</span>
                 <span class="font-bold text-emerald-700 text-base">${wid} ÷ ${side} = ${rows}</span> 張
               </div>
-              <div class="p-2 bg-white rounded-lg border border-emerald-200">
+              <div class="p-2.5 bg-white rounded-lg border border-emerald-200">
                 <span class="text-slate-500 text-xs block">共可切成：</span>
                 <span class="font-bold text-indigo-700 text-base">${cols} × ${rows} = ${totalCards}</span> 張紙卡
               </div>
             </div>
-            ${isMax ? `<div class="mt-2 text-emerald-800 font-bold text-xs"><i class="fa-solid fa-sparkles text-amber-500"></i> 正方形紙卡的邊長最長是 <strong>${gcd}</strong> 公分，恰好為兩數的最大公因數！</div>` : ''}
+            ${isMax ? `<div class="mt-2.5 text-emerald-800 font-bold text-xs"><i class="fa-solid fa-sparkles text-amber-500 mr-1"></i> 正方形紙卡的邊長最長是 <strong>${gcd}</strong> 公分，恰好為兩數的最大公因數！</div>` : ''}
           `;
         } else {
           badge.className = "px-2.5 py-0.5 rounded-full font-bold text-xs bg-rose-100 text-rose-800";
@@ -956,7 +966,7 @@
         }
 
       } else {
-        // 拼排模式：以小卡片 len x wid 拼成 side x side 的大正方形
+        // 拼排模式
         const lcm = calcLCM(len, wid);
         const colFit = side % len === 0;
         const rowFit = side % wid === 0;
@@ -965,21 +975,19 @@
         const cols = side / len;
         const rows = side / wid;
 
-        const pad = 35;
-        const scale = (canvas.height - pad * 2) / side;
+        const pad = 32;
+        const scale = (ch - pad * 2) / side;
         const drawSize = side * scale;
-        const startX = (canvas.width - drawSize) / 2;
-        const startY = (canvas.height - drawSize) / 2;
+        const startX = (cw - drawSize) / 2;
+        const startY = (ch - drawSize) / 2;
 
-        // 繪製大正方形外框
         ctx.fillStyle = '#f8fafc';
         ctx.fillRect(startX, startY, drawSize, drawSize);
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2.5;
         ctx.strokeStyle = '#6366f1';
         ctx.strokeRect(startX, startY, drawSize, drawSize);
 
-        // 繪製小長方形拼貼
-        if (isPerfect && cols <= 20 && rows <= 20) {
+        if (isPerfect && cols <= 25 && rows <= 25) {
           const cardW = len * scale;
           const cardH = wid * scale;
           for (let r = 0; r < rows; r++) {
@@ -993,9 +1001,8 @@
           }
         }
 
-        // 標註尺寸
         ctx.fillStyle = '#1e293b';
-        ctx.font = 'bold 12px sans-serif';
+        ctx.font = 'bold 12px "Noto Sans TC", sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(`大正方形邊長：${side} cm`, startX + drawSize / 2, startY - 10);
 
@@ -1007,20 +1014,20 @@
 
           calcBoard.innerHTML = `
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <div class="p-2 bg-white rounded-lg border border-indigo-200">
+              <div class="p-2.5 bg-white rounded-lg border border-indigo-200">
                 <span class="text-slate-500 text-xs block">橫列需要：</span>
                 <span class="font-bold text-indigo-700 text-base">${side} ÷ ${len} = ${cols}</span> 張
               </div>
-              <div class="p-2 bg-white rounded-lg border border-indigo-200">
+              <div class="p-2.5 bg-white rounded-lg border border-indigo-200">
                 <span class="text-slate-500 text-xs block">直排需要：</span>
                 <span class="font-bold text-indigo-700 text-base">${side} ÷ ${wid} = ${rows}</span> 張
               </div>
-              <div class="p-2 bg-white rounded-lg border border-indigo-200">
+              <div class="p-2.5 bg-white rounded-lg border border-indigo-200">
                 <span class="text-slate-500 text-xs block">共需長方形卡片：</span>
                 <span class="font-bold text-purple-700 text-base">${cols} × ${rows} = ${totalCards}</span> 張
               </div>
             </div>
-            ${isMin ? `<div class="mt-2 text-indigo-900 font-bold text-xs"><i class="fa-solid fa-star text-amber-500"></i> 拼成最小正方形邊長為 <strong>${lcm}</strong> 公分，即為長與寬的最小公倍數！</div>` : ''}
+            ${isMin ? `<div class="mt-2.5 text-indigo-900 font-bold text-xs"><i class="fa-solid fa-star text-amber-500 mr-1"></i> 拼成最小正方形邊長為 <strong>${lcm}</strong> 公分，即為長與寬的最小公倍數！</div>` : ''}
           `;
         } else {
           badge.className = "px-2.5 py-0.5 rounded-full font-bold text-xs bg-rose-100 text-rose-800";
@@ -1035,6 +1042,9 @@
       }
     }
 
+    /* =========================================
+       標籤頁 3：週期發車與出爐 (LCM)
+       ========================================= */
     let currentPeriodScenario = 'bus'; // 'bus' or 'tart'
 
     function setPeriodScenario(scen) {
@@ -1045,25 +1055,27 @@
       const lblB = document.getElementById('lbl-period-b');
       const unit = document.getElementById('txt-unit');
       const startTime = document.getElementById('txt-start-time');
+      const sliderA = document.getElementById('slider-period-a');
+      const sliderB = document.getElementById('slider-period-b');
 
       if (scen === 'bus') {
-        btnBus.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-purple-600 text-white shadow-sm";
-        btnTart.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300";
+        btnBus.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-purple-600 text-white shadow-sm transition";
+        btnTart.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
         lblA.innerHTML = `賞花專車發車週期：<span id="txt-period-a" class="text-base font-black">20</span> 分鐘`;
         lblB.innerHTML = `爬山專車發車週期：<span id="txt-period-b" class="text-base font-black">50</span> 分鐘`;
         unit.innerText = "分鐘";
         startTime.innerText = "上午 05:30";
-        document.getElementById('slider-period-a').value = 20;
-        document.getElementById('slider-period-b').value = 50;
+        sliderA.min = 5; sliderA.max = 60; sliderA.value = 20;
+        sliderB.min = 5; sliderB.max = 60; sliderB.value = 50;
       } else {
-        btnTart.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-purple-600 text-white shadow-sm";
-        btnBus.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300";
+        btnTart.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-purple-600 text-white shadow-sm transition";
+        btnBus.className = "px-4 py-2 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-700 hover:bg-slate-300 transition";
         lblA.innerHTML = `起司蛋塔出爐週期：<span id="txt-period-a" class="text-base font-black">8</span> 天`;
         lblB.innerHTML = `蘋果蛋塔出爐週期：<span id="txt-period-b" class="text-base font-black">6</span> 天`;
         unit.innerText = "天";
         startTime.innerText = "11 月 1 日";
-        document.getElementById('slider-period-a').value = 8;
-        document.getElementById('slider-period-b').value = 6;
+        sliderA.min = 2; sliderA.max = 15; sliderA.value = 8;
+        sliderB.min = 2; sliderB.max = 15; sliderB.value = 6;
       }
       updatePeriodicLab();
     }
@@ -1082,10 +1094,12 @@
 
       if (currentPeriodScenario === 'bus') {
         const nextTimeStr = formatTimeAdd(5, 30, lcm);
-        nextLabel.innerText = `下次同時發車：${nextTimeStr} (經過 ${lcm} 分鐘 / 1小時40分)`;
+        const hours = Math.floor(lcm / 60);
+        const mins = lcm % 60;
+        const durationDesc = hours > 0 ? `${hours}小時${mins > 0 ? mins + '分' : ''}` : `${mins}分鐘`;
+        nextLabel.innerText = `下次同時發車：${nextTimeStr} (經過 ${lcm} 分鐘 / ${durationDesc})`;
 
-        // 渲染前 120 分鐘時間軸
-        const maxTime = Math.max(lcm * 1.25, 120);
+        const maxTime = Math.max(lcm * 1.15, 60);
         track.innerHTML = `
           <div class="text-xs font-bold text-slate-500 mb-2 flex justify-between">
             <span>0分 (05:30)</span>
@@ -1094,12 +1108,12 @@
           </div>
           <!-- 專車 A 軌跡 -->
           <div class="relative h-10 bg-purple-100/60 rounded-lg flex items-center px-2 mb-3">
-            <span class="text-[11px] font-black text-purple-800 w-24 flex-shrink-0"><i class="fa-solid fa-van-shuttle"></i> 專車 A (${pA}分)</span>
+            <span class="text-[11px] font-black text-purple-800 w-28 flex-shrink-0"><i class="fa-solid fa-van-shuttle"></i> 專車 A (${pA}分)</span>
             <div class="relative flex-grow h-3 bg-purple-200 rounded-full" id="track-line-a"></div>
           </div>
           <!-- 專車 B 軌跡 -->
           <div class="relative h-10 bg-amber-100/60 rounded-lg flex items-center px-2 mb-2">
-            <span class="text-[11px] font-black text-amber-800 w-24 flex-shrink-0"><i class="fa-solid fa-bus"></i> 專車 B (${pB}分)</span>
+            <span class="text-[11px] font-black text-amber-800 w-28 flex-shrink-0"><i class="fa-solid fa-bus"></i> 專車 B (${pB}分)</span>
             <div class="relative flex-grow h-3 bg-amber-200 rounded-full" id="track-line-b"></div>
           </div>
         `;
@@ -1107,12 +1121,11 @@
         const lineA = document.getElementById('track-line-a');
         const lineB = document.getElementById('track-line-b');
 
-        // 標記站點
         for (let t = 0; t <= maxTime; t += pA) {
           const pct = (t / maxTime) * 100;
           const isLCM = (t > 0 && t % lcm === 0);
           const dot = document.createElement('div');
-          dot.className = `absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${isLCM ? 'bg-rose-500 text-white ring-4 ring-rose-200 z-20' : 'bg-purple-600 text-white'}`;
+          dot.className = `absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${isLCM ? 'bg-rose-500 text-white ring-4 ring-rose-200 z-20' : 'bg-purple-600 text-white'}`;
           dot.style.left = `${pct}%`;
           dot.title = `${t} 分鐘發車`;
           dot.innerText = t;
@@ -1123,7 +1136,7 @@
           const pct = (t / maxTime) * 100;
           const isLCM = (t > 0 && t % lcm === 0);
           const dot = document.createElement('div');
-          dot.className = `absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold ${isLCM ? 'bg-rose-500 text-white ring-4 ring-rose-200 z-20' : 'bg-amber-600 text-white'}`;
+          dot.className = `absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${isLCM ? 'bg-rose-500 text-white ring-4 ring-rose-200 z-20' : 'bg-amber-600 text-white'}`;
           dot.style.left = `${pct}%`;
           dot.title = `${t} 分鐘發車`;
           dot.innerText = t;
@@ -1131,25 +1144,29 @@
         }
 
       } else {
-        // 蛋塔情境：11月1日 + lcm 天
-        const nextDate = 1 + lcm;
-        nextLabel.innerText = `下一次同時出爐：11 月 ${nextDate} 日 (相隔 ${lcm} 天)`;
+        // 蛋塔情境：11月1日 + lcm 天 (11月共30天)
+        const rawDate = 1 + lcm;
+        const dateStr = rawDate <= 30 ? `11 月 ${rawDate} 日` : `12 月 ${rawDate - 30} 日`;
+        nextLabel.innerText = `下一次同時出爐：${dateStr} (相隔 ${lcm} 天)`;
 
         track.innerHTML = `
           <div class="text-xs font-bold text-slate-500 mb-2 flex justify-between">
             <span>11/1 出爐</span>
             <span>相隔 ${lcm} 天 (最小公倍數)</span>
-            <span>11/${nextDate} 同時出爐</span>
+            <span>${dateStr} 同時出爐</span>
           </div>
-          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
+          <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
             <i class="fa-solid fa-calendar-check text-amber-600 mr-1"></i>
-            <strong>月曆思維考點：</strong> 8 與 6 的最小公倍數是 <strong>${lcm}</strong> 天。<br>
-            從 11 月 1 日算起，再過 24 天，因此日期是：<span class="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-amber-300">1 + 24 = 25</span>。即為 <strong>11 月 25 日</strong>（切記不是 11 月 24 日！）。
+            <strong>月曆思維考點：</strong> ${pA} 與 ${pB} 的最小公倍數是 <strong>${lcm}</strong> 天。<br>
+            從 11 月 1 日算起，再過 ${lcm} 天，因此日期計算為：<span class="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-amber-300">1 + ${lcm} = ${rawDate}</span>。即為 <strong>${dateStr}</strong>（注意：因為 11/1 當天已經出爐過一次，必須把 1 號加上經過天數！）。
           </div>
         `;
       }
     }
 
+    /* =========================================
+       標籤頁 4：短除法動態解密機
+       ========================================= */
     function quickSetNumbers(a, b) {
       document.getElementById('num-a').value = a;
       document.getElementById('num-b').value = b;
@@ -1160,8 +1177,8 @@
       let a = parseInt(document.getElementById('num-a').value);
       let b = parseInt(document.getElementById('num-b').value);
 
-      if (isNaN(a) || isNaN(b) || a < 2 || b < 2) {
-        showModal('輸入錯誤', '請輸入大於或等於 2 的正整數。');
+      if (isNaN(a) || isNaN(b) || a < 2 || b < 2 || a > 9999 || b > 9999) {
+        showModal('輸入提醒', '請輸入 2 到 9999 之間的正整數進行短除法分解。');
         return;
       }
 
@@ -1170,7 +1187,6 @@
       const divisors = [];
       const steps = [];
 
-      // 提取質因數步驟 (尋找公因數)
       let divisorCandidate = 2;
       while (divisorCandidate <= Math.min(currentA, currentB)) {
         if (currentA % divisorCandidate === 0 && currentB % divisorCandidate === 0) {
@@ -1187,24 +1203,22 @@
         }
       }
 
-      // 最終商數
       const remainA = currentA;
       const remainB = currentB;
 
-      // 建立短除法階梯 HTML 表格
       const board = document.getElementById('short-division-board');
       let tableHtml = `<table class="short-div-table">`;
 
       if (divisors.length === 0) {
         tableHtml += `
           <tr>
-            <td class="short-div-cell text-slate-400 font-sans text-xs">無>1公因數</td>
+            <td class="short-div-cell text-slate-400 font-sans text-xs">無&gt;1公因數</td>
             <td class="short-div-cell text-blue-600">${a}</td>
             <td class="short-div-cell text-pink-600">${b}</td>
           </tr>
         `;
       } else {
-        steps.forEach((step, idx) => {
+        steps.forEach((step) => {
           tableHtml += `
             <tr>
               <td class="short-div-cell text-amber-600 font-mono">${step.divisor}</td>
@@ -1213,7 +1227,6 @@
             </tr>
           `;
         });
-        // 最後一列 (底層商)
         tableHtml += `
           <tr>
             <td class="short-div-cell"></td>
@@ -1225,7 +1238,6 @@
       tableHtml += `</table>`;
       board.innerHTML = tableHtml;
 
-      // 計算數值
       const gcdVal = divisors.length > 0 ? divisors.reduce((acc, v) => acc * v, 1) : 1;
       const lcmVal = gcdVal * remainA * remainB;
 
@@ -1233,7 +1245,6 @@
       const resLcm = document.getElementById('res-lcm');
       const coprimeBox = document.getElementById('coprime-box');
 
-      // 對應圖2短除法顏色：左側除數為橘黃色、A商數為藍色、B商數為粉紅色
       const mulSymbol = `<span class="text-slate-400 font-normal mx-1">×</span>`;
       const eqSymbol = `<span class="text-slate-400 font-normal mx-1">=</span>`;
 
@@ -1244,7 +1255,6 @@
         resGcd.innerHTML = `<span class="text-slate-600 font-bold">1</span> <span class="text-xs text-slate-400 font-normal">(兩數無大於 1 的共同質因數)</span>`;
       }
 
-      // L型所有數相乘：除數(橘黃) × A商(藍) × B商(粉紅)
       const lFactorParts = [
         ...divisors.map(d => `<span class="text-amber-600 font-bold">${d}</span>`),
         `<span class="text-blue-600 font-bold">${remainA}</span>`,
@@ -1252,16 +1262,14 @@
       ];
       resLcm.innerHTML = `${lFactorParts.join(mulSymbol)} ${eqSymbol} <span class="text-purple-700 font-black">${lcmVal}</span>`;
 
-      // 互質判斷
       if (gcdVal === 1) {
         coprimeBox.className = "p-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-900 text-xs";
         coprimeBox.innerHTML = `<strong><i class="fa-solid fa-handshake"></i> 互質確認：</strong> 數值 ${a} 與 ${b} 的最大公因數為 1，兩數「互質」！`;
       } else {
         coprimeBox.className = "p-3 rounded-xl border border-sky-300 bg-sky-50 text-sky-900 text-xs";
-        coprimeBox.innerHTML = `<strong><i class="fa-solid fa-shapes"></i> 互質檢測：</strong> 最大公因數是 ${gcdVal}（≠1），因此 ${a} 與 ${b} 不互質。商數 ${remainA} 與 ${remainB} 則彼此互質。`;
+        coprimeBox.innerHTML = `<strong><i class="fa-solid fa-shapes"></i> 互質檢測：</strong> 最大公因數是 ${gcdVal}（≠1），因此 ${a} 與 ${b} 不互質。底層商數 ${remainA} 與 ${remainB} 則彼此互質。`;
       }
 
-      // 更新標準直式分數預覽
       const fracNumOrig = document.getElementById('frac-num-orig');
       const fracDenOrig = document.getElementById('frac-den-orig');
       const fracNumSimp = document.getElementById('frac-num-simp');
@@ -1274,13 +1282,16 @@
       }
     }
 
+    /* =========================================
+       標籤頁 5：隨堂測驗
+       ========================================= */
     const quizData = [
       {
         id: 1,
         title: "水果分裝問題",
         question: "東東水果店進貨一箱水梨，每 12 顆裝一盒剛好裝完，每 16 顆裝一盒也剛好裝完。這箱水梨最少有幾顆？",
         options: ["24 顆", "36 顆", "48 顆", "96 顆"],
-        correct: 2, // 48
+        correct: 2,
         explanation: "水梨顆數同時是 12 的倍數也是 16 的倍數，求最少顆數即求 [12, 16] 的最小公倍數。短除法：2 × 2 × 3 × 4 = 48 顆。"
       },
       {
@@ -1352,7 +1363,7 @@
         let optsHtml = '';
         q.options.forEach((opt, oIdx) => {
           optsHtml += `
-            <button onclick="selectQuizAnswer(${q.id}, ${oIdx})" id="opt-btn-${q.id}-${oIdx}" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-xs md:text-sm font-medium transition flex items-center justify-between">
+            <button onclick="selectQuizAnswer(${q.id}, ${oIdx})" id="opt-btn-${q.id}-${oIdx}" class="w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-xs md:text-sm font-medium transition flex items-center justify-between">
               <span><strong class="text-blue-600 mr-2">${['A', 'B', 'C', 'D'][oIdx]}.</strong> ${opt}</span>
               <i class="fa-regular fa-circle text-slate-300 opt-icon"></i>
             </button>
@@ -1361,7 +1372,7 @@
 
         card.innerHTML = `
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">第 ${idx + 1} 題 · ${q.title}</span>
+            <span class="text-xs font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-600">第 ${idx + 1} 題 · ${q.title}</span>
             <span class="text-xs font-bold text-slate-400" id="quiz-status-${q.id}">未作答</span>
           </div>
           <p class="text-sm md:text-base font-bold text-slate-800 mb-4 leading-relaxed">${q.question}</p>
@@ -1375,21 +1386,20 @@
     }
 
     function selectQuizAnswer(qid, optIndex) {
-      if (isQuizSubmitted) return; // 提交後鎖定作答
+      if (isQuizSubmitted) return;
 
       userAnswers[qid] = optIndex;
       const q = quizData.find(item => item.id === qid);
 
-      // 更新選項高亮外觀（尚未批改，僅標示已選取）
       q.options.forEach((_, idx) => {
         const btn = document.getElementById(`opt-btn-${qid}-${idx}`);
         const icon = btn.querySelector('.opt-icon') || btn.querySelector('i');
 
         if (idx === optIndex) {
-          btn.className = "w-full text-left p-3 rounded-xl border-2 border-blue-500 bg-blue-50/70 text-xs md:text-sm font-bold text-blue-900 flex items-center justify-between";
+          btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-blue-500 bg-blue-50/70 text-xs md:text-sm font-bold text-blue-900 flex items-center justify-between";
           if (icon) icon.className = "fa-solid fa-circle-dot text-blue-600 opt-icon";
         } else {
-          btn.className = "w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-xs md:text-sm font-medium text-slate-700 flex items-center justify-between";
+          btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-xs md:text-sm font-medium text-slate-700 flex items-center justify-between";
           if (icon) icon.className = "fa-regular fa-circle text-slate-300 opt-icon";
         }
       });
@@ -1415,7 +1425,6 @@
         const explBox = document.getElementById(`quiz-expl-${q.id}`);
         const statusSpan = document.getElementById(`quiz-status-${q.id}`);
 
-        // 鎖定所有選項按鈕
         q.options.forEach((_, idx) => {
           const btn = document.getElementById(`opt-btn-${q.id}-${idx}`);
           btn.disabled = true;
@@ -1423,7 +1432,6 @@
 
         explBox.classList.remove('hidden');
 
-        // 情況 1：未作答（空白）-> 僅顯示黃色系「未作答。」，不顯示其他說明與正確答案
         if (selectedOpt === undefined) {
           unansweredCount++;
           statusSpan.innerText = "未作答";
@@ -1432,7 +1440,7 @@
           q.options.forEach((_, idx) => {
             const btn = document.getElementById(`opt-btn-${q.id}-${idx}`);
             const icon = btn.querySelector('.opt-icon') || btn.querySelector('i');
-            btn.className = "w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-400 flex items-center justify-between";
+            btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-400 flex items-center justify-between";
             if (icon) icon.className = "fa-regular fa-circle text-slate-300 opt-icon";
           });
 
@@ -1441,7 +1449,6 @@
           return;
         }
 
-        // 情況 2：有作答 -> 判斷對錯並顯示客觀解析（不含矛盾讚美詞）
         const isCorrect = (selectedOpt === q.correct);
         if (isCorrect) {
           score += 20;
@@ -1452,13 +1459,13 @@
           const icon = btn.querySelector('.opt-icon') || btn.querySelector('i');
 
           if (idx === q.correct) {
-            btn.className = "w-full text-left p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-xs md:text-sm font-bold text-emerald-900 flex items-center justify-between";
+            btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-xs md:text-sm font-bold text-emerald-900 flex items-center justify-between";
             if (icon) icon.className = "fa-solid fa-circle-check text-emerald-600 opt-icon";
           } else if (idx === selectedOpt && !isCorrect) {
-            btn.className = "w-full text-left p-3 rounded-xl border-2 border-rose-400 bg-rose-50 text-xs md:text-sm font-medium text-rose-900 flex items-center justify-between";
+            btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-rose-400 bg-rose-50 text-xs md:text-sm font-medium text-rose-900 flex items-center justify-between";
             if (icon) icon.className = "fa-solid fa-circle-xmark text-rose-500 opt-icon";
           } else {
-            btn.className = "w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-400 opacity-60 flex items-center justify-between";
+            btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-50 text-xs md:text-sm text-slate-400 opacity-60 flex items-center justify-between";
             if (icon) icon.className = "fa-regular fa-circle text-slate-300 opt-icon";
           }
         });
@@ -1500,16 +1507,17 @@
       renderQuiz();
     }
 
+    window.addEventListener('resize', () => {
+      if (!document.getElementById('tab-geometry').classList.contains('hidden')) {
+        renderGeometryLab();
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
-      // 初始化分組與裝袋
       updateGroupingLab();
-      // 初始化短除法
       calculateShortDivision();
-      // 初始化時間軸
       updatePeriodicLab();
-      // 初始化幾何切割
       renderGeometryLab();
-      // 初始化測驗
       renderQuiz();
     });
   </script>

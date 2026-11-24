@@ -22,24 +22,30 @@
 
         /* 新海誠風半透明玻璃質感 */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.78);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.65);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
         }
 
         .glass-tab {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(8px);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .glass-tab:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-1px);
         }
 
         .glass-tab.active {
-            background: rgba(255, 255, 255, 0.95);
-            color: #3b82f6;
+            background: rgba(255, 255, 255, 0.96);
+            color: #2563eb;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
             font-weight: 700;
+            border: 1px solid rgba(147, 197, 253, 0.6);
         }
 
         /* 符合標準直式分數樣式 */
@@ -78,28 +84,37 @@
         .node-prime {
             background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
             color: #5c2c00;
-            box-shadow: 0 4px 12px rgba(253, 160, 133, 0.4);
+            box-shadow: 0 4px 12px rgba(253, 160, 133, 0.45);
         }
 
         .node-composite {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             color: #0d4b56;
-            box-shadow: 0 4px 12px rgba(143, 211, 244, 0.4);
+            box-shadow: 0 4px 12px rgba(143, 211, 244, 0.45);
         }
 
         /* 雲朵動畫效果 */
         @keyframes floatCloud {
             0% { transform: translateX(0px); }
-            50% { transform: translateX(20px); }
+            50% { transform: translateX(16px); }
             100% { transform: translateX(0px); }
         }
 
         .floating-cloud {
-            animation: floatCloud 8s ease-in-out infinite;
+            animation: floatCloud 7s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="p-3 md:p-6 text-slate-800">
+<body class="p-3 md:p-6 text-slate-800 antialiased">
+
+    <!-- 修改：使用轉換後的 Google Drive 直接連結 -->
+    <div class="w-full max-w-6xl mx-auto flex items-center justify-start mb-4 px-2 fade-in">
+        <img src="https://lh3.googleusercontent.com/d/1qUdM3yxfDP9U8S1PAlYScLXLG9riPxMt"
+             alt="閒雲數學小棧Logo" 
+             class="h-8 w-auto mr-3 object-contain drop-shadow-md rounded-full bg-white/30 p-1"
+             onerror="this.src='https://placehold.co/40x40/ffffff/333333?text=Logo'">
+        <span class="text-xl md:text-2xl font-bold text-white drop-shadow-lg tracking-wider" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">閒雲數學小棧</span>
+    </div>
 
     <!-- 頂部標題區 (新海誠天空風格) -->
     <header class="max-w-6xl mx-auto mb-6 glass-panel rounded-3xl p-6 text-center relative overflow-hidden">
@@ -112,9 +127,9 @@
             <span class="text-xs md:text-sm font-bold text-slate-700 tracking-wide">國小六上數學 1-2 互動學習網頁</span>
         </div>
 
-        <h1 class="text-3xl md:text-4xl font-black text-slate-800 tracking-wide mb-2 flex items-center justify-center gap-3">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 tracking-wide mb-2 flex items-center justify-center gap-3">
             <i class="fa-solid fa-cloud-sun text-sky-500 floating-cloud"></i>
-            質因數分解與應用探究
+            <span>質因數分解與應用探究</span>
         </h1>
         <p class="text-slate-600 font-medium text-sm md:text-base">
             透過動態觀察與操作，探索數的質因數、樹狀圖分解與短除法的奧妙！
@@ -122,20 +137,20 @@
     </header>
 
     <!-- 主頁籤導航 -->
-    <nav class="max-w-6xl mx-auto mb-6 flex flex-wrap justify-center gap-2 md:gap-4">
-        <button onclick="switchTab('tab0')" id="btn-tab0" class="glass-tab active px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 hover:text-blue-600 font-medium transition">
+    <nav class="max-w-6xl mx-auto mb-6 flex flex-wrap justify-center gap-2 md:gap-3">
+        <button onclick="switchTab('tab0')" id="btn-tab0" class="glass-tab active px-4 md:px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 text-sm md:text-base font-medium">
             <i class="fa-solid fa-magnifying-glass-chart"></i> 1. 認識質因數
         </button>
-        <button onclick="switchTab('tab1')" id="btn-tab1" class="glass-tab px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 hover:text-blue-600 font-medium transition">
+        <button onclick="switchTab('tab1')" id="btn-tab1" class="glass-tab px-4 md:px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 text-sm md:text-base font-medium">
             <i class="fa-solid fa-sitemap"></i> 2. 樹狀圖分解
         </button>
-        <button onclick="switchTab('tab2')" id="btn-tab2" class="glass-tab px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 hover:text-blue-600 font-medium transition">
+        <button onclick="switchTab('tab2')" id="btn-tab2" class="glass-tab px-4 md:px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 text-sm md:text-base font-medium">
             <i class="fa-solid fa-square-root-variable"></i> 3. 短除法探索
         </button>
-        <button onclick="switchTab('tab3')" id="btn-tab3" class="glass-tab px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 hover:text-blue-600 font-medium transition">
+        <button onclick="switchTab('tab3')" id="btn-tab3" class="glass-tab px-4 md:px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 text-sm md:text-base font-medium">
             <i class="fa-solid fa-cubes"></i> 4. 質因數組合與因數
         </button>
-        <button onclick="switchTab('tab4')" id="btn-tab4" class="glass-tab px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 hover:text-blue-600 font-medium transition">
+        <button onclick="switchTab('tab4')" id="btn-tab4" class="glass-tab px-4 md:px-5 py-3 rounded-2xl flex items-center gap-2 text-slate-700 text-sm md:text-base font-medium">
             <i class="fa-solid fa-circle-check"></i> 5. 隨堂測驗
         </button>
     </nav>
@@ -144,7 +159,7 @@
     <main class="max-w-6xl mx-auto">
 
         <!-- TAB 0: 認識質因數 -->
-        <section id="tab0" class="tab-content glass-panel rounded-3xl p-6 md:p-8">
+        <section id="tab0" class="tab-content glass-panel rounded-3xl p-5 md:p-8">
             <!-- 標題與滑桿控制列 -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-sky-100">
                 <div class="flex items-start gap-3">
@@ -159,7 +174,7 @@
                     </div>
                 </div>
                 <!-- 數字滑桿 -->
-                <div class="flex items-center gap-3 bg-white/70 px-4 py-2.5 rounded-2xl border border-sky-100 self-start md:self-auto shadow-sm">
+                <div class="flex items-center gap-3 bg-white/80 px-4 py-2.5 rounded-2xl border border-sky-100 self-start md:self-auto shadow-sm">
                     <span class="text-slate-600 font-bold text-sm whitespace-nowrap">選擇數字：</span>
                     <input type="range" id="intro-num-range" min="2" max="100" value="18" class="w-32 md:w-44 h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-sky-500">
                     <span id="intro-num-val" class="text-2xl font-black text-sky-600 w-10 text-center font-mono">18</span>
@@ -168,13 +183,13 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- 左側：因數乘積組合 -->
-                <div class="bg-white/80 p-5 md:p-6 rounded-2xl border border-sky-100 flex flex-col justify-between shadow-sm">
+                <div class="bg-white/85 p-5 md:p-6 rounded-2xl border border-sky-100 flex flex-col justify-between shadow-sm">
                     <div>
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-arrows-split-up-and-left text-sky-500"></i> 因數乘積組合：
                             </h3>
-                            <span class="text-xs text-slate-400 font-medium">（兩數相乘等於 target）</span>
+                            <span class="text-xs text-slate-400 font-medium">（兩數相乘等於 <span id="intro-target-hint" class="font-bold text-sky-600 font-mono">18</span>）</span>
                         </div>
                         
                         <div id="intro-pairs-container" class="space-y-3 mb-6">
@@ -183,7 +198,7 @@
                     </div>
 
                     <!-- 概念宣告 -->
-                    <div class="p-4 bg-amber-50/90 rounded-2xl border border-amber-200/80 flex items-start gap-3">
+                    <div class="p-4 bg-amber-50/95 rounded-2xl border border-amber-200/80 flex items-start gap-3">
                         <i class="fa-solid fa-lightbulb text-amber-500 text-lg mt-0.5 shrink-0"></i>
                         <p class="text-xs md:text-sm text-amber-900 leading-relaxed font-medium">
                             <strong class="text-amber-800 font-bold">概念宣告：</strong>若一個數既是該數的「<strong>因數</strong>」，本身又是「<strong>質數</strong>」，我們就稱它為該數的「<span class="text-rose-600 font-bold">質因數</span>」！
@@ -192,7 +207,7 @@
                 </div>
 
                 <!-- 右側：所有因數清單與結論 -->
-                <div class="bg-white/80 p-5 md:p-6 rounded-2xl border border-sky-100 flex flex-col justify-between shadow-sm">
+                <div class="bg-white/85 p-5 md:p-6 rounded-2xl border border-sky-100 flex flex-col justify-between shadow-sm">
                     <div>
                         <h3 class="text-base md:text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-tags text-indigo-500"></i> 所有因數清單：
@@ -204,7 +219,7 @@
                     </div>
 
                     <!-- 重點結論 -->
-                    <div class="p-4 md:p-5 rounded-2xl bg-sky-50/80 border border-sky-200/80">
+                    <div class="p-4 md:p-5 rounded-2xl bg-sky-50/90 border border-sky-200/80">
                         <div class="text-xs font-bold text-sky-700 tracking-wider mb-2 flex items-center gap-1.5">
                             <i class="fa-solid fa-clipboard-check text-sky-600"></i> 重點結論
                         </div>
@@ -222,9 +237,9 @@
         </section>
 
         <!-- TAB 1: 樹狀圖分解 -->
-        <section id="tab1" class="tab-content glass-panel rounded-3xl p-6 md:p-8 hidden">
+        <section id="tab1" class="tab-content glass-panel rounded-3xl p-5 md:p-8 hidden">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-diagram-project text-sky-500"></i> 樹狀圖質因數分解
                 </h2>
                 <p class="text-slate-600 text-sm">
@@ -233,50 +248,50 @@
             </div>
 
             <!-- 控制面板 -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-white/50 p-4 rounded-2xl border border-white">
-                <div class="col-span-2 flex flex-col justify-center">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-white/70 p-4 rounded-2xl border border-white">
+                <div class="md:col-span-2 flex flex-col justify-center">
                     <label class="block text-sm font-bold text-slate-700 mb-2">
-                        拖動滑桿或輸入數字：<span id="tree-num-val" class="text-2xl text-blue-600 font-black ml-2">30</span>
+                        拖動滑桿選擇數字：<span id="tree-num-val" class="text-2xl text-blue-600 font-black ml-2 font-mono">30</span>
                     </label>
                     <input type="range" id="tree-range" min="12" max="120" value="30" class="w-full h-3 bg-sky-200 rounded-lg appearance-none cursor-pointer accent-sky-500">
                 </div>
                 <div class="flex flex-col justify-center">
                     <span class="text-xs font-bold text-slate-500 mb-2">課本例題快速選擇：</span>
                     <div class="flex flex-wrap gap-2">
-                        <button onclick="setTreeNum(20)" class="px-3 py-1 bg-white hover:bg-sky-100 text-sky-700 rounded-lg text-sm border border-sky-200 font-medium">20</button>
-                        <button onclick="setTreeNum(30)" class="px-3 py-1 bg-white hover:bg-sky-100 text-sky-700 rounded-lg text-sm border border-sky-200 font-medium">30</button>
-                        <button onclick="setTreeNum(54)" class="px-3 py-1 bg-white hover:bg-sky-100 text-sky-700 rounded-lg text-sm border border-sky-200 font-medium">54</button>
-                        <button onclick="setTreeNum(78)" class="px-3 py-1 bg-white hover:bg-sky-100 text-sky-700 rounded-lg text-sm border border-sky-200 font-medium">78</button>
-                        <button onclick="setTreeNum(99)" class="px-3 py-1 bg-white hover:bg-sky-100 text-sky-700 rounded-lg text-sm border border-sky-200 font-medium">99</button>
-                        <button onclick="setTreeNum(105)" class="px-3 py-1 bg-white hover:bg-sky-100 text-sky-700 rounded-lg text-sm border border-sky-200 font-medium">105</button>
+                        <button onclick="setTreeNum(20)" class="px-3 py-1.5 bg-white hover:bg-sky-100 text-sky-700 rounded-xl text-sm border border-sky-200 font-bold transition shadow-xs">20</button>
+                        <button onclick="setTreeNum(30)" class="px-3 py-1.5 bg-white hover:bg-sky-100 text-sky-700 rounded-xl text-sm border border-sky-200 font-bold transition shadow-xs">30</button>
+                        <button onclick="setTreeNum(54)" class="px-3 py-1.5 bg-white hover:bg-sky-100 text-sky-700 rounded-xl text-sm border border-sky-200 font-bold transition shadow-xs">54</button>
+                        <button onclick="setTreeNum(78)" class="px-3 py-1.5 bg-white hover:bg-sky-100 text-sky-700 rounded-xl text-sm border border-sky-200 font-bold transition shadow-xs">78</button>
+                        <button onclick="setTreeNum(99)" class="px-3 py-1.5 bg-white hover:bg-sky-100 text-sky-700 rounded-xl text-sm border border-sky-200 font-bold transition shadow-xs">99</button>
+                        <button onclick="setTreeNum(105)" class="px-3 py-1.5 bg-white hover:bg-sky-100 text-sky-700 rounded-xl text-sm border border-sky-200 font-bold transition shadow-xs">105</button>
                     </div>
                 </div>
             </div>
 
             <!-- 圖示說明 -->
-            <div class="flex gap-4 justify-center mb-6 text-xs md:text-sm">
-                <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded-full node-composite inline-block"></span> 合數（可繼續分解）</span>
-                <span class="flex items-center gap-1.5"><span class="w-4 h-4 rounded-full node-prime inline-block"></span> 質數（不可再分解）</span>
+            <div class="flex flex-wrap gap-4 justify-center mb-6 text-xs md:text-sm font-medium">
+                <span class="flex items-center gap-1.5 bg-white/70 px-3 py-1 rounded-full"><span class="w-4 h-4 rounded-full node-composite inline-block"></span> 合數（可繼續分解）</span>
+                <span class="flex items-center gap-1.5 bg-white/70 px-3 py-1 rounded-full"><span class="w-4 h-4 rounded-full node-prime inline-block"></span> 質數（不可再分解）</span>
             </div>
 
             <!-- 動態樹狀圖呈現區 -->
-            <div id="tree-container" class="min-h-[280px] bg-sky-50/50 rounded-2xl p-6 border border-sky-100 flex flex-col items-center justify-center overflow-x-auto">
+            <div id="tree-container" class="min-h-[280px] bg-sky-50/60 rounded-2xl p-6 border border-sky-100 flex flex-col items-center justify-center overflow-x-auto">
                 <!-- 由 JS 動態生成樹狀結構 -->
             </div>
 
             <!-- 質因數分解結果呈現 -->
-            <div class="mt-6 p-4 bg-white/80 rounded-2xl border border-sky-200 text-center">
+            <div class="mt-6 p-4 bg-white/90 rounded-2xl border border-sky-200 text-center shadow-sm">
                 <div class="text-sm text-slate-500 font-medium">最終質因數分解結果（由小到大排列）：</div>
-                <div id="tree-result" class="text-2xl md:text-3xl font-black text-slate-800 mt-1">
+                <div id="tree-result" class="text-2xl md:text-3xl font-black text-slate-800 mt-1 font-mono">
                     30 = 2 &times; 3 &times; 5
                 </div>
             </div>
         </section>
 
         <!-- TAB 2: 短除法探索 -->
-        <section id="tab2" class="tab-content glass-panel rounded-3xl p-6 md:p-8 hidden">
+        <section id="tab2" class="tab-content glass-panel rounded-3xl p-5 md:p-8 hidden">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-list-ol text-indigo-500"></i> 短除法質因數分解
                 </h2>
                 <p class="text-slate-600 text-sm">
@@ -285,17 +300,17 @@
             </div>
 
             <!-- 輸入與控制 -->
-            <div class="flex flex-wrap gap-4 items-center justify-between mb-8 bg-white/50 p-4 rounded-2xl border border-white">
-                <div class="flex items-center gap-3">
+            <div class="flex flex-wrap gap-4 items-center justify-between mb-8 bg-white/70 p-4 rounded-2xl border border-white">
+                <div class="flex flex-wrap items-center gap-3">
                     <label for="sd-num-input" class="font-bold text-slate-700 text-sm md:text-base">選擇目標數：</label>
-                    <input type="number" id="sd-num-input" value="90" min="4" max="500" class="w-24 px-3 py-2 bg-white rounded-xl border border-slate-300 font-bold text-center text-indigo-600">
-                    <button onclick="initShortDivision()" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl shadow-md transition">重新開始</button>
+                    <input type="number" id="sd-num-input" value="90" min="4" max="500" class="w-24 px-3 py-2 bg-white rounded-xl border border-slate-300 font-bold text-center text-indigo-600 font-mono">
+                    <button onclick="initShortDivision()" class="px-4 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl shadow-md transition">重新開始</button>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="sdNextStep()" id="sd-next-btn" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                    <button onclick="sdNextStep()" id="sd-next-btn" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
                         下一步 <i class="fa-solid fa-arrow-right"></i>
                     </button>
-                    <button onclick="sdAutoPlay()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-md transition">
+                    <button onclick="sdAutoPlay()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-md transition flex items-center gap-1.5">
                         <i class="fa-solid fa-play"></i> 自動演示
                     </button>
                 </div>
@@ -304,25 +319,25 @@
             <!-- 短除法動態畫布與說明 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- 左側：短除法階梯呈現 -->
-                <div class="bg-white/90 rounded-2xl p-6 border border-indigo-100 flex flex-col items-center justify-center min-h-[300px]">
+                <div class="bg-white/95 rounded-2xl p-6 border border-indigo-100 flex flex-col items-center justify-center min-h-[300px] shadow-sm">
                     <div id="sd-ladder" class="font-mono text-xl md:text-2xl font-bold text-slate-800">
                         <!-- 由 JS 動態生成短除法階梯 -->
                     </div>
                 </div>
 
                 <!-- 右側：教學小助手解說 -->
-                <div class="flex flex-col justify-between bg-indigo-50/60 rounded-2xl p-6 border border-indigo-100">
+                <div class="flex flex-col justify-between bg-indigo-50/75 rounded-2xl p-6 border border-indigo-100">
                     <div>
                         <h3 class="text-lg font-bold text-indigo-900 mb-3 flex items-center gap-2">
                             <i class="fa-solid fa-lightbulb text-amber-500"></i> 解題重點說明
                         </h3>
-                        <div id="sd-explanation" class="text-slate-700 leading-relaxed text-sm space-y-2">
+                        <div id="sd-explanation" class="text-slate-700 leading-relaxed text-sm md:text-base space-y-2">
                             請點擊「下一步」開始進行短除法分解。
                         </div>
                     </div>
-                    <div class="mt-6 p-4 bg-white/90 rounded-xl border border-indigo-200">
+                    <div class="mt-6 p-4 bg-white/95 rounded-xl border border-indigo-200 shadow-xs">
                         <div class="text-xs text-slate-500 font-bold">質因數記錄算式：</div>
-                        <div id="sd-result-formula" class="text-xl font-black text-indigo-700 mt-1">
+                        <div id="sd-result-formula" class="text-xl font-black text-indigo-700 mt-1 font-mono">
                             --
                         </div>
                     </div>
@@ -331,9 +346,9 @@
         </section>
 
         <!-- TAB 3: 質因數組合與因數 -->
-        <section id="tab3" class="tab-content glass-panel rounded-3xl p-6 md:p-8 hidden">
+        <section id="tab3" class="tab-content glass-panel rounded-3xl p-5 md:p-8 hidden">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-puzzle-piece text-pink-500"></i> 質因數組合實驗室
                 </h2>
                 <p class="text-slate-600 text-sm">
@@ -342,33 +357,35 @@
             </div>
 
             <!-- 數字切換 -->
-            <div class="flex flex-wrap gap-3 mb-6">
-                <span class="font-bold text-slate-700 flex items-center">選擇示範數：</span>
-                <button onclick="loadCombinationNum(42)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700">42 (2&times;3&times;7)</button>
-                <button onclick="loadCombinationNum(20)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700">20 (2&times;2&times;5)</button>
-                <button onclick="loadCombinationNum(56)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700">56 (2&times;2&times;2&times;7)</button>
-                <button onclick="loadCombinationNum(76)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700">76 (2&times;2&times;19)</button>
+            <div class="flex flex-wrap gap-2.5 md:gap-3 mb-6 items-center">
+                <span class="font-bold text-slate-700 text-sm md:text-base">選擇示範數：</span>
+                <button onclick="loadCombinationNum(42)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700 transition">42 (2&times;3&times;7)</button>
+                <button onclick="loadCombinationNum(20)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700 transition">20 (2&times;2&times;5)</button>
+                <button onclick="loadCombinationNum(56)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700 transition">56 (2&times;2&times;2&times;7)</button>
+                <button onclick="loadCombinationNum(76)" class="combo-num-btn px-4 py-2 bg-white hover:bg-pink-100 rounded-xl font-bold border border-pink-200 text-slate-700 transition">76 (2&times;2&times;19)</button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- 左側：點擊組合嘗試區 -->
-                <div class="bg-white/80 p-6 rounded-2xl border border-pink-100 flex flex-col items-center">
-                    <h3 class="text-base font-bold text-slate-800 mb-2">自由點選質因數配對</h3>
-                    <p class="text-xs text-slate-500 mb-4 text-center">勾選不同的質因數組合，試試看會算出哪一個因數！</p>
-                    
-                    <div id="prime-chips-container" class="flex flex-wrap gap-3 justify-center mb-6">
-                        <!-- JS 動態生成質因數按鈕 -->
+                <div class="bg-white/85 p-6 rounded-2xl border border-pink-100 flex flex-col items-center justify-between shadow-sm">
+                    <div class="w-full flex flex-col items-center">
+                        <h3 class="text-base font-bold text-slate-800 mb-2">自由點選質因數配對</h3>
+                        <p class="text-xs text-slate-500 mb-5 text-center">點擊下方質因數按鈕進行勾選或取消，觀察乘積結果！</p>
+                        
+                        <div id="prime-chips-container" class="flex flex-wrap gap-3 justify-center mb-6">
+                            <!-- JS 動態生成質因數按鈕 -->
+                        </div>
                     </div>
 
                     <div class="w-full p-4 bg-pink-50 rounded-xl text-center border border-pink-200">
                         <div class="text-xs text-pink-600 font-bold">當前選擇組合計算：</div>
-                        <div id="combo-calc-text" class="text-xl font-black text-pink-700 my-1">1 (固定包含 1)</div>
+                        <div id="combo-calc-text" class="text-xl font-black text-pink-700 my-1 font-mono">1 (固定包含 1)</div>
                         <div id="combo-calc-result" class="text-sm font-semibold text-slate-600">因數為：1</div>
                     </div>
                 </div>
 
                 <!-- 右側：完整因數結構列表 -->
-                <div class="lg:col-span-2 bg-white/80 p-6 rounded-2xl border border-pink-100">
+                <div class="lg:col-span-2 bg-white/85 p-6 rounded-2xl border border-pink-100 shadow-sm">
                     <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-table-cells text-pink-500"></i> 所有因數分類總覽
                     </h3>
@@ -381,14 +398,19 @@
         </section>
 
         <!-- TAB 4: 隨堂測驗 -->
-        <section id="tab4" class="tab-content glass-panel rounded-3xl p-6 md:p-8 hidden">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-award text-amber-500"></i> 隨堂測驗
-                </h2>
-                <p class="text-slate-600 text-sm">
-                    檢測你的學習成果！共有 5 題觀念題，選擇答案後會立即為你對答案並給予解析。
-                </p>
+        <section id="tab4" class="tab-content glass-panel rounded-3xl p-5 md:p-8 hidden">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-award text-amber-500"></i> 隨堂測驗
+                    </h2>
+                    <p class="text-slate-600 text-sm">
+                        檢測你的學習成果！每次按下「重新測驗」都會從題庫抽出 5 題新題目練習喔！
+                    </p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/80 text-amber-800 text-xs font-bold self-start sm:self-center">
+                    <i class="fa-solid fa-shuffle"></i> 隨機出題模式
+                </span>
             </div>
 
             <!-- 題目容器 -->
@@ -397,12 +419,12 @@
             </div>
 
             <!-- 計分結果與操作按鈕 -->
-            <div class="mt-8 p-6 bg-white/90 rounded-2xl border border-amber-200 text-center">
+            <div class="mt-8 p-6 bg-white/90 rounded-2xl border border-amber-200 text-center shadow-sm">
                 <div class="flex flex-wrap justify-center items-center gap-4">
-                    <button onclick="submitQuiz()" class="w-44 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-lg rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                    <button onclick="submitQuiz()" class="w-44 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-base md:text-lg rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> 提交答案
                     </button>
-                    <button onclick="resetQuiz()" class="w-44 py-3 bg-slate-500 hover:bg-slate-600 text-white font-black text-lg rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                    <button onclick="resetQuiz()" class="w-44 py-3 bg-slate-600 hover:bg-slate-700 text-white font-black text-base md:text-lg rounded-2xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-rotate-right"></i> 重新測驗
                     </button>
                 </div>
@@ -459,6 +481,9 @@
             const summaryNum = document.getElementById('intro-summary-num');
             const summaryAllFactors = document.getElementById('intro-summary-all-factors');
             const summaryPrimeFactors = document.getElementById('intro-summary-prime-factors');
+            const targetHint = document.getElementById('intro-target-hint');
+
+            if (targetHint) targetHint.textContent = num;
 
             // 1. 計算所有乘積組合與因數
             const pairs = [];
@@ -490,8 +515,8 @@
                 };
 
                 return `
-                    <div class="flex items-center gap-3 p-3 bg-slate-50/70 rounded-xl border border-slate-100 shadow-sm transition">
-                        <span class="font-bold text-slate-800 font-mono w-7 text-right">${num}</span>
+                    <div class="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100 shadow-xs transition">
+                        <span class="font-bold text-slate-800 font-mono w-8 text-right">${num}</span>
                         <span class="text-slate-400 font-bold">=</span>
                         ${renderNumBadge(a)}
                         <span class="text-slate-400 font-bold">&times;</span>
@@ -584,7 +609,7 @@
 
                 const nodeClass = node.isPrime ? 'node-prime' : 'node-composite';
                 nodesHTML += `
-                    <div class="absolute transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full ${nodeClass} flex items-center justify-center font-black text-lg border-2 border-white shadow-md z-10 transition-all duration-300"
+                    <div class="absolute transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full ${nodeClass} flex items-center justify-center font-black text-lg border-2 border-white shadow-md z-10 transition-all duration-300 font-mono"
                          style="left: ${px}px; top: ${py}px;">
                         ${node.value}
                     </div>
@@ -634,34 +659,6 @@
             };
         }
 
-        function createNodeHTML(node) {
-            if (node.isPrime) {
-                return `
-                    <div class="flex flex-col items-center">
-                        <div class="w-12 h-12 rounded-full node-prime flex items-center justify-center font-black text-lg border-2 border-white shadow-sm">${node.value}</div>
-                    </div>
-                `;
-            }
-            return `
-                <div class="flex flex-col items-center">
-                    <div class="w-12 h-12 rounded-full node-composite flex items-center justify-center font-black text-lg border-2 border-white shadow-sm">${node.value}</div>
-                    <div class="w-0.5 h-3 bg-slate-400"></div>
-                    <div class="flex relative">
-                        <div class="flex flex-col items-center px-2 relative">
-                            <div class="absolute top-0 right-0 w-1/2 h-3 border-t-2 border-l-2 border-slate-400"></div>
-                            <div class="h-3"></div>
-                            ${createNodeHTML(node.left)}
-                        </div>
-                        <div class="flex flex-col items-center px-2 relative">
-                            <div class="absolute top-0 left-0 w-1/2 h-3 border-t-2 border-r-2 border-slate-400"></div>
-                            <div class="h-3"></div>
-                            ${createNodeHTML(node.right)}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
         function getPrimeFactorsList(n) {
             const factors = [];
             let curr = n;
@@ -681,7 +678,7 @@
 
         document.getElementById('sd-num-input').addEventListener('change', (e) => {
             let val = parseInt(e.target.value);
-            if (val < 4) val = 4;
+            if (isNaN(val) || val < 4) val = 4;
             if (val > 500) val = 500;
             e.target.value = val;
             sdCurrentNum = val;
@@ -720,7 +717,7 @@
                         </div>
                     </div>
                 `;
-                exp.innerHTML = `<p>準備開始！請按「下一步」找尋能整除 ${sdCurrentNum} 的最小質因數。</p>`;
+                exp.innerHTML = `<p>準備開始！請按「下一步」找尋能整除 <span class="font-bold text-indigo-700">${sdCurrentNum}</span> 的最小質因數。</p>`;
                 formula.innerHTML = `${sdCurrentNum} = ...`;
                 return;
             }
@@ -789,7 +786,7 @@
                 } else {
                     clearInterval(sdTimer);
                 }
-            }, 1000);
+            }, 900);
         }
 
         // ==================== TAB 3: 質因數組合邏輯 ====================
@@ -804,12 +801,12 @@
 
             // 更新按鈕樣式
             document.querySelectorAll('.combo-num-btn').forEach(btn => {
-                if (btn.textContent.includes(num.toString())) {
-                    btn.classList.add('bg-pink-500', 'text-white');
-                    btn.classList.remove('bg-white', 'text-slate-700');
+                if (btn.textContent.startsWith(num.toString() + ' ')) {
+                    btn.classList.add('bg-pink-500', 'text-white', 'border-pink-600');
+                    btn.classList.remove('bg-white', 'text-slate-700', 'border-pink-200');
                 } else {
-                    btn.classList.remove('bg-pink-500', 'text-white');
-                    btn.classList.add('bg-white', 'text-slate-700');
+                    btn.classList.remove('bg-pink-500', 'text-white', 'border-pink-600');
+                    btn.classList.add('bg-white', 'text-slate-700', 'border-pink-200');
                 }
             });
 
@@ -824,7 +821,7 @@
             
             comboPrimes.forEach((p, idx) => {
                 const btn = document.createElement('button');
-                btn.className = `w-12 h-12 rounded-xl font-black text-lg shadow-sm border transition flex items-center justify-center ${selectedIndices.has(idx) ? 'bg-pink-500 text-white border-pink-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-pink-50'}`;
+                btn.className = `w-12 h-12 rounded-xl font-black text-lg shadow-sm border transition flex items-center justify-center font-mono ${selectedIndices.has(idx) ? 'bg-pink-500 text-white border-pink-600 scale-105' : 'bg-white text-slate-700 border-slate-200 hover:bg-pink-50'}`;
                 btn.textContent = p;
                 btn.onclick = () => togglePrimeChip(idx);
                 container.appendChild(btn);
@@ -847,7 +844,7 @@
 
             if (selectedIndices.size === 0) {
                 calcText.innerHTML = '1 (基本因數)';
-                calcRes.innerHTML = '對應因數為：<span class="text-xl font-bold text-pink-600">1</span>';
+                calcRes.innerHTML = '對應因數為：<span class="text-xl font-bold text-pink-600 font-mono">1</span>';
                 return;
             }
 
@@ -855,7 +852,7 @@
             const prod = selectedVals.reduce((a, b) => a * b, 1);
             
             calcText.innerHTML = selectedVals.join(' &times; ');
-            calcRes.innerHTML = `對應因數為：<span class="text-xl font-bold text-pink-600">${prod}</span>`;
+            calcRes.innerHTML = `對應因數為：<span class="text-xl font-bold text-pink-600 font-mono">${prod}</span>`;
         }
 
         function renderFactorsMatrix() {
@@ -890,19 +887,19 @@
             // 渲染HTML
             for (let label in groups) {
                 const groupDiv = document.createElement('div');
-                groupDiv.className = "p-3 bg-pink-50/50 rounded-xl border border-pink-100";
+                groupDiv.className = "p-3 bg-pink-50/60 rounded-xl border border-pink-100";
                 
                 let contentHTML = '';
                 if (label === '1 個數') {
-                    contentHTML = `<span class="px-3 py-1 bg-white rounded-lg border text-sm font-bold text-slate-700">1</span>`;
+                    contentHTML = `<span class="px-3 py-1 bg-white rounded-lg border text-sm font-bold text-slate-700 font-mono m-1">1</span>`;
                     // 加上個別質因數
                     const uniquePrimes = Array.from(new Set(comboPrimes));
                     uniquePrimes.forEach(p => {
-                        contentHTML += ` <span class="px-3 py-1 bg-white rounded-lg border text-sm font-bold text-slate-700">${p}</span>`;
+                        contentHTML += `<span class="px-3 py-1 bg-white rounded-lg border text-sm font-bold text-slate-700 font-mono m-1">${p}</span>`;
                     });
                 } else {
                     contentHTML = groups[label].map(item => `
-                        <span class="inline-block px-3 py-1 bg-white rounded-lg border text-sm font-bold text-slate-700 m-1">
+                        <span class="inline-block px-3 py-1 bg-white rounded-lg border text-sm font-bold text-slate-700 font-mono m-1">
                             ${item.expr} = <span class="text-pink-600">${item.val}</span>
                         </span>
                     `).join('');
@@ -962,59 +959,97 @@
             return results;
         }
 
-        // ==================== TAB 4: 隨堂測驗邏輯 ====================
-        const quizData = [
+        // ==================== TAB 4: 隨堂測驗邏輯 (擴充題庫並支援隨機出題) ====================
+        const quizPool = [
             {
-                q: "1. 寫出 18 的所有因數：1、2、3、6、9、18。請問其中「質因數」有哪些？",
+                q: "寫出 18 的所有因數：1、2、3、6、9、18。請問其中「質因數」有哪些？",
                 options: ["1 和 18", "2 和 3", "3、6 和 9", "所有因數都是"],
                 ans: 1,
                 exp: "質因數必須同時是「因數」且是「質數」。18 的因數中只有 2 和 3 是質數。"
             },
             {
-                q: "2. 將 30 做質因數分解，記成由小到大的質因數連乘式，正確的表示法是？",
+                q: "將 30 做質因數分解，記成由小到大的質因數連乘式，正確的表示法是？",
                 options: ["30 = 3 × 10", "30 = 2 × 15", "30 = 5 × 6", "30 = 2 × 3 × 5"],
                 ans: 3,
                 exp: "質因數分解必須分解到「全都是質數相乘」，並通常由小到大記錄為 2 × 3 × 5。"
             },
             {
-                q: "3. 用短除法對 90 做質因數分解，下列何者為正確的質因數分解結果？",
+                q: "用短除法對 90 做質因數分解，下列何者為正確的質因數分解結果？",
                 options: ["90 = 2 × 3 × 3 × 5", "90 = 2 × 5 × 9", "90 = 3 × 3 × 10", "90 = 9 × 10"],
                 ans: 0,
-                exp: "90 ÷ 2 = 45, 45 ÷ 3 = 15, 15 ÷ 3 = 5，因此 90 = 2 × 3 × 3 × 5。"
+                exp: "90 ÷ 2 = 45，45 ÷ 3 = 15，15 ÷ 3 = 5，因此 90 = 2 × 3 × 3 × 5。"
             },
             {
-                q: "4. 若已知 56 的質因數分解為「56 = 2 × 2 × 2 × 7」，下列何者「不是」56 的因數？",
+                q: "若已知 56 的質因數分解為「56 = 2 × 2 × 2 × 7」，下列何者「不是」56 的因數？",
                 options: ["2 × 7 (即 14)", "2 × 2 × 2 (即 8)", "2 × 7 × 7 (即 98)", "2 × 2 (即 4)"],
                 ans: 2,
                 exp: "質因數分解中只有一個 7，因此 2 × 7 × 7 選了兩個 7，超出原有的質因數，故不是 56 的因數。"
             },
             {
-                q: "5. 將 78 做質因數分解（78 = 2 × 3 × 13），請問 78 共有幾個「質因數」？",
+                q: "將 78 做質因數分解（78 = 2 × 3 × 13），請問 78 共有幾個不同的「質因數」？",
                 options: ["2 個", "3 個", "4 個", "6 個"],
                 ans: 1,
                 exp: "78 的質因數有 2、3、13，共 3 個。"
+            },
+            {
+                q: "請問 1 是任何整數的「質因數」嗎？",
+                options: ["是，因為 1 是所有數的因數", "不是，因為 1 不是質數", "只有偶數才有 1 當質因數", "只有奇數才有 1 當質因數"],
+                ans: 1,
+                exp: "質數必須大於 1 且只有 1 和自己兩個因數，1 不是質數，因此 1 絕不會是任何數的質因數。"
+            },
+            {
+                q: "已知 84 = 2 × 2 × 3 × 7，請問 84 的所有質因數總和是多少？",
+                options: ["12", "14", "17", "21"],
+                ans: 0,
+                exp: "84 的不同質因數有 2、3、7，它們的總和為 2 + 3 + 7 = 12。"
+            },
+            {
+                q: "下列哪一個算式是「72」正確的質因數分解？",
+                options: ["72 = 8 × 9", "72 = 2 × 2 × 2 × 9", "72 = 2 × 2 × 2 × 3 × 3", "72 = 2 × 3 × 3 × 4"],
+                ans: 2,
+                exp: "8 與 9 都是合數，必須繼續分解成 2 × 2 × 2 與 3 × 3，全為質數連乘才算完成。"
+            },
+            {
+                q: "若某數的質因數分解為 2 × 5 × 11，請問下列哪一個數「不是」這個數的因數？",
+                options: ["10", "22", "55", "25"],
+                ans: 3,
+                exp: "分解式中只有一個 5，無法組出 5 × 5 = 25，因此 25 不是它的因數。"
+            },
+            {
+                q: "在 21、23、27、39 這四個數中，哪一個數「只有 1 個」質因數？",
+                options: ["21", "23", "27", "39"],
+                ans: 1,
+                exp: "23 本身是質數，它的因數只有 1 和 23，所以質因數只有 23 這 1 個（27 = 3×3×3 也只有質因數 3，但本題選項中 23 為質數代表）。"
             }
         ];
+
+        let currentQuiz = [];
+
+        function getRandomQuiz(count = 5) {
+            const shuffled = [...quizPool].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
 
         function renderQuiz() {
             const container = document.getElementById('quiz-container');
             container.innerHTML = '';
+            currentQuiz = getRandomQuiz(5);
 
-            quizData.forEach((qItem, idx) => {
+            currentQuiz.forEach((qItem, idx) => {
                 const qCard = document.createElement('div');
-                qCard.className = "bg-white/80 p-5 rounded-2xl border border-amber-100";
+                qCard.className = "bg-white/85 p-5 rounded-2xl border border-amber-100 shadow-xs";
                 
                 let optionsHTML = qItem.options.map((opt, oIdx) => `
-                    <label class="flex items-center gap-3 p-3 bg-amber-50/50 hover:bg-amber-100/60 rounded-xl cursor-pointer border border-amber-100 transition">
+                    <label class="flex items-center gap-3 p-3.5 bg-amber-50/50 hover:bg-amber-100/70 rounded-xl cursor-pointer border border-amber-100 transition">
                         <input type="radio" name="quiz-${idx}" value="${oIdx}" class="w-4 h-4 text-amber-500 focus:ring-amber-400">
-                        <span class="text-slate-800 text-sm font-medium">${opt}</span>
+                        <span class="text-slate-800 text-sm md:text-base font-medium">${opt}</span>
                     </label>
                 `).join('');
 
                 qCard.innerHTML = `
-                    <div class="font-bold text-slate-800 mb-3">${qItem.q}</div>
+                    <div class="font-bold text-slate-800 mb-3 text-base md:text-lg">${idx + 1}. ${qItem.q}</div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">${optionsHTML}</div>
-                    <div id="quiz-feedback-${idx}" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+                    <div id="quiz-feedback-${idx}" class="hidden p-3.5 rounded-xl text-xs md:text-sm font-semibold leading-relaxed"></div>
                 `;
                 container.appendChild(qCard);
             });
@@ -1022,7 +1057,7 @@
 
         function submitQuiz() {
             let score = 0;
-            quizData.forEach((qItem, idx) => {
+            currentQuiz.forEach((qItem, idx) => {
                 const selected = document.querySelector(`input[name="quiz-${idx}"]:checked`);
                 const feedback = document.getElementById(`quiz-feedback-${idx}`);
                 feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800', 'bg-amber-100', 'text-amber-800');
@@ -1032,20 +1067,21 @@
                     if (userAns === qItem.ans) {
                         score += 20;
                         feedback.classList.add('bg-emerald-100', 'text-emerald-800');
-                        feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> 回答正確！ ${qItem.exp}`;
+                        feedback.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> 回答正確！ ${qItem.exp}`;
                     } else {
                         feedback.classList.add('bg-rose-100', 'text-rose-800');
-                        feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600"></i> 答錯囉！ ${qItem.exp}`;
+                        feedback.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> 答錯囉！ ${qItem.exp}`;
                     }
                 } else {
                     feedback.classList.add('bg-amber-100', 'text-amber-800');
-                    feedback.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-600"></i> 未作答。`;
+                    feedback.innerHTML = `<i class="fa-solid fa-circle-exclamation text-amber-600 mr-1"></i> 尚未作答。提示：${qItem.exp}`;
                 }
             });
 
             const scoreDisplay = document.getElementById('quiz-score-display');
             scoreDisplay.classList.remove('hidden');
-            scoreDisplay.innerHTML = `測驗得分：<span class="text-3xl font-black text-amber-600">${score}</span> / 100 分`;
+            let comment = score === 100 ? '太厲害了，全部答對！🎉' : (score >= 60 ? '表現不錯，繼續加油！👍' : '再複習一下上面的單元吧！💪');
+            scoreDisplay.innerHTML = `測驗得分：<span class="text-3xl font-black text-amber-600 font-mono">${score}</span> / 100 分 <span class="block sm:inline text-base text-slate-600 sm:ml-2 mt-1 sm:mt-0">（${comment}）</span>`;
         }
 
         function resetQuiz() {
